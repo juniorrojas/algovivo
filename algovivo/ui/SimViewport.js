@@ -113,7 +113,7 @@ class SimViewport {
 
     const dragBehavior = this.dragBehavior = new mm2d.ui.DragBehavior({
       onDomCursorDown: (domCursor, event) => {
-        if (event.button != 0) return;
+        if ("button" in event && event.button != 0) return;
         const sim = this.system;
         const worldCursor = camera.domToWorldSpace(domCursor);
         const vertexId = this.hitTestVertex(worldCursor);
