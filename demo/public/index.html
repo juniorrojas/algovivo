@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css?family=Palanquin" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Palanquin";
+    }
+
+    html, body {
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+  <script src="algovivo.js"></script>
+  <script>
+    (function() {
+      const script = document.createElement("script");
+      const now = new Date();
+      const nstr = now.toISOString();
+      script.src = `main.js?t=${nstr}`;
+      document.body.appendChild(script);
+    })();
+  </script>
+</body>
+</html>
