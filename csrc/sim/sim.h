@@ -4,13 +4,7 @@
 #include "vertices.h"
 #include "inertia.h"
 #include "framenorm.h"
-
-int enzyme_dup;
-int enzyme_out;
-int enzyme_const;
-
-template<typename Output, typename... ForwardArgs, typename... BackwardArgs>
-Output __enzyme_autodiff(Output (*)(ForwardArgs...), BackwardArgs...);
+#include "enzyme.h"
 
 extern "C"
 float be_loss(
