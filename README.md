@@ -2,7 +2,11 @@
 
 A JavaScript + WASM implementation of an energy-based formulation for soft-bodied virtual creatures.
 
-![](media/anim.gif)
+[live demo](https://juniorrojas.com/algovivo)
+
+<a href="https://juniorrojas.com/algovivo">
+  <img src="media/anim.gif">
+</a>
 
 Instead of implementing simulations using explicit position update rules and manually computed forces, we can implement simulations using gradient-based optimization on differentiable energy functions and compute forces using automatic differentiation. Mass-spring systems are one of the simplest examples to demonstrate this. For example, AD can be used for [energy minimization](https://github.com/juniorrojas/hookean-springs-pytorch) and [numerical integration](https://github.com/juniorrojas/springs-integration-pytorch) for mass-spring systems.
 
