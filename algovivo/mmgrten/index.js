@@ -1,6 +1,6 @@
 const Engine = require("./Engine");
 
-async function engine(args = {}) {
+function engine(args = {}) {
   const ten = new Engine({
     wasmInstance: args.wasmInstance
   });

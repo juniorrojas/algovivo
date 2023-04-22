@@ -2,7 +2,7 @@ const algovivo = require("algovivo");
 const utils = require("./utils");
 
 test("test", async () => {
-  const system = await algovivo.makeSystem({
+  const system = new algovivo.System({
     wasmInstance: await utils.loadWasm()
   });
   const memoryManager = system.ten.mgr;

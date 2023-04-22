@@ -46,7 +46,7 @@ test("framenorm_projection", async () => {
 });
 
 test("make_policy_input", async () => {
-  const ten = await mmgrten.engine({
+  const ten = mmgrten.engine({
     wasmInstance: await loadWasm()
   });
 

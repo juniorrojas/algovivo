@@ -36,7 +36,7 @@ async function loadWasm() {
 ### `System`
 
 ```js
-const system = await algovivo.makeSystem({
+const system = new algovivo.System({
   wasmInstance: await loadWasm()
 });
 
