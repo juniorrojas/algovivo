@@ -7,6 +7,9 @@ const nn = require("./nn");
 
 class Engine {
   constructor(args = {}) {
+    if (args.wasmInstance == null) {
+      throw new Error("wasmInstance required");
+    }
     this.wasmInstance = args.wasmInstance;
     const arr = args.wasmInstance.exports.memory.buffer;
     const mgr = new mmgr.MemoryManager(arr, args.wasmInstance.exports.__heap_base);

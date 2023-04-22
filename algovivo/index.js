@@ -3,7 +3,7 @@ const mmgrten = require("./mmgrten/index");
 const ui = require("./ui");
 
 async function makeSystem(args = {}) {
-  const ten = await mmgrten.engine({
+  const ten = mmgrten.engine({
     wasmInstance: args.wasmInstance
   });
   return new System({
