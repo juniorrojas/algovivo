@@ -1,5 +1,7 @@
 # algovivo
 
+[![test](https://github.com/juniorrojas/algovivo/actions/workflows/test.yml/badge.svg)](https://github.com/juniorrojas/algovivo/actions/workflows/test.yml)
+
 A JavaScript + WASM implementation of an energy-based formulation for soft-bodied virtual creatures.
 
 [live demo](https://juniorrojas.com/algovivo)
