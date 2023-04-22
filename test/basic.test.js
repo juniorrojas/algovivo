@@ -2,7 +2,7 @@ const algovivo = require("algovivo/index");
 const utils = require("./utils");
 
 test("test", async () => {
-  const system = await algovivo.makeSystem({
+  const system = new algovivo.System({
     wasmInstance: await utils.loadWasm()
   });
   expect(system.numVertices()).toBe(0);

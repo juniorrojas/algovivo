@@ -1,9 +1,14 @@
+const mmgrten = require("./mmgrten");
+
 class Sim {
   constructor(args = {}) {
-    if (args.ten == null) {
-      throw new Error("ten required to create sim");
-    }
-    const ten = args.ten;
+    // if (args.ten == null) {
+    //   throw new Error("ten required to create sim");
+    // }
+    // const ten = args.ten;
+    const ten = new mmgrten.Engine({
+      wasmInstance: args.wasmInstance
+    });
     this.ten = ten;
 
     const wasmInstance = ten.wasmInstance;
