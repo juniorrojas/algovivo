@@ -1,3 +1,3 @@
 module.exports = {
-  SimViewport: require("./SimViewport")
+  SystemViewport: require("./SystemViewport")
 };
