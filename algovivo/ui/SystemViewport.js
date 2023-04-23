@@ -21,7 +21,7 @@ function edgesFromTriangles(triangles) {
   return Array.from(edges.values());
 }
 
-class SimViewport {
+class SystemViewport {
   constructor(args = {}) {
     if (args.system == null) {
       throw new Error("system required");
@@ -302,4 +302,4 @@ class SimViewport {
   }
 }
 
-module.exports = SimViewport;
+module.exports = SystemViewport;
