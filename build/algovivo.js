@@ -1187,7 +1187,7 @@
 
 	const mmgrten$1 = mmgrten$2;
 
-	class Sim {
+	class System$1 {
 	  constructor(args = {}) {
 	    if (args.wasmInstance == null) {
 	      throw new Error("wasmInstance required");
@@ -1442,7 +1442,7 @@
 	  }
 	}
 
-	var Sim_1 = Sim;
+	var System_1 = System$1;
 
 	function clone(a) {
 	  return [a[0], a[1]];
@@ -2567,7 +2567,7 @@
 	  return Array.from(edges.values());
 	}
 
-	class SimViewport {
+	class SystemViewport {
 	  constructor(args = {}) {
 	    if (args.system == null) {
 	      throw new Error("system required");
@@ -2848,13 +2848,13 @@
 	  }
 	}
 
-	var SimViewport_1 = SimViewport;
+	var SystemViewport_1 = SystemViewport;
 
 	var ui$1 = {
-	  SimViewport: SimViewport_1
+	  SystemViewport: SystemViewport_1
 	};
 
-	const System = Sim_1;
+	const System = System_1;
 	const mmgrten = mmgrten$2;
 	const ui = ui$1;
 
