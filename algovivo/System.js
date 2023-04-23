@@ -1,6 +1,6 @@
 const mmgrten = require("./mmgrten");
 
-class Sim {
+class System {
   constructor(args = {}) {
     if (args.wasmInstance == null) {
       throw new Error("wasmInstance required");
@@ -255,4 +255,4 @@ class Sim {
   }
 }
 
-module.exports = Sim;
+module.exports = System;

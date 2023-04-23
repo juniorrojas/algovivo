@@ -1,4 +1,4 @@
-const System = require("./Sim");
+const System = require("./System");
 const mmgrten = require("./mmgrten/index");
 const ui = require("./ui");
 
