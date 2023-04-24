@@ -1,5 +1,4 @@
 const Viewport = algovivo.SystemViewport;
-const policies = algovivo.policies;
 
 class NeuralPolicy {
   constructor(args = {}) {
@@ -118,11 +117,10 @@ class NeuralPolicy {
 }
 
 async function loadWasm() {
-  const r = await fetch("algovivo.wasm");
-  const bytes = await r.arrayBuffer();
-  const r1 = await WebAssembly.instantiate(bytes, {});
-  const wasmInstance = r1.instance;
-  return wasmInstance;
+  const response = await fetch("algovivo.wasm");
+  const bytes = await response.arrayBuffer();
+  const wasm = await WebAssembly.instantiate(bytes);
+  return wasm.instance;
 }
 
 class IconButton {
@@ -217,11 +215,10 @@ async function main() {
   document.body.style.flexDirection = "column";
 
   const divContent = document.createElement("div");
-  // divContent.style.paddingTop = "75px";
   document.body.appendChild(divContent);
 
   const wasmInstance = await loadWasm();
-  const system = await algovivo.makeSystem({
+  const system = new algovivo.System({
     wasmInstance: wasmInstance
   });
 
@@ -231,7 +228,6 @@ async function main() {
   document.body.style.margin = 0;
   document.body.style.padding = 0;
   document.body.style.alignItems = "center";
-  // document.body.style.justifyContent = "center";
 
   const viewport = new Viewport({
     system: system
@@ -260,14 +256,6 @@ async function main() {
   const policyData = await r1.json();
   policy.loadData(policyData);
 
-  viewport.render();
-
-  setInterval(() => {
-    policy.step();
-    system.step();
-    viewport.render();
-  }, 1000 / 30);
-
   const btnBrain = new IconButton({
     src: "assets/brain.svg"
   });
@@ -277,6 +265,13 @@ async function main() {
     else btnBrain.setInactiveStyle();
   });
   document.body.appendChild(btnBrain.domElement);
+
+  viewport.render();
+  setInterval(() => {
+    policy.step();
+    system.step();
+    viewport.render();
+  }, 1000 / 30);
 }
 
 main();
