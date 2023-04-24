@@ -1,5 +1,4 @@
 const Viewport = algovivo.SystemViewport;
-const policies = algovivo.policies;
 
 class NeuralPolicy {
   constructor(args = {}) {
