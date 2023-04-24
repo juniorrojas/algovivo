@@ -18,6 +18,10 @@ For example, AD can be used for [energy minimization](https://github.com/juniorr
 
 To use in the browser, you can use a [UMD build](build/algovivo.min.js) that exposes `algovivo` as a global variable.
 
+```
+wget https://raw.githubusercontent.com/juniorrojas/algovivo/master/build/algovivo.min.js
+```
+
 ```html
 <script src="algovivo.min.js"></script>
 ```
