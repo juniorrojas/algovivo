@@ -2861,7 +2861,7 @@
 	var algovivo = {
 	  System: System,
 	  mmgrten: mmgrten,
-	  SystemViewport: ui.SimViewport
+	  SystemViewport: ui.SystemViewport
 	};
 
 	var index = /*@__PURE__*/getDefaultExportFromCjs(algovivo);

@@ -5,5 +5,5 @@ const ui = require("./ui");
 module.exports = {
   System: System,
   mmgrten: mmgrten,
-  SystemViewport: ui.SimViewport
+  SystemViewport: ui.SystemViewport
 };
