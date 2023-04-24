@@ -216,7 +216,6 @@ async function main() {
   document.body.style.flexDirection = "column";
 
   const divContent = document.createElement("div");
-  // divContent.style.paddingTop = "75px";
   document.body.appendChild(divContent);
 
   const wasmInstance = await loadWasm();
@@ -230,7 +229,6 @@ async function main() {
   document.body.style.margin = 0;
   document.body.style.padding = 0;
   document.body.style.alignItems = "center";
-  // document.body.style.justifyContent = "center";
 
   const viewport = new Viewport({
     system: system
