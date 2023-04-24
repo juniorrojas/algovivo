@@ -26,12 +26,16 @@ wget https://raw.githubusercontent.com/juniorrojas/algovivo/master/build/algoviv
 <script src="algovivo.min.js"></script>
 ```
 
-You also need the [WASM build](./build/algovivo.wasm), which you can load in the browser with JavaScript:
+You also need the [WASM build](./build/algovivo.wasm), which you can load in the browser with JavaScript.
+
+```
+wget https://raw.githubusercontent.com/juniorrojas/algovivo/master/build/algovivo.wasm
+```
 
 ```js
 async function loadWasm() {
-  const r = await fetch("algovivo.wasm");
-  const bytes = await r.arrayBuffer();
+  const response = await fetch("algovivo.wasm");
+  const bytes = await response.arrayBuffer();
   const wasm = await WebAssembly.instantiate(bytes);
   return wasm.instance;
 }
