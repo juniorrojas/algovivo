@@ -35,21 +35,21 @@ for (let minified of [true, false]) {
   });
 }
 
-// for (let minified of [true, false]) {
-//   configs.push({
-//     input: "algovivo/index.js",
-//     output: {
-//       file: `build/algovivo${minified ? ".min": ""}.mjs`,
-//       format: "esm",
-//       sourcemap: false
-//     },
-//     plugins: [
-//       resolve(),
-//       commonjs(),
-//       ...(minified ? [terser()] : []),
-//       header()
-//     ]
-//   });
-// }
+for (let minified of [true, false]) {
+  configs.push({
+    input: "algovivo/index.js",
+    output: {
+      file: `build/algovivo${minified ? ".min": ""}.mjs`,
+      format: "esm",
+      sourcemap: false
+    },
+    plugins: [
+      resolve(),
+      commonjs(),
+      ...(minified ? [terser()] : []),
+      header()
+    ]
+  });
+}
 
 export default configs;
