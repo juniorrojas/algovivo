@@ -104,3 +104,16 @@ system.a.set([1, 0.2]);
 TODO: instructions, coming soon!
 
 ![](media/anim.gif)
+
+## BibTeX
+
+To cite this in an academic context, please use the following BibTeX entry:
+
+```bibtex
+@misc{algovivo,
+  author = {Junior Rojas},
+  title = {Algovivo: An energy-based formulation for soft-bodied virtual creatures},
+  howpublished = {\url{https://github.com/juniorrojas/algovivo}},
+  year = {2023}
+}
+```
