@@ -5,14 +5,16 @@ ld=${llvm_bin_dir}/wasm-ld
 opt=${llvm_bin_dir}/opt
 
 src_filename="csrc/main.cpp"
-
 lib_name="algovivo"
+build_dirname=build
+
 ll_filename="${lib_name}.out.ll"
 ll_diff_filename="${lib_name}.diff.out.ll"
 ll_diff_opt_filename="${lib_name}.diff.opt.out.ll"
 o_filename="${lib_name}.out.o"
-wasm_filename=build/algovivo.wasm
-mkdir -p build
+wasm_filename=${build_dirname}/algovivo.wasm
+
+mkdir -p ${build_dirname}
 
 echo "compiling C++ to LLVM IR..." && \
 $clang --target=wasm32 -emit-llvm -c -S ${src_filename} -o ${ll_filename} && \
