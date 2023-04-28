@@ -1,8 +1,8 @@
 #!/bin/bash
-clang=${llvm_bin_dir}/clang++
-llc=${llvm_bin_dir}/llc
-ld=${llvm_bin_dir}/wasm-ld
-opt=${llvm_bin_dir}/opt
+clang=${LLVM_BIN_DIR}/clang++
+llc=${LLVM_BIN_DIR}/llc
+ld=${LLVM_BIN_DIR}/wasm-ld
+opt=${LLVM_BIN_DIR}/opt
 
 src_filename="csrc/main.cpp"
 lib_name="algovivo"
@@ -19,7 +19,7 @@ mkdir -p ${build_dirname}
 echo "compiling C++ to LLVM IR..." && \
 $clang --target=wasm32 -emit-llvm -c -S ${src_filename} -o ${ll_filename} && \
 echo "differentiating LLVM IR..." && \
-$opt ${ll_filename} -load=$enzyme -enzyme -S -o ${ll_diff_filename} && \
+$opt ${ll_filename} -load=$ENZYME -enzyme -S -o ${ll_diff_filename} && \
 echo "optimizing differentiated LLVM IR..." && \
 $opt ${ll_diff_filename} -S -o ${ll_diff_opt_filename} && \
 echo "compiling LLVM IR to WASM..." && \
