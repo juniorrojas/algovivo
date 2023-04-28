@@ -4,11 +4,13 @@ llc=${llvm_bin_dir}/llc
 ld=${llvm_bin_dir}/wasm-ld
 opt=${llvm_bin_dir}/opt
 
-src_filename=csrc/main.cpp
-ll_filename=main.out.ll
-ll_diff_filename=main.diff.out.ll
-ll_diff_opt_filename=main.diff.opt.out.ll
-o_filename=main.out.o
+src_filename="csrc/main.cpp"
+
+lib_name="algovivo"
+ll_filename="${lib_name}.out.ll"
+ll_diff_filename="${lib_name}.diff.out.ll"
+ll_diff_opt_filename="${lib_name}.diff.opt.out.ll"
+o_filename="${lib_name}.out.o"
 wasm_filename=build/algovivo.wasm
 mkdir -p build
 
