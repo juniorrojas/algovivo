@@ -18,7 +18,7 @@ test("main", async () => {
   }
 
   await utils.runWebServer({
-    staticDirname: `${__dirname}/utils/public`,
+    staticDirname: `${__dirname}/../public`,
     onReady: main
   });
 })
