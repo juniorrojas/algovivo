@@ -22,6 +22,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       - run: |
+          npm ci
+          npm run build
           cd demo
           npm ci
           npm test
