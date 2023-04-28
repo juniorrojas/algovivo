@@ -1252,16 +1252,8 @@
 
 	  set(data) {
 	    const ten = this.ten;
-
-	    this.spaceDim;
+	    
 	    const numVertices = data.x.length;
-
-	    let numTriangles;
-	    if (data.triangles == null) {
-	      numTriangles = 0;
-	    } else {
-	      numTriangles = data.triangles.length;
-	    }
 
 	    const mgr = this.memoryManager;
 
@@ -1270,6 +1262,10 @@
 	    const r = ten.zeros([numVertices]);
 	    if (this.r != null) this.r.dispose();
 	    this.r = r;
+	    
+	    let numTriangles;
+	    if (data.triangles == null) numTriangles = 0;
+	    else numTriangles = data.triangles.length;
 	    
 	    const triangles = mgr.malloc32(numTriangles * 3);
 	    if (this.triangles != null) this.triangles.free();
