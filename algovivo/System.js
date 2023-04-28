@@ -68,7 +68,13 @@ class System {
 
     const spaceDim = this.spaceDim;
     const numVertices = data.x.length;
-    const numTriangles = data.triangles.length;
+
+    let numTriangles;
+    if (data.triangles == null) {
+      numTriangles = 0;
+    } else {
+      numTriangles = data.triangles.length;
+    }
 
     const mgr = this.memoryManager;
 
@@ -81,11 +87,13 @@ class System {
     const triangles = mgr.malloc32(numTriangles * 3);
     if (this.triangles != null) this.triangles.free();
     this.triangles = triangles;
-    data.triangles.forEach((t, i) => {
-      triangles.u32()[i * 3]     = t[0];
-      triangles.u32()[i * 3 + 1] = t[1];
-      triangles.u32()[i * 3 + 2] = t[2];
-    });
+    if (data.triangles != null) {
+      data.triangles.forEach((t, i) => {
+        triangles.u32()[i * 3]     = t[0];
+        triangles.u32()[i * 3 + 1] = t[1];
+        triangles.u32()[i * 3 + 2] = t[2];
+      });
+    }
 
     let edges;
 

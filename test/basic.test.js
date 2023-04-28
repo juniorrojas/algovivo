@@ -9,9 +9,11 @@ test("test", async () => {
   expect(system.numSprings()).toBe(0);
   expect(system.numTriangles()).toBe(0);
 
-  system.setX([
-    [0, 0]
-  ]);
+  system.set({
+    x: [
+      [0, 0]
+    ]
+  });
 
   expect(system.numVertices()).toBe(1);
 });
