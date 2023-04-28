@@ -4,14 +4,27 @@ test("main", async () => {
   const main = async (port) => {
     const window = new utils.Window({
       headless: true,
-      indexUrl: `http://localhost:${port}`
+      indexUrl: `http://localhost:${port}`,
+      width: 800,
+      height: 800
     });
     try {
       await window.launch();
-      const x = await window.evaluate(async () => {
-        return 123;
+      const numVertices = await window.evaluate(async () => {
+        function waitInit() {
+          return new Promise((resolve, reject) => {
+            const interval = setInterval(() => {
+              if (window.system != null) {
+                clearInterval(interval);
+                resolve();
+              }
+            }, 1);
+          });
+        }
+        await waitInit();
+        return system.numVertices();
       });
-      expect(x).toEqual(123);
+      expect(numVertices).toBe(28);
     } finally {
       await window.close();
     }
@@ -21,4 +34,4 @@ test("main", async () => {
     staticDirname: `${__dirname}/../public`,
     onReady: main
   });
-})
+});

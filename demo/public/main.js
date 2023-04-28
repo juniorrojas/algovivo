@@ -272,6 +272,8 @@ async function main() {
     system.step();
     viewport.render();
   }, 1000 / 30);
+
+  window.system = system;
 }
 
 main();
