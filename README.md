@@ -16,14 +16,10 @@ For example, AD can be used for [energy minimization](https://github.com/juniorr
 
 ## quick start
 
-To use in the browser, you can use a [UMD build](build/algovivo.min.js) that exposes `algovivo` as a global variable.
+To use in the browser, you can use an [ES6 module build](build/algovivo.min.mjs).
 
 ```
-wget https://raw.githubusercontent.com/juniorrojas/algovivo/master/build/algovivo.min.js
-```
-
-```html
-<script src="algovivo.min.js"></script>
+wget https://raw.githubusercontent.com/juniorrojas/algovivo/master/build/algovivo.min.mjs
 ```
 
 You also need the [WASM build](./build/algovivo.wasm), which you can load in the browser with JavaScript.
@@ -44,6 +40,8 @@ async function loadWasm() {
 ### `System`
 
 ```js
+import algovivo from "./algovivo.min.mjs";
+
 const system = new algovivo.System({
   wasmInstance: await loadWasm()
 });
