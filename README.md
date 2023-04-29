@@ -7,7 +7,7 @@ A JavaScript + WebAssembly implementation of an energy-based formulation for sof
 ## [live demo](https://juniorrojas.com/algovivo)
 
 <a href="https://juniorrojas.com/algovivo">
-  <img src="media/anim.gif" width="250px">
+  <img src="media/anim2.gif" width="250px">
 </a>
 
 Instead of implementing simulations using explicit position update rules and manually computed forces, we can implement simulations using gradient-based optimization on differentiable energy functions and compute forces using automatic differentiation.
@@ -103,7 +103,7 @@ system.a.set([1, 0.2]);
 
 TODO: instructions, coming soon!
 
-<img src="media/anim.gif" width="250px">
+<img src="media/anim2.gif" width="250px">
 
 ## BibTeX
 
