@@ -34,9 +34,9 @@ wget https://raw.githubusercontent.com/juniorrojas/algovivo/master/build/algoviv
 
 ```js
 async function loadWasm() {
-  const response = await fetch("algovivo.wasm");
-  const bytes = await response.arrayBuffer();
-  const wasm = await WebAssembly.instantiate(bytes);
+  const wasm = await WebAssembly.instantiateStreaming(
+    await fetch("algovivo.wasm")
+  );
   return wasm.instance;
 }
 ```
