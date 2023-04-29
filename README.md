@@ -7,10 +7,10 @@ A JavaScript + WebAssembly implementation of an energy-based formulation for sof
 ## [live demo](https://juniorrojas.com/algovivo)
 
 <a href="https://juniorrojas.com/algovivo">
-  <img src="media/anim.gif" width="250px">
+  <img src="media/locomotion.gif" width="250px">
 </a>
 
-Instead of implementing simulations using explicit position update rules and manually computed forces, we can implement simulations using gradient-based optimization on differentiable energy functions and compute forces using automatic differentiation.
+Instead of implementing simulations using explicit position update rules and manually derived force functions, we can implement simulations using gradient-based optimization on differentiable energy functions and compute forces using automatic differentiation.
 
 For example, AD can be used for [energy minimization](https://github.com/juniorrojas/hookean-springs-pytorch) and [numerical integration](https://github.com/juniorrojas/springs-integration-pytorch) for mass-spring systems. This repository contains an implementation with additional energy terms such as Neo-Hookean triangles, controllable muscles and friction, to simulate soft-bodied virtual creatures. The energy functions are implemented in C++, compiled to LLVM IR, differentiated with [Enzyme AD](https://github.com/EnzymeAD/Enzyme), compiled to WASM, and wrapped as a JavaScript library.
 
@@ -103,7 +103,7 @@ system.a.set([1, 0.2]);
 
 TODO: instructions, coming soon!
 
-<img src="media/anim.gif" width="250px">
+<img src="media/locomotion.gif" width="250px">
 
 ## BibTeX
 
