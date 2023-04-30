@@ -20,7 +20,7 @@ To use in the browser, you can download the compiled ES6 module [algovivo.min.mj
 
 You can create a simple simulation with one triangle, two muscles and one muscle controlled with a periodic signal, by adding the following code inside a `<script type="module"></script>` tag in your HTML page.
 
-<img src="media/periodic.gif" width="150px">
+<img src="media/periodic.gif" width="250px">
 
 ```js
 import algovivo from "./algovivo.min.mjs";
@@ -69,6 +69,16 @@ async function main() {
 
 main();
 ```
+
+To view the example, you need to run a local HTTP server to serve the files. One simple way to do this is to use Python's built-in HTTP server module.
+
+```
+python -m http.server 8000
+```
+
+Open a web browser and go to `http://localhost:8000`.
+
+<img src="media/periodic.gif" width="250px">
 
 ## BibTeX
 
