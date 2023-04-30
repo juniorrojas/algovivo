@@ -70,6 +70,16 @@ async function main() {
 main();
 ```
 
+To view the example, you need to run a local HTTP server to serve the files. One simple way to do this is to use Python's built-in HTTP server module.
+
+```
+python -m http.server 8000
+```
+
+Open a web browser and go to `http://localhost:8000`.
+
+<img src="media/periodic.gif" width="250px">
+
 ## BibTeX
 
 To cite this in an academic context, please use the following BibTeX entry:
