@@ -16,94 +16,69 @@ For example, AD can be used for [energy minimization](https://github.com/juniorr
 
 ## quick start
 
-To use in the browser, you can use a [UMD build](build/algovivo.min.js) that exposes `algovivo` as a global variable.
+To use in the browser, you can download the compiled ES6 module [algovivo.min.mjs](build/algovivo.min.mjs) and compiled WASM [algovivo.wasm](./build/algovivo.wasm).
 
-```
-wget https://raw.githubusercontent.com/juniorrojas/algovivo/master/build/algovivo.min.js
-```
+You can create a simple simulation with one triangle and two muscles, where one muscle is controlled by a periodic signal, by adding the following code inside a `<script type="module"></script>` tag in your HTML file.
 
-```html
-<script src="algovivo.min.js"></script>
-```
-
-You also need the [WASM build](./build/algovivo.wasm), which you can load in the browser with JavaScript.
-
-```
-wget https://raw.githubusercontent.com/juniorrojas/algovivo/master/build/algovivo.wasm
-```
+<img src="media/periodic.gif" width="250px">
 
 ```js
+import algovivo from "./algovivo.min.mjs";
+
 async function loadWasm() {
   const wasm = await WebAssembly.instantiateStreaming(
     await fetch("algovivo.wasm")
   );
   return wasm.instance;
 }
+
+async function main() {
+  const system = new algovivo.System({
+    wasmInstance: await loadWasm()
+  });
+  system.set({
+    x: [
+      [0, 0],
+      [2, 0],
+      [1, 1]
+    ],
+    triangles: [
+      [0, 1, 2]
+    ],
+    springs: [
+      [0, 2],
+      [1, 2]
+    ]
+  });
+
+  const viewport = new algovivo.SystemViewport({ system });
+  document.body.appendChild(viewport.domElement);
+
+  let t = 0;
+  setInterval(() => {
+    system.a.set([
+      1,
+      0.2 + 0.8 * (Math.cos(t * 0.1) * 0.5 + 0.5)
+    ]);
+    t++;
+
+    system.step();
+    viewport.render();
+  }, 1000 / 30);
+}
+
+main();
 ```
 
-### `System`
+To view the example, you need to run a local HTTP server to serve the files. One simple way to do this is to use Python's built-in HTTP server module.
 
-```js
-const system = new algovivo.System({
-  wasmInstance: await loadWasm()
-});
-
-system.set({
-  x: [
-    [0, 0],
-    [2, 0],
-    [1, 1]
-  ],
-  triangles: [
-    [0, 1, 2]
-  ],
-  springs: [
-    [0, 2],
-    [1, 2]
-  ]
-});
+```
+python -m http.server 8000
 ```
 
-### `SystemViewport`
+Open a web browser and go to `http://localhost:8000`.
 
-```js
-const viewport = new algovivo.SystemViewport({
-  system: system
-});
-document.body.appendChild(viewport.domElement);
-viewport.render();
-```
-
-<img src="media/triangle.png" width="200px"></img>
-
-### `System.step`
-
-```js
-setInterval(() => {
-  system.step();
-  viewport.render();
-}, 1000 / 30);
-```
-
-### muscle control
-
-```js
-system.a.set([0.2, 1]);
-```
-
-<img src="media/muscle-control-0.png" width="200px"></img>
-
-```js
-system.a.set([1, 0.2]);
-```
-
-<img src="media/muscle-control-1.png" width="200px"></img>
-
-### locomotion with neural controller
-
-TODO: instructions, coming soon!
-
-<img src="media/locomotion.gif" width="250px">
+<img src="media/periodic.gif" width="250px">
 
 ## BibTeX
 
