@@ -37,6 +37,58 @@ async function loadWasm() {
 }
 ```
 
+### simple example
+
+One triangle, two muscles, one muscle controlled with a periodic signal.
+
+```js
+import algovivo from "./algovivo.min.mjs";
+
+async function loadWasm() {
+  const wasm = await WebAssembly.instantiateStreaming(
+    await fetch("algovivo.wasm")
+  );
+  return wasm.instance;
+}
+
+async function main() {
+  const system = new algovivo.System({
+    wasmInstance: await loadWasm()
+  });
+  system.set({
+    x: [
+      [0, 0],
+      [2, 0],
+      [1, 1]
+    ],
+    triangles: [
+      [0, 1, 2]
+    ],
+    springs: [
+      [0, 2],
+      [1, 2]
+    ]
+  });
+
+  const viewport = new algovivo.SystemViewport({ system });
+  document.body.appendChild(viewport.domElement);
+
+  let t = 0;
+  setInterval(() => {
+    system.a.set([
+      1,
+      0.2 + 0.8 * (Math.cos(t * 0.1) * 0.5 + 0.5)
+    ]);
+    t++;
+
+    system.step();
+    viewport.render();
+  }, 1000 / 30);
+}
+
+main();
+```
+
 ### `System`
 
 ```js
