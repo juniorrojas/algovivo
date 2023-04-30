@@ -16,32 +16,13 @@ For example, AD can be used for [energy minimization](https://github.com/juniorr
 
 ## quick start
 
-To use in the browser, you can use an [ES6 module build](build/algovivo.min.mjs).
-
-```
-wget https://raw.githubusercontent.com/juniorrojas/algovivo/master/build/algovivo.min.mjs
-```
-
-You also need the [WASM build](./build/algovivo.wasm), which you can load in the browser with JavaScript.
-
-```
-wget https://raw.githubusercontent.com/juniorrojas/algovivo/master/build/algovivo.wasm
-```
-
-```js
-async function loadWasm() {
-  const wasm = await WebAssembly.instantiateStreaming(
-    await fetch("algovivo.wasm")
-  );
-  return wasm.instance;
-}
-```
-
-### simple example
+To use in the browser, you can download the [ES6 module build](build/algovivo.min.mjs) and the [WASM build](./build/algovivo.wasm).
 
 One triangle, two muscles, one muscle controlled with a periodic signal.
 
 <img src="media/periodic.gif" width="150px">
+
+You can copy the following code in a `<script type="module"></script>` tag of your HTML page.
 
 ```js
 import algovivo from "./algovivo.min.mjs";
@@ -90,72 +71,6 @@ async function main() {
 
 main();
 ```
-
-### `System`
-
-```js
-import algovivo from "./algovivo.min.mjs";
-
-const system = new algovivo.System({
-  wasmInstance: await loadWasm()
-});
-
-system.set({
-  x: [
-    [0, 0],
-    [2, 0],
-    [1, 1]
-  ],
-  triangles: [
-    [0, 1, 2]
-  ],
-  springs: [
-    [0, 2],
-    [1, 2]
-  ]
-});
-```
-
-### `SystemViewport`
-
-```js
-const viewport = new algovivo.SystemViewport({
-  system: system
-});
-document.body.appendChild(viewport.domElement);
-viewport.render();
-```
-
-<img src="media/triangle.png" width="200px"></img>
-
-### `System.step`
-
-```js
-setInterval(() => {
-  system.step();
-  viewport.render();
-}, 1000 / 30);
-```
-
-### muscle control
-
-```js
-system.a.set([0.2, 1]);
-```
-
-<img src="media/muscle-control-0.png" width="200px"></img>
-
-```js
-system.a.set([1, 0.2]);
-```
-
-<img src="media/muscle-control-1.png" width="200px"></img>
-
-### locomotion with neural controller
-
-TODO: instructions, coming soon!
-
-<img src="media/locomotion.gif" width="250px">
 
 ## BibTeX
 
