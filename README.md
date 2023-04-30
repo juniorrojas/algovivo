@@ -41,6 +41,8 @@ async function loadWasm() {
 
 One triangle, two muscles, one muscle controlled with a periodic signal.
 
+<img src="media/periodic.gif" width="150px">
+
 ```js
 import algovivo from "./algovivo.min.mjs";
 
