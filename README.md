@@ -16,13 +16,11 @@ For example, AD can be used for [energy minimization](https://github.com/juniorr
 
 ## quick start
 
-To use in the browser, you can download the [ES6 module build](build/algovivo.min.mjs) and the [WASM build](./build/algovivo.wasm).
+To use in the browser, you can download the compiled ES6 module [algovivo.min.mjs](build/algovivo.min.mjs) and compiled WASM [algovivo.wasm](./build/algovivo.wasm).
 
-One triangle, two muscles, one muscle controlled with a periodic signal.
+You can create a simple simulation with one triangle, two muscles and one muscle controlled with a periodic signal, by adding the following code inside a `<script type="module"></script>` tag in your HTML page.
 
 <img src="media/periodic.gif" width="150px">
-
-You can copy the following code in a `<script type="module"></script>` tag of your HTML page.
 
 ```js
 import algovivo from "./algovivo.min.mjs";
