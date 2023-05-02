@@ -102,7 +102,7 @@ class NeuralPolicy {
     }
   }
 
-  async loadData(data) {
+  loadData(data) {
     const fc1 = this.model.layers[0];
     fc1.weight.set(data.fc1.weight);
     fc1.bias.set(data.fc1.bias);
