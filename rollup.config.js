@@ -39,7 +39,7 @@ for (let minified of [true, false]) {
   configs.push({
     input: "algovivo/index.js",
     output: {
-      file: `build/algovivo${minified ? ".min": ""}.mjs`,
+      file: `build/algovivo.module${minified ? ".min": ""}.js`,
       format: "esm",
       sourcemap: false
     },
