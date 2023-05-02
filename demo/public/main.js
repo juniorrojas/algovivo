@@ -1,3 +1,4 @@
+import algovivo from "./algovivo.module.min.js";
 const Viewport = algovivo.SystemViewport;
 
 class NeuralPolicy {
