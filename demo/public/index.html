@@ -19,12 +19,12 @@
   </style>
 </head>
 <body>
-  <script src="algovivo.js"></script>
   <script>
     (function() {
       const script = document.createElement("script");
       const now = new Date();
       const nstr = now.toISOString();
+      script.type = "module";
       script.src = `main.js?t=${nstr}`;
       document.body.appendChild(script);
     })();
