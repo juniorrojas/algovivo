@@ -1,3 +1,4 @@
+import algovivo from "./algovivo.module.min.js";
 const Viewport = algovivo.SystemViewport;
 
 class NeuralPolicy {
@@ -34,10 +35,9 @@ class NeuralPolicy {
     );
   }
 
-  step(args = {}) {
+  step() {
     const system = this.system;
     const wasmInstance = this.ten.wasmInstance;
-    const trace = args.trace;
 
     const numVertices = system.numVertices();
 
@@ -70,10 +70,7 @@ class NeuralPolicy {
         this.input.slot.ptr
       );
 
-      if (trace != null) trace.input = this.input.toArray();
-
       output = this.model.forward(this.input);
-      if (trace != null) trace.output = output.toArray();
     }
 
     const minA = this.minA;
@@ -101,7 +98,7 @@ class NeuralPolicy {
     }
   }
 
-  async loadData(data) {
+  loadData(data) {
     const fc1 = this.model.layers[0];
     fc1.weight.set(data.fc1.weight);
     fc1.bias.set(data.fc1.bias);
@@ -117,9 +114,9 @@ class NeuralPolicy {
 }
 
 async function loadWasm() {
-  const response = await fetch("algovivo.wasm");
-  const bytes = await response.arrayBuffer();
-  const wasm = await WebAssembly.instantiate(bytes);
+  const wasm = await WebAssembly.instantiateStreaming(
+    await fetch("algovivo.wasm")
+  );
   return wasm.instance;
 }
 
@@ -272,6 +269,8 @@ async function main() {
     system.step();
     viewport.render();
   }, 1000 / 30);
+
+  window.system = system;
 }
 
 main();
