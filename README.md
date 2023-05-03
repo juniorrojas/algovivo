@@ -16,9 +16,9 @@ For example, AD can be used for [energy minimization](https://github.com/juniorr
 
 ## quick start
 
-To use in the browser, you can download the compiled ES6 module [algovivo.module.min.js](build/algovivo.module.min.js) and compiled WASM [algovivo.wasm](./build/algovivo.wasm).
+**Just one HTML file, no installation needed**
 
-You can create a simple simulation with one triangle and two muscles, where one muscle is controlled by a periodic signal, by adding the following code inside a `<script type="module"></script>` tag in your HTML file.
+You can create a simple simulation with one triangle and two muscles, where one muscle is controlled by a periodic signal, with the following HTML code.
 
 <img src="media/periodic.gif" width="250px">
 
@@ -30,11 +30,11 @@ You can create a simple simulation with one triangle and two muscles, where one 
 </head>
 <body>
   <script type="module">
-    import algovivo from "https://cdn.rawgit.com/juniorrojas/algovivo/master/build/algovivo.module.min.js"
+    import algovivo from "https://juniorrojas.github.io/algovivo/algovivo.module.min.js"
 
     async function loadWasm() {
       const wasm = await WebAssembly.instantiateStreaming(
-        await fetch("https://cdn.rawgit.com/juniorrojas/algovivo/master/build/algovivo.wasm")
+        await fetch("https://juniorrojas.github.io/algovivo/algovivo.wasm")
       );
       return wasm.instance;
     }
@@ -80,15 +80,7 @@ You can create a simple simulation with one triangle and two muscles, where one 
 </html>
 ```
 
-To view the example, you need to run a local HTTP server to serve the files. One simple way to do this is to use Python's built-in HTTP server module.
-
-```
-python -m http.server 8000
-```
-
-Open a web browser and go to `http://localhost:8000`.
-
-<img src="media/periodic.gif" width="250px">
+This example imports the compiled ES6 module `algovivo.module.min.js` and loads the compiled WASM `algovivo.wasm` from the demo website hosted on GitHub pages. If you want to serve these files on your own, you can download them from the [build](./build) directory.
 
 ## muscle commands
 
