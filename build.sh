@@ -12,7 +12,7 @@ ll_filename="${build_dirname}/${lib_name}.out.ll"
 ll_diff_filename="${build_dirname}/${lib_name}.diff.out.ll"
 ll_diff_opt_filename="${build_dirname}/${lib_name}.diff.opt.out.ll"
 o_filename="${build_dirname}/${lib_name}.out.o"
-wasm_filename="${build_dirname}/algovivo.wasm"
+wasm_filename="${build_dirname}/${lib_name}.wasm"
 
 mkdir -p ${build_dirname}
 
