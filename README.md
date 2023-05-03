@@ -30,11 +30,11 @@ You can create a simple simulation with one triangle and two muscles, where one 
 </head>
 <body>
   <script type="module">
-    import algovivo from "https://juniorrojas.com/algovivo/algovivo.module.min.js"
+    import algovivo from "https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@master/build/algovivo.module.min.js"
 
     async function loadWasm() {
       const wasm = await WebAssembly.instantiateStreaming(
-        await fetch("https://juniorrojas.com/algovivo/algovivo.wasm")
+        await fetch("https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@master/build/algovivo.wasm")
       );
       return wasm.instance;
     }
@@ -80,7 +80,7 @@ You can create a simple simulation with one triangle and two muscles, where one 
 </html>
 ```
 
-This example imports the compiled ES6 module `algovivo.module.min.js` and loads the compiled WASM `algovivo.wasm` from the demo website https://juniorrojas.com/algovivo hosted on GitHub pages. If you want to serve these files on your own, you can download them from the [build](./build) directory.
+This example imports the compiled ES6 module `algovivo.module.min.js` and loads the compiled WASM `algovivo.wasm` from [jsDelivr](https://www.jsdelivr.com/). If you want to serve these files on your own, you can download them from the [build](./build) directory.
 
 ## muscle commands
 
