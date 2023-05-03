@@ -33,9 +33,8 @@ You can create a simple simulation with one triangle and two muscles, where one 
     import algovivo from "https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@master/build/algovivo.module.min.js"
 
     async function loadWasm() {
-      const wasm = await WebAssembly.instantiateStreaming(
-        await fetch("https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@master/build/algovivo.wasm")
-      );
+      const response = await fetch("https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@master/build/algovivo.wasm");
+      const wasm = await WebAssembly.instantiateStreaming(response);
       return wasm.instance;
     }
 
