@@ -82,7 +82,7 @@ Open a web browser and go to `http://localhost:8000`.
 
 ## muscle commands
 
-Muscle commands can be specified using `system.a.set([...])`. A value of 1 means that the muscle is relaxed and wants to keep its original rest length. Values less than 1 indicate that the muscle wants to contract to some fraction of its original rest length.
+Muscle commands can be specified with `system.a.set([...])`. A value of 1 means that the muscle is relaxed and wants to keep its original rest length. Values less than 1 indicate that the muscle wants to contract to some fraction of its original rest length.
 
 | `system.a.set([0.3, 1])` | `system.a.set([1, 0.3])` | `system.a.set([0.3, 0.3])`  |
 | ------------- |-------------| -----|
