@@ -22,52 +22,62 @@ You can create a simple simulation with one triangle and two muscles, where one 
 
 <img src="media/periodic.gif" width="250px">
 
-```js
-import algovivo from "./algovivo.module.min.js";
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+</head>
+<body>
+  <script type="module">
+    import algovivo from "https://cdn.rawgit.com/juniorrojas/algovivo/master/build/algovivo.module.min.js"
 
-async function loadWasm() {
-  const wasm = await WebAssembly.instantiateStreaming(
-    await fetch("algovivo.wasm")
-  );
-  return wasm.instance;
-}
+    async function loadWasm() {
+      const wasm = await WebAssembly.instantiateStreaming(
+        await fetch("https://cdn.rawgit.com/juniorrojas/algovivo/master/build/algovivo.wasm")
+      );
+      return wasm.instance;
+    }
 
-async function main() {
-  const system = new algovivo.System({
-    wasmInstance: await loadWasm()
-  });
-  system.set({
-    x: [
-      [0, 0],
-      [2, 0],
-      [1, 1]
-    ],
-    triangles: [
-      [0, 1, 2]
-    ],
-    springs: [
-      [0, 2],
-      [1, 2]
-    ]
-  });
+    async function main() {
+      const system = new algovivo.System({
+        wasmInstance: await loadWasm()
+      });
+      system.set({
+        x: [
+          [0, 0],
+          [2, 0],
+          [1, 1]
+        ],
+        triangles: [
+          [0, 1, 2]
+        ],
+        springs: [
+          [0, 2],
+          [1, 2]
+        ]
+      });
 
-  const viewport = new algovivo.SystemViewport({ system });
-  document.body.appendChild(viewport.domElement);
+      const viewport = new algovivo.SystemViewport({ system });
+      document.body.appendChild(viewport.domElement);
 
-  let t = 0;
-  setInterval(() => {
-    system.a.set([
-      1,
-      0.2 + 0.8 * (Math.cos(t * 0.1) * 0.5 + 0.5)
-    ]);
-    t++;
+      let t = 0;
+      setInterval(() => {
+        system.a.set([
+          1,
+          0.2 + 0.8 * (Math.cos(t * 0.1) * 0.5 + 0.5)
+        ]);
+        t++;
 
-    system.step();
-    viewport.render();
-  }, 1000 / 30);
-}
+        system.step();
+        viewport.render();
+      }, 1000 / 30);
+    }
 
-main();
+    main();
+  </script>
+</body>
+</html>
 ```
 
 To view the example, you need to run a local HTTP server to serve the files. One simple way to do this is to use Python's built-in HTTP server module.
