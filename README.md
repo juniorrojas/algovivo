@@ -86,7 +86,7 @@ Muscle commands can be specified using `system.a.set([...])`. A value of 1 means
 
 | `system.a.set([0.3, 1])` | `system.a.set([1, 0.3])` | `system.a.set([0.3, 0.3])`  |
 | ------------- |-------------| -----|
-| <img src="media/muscle-contract-left.png" width="100px"> | <img src="media/muscle-contract-right.png" width="100px"> | <img src="media/muscle-contract-both.png" width="100px"> |
+| <div align="center"><img src="media/muscle-contract-left.png" width="100px"></div> | <div align="center"><img src="media/muscle-contract-right.png" width="100px"></div> | <div align="center"><img src="media/muscle-contract-both.png" width="100px"></div> |
 
 
 ## BibTeX
