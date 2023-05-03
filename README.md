@@ -16,69 +16,70 @@ For example, AD can be used for [energy minimization](https://github.com/juniorr
 
 ## quick start
 
-To use in the browser, you can download the compiled ES6 module [algovivo.module.min.js](build/algovivo.module.min.js) and compiled WASM [algovivo.wasm](./build/algovivo.wasm).
+**Just one HTML file, no download or installation required.**
 
-You can create a simple simulation with one triangle and two muscles, where one muscle is controlled by a periodic signal, by adding the following code inside a `<script type="module"></script>` tag in your HTML file.
-
-<img src="media/periodic.gif" width="250px">
-
-```js
-import algovivo from "./algovivo.module.min.js";
-
-async function loadWasm() {
-  const wasm = await WebAssembly.instantiateStreaming(
-    await fetch("algovivo.wasm")
-  );
-  return wasm.instance;
-}
-
-async function main() {
-  const system = new algovivo.System({
-    wasmInstance: await loadWasm()
-  });
-  system.set({
-    x: [
-      [0, 0],
-      [2, 0],
-      [1, 1]
-    ],
-    triangles: [
-      [0, 1, 2]
-    ],
-    springs: [
-      [0, 2],
-      [1, 2]
-    ]
-  });
-
-  const viewport = new algovivo.SystemViewport({ system });
-  document.body.appendChild(viewport.domElement);
-
-  let t = 0;
-  setInterval(() => {
-    system.a.set([
-      1,
-      0.2 + 0.8 * (Math.cos(t * 0.1) * 0.5 + 0.5)
-    ]);
-    t++;
-
-    system.step();
-    viewport.render();
-  }, 1000 / 30);
-}
-
-main();
-```
-
-To view the example, you need to run a local HTTP server to serve the files. One simple way to do this is to use Python's built-in HTTP server module.
-
-```
-python -m http.server 8000
-```
-
-Open a web browser and go to `http://localhost:8000`.
+You can create a simple simulation with one triangle and two muscles, where one muscle is controlled by a periodic signal, with the following HTML code.
 
 <img src="media/periodic.gif" width="250px">
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+</head>
+<body>
+  <script type="module">
+    import algovivo from "https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@master/build/algovivo.module.min.js"
+
+    async function loadWasm() {
+      const response = await fetch("https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@master/build/algovivo.wasm");
+      const wasm = await WebAssembly.instantiateStreaming(response);
+      return wasm.instance;
+    }
+
+    async function main() {
+      const system = new algovivo.System({
+        wasmInstance: await loadWasm()
+      });
+      system.set({
+        x: [
+          [0, 0],
+          [2, 0],
+          [1, 1]
+        ],
+        triangles: [
+          [0, 1, 2]
+        ],
+        springs: [
+          [0, 2],
+          [1, 2]
+        ]
+      });
+
+      const viewport = new algovivo.SystemViewport({ system });
+      document.body.appendChild(viewport.domElement);
+
+      let t = 0;
+      setInterval(() => {
+        system.a.set([
+          1,
+          0.2 + 0.8 * (Math.cos(t * 0.1) * 0.5 + 0.5)
+        ]);
+        t++;
+
+        system.step();
+        viewport.render();
+      }, 1000 / 30);
+    }
+
+    main();
+  </script>
+</body>
+</html>
+```
+
+The code above imports the ES6 module `algovivo.module.min.js` and loads the WASM `algovivo.wasm` from [jsDelivr](https://www.jsdelivr.com/). To serve these files from your own server, you can download them from the [build](./build) directory.
 
 ## muscle commands
 
