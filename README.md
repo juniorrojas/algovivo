@@ -16,7 +16,7 @@ For example, AD can be used for [energy minimization](https://github.com/juniorr
 
 ## quick start
 
-**Just one HTML file, no installation needed**
+**just one HTML file**
 
 You can create a simple simulation with one triangle and two muscles, where one muscle is controlled by a periodic signal, with the following HTML code.
 
@@ -30,11 +30,11 @@ You can create a simple simulation with one triangle and two muscles, where one 
 </head>
 <body>
   <script type="module">
-    import algovivo from "https://juniorrojas.github.io/algovivo/algovivo.module.min.js"
+    import algovivo from "https://juniorrojas.com/algovivo/algovivo.module.min.js"
 
     async function loadWasm() {
       const wasm = await WebAssembly.instantiateStreaming(
-        await fetch("https://juniorrojas.github.io/algovivo/algovivo.wasm")
+        await fetch("https://juniorrojas.com/algovivo/algovivo.wasm")
       );
       return wasm.instance;
     }
@@ -80,7 +80,7 @@ You can create a simple simulation with one triangle and two muscles, where one 
 </html>
 ```
 
-This example imports the compiled ES6 module `algovivo.module.min.js` and loads the compiled WASM `algovivo.wasm` from the demo website hosted on GitHub pages. If you want to serve these files on your own, you can download them from the [build](./build) directory.
+This example imports the compiled ES6 module `algovivo.module.min.js` and loads the compiled WASM `algovivo.wasm` from the demo website https://juniorrojas.com/algovivo hosted on GitHub pages. If you want to serve these files on your own, you can download them from the [build](./build) directory.
 
 ## muscle commands
 
