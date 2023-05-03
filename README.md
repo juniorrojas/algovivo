@@ -16,7 +16,7 @@ For example, AD can be used for [energy minimization](https://github.com/juniorr
 
 ## quick start
 
-**just one HTML file**
+**just one HTML file, no download or installation required**
 
 You can create a simple simulation with one triangle and two muscles, where one muscle is controlled by a periodic signal, with the following HTML code.
 
