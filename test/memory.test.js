@@ -37,4 +37,8 @@ test("test", async () => {
   // should not allocate any new memory
   system.set(mesh);
   expect(memoryManager.numReservedBytes()).toBe(reservedBytes);
+
+  // dispose
+  system.dispose();
+  expect(memoryManager.numReservedBytes()).toBe(0);
 });
