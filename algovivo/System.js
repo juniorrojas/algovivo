@@ -265,9 +265,14 @@ class System {
     if (this.xGrad != null) this.xGrad.dispose();
     if (this.xTmp != null) this.xTmp.dispose();
     if (this.v0 != null) this.v0.dispose();
+    if (this.v1 != null) this.v1.dispose();
 
+    if (this.triangles != null) this.triangles.free();
     if (this.rsi != null) this.rsi.dispose();
+
+    if (this.springs != null) this.springs.free();
     if (this.l0 != null) this.l0.dispose();
+    if (this.a != null) this.a.dispose();
   }
 }
 
