@@ -38,7 +38,7 @@ test("test", async () => {
   system.set(mesh);
   expect(memoryManager.numReservedBytes()).toBe(reservedBytes);
 
-  // dispose
+  // free memory
   system.dispose();
   expect(memoryManager.numReservedBytes()).toBe(0);
 });

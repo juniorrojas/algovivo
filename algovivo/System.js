@@ -72,9 +72,10 @@ class System {
 
     this.setX(data.x);
     
-    const r = ten.zeros([numVertices]);
-    if (this.r != null) this.r.dispose();
-    this.r = r;
+    // const r = ten.zeros([numVertices]);
+    // if (this.r != null) this.r.dispose();
+    // this.r = r;
+    this.r = null;
     
     let numTriangles;
     if (data.triangles == null) numTriangles = 0;
@@ -259,7 +260,14 @@ class System {
   }
 
   dispose() {
-    
+    if (this.x0 != null) this.x0.dispose();
+    if (this.x1 != null) this.x1.dispose();
+    if (this.xGrad != null) this.xGrad.dispose();
+    if (this.xTmp != null) this.xTmp.dispose();
+    if (this.v0 != null) this.v0.dispose();
+
+    if (this.rsi != null) this.rsi.dispose();
+    if (this.l0 != null) this.l0.dispose();
   }
 }
 
