@@ -1,7 +1,7 @@
 const algovivo = require("algovivo");
 const utils = require("./utils");
 
-test("test", async () => {
+test("system", async () => {
   const system = new algovivo.System({
     wasmInstance: await utils.loadWasm()
   });
