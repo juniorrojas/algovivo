@@ -1,7 +1,7 @@
 const { mmgrten } = require("algovivo");
 const utils = require("../utils");
 
-test("create", async () => {
+test("get/set", async () => {
   const ten = await mmgrten.engine({
     wasmInstance: await utils.loadWasm()
   });
