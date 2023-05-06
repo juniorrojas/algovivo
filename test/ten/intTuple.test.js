@@ -9,8 +9,10 @@ test("create", async () => {
   expect(a.get(0)).toBe(1);
   expect(a.get(1)).toBe(4);
   expect(a.get(2)).toBe(8);
-  a.set(1, 8);
-  expect(a.get(1)).toBe(8);
+  expect(a.toString()).toBe("1,4,8");
+  a.set(1, 6);
+  expect(a.get(1)).toBe(6);
+  expect(a.toString()).toBe("1,6,8");
 });
 
 test("flatten idx", async () => {
