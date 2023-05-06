@@ -46,6 +46,10 @@ class IntTuple {
     }
   }
 
+  toString() {
+    return this.slot.u32().toString();
+  }
+
   toArray() {
     const s = [];
     this.forEach((si) => {
