@@ -1,4 +1,4 @@
-const algovivo = require("algovivo/index");
+const algovivo = require("algovivo");
 const utils = require("./utils");
 
 test("test", async () => {
