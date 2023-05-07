@@ -12,7 +12,7 @@ A JavaScript + WebAssembly implementation of an energy-based formulation for sof
 
 Instead of implementing simulations using explicit position update rules and manually derived force functions, we can implement simulations using [gradient-based optimization on differentiable energy functions](https://medium.com/@juniorrojas/physics-based-simulation-via-backpropagation-on-energy-functions-6d3b0e93f5fb) and compute forces using automatic differentiation.
 
-For example, AD can be used for [energy minimization](https://github.com/juniorrojas/hookean-springs-pytorch) and [numerical integration](https://github.com/juniorrojas/springs-integration-pytorch) for mass-spring systems. This repository contains an implementation with additional energy terms such as Neo-Hookean triangles, controllable muscles and friction, to simulate soft-bodied virtual creatures. The energy functions are implemented in C++, compiled to LLVM IR, differentiated with [Enzyme AD](https://github.com/EnzymeAD/Enzyme), compiled to WASM, and wrapped as a JavaScript library.
+For example, AD can be used for [energy minimization](https://github.com/juniorrojas/hookean-springs-pytorch) and [numerical integration](https://github.com/juniorrojas/springs-integration-pytorch) for mass-spring systems. This repository contains an implementation with additional energy terms such as Neo-Hookean triangles, controllable muscles and friction. The energy functions are implemented in C++, compiled to LLVM IR, differentiated with [Enzyme AD](https://github.com/EnzymeAD/Enzyme), compiled to WASM, and wrapped as a JavaScript library.
 
 ## quick start
 
@@ -89,6 +89,13 @@ Muscle commands can be specified with `system.a.set([...])`. A value of 1 means 
 | ------------- |-------------| -----|
 | <div align="center"><img src="media/muscle-contract-left.png" width="140px"></div> | <div align="center"><img src="media/muscle-contract-right.png" width="140px"></div> | <div align="center"><img src="media/muscle-contract-both.png" width="140px"></div> |
 
+This is achieved using an action-dependent potential energy function for each muscle.
+
+$$
+E(x, a) = \frac{k}{2} \left(\frac{l(x)}{a\ l_0} - 1\right)^2
+$$
+
+More details about this and other energy functions used in the simulation can be found [here](https://arxiv.org/abs/2102.05791).
 
 ## BibTeX
 
