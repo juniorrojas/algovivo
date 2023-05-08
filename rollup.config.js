@@ -3,16 +3,16 @@ import resolve from "@rollup/plugin-node-resolve";
 import { terser } from "rollup-plugin-terser";
 
 function header() {
-	return {
-		renderChunk(code) {
-			return `/**
+  return {
+    renderChunk(code) {
+      return `/**
  * algovivo
  * (c) 2023 Junior Rojas
  * License: MIT
  */
 ${code}`;
-		}
-	};
+    }
+  };
 }
 
 const configs = [];
