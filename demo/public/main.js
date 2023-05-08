@@ -237,7 +237,9 @@ async function main() {
   const dataRoot = "data";
   const meshDataPromise = fetch(`${dataRoot}/mesh.json`);
   const policyDataPromise = fetch(`${dataRoot}/policy.json`);
-  const [meshDataResponse, policyDataResponse] = await Promise.all([meshDataPromise, policyDataPromise]);
+  const [meshDataResponse, policyDataResponse] = await Promise.all([
+    meshDataPromise, policyDataPromise
+  ]);
 
   const meshData = await meshDataResponse.json();
   system.set({
