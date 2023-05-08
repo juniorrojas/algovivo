@@ -235,8 +235,10 @@ async function main() {
   divContent.appendChild(viewport.domElement);
   
   const dataRoot = "data";
+  const pMeshData = fetch(`${dataRoot}/mesh.json`);
+  const pPolicyData = fetch(`${dataRoot}/policy.json`);
+  const [r, r1] = await Promise.all([pMeshData, pPolicyData]);
 
-  const r = await fetch(`${dataRoot}/mesh.json`);
   const meshData = await r.json();
   system.set({
     x: meshData.x,
@@ -249,7 +251,6 @@ async function main() {
     system: system,
     stochastic: true
   });
-  const r1 = await fetch(`${dataRoot}/policy.json`);
   const policyData = await r1.json();
   policy.loadData(policyData);
 
