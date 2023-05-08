@@ -6,10 +6,10 @@ function header() {
   return {
     renderChunk(code) {
       return `/**
-* algovivo
-* (c) 2023 Junior Rojas
-* License: MIT
-*/
+ * algovivo
+ * (c) 2023 Junior Rojas
+ * License: MIT
+ */
 ${code}`;
     }
   };
