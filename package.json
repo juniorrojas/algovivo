@@ -8,7 +8,7 @@
     "watch": "rollup -c rollup.config.js --watch",
     "test": "export NODE_PATH=. && jest"
   },
-  "dependencies": {
+  "devDependencies": {
     "@rollup/plugin-commonjs": "^24.1.0",
     "@rollup/plugin-node-resolve": "^15.0.2",
     "jest": "^29.5.0",
