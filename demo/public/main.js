@@ -235,9 +235,13 @@ async function main() {
   divContent.appendChild(viewport.domElement);
   
   const dataRoot = "data";
+  const meshDataPromise = fetch(`${dataRoot}/mesh.json`);
+  const policyDataPromise = fetch(`${dataRoot}/policy.json`);
+  const [meshDataResponse, policyDataResponse] = await Promise.all([
+    meshDataPromise, policyDataPromise
+  ]);
 
-  const r = await fetch(`${dataRoot}/mesh.json`);
-  const meshData = await r.json();
+  const meshData = await meshDataResponse.json();
   system.set({
     x: meshData.x,
     triangles: meshData.triangles,
@@ -249,8 +253,7 @@ async function main() {
     system: system,
     stochastic: true
   });
-  const r1 = await fetch(`${dataRoot}/policy.json`);
-  const policyData = await r1.json();
+  const policyData = await policyDataResponse.json();
   policy.loadData(policyData);
 
   const btnBrain = new IconButton({
