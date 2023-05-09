@@ -15,9 +15,9 @@ async function main() {
   system.set(meshData);
   const policy = new NeuralPolicy({
     system: system,
-    stochastic: false
+    stochastic: false,
+    active: true
   });
-  policy.active = true;
   policy.loadData(policyData);
 
   const outputDirname = `${__dirname}/gen`;
@@ -33,7 +33,7 @@ async function main() {
 
     policy.step();
     system.step();
-    
+
     itemData.x1 = system.x0.toArray();
     itemData.v1 = system.v0.toArray();
 

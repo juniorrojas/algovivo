@@ -21,7 +21,7 @@ class NeuralPolicy {
     const outputSize = numSprings;
     this.input = ten.zeros([inputSize]);
 
-    this.active = false;
+    this.active = args.active ?? false;
 
     const nn = ten.nn;
     this.model = nn.Sequential(
