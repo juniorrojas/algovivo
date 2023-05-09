@@ -1,7 +1,7 @@
-const algovivo = require("../../algovivo");
-const utils = require("../utils");
+const algovivo = require("algovivo");
 const fsp = require("fs/promises");
 const NeuralPolicy = require("./NeuralPolicy");
+const utils = require("../utils");
 
 async function main() {
   const system = new algovivo.System({
