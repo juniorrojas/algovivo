@@ -2,25 +2,6 @@ const algovivo = require("../../algovivo");
 const utils = require("../utils");
 const fsp = require("fs/promises");
 const NeuralPolicy = require("./NeuralPolicy");
-const fs = require("fs");
-
-function fileExists(filename) {
-  return new Promise((resolve, reject) => {
-    fs.access(filename, fs.constants.F_OK, (err) => {
-      if (err) resolve(false);
-      else resolve(true);
-    });
-  });
-}
-
-async function cleandir(dirname) {
-  if (!await fileExists(dirname)) {
-    await fsp.mkdir(dirname);
-  } else {
-    fs.rmSync(dirname, { recursive: true });
-    await fsp.mkdir(dirname);
-  }
-}
 
 async function main() {
   const system = new algovivo.System({
@@ -39,7 +20,9 @@ async function main() {
   policy.active = true;
   policy.loadData(policyData);
 
-  await cleandir(`${__dirname}/gen`);
+  const outputDirname = `${__dirname}/gen`;
+
+  await utils.cleandir(outputDirname);
 
   const writePromises = [];
   for (let i = 0; i < 10; i++) {
@@ -47,11 +30,15 @@ async function main() {
       x0: system.x0.toArray(),
       v0: system.v0.toArray()
     };
+
     policy.step();
     system.step();
+    
     itemData.x1 = system.x0.toArray();
     itemData.v1 = system.v0.toArray();
-    const p = fsp.writeFile(`${__dirname}/gen/${i}.json`, JSON.stringify(itemData));
+
+    const filename = `${outputDirname}/${i}.json`;
+    const p = fsp.writeFile(filename, JSON.stringify(itemData));
     writePromises.push(p);
   }
 

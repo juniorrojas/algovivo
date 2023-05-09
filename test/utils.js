@@ -1,4 +1,5 @@
 const fsp = require("fs/promises");
+const fs = require("fs");
 
 function toBeCloseToArray(a, b) {
   if ((typeof a == "number") && (typeof b == "number")) {
@@ -43,7 +44,26 @@ async function loadWasm() {
   return wasmInstance;
 }
 
+function fileExists(filename) {
+  return new Promise((resolve, reject) => {
+    fs.access(filename, fs.constants.F_OK, (err) => {
+      if (err) resolve(false);
+      else resolve(true);
+    });
+  });
+}
+
+async function cleandir(dirname) {
+  if (!await fileExists(dirname)) {
+    await fsp.mkdir(dirname);
+  } else {
+    fs.rmSync(dirname, { recursive: true });
+    await fsp.mkdir(dirname);
+  }
+}
+
 module.exports = {
   loadWasm,
-  toBeCloseToArray
+  toBeCloseToArray,
+  cleandir
 };
