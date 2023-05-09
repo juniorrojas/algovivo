@@ -18,9 +18,9 @@ test("neural policy", async () => {
   system.set(meshData);
   const policy = new NeuralPolicy({
     system: system,
-    stochastic: false
+    stochastic: false,
+    active: true
   });
-  policy.active = true;
   policy.loadData(policyData);
 
   const trajectoryDataDirname = `${__dirname}/data/trajectory`;
