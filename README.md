@@ -30,7 +30,7 @@ You can create a simple simulation with one triangle and two muscles, where one 
 </head>
 <body>
   <script type="module">
-    import algovivo from "https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@master/build/algovivo.module.min.js"
+    import algovivo from "https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@master/build/algovivo.module.min.js";
 
     async function loadWasm() {
       const response = await fetch("https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@master/build/algovivo.wasm");
