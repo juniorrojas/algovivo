@@ -23,8 +23,10 @@ test("neural policy", async () => {
   policy.active = true;
   policy.loadData(policyData);
 
+  const trajectoryDataDirname = `${__dirname}/data/trajectory`;
+
   for (let i = 0; i < 10; i++) {
-    const data = JSON.parse(fs.readFileSync(`${__dirname}/gen/${i}.json`));
+    const data = JSON.parse(fs.readFileSync(`${trajectoryDataDirname}/${i}.json`));
 
     system.x0.set(data.x0);
     system.v0.set(data.v0);

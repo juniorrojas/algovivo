@@ -20,7 +20,7 @@ async function main() {
   });
   policy.loadData(policyData);
 
-  const outputDirname = `${__dirname}/gen`;
+  const outputDirname = `${__dirname}/data/trajectory`;
 
   await utils.cleandir(outputDirname);
 
