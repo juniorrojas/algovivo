@@ -25,7 +25,7 @@ test("neural policy", async () => {
 
   const trajectoryDataDirname = `${__dirname}/data/trajectory`;
 
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 100; i++) {
     const data = JSON.parse(fs.readFileSync(`${trajectoryDataDirname}/${i}.json`));
 
     system.x0.set(data.x0);
