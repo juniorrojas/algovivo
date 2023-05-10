@@ -655,7 +655,7 @@
 	  constructor(args = {}) {
 	    const engine = args.engine;
 	    if (engine == null) {
-	      throw new Error("engine required to creat e tensor");
+	      throw new Error("engine required to create tensor");
 	    }
 	    this.engine = engine;
 
