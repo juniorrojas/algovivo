@@ -37,8 +37,8 @@ async function main() {
 
     itemData.x1 = system.x0.toArray();
     itemData.v1 = system.v0.toArray();
-    itemData.policyInput = policyTrace.policyInput;
-    itemData.policyOutput = policyTrace.policyOutput;
+    itemData.policy_input = policyTrace.policyInput;
+    itemData.policy_output = policyTrace.policyOutput;
 
     const filename = `${outputDirname}/${i}.json`;
     const p = fsp.writeFile(filename, JSON.stringify(itemData, null, 2));

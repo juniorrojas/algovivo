@@ -43,8 +43,8 @@ test("neural policy", async () => {
     expect(expectedNumReservedBytes).toBeGreaterThan(0);
     expect(mgr.numReservedBytes()).toBe(expectedNumReservedBytes);
     
-    expect(policyTrace.policyInput).toBeCloseToArray(data.policyInput);
-    expect(policyTrace.policyOutput).toBeCloseToArray(data.policyOutput);
+    expect(policyTrace.policyInput).toBeCloseToArray(data.policy_input);
+    expect(policyTrace.policyOutput).toBeCloseToArray(data.policy_output);
     expect(system.x0.toArray()).toBeCloseToArray(data.x1);
     expect(system.v0.toArray()).toBeCloseToArray(data.v1);
   }
