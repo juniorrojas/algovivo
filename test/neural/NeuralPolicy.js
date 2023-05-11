@@ -31,7 +31,7 @@ class NeuralPolicy {
     );
   }
 
-  step() {
+  step(args = {}) {
     const system = this.system;
     const wasmInstance = this.ten.wasmInstance;
 
@@ -69,11 +69,19 @@ class NeuralPolicy {
       output = this.model.forward(this.input);
     }
 
+    const trace = args.trace;
+    
+    if (trace != null) {
+      trace.policyInput = this.input.toArray();
+      trace.policyOutput = output.toArray();
+    }
+
     const minA = this.minA;
     const maxAbsDa = this.maxAbsDa;
 
     const a = this.system.a.slot.f32();
     const numSprings = this.system.numSprings();
+    
     for (let i = 0; i < numSprings; i++) {
       let da;
       if (this.active) {
