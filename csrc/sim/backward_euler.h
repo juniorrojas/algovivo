@@ -116,7 +116,6 @@ float be_loss(
     float lambda = 50;
     float qlogJ = -1.5 + 2 * J - 0.5 * J * J;
     float psi_mu = 0.5 * mu * (I1 - 2) - mu * qlogJ;
-
     float psi_lambda = 0.5 * lambda * qlogJ * qlogJ;
     
     potential_energy += psi_mu + psi_lambda;
