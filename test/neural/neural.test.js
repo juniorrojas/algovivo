@@ -25,6 +25,8 @@ test("neural policy", async () => {
 
   const trajectoryDataDirname = `${__dirname}/data/trajectory`;
 
+  let expectedNumReservedBytes = null;
+
   for (let i = 0; i < 100; i++) {
     const data = JSON.parse(fs.readFileSync(`${trajectoryDataDirname}/${i}.json`));
 
@@ -34,6 +36,11 @@ test("neural policy", async () => {
     const policyTrace = {};
     policy.step({ trace: policyTrace });
     system.step();
+
+    const mgr = system.memoryManager;
+    if (i == 0) expectedNumReservedBytes = mgr.numReservedBytes();
+    expect(expectedNumReservedBytes).not.toBeNull();
+    expect(mgr.numReservedBytes()).toBe(expectedNumReservedBytes);
     
     expect(policyTrace.policyInput).toBeCloseToArray(data.policyInput);
     expect(policyTrace.policyOutput).toBeCloseToArray(data.policyOutput);
