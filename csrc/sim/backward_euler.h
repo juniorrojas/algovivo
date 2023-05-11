@@ -22,7 +22,7 @@ float backward_euler_loss(
   int* triangles,
   float* rsi,
 
-  float* springs_a,
+  float* a,
   float* l0
 ) {
   int space_dim = 2;
@@ -63,7 +63,7 @@ float backward_euler_loss(
     float q = dx * dx + dy * dy;
 
     float l = __builtin_sqrt(q + 1e-6);
-    float al0 = springs_a[i] * l0[i];
+    float al0 = a[i] * l0[i];
 
     float dl = (l - al0) / al0;
     float k = 90.0;
@@ -168,7 +168,7 @@ void backward_euler_loss_grad(
   int* triangles,
   float* rsi,
 
-  float* springs_a,
+  float* a,
   float* l0
 ) {
   __enzyme_autodiff(
@@ -187,12 +187,12 @@ void backward_euler_loss_grad(
     enzyme_const, triangles,
     enzyme_const, rsi,
 
-    enzyme_const, springs_a,
+    enzyme_const, a,
     enzyme_const, l0
   );
 }
 
-#define eval_loss(x1) backward_euler_loss(num_vertices, x1, x0, v, h, r, num_springs, springs, num_triangles, triangles, rsi, springs_a, l0)
+#define eval_loss(x1) backward_euler_loss(num_vertices, x1, x0, v, h, r, num_springs, springs, num_triangles, triangles, rsi, a, l0)
 
 extern "C"
 void be_step(
@@ -210,7 +210,7 @@ void be_step(
   int* triangles,
   float* rsi,
 
-  float* springs_a,
+  float* a,
   float* l0,
 
   int fixed_vertex_id
@@ -239,7 +239,7 @@ void be_step(
       triangles,
       rsi,
 
-      springs_a,
+      a,
       l0
     );
 
