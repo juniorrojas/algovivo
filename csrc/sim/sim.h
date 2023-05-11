@@ -245,8 +245,8 @@ void be_step(
     );
 
     if (fixed_vertex_id > -1) {
-      x_grad[fixed_vertex_id * 2] = 0.0;
-      x_grad[fixed_vertex_id * 2 + 1] = 0.0;
+      x_grad[fixed_vertex_id * space_dim    ] = 0.0;
+      x_grad[fixed_vertex_id * space_dim + 1] = 0.0;
     }
     
     float grad_max_q = 0.0;
