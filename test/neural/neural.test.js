@@ -40,6 +40,7 @@ test("neural policy", async () => {
     const mgr = system.memoryManager;
     if (i == 0) expectedNumReservedBytes = mgr.numReservedBytes();
     expect(expectedNumReservedBytes).not.toBeNull();
+    expect(expectedNumReservedBytes).toBeGreaterThan(0);
     expect(mgr.numReservedBytes()).toBe(expectedNumReservedBytes);
     
     expect(policyTrace.policyInput).toBeCloseToArray(data.policyInput);
