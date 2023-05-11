@@ -23,7 +23,7 @@ float backward_euler_loss(
   float* rsi,
 
   float* springs_a,
-  float* _l0
+  float* l0
 ) {
   int space_dim = 2;
 
@@ -63,9 +63,9 @@ float backward_euler_loss(
     float q = dx * dx + dy * dy;
 
     float l = __builtin_sqrt(q + 1e-6);
-    float l0 = springs_a[i] * _l0[i];
+    float al0 = springs_a[i] * l0[i];
 
-    float dl = (l - l0) / l0;
+    float dl = (l - al0) / al0;
     float k = 90.0;
     
     potential_energy += 0.5 * k * dl * dl;
@@ -192,7 +192,7 @@ void backward_euler_loss_grad(
   );
 }
 
-#define eval_loss(x1) backward_euler_loss(num_vertices, x1, x0, v, h, r, num_springs, springs, num_triangles, triangles, rsi, springs_a, _l0)
+#define eval_loss(x1) backward_euler_loss(num_vertices, x1, x0, v, h, r, num_springs, springs, num_triangles, triangles, rsi, springs_a, l0)
 
 extern "C"
 void be_step(
@@ -211,7 +211,7 @@ void be_step(
   float* rsi,
 
   float* springs_a,
-  float* _l0,
+  float* l0,
 
   int fixed_vertex_id
 ) {
@@ -240,7 +240,7 @@ void be_step(
       rsi,
 
       springs_a,
-      _l0
+      l0
     );
 
     if (fixed_vertex_id > -1) {
