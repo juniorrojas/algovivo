@@ -7,7 +7,7 @@
 #include "enzyme.h"
 
 extern "C"
-float be_loss(
+float backward_euler_loss(
   int num_vertices,
   float* x, float* x0,
   float* v,
@@ -154,7 +154,7 @@ float be_loss(
 }
 
 extern "C"
-void d_be_loss(
+void backward_euler_loss_grad(
   int num_vertices,
   float* x, float* x_grad,
   float* x0,
@@ -172,7 +172,7 @@ void d_be_loss(
   float* l0
 ) {
   __enzyme_autodiff(
-    be_loss,
+    backward_euler_loss,
     enzyme_const, num_vertices,
     enzyme_dup, x, x_grad,
     enzyme_const, x0,
@@ -192,7 +192,7 @@ void d_be_loss(
   );
 }
 
-#define eval_loss(x1) be_loss(num_vertices, x1, x0, v, h, r, num_springs, springs, num_triangles, triangles, rsi, springs_a, _l0)
+#define eval_loss(x1) backward_euler_loss(num_vertices, x1, x0, v, h, r, num_springs, springs, num_triangles, triangles, rsi, springs_a, _l0)
 
 extern "C"
 void be_step(
@@ -226,7 +226,7 @@ void be_step(
   int max_optim_iters = 100;
   for (int i = 0; i < max_optim_iters; i++) {
     zero_(num_vertices * space_dim, x_grad);
-    d_be_loss(
+    backward_euler_loss_grad(
       num_vertices,
       x, x_grad,
       x0,
