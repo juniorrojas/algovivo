@@ -31,11 +31,14 @@ async function main() {
       v0: system.v0.toArray()
     };
 
-    policy.step();
+    const policyTrace = {};
+    policy.step({ trace: policyTrace });
     system.step();
 
     itemData.x1 = system.x0.toArray();
     itemData.v1 = system.v0.toArray();
+    itemData.policyInput = policyTrace.policyInput;
+    itemData.policyOutput = policyTrace.policyOutput;
 
     const filename = `${outputDirname}/${i}.json`;
     const p = fsp.writeFile(filename, JSON.stringify(itemData));
