@@ -41,7 +41,7 @@ async function main() {
     itemData.policyOutput = policyTrace.policyOutput;
 
     const filename = `${outputDirname}/${i}.json`;
-    const p = fsp.writeFile(filename, JSON.stringify(itemData));
+    const p = fsp.writeFile(filename, JSON.stringify(itemData, null, 2));
     writePromises.push(p);
   }
 
