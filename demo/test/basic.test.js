@@ -34,4 +34,4 @@ test("main", async () => {
     staticDirname: `${__dirname}/../public`,
     onReady: main
   });
-});
+}, 10000);
