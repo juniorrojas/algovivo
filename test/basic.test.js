@@ -26,12 +26,16 @@ test("set x and springs", async () => {
     x: [
       [0, 0],
       [2, 0],
-      [1, 1]
+      [1, 1],
+      [3, 7],
+      [5, 7]
     ],
     springs: [
       [0, 2],
-      [1, 2]
+      [1, 2],
+      [3, 4]
     ]
   });
-  expect(system.l0.toArray()).toBeCloseToArray([1.4142135381698608, 1.4142135381698608]);
+  const expectedL0 = [1.4142135381698608, 1.4142135381698608, 2];
+  expect(system.l0.toArray()).toBeCloseToArray(expectedL0);
 });
