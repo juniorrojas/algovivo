@@ -1,5 +1,4 @@
 import algovivo from "./algovivo.module.min.js";
-const Viewport = algovivo.SystemViewport;
 
 class NeuralPolicy {
   constructor(args = {}) {
@@ -227,7 +226,7 @@ async function main() {
   document.body.style.padding = 0;
   document.body.style.alignItems = "center";
 
-  const viewport = new Viewport({
+  const viewport = new algovivo.SystemViewport({
     system: system
   });
   viewport.domElement.style.borderRadius = "10px";
