@@ -124,6 +124,7 @@ class IconButton {
   constructor(args = {}) {
     const div = this.domElement = document.createElement("div");
     div.style.userSelect = "none";
+    div.style.webkitTapHighlightColor = "transparent";
     div.style.padding = "12px";
     div.style.cursor = "pointer";
     div.style.borderRadius = "50%";
