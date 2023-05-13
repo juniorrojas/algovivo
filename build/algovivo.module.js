@@ -2654,7 +2654,6 @@ class SystemViewport {
       const ctx = args.ctx;
       const a = args.a;
       const b = args.b;
-      args.c;
       const camera = args.camera;
       const scale = camera.inferScale();
 
