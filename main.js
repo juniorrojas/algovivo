@@ -1,5 +1,4 @@
 import algovivo from "./algovivo.module.min.js";
-const Viewport = algovivo.SystemViewport;
 
 class NeuralPolicy {
   constructor(args = {}) {
@@ -181,8 +180,8 @@ function makeHeader() {
     style.backgroundColor = headerBackgroundColor;
     style.paddingTop = "20px";
     style.paddingBottom = "20px";
-    style.paddingRight = "5px";
-    style.paddingLeft = "5px";
+    style.paddingRight = "50px";
+    style.paddingLeft = "50px";
     style.marginBottom = "30px";
     style.boxShadow = "0 0 10px rgba(0, 0, 0, 0.3)";
   })(divTitle.style);
@@ -227,7 +226,7 @@ async function main() {
   document.body.style.padding = 0;
   document.body.style.alignItems = "center";
 
-  const viewport = new Viewport({
+  const viewport = new algovivo.SystemViewport({
     system: system
   });
   viewport.domElement.style.borderRadius = "10px";
