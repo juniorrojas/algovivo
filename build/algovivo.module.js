@@ -2554,7 +2554,7 @@ var background = {
   Background: Background_1
 };
 
-var mm2d$1 = {
+var mm2d$2 = {
   math: math$2,
   ui: ui$2,
   shaders: shaders$1,
@@ -2563,7 +2563,7 @@ var mm2d$1 = {
   background: background
 };
 
-const mm2d = mm2d$1;
+const mm2d$1 = mm2d$2;
 
 function hashSimplex(vids) {
   vids.sort();
@@ -2593,7 +2593,7 @@ class SystemViewport {
     }
     this.system = args.system;
 
-    const renderer = new mm2d.core.Renderer();
+    const renderer = new mm2d$1.core.Renderer();
     renderer.domElement.style.border = "1px solid black";
     renderer.setSize({
       width: 400,
@@ -2602,16 +2602,16 @@ class SystemViewport {
     this.renderer = renderer;
     this.domElement = renderer.domElement;
 
-    const scene = new mm2d.core.Scene();
+    const scene = new mm2d$1.core.Scene();
     this.scene = scene;
 
-    const camera = new mm2d.core.Camera();
+    const camera = new mm2d$1.core.Camera();
     this.camera = camera;
 
-    new mm2d.background.Background({
+    new mm2d$1.background.Background({
       scene: scene
     });
-    this.grid = new mm2d.background.Grid({
+    this.grid = new mm2d$1.background.Grid({
       scene: scene,
       x0: -3,
       y0: 0,
@@ -2622,7 +2622,7 @@ class SystemViewport {
       secondaryLineWidth: 0.005,
       color: "#acadad"
     });
-    this.floor = new mm2d.custom.Floor({
+    this.floor = new mm2d$1.custom.Floor({
       scene: scene
     });
 
@@ -2632,7 +2632,7 @@ class SystemViewport {
     const muscleMesh = scene.addMesh();
     this.muscleMesh = muscleMesh;
     
-    mesh.pointShader.renderPoint = mm2d.custom.makePointShader();
+    mesh.pointShader.renderPoint = mm2d$1.custom.makePointShader();
 
     mesh.triangleShader.renderTriangle = (args = {}) => {
       const ctx = args.ctx;
@@ -2654,7 +2654,6 @@ class SystemViewport {
       const ctx = args.ctx;
       const a = args.a;
       const b = args.b;
-      args.c;
       const camera = args.camera;
       const scale = camera.inferScale();
 
@@ -2671,12 +2670,12 @@ class SystemViewport {
       ctx.stroke();
     };
 
-    muscleMesh.pointShader.renderPoint = mm2d.custom.makePointShader({});
+    muscleMesh.pointShader.renderPoint = mm2d$1.custom.makePointShader({});
     
-    muscleMesh.lineShader.renderLine = mm2d.custom.makeFiberShader({
+    muscleMesh.lineShader.renderLine = mm2d$1.custom.makeFiberShader({
     });
 
-    const dragBehavior = this.dragBehavior = new mm2d.ui.DragBehavior({
+    const dragBehavior = this.dragBehavior = new mm2d$1.ui.DragBehavior({
       onDomCursorDown: (domCursor, event) => {
         if ("button" in event && event.button != 0) return;
         const sim = this.system;
@@ -2827,8 +2826,8 @@ class SystemViewport {
     for (let i = 0; i < numVertices; i++) {
       const offset = i * 2;
       const xi = [xF32[offset], xF32[offset + 1]];
-      const d = mm2d.math.Vec2.sub(xi, p);
-      const q = mm2d.math.Vec2.quadrance(d);
+      const d = mm2d$1.math.Vec2.sub(xi, p);
+      const q = mm2d$1.math.Vec2.quadrance(d);
       if (q < 0.1) {
         return i;
       }
@@ -2876,11 +2875,13 @@ var ui$1 = {
 const System = System_1;
 const mmgrten = mmgrten$2;
 const ui = ui$1;
+const mm2d = mm2d$2;
 
 var algovivo = {
   System: System,
   mmgrten: mmgrten,
-  SystemViewport: ui.SystemViewport
+  SystemViewport: ui.SystemViewport,
+  mm2d: mm2d
 };
 
 var index = /*@__PURE__*/getDefaultExportFromCjs(algovivo);
