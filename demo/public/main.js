@@ -180,8 +180,8 @@ function makeHeader() {
     style.backgroundColor = headerBackgroundColor;
     style.paddingTop = "20px";
     style.paddingBottom = "20px";
-    style.paddingRight = "5px";
-    style.paddingLeft = "5px";
+    style.paddingRight = "50px";
+    style.paddingLeft = "50px";
     style.marginBottom = "30px";
     style.boxShadow = "0 0 10px rgba(0, 0, 0, 0.3)";
   })(divTitle.style);
