@@ -13,11 +13,9 @@ import argparse
 def populate_deploy_path(deploy_path):
     public_path = this_dirpath.parent.joinpath("public")
 
-    deploy_index_filename = str(deploy_path.joinpath("index.html"))
-
     shutil.copy(
         public_path.joinpath("index.html"),
-        deploy_index_filename
+        deploy_path.joinpath("index.html")
     )
 
     for filename in ["algovivo.module.min.js", "main.js", "algovivo.wasm"]:
@@ -31,8 +29,6 @@ def populate_deploy_path(deploy_path):
             public_path.joinpath(dirname),
             deploy_path.joinpath(dirname)
         )
-
-    return deploy_index_filename
 
 if __name__ == "__main__":
     arg_parser = argparse.ArgumentParser()
@@ -49,7 +45,7 @@ if __name__ == "__main__":
             print("github remote could not be inferred, run the script with --remote_url <remote-url>", file=sys.stderr)
             exit(1)
 
-    deploy_path = this_dirpath.joinpath("deploy.out")
+    deploy_path = this_dirpath.parent.joinpath("deploy.out")
     deployutils.run(
         remote_url,
         deploy_path,

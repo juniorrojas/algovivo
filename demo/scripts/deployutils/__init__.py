@@ -101,18 +101,20 @@ def clean_deploy_dir(deploy_path):
 def run(remote_url, deploy_path, deploy_branch, push=False, populate_deploy_path=None):
     assert populate_deploy_path is not None
     
-    remote = "origin"
-    
-    git_clone(remote_url, remote, deploy_path, deploy_branch)
+    if push:
+        remote = "origin"
+        git_clone(remote_url, remote, deploy_path, deploy_branch)
+    else:
+        os.makedirs(deploy_path, exist_ok=True)
+        os.chdir(deploy_path)
 
     clean_deploy_dir(deploy_path)
     
-    deploy_index_filename = populate_deploy_path(deploy_path)
-    print(yellow(f"Preview available at:\n{deploy_index_filename}"), file=sys.stderr)
+    populate_deploy_path(deploy_path)
+    print(yellow(f"Preview available at:\n{deploy_path}"), file=sys.stderr)
     
     if push:
         a = input(f"Deploy to {remote_url}@{deploy_branch}? [y/_] ")
         if a.rstrip().lstrip() != "y":
             return
-        
         git_push_deploy(deploy_path, remote, deploy_branch)

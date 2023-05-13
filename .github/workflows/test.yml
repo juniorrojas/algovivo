@@ -26,4 +26,5 @@ jobs:
           npm run build
           cd demo
           npm ci
+          npm run build
           npm test
