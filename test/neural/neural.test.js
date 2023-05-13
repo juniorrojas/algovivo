@@ -16,6 +16,7 @@ test("neural policy", async () => {
     meshDataPromise, policyDataPromise
   ])).map(r => JSON.parse(r));
   system.set(meshData);
+  // expect(system.l0.toArray()).toEqual(meshData.l0);
   const policy = new NeuralPolicy({
     system: system,
     stochastic: false,

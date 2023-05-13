@@ -1312,7 +1312,6 @@
 	    if (data.springsL0 == null) {
 	      for (let i = 0; i < numSprings; i++) {
 	        a.slot.f32()[i] = 1;
-	        // TODO use WASM l0_of_x
 	        const [i1, i2] = edges[i];
 	        const p1 = data.x[i1];
 	        const p2 = data.x[i2];
@@ -1322,6 +1321,13 @@
 	        const l0i = Math.sqrt(q);
 	        l0.slot.f32()[i] = l0i;
 	      }
+	      // this.wasmInstance.exports.l0_of_x(
+	      //   numVertices,
+	      //   this.x0.ptr,
+	      //   numSprings,
+	      //   this.springs.ptr,
+	      //   this.l0.ptr
+	      // );
 	    } else {
 	      for (let i = 0; i < numSprings; i++) {
 	        a.slot.f32()[i] = 1;
