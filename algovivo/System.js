@@ -121,6 +121,7 @@ class System {
     if (data.springsL0 == null) {
       for (let i = 0; i < numSprings; i++) {
         a.slot.f32()[i] = 1;
+        // TODO use WASM l0_of_x
         const [i1, i2] = edges[i];
         const p1 = data.x[i1];
         const p2 = data.x[i2]
