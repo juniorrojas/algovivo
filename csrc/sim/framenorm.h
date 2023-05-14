@@ -20,10 +20,10 @@ float dot2d(float ax, float ay, float bx, float by) {
 extern "C"
 void framenorm_projection(
   int num_vertices,
-  float* x,
+  const float* x,
   int center_id,
   int forward_id,
-  float* data,
+  const float* data,
   float* projected_data,
   bool subtract_origin
 ) {
@@ -77,9 +77,33 @@ void cat_xv(
 extern "C"
 void make_framenorm_neural_policy_input(
   int num_vertices,
-  float* x,
-  float* v,
+  const float* x,
+  const float* v,
+  int center_vertex_id,
+  int forward_vertex_id,
+  float* projected_x,
+  float* projected_v,
   float* policy_input
 ) {
-  
+  framenorm_projection(
+    num_vertices,
+    x,
+    center_vertex_id,
+    forward_vertex_id,
+    x,
+    projected_x,
+    true
+  );
+
+  framenorm_projection(
+    num_vertices,
+    x,
+    center_vertex_id,
+    forward_vertex_id,
+    v,
+    projected_v,
+    false
+  );
+
+  cat_xv(num_vertices, projected_x, projected_v, policy_input);
 }
