@@ -81,9 +81,11 @@ class System {
     if (this.l0 != null) this.l0.dispose();
     this.l0 = l0;
 
+    const springsU32 = springs.u32();
+
     indices.forEach((e, i) => {
-      springs.u32()[i * 2    ] = e[0];
-      springs.u32()[i * 2 + 1] = e[1];
+      springsU32[i * 2    ] = e[0];
+      springsU32[i * 2 + 1] = e[1];
     });
 
     this.wasmInstance.exports.l0_of_x(
