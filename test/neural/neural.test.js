@@ -23,6 +23,7 @@ test("neural policy", async () => {
     trianglesRsi: meshData.rsi
   });
   expect(system.l0.toArray()).toEqual(meshData.l0);
+  expect(system.rsi.toArray()).toEqual(meshData.rsi);
   const policy = new NeuralPolicy({
     system: system,
     stochastic: false,
