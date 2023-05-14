@@ -1,5 +1,10 @@
 #pragma once
 
+#define vec2_sub(a, b, c) \
+  const auto (c##x) = (a##x) - (b##x); \
+  const auto (c##y) = (a##y) - (b##y);
+
+
 extern "C"
 void rsi_of_x(int num_vertices, const float* x, int num_triangles, const int* indices, float* rsi) {
   for (int i = 0; i < num_triangles; i++) {
@@ -8,22 +13,26 @@ void rsi_of_x(int num_vertices, const float* x, int num_triangles, const int* in
     const auto ib = indices[offset + 1];
     const auto ic = indices[offset + 2];
 
-    get_vertex_2d(x, ia, a);
-    get_vertex_2d(x, ib, b);
-    get_vertex_2d(x, ic, c);
+    // get_vertex_2d(x, ia, a);
+    const auto ax = x[2 * ia   ];
+    const auto ay = x[2 * ia + 1];
 
-    // const auto ax = x[space_dim * ia    ];
-    // const auto ay = x[space_dim * ia + 1];
+    // get_vertex_2d(x, ib, b);
+    const auto bx = x[2 * ib   ];
+    const auto by = x[2 * ib + 1];
 
-    // const auto bx = x[space_dim * ib    ];
-    // const auto by = x[space_dim * ib + 1];
-
-    get_vertex(x, ia, a);
+    // get_vertex_2d(x, ic, c);
+    const auto cx = x[2 * ic   ];
+    const auto cy = x[2 * ic + 1];
     
-    // const auto p1x = x[i1 * space_dim    ];
-    // const auto p1y = x[i1 * space_dim + 1];
+    vec2_sub(b, a, ab);
+    vec2_sub(c, a, ac);
 
-    // const auto p2x = x[i2 * space_dim    ];
-    // const auto p2y = x[i2 * space_dim + 1];
+    const auto d = abx * acy - acx * aby;
+    const auto offset_rsi = i * 4;
+    rsi[offset_rsi    ] =  acy / d;
+    rsi[offset_rsi + 1] = -acx / d;
+    rsi[offset_rsi + 2] = -aby / d;
+    rsi[offset_rsi + 3] =  abx / d;
   }
 }
