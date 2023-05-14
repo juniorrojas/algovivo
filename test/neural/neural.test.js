@@ -41,6 +41,7 @@ test("neural policy", async () => {
 
     system.x0.set(data.x0);
     system.v0.set(data.v0);
+    system.a.set(data.a0);
 
     const policyTrace = {};
     policy.step({ trace: policyTrace });
@@ -55,5 +56,6 @@ test("neural policy", async () => {
     expect(policyTrace.policyOutput).toBeCloseToArray(data.policy_output);
     expect(system.x0.toArray()).toBeCloseToArray(data.x1);
     expect(system.v0.toArray()).toBeCloseToArray(data.v1);
+    expect(system.a.toArray()).toBeCloseToArray(data.a1);
   }
 });

@@ -34,7 +34,8 @@ async function main() {
   for (let i = 0; i < 100; i++) {
     const itemData = {
       x0: system.x0.toArray(),
-      v0: system.v0.toArray()
+      v0: system.v0.toArray(),
+      a0: system.a.toArray()
     };
 
     const policyTrace = {};
@@ -43,6 +44,7 @@ async function main() {
 
     itemData.x1 = system.x0.toArray();
     itemData.v1 = system.v0.toArray();
+    itemData.a1 = system.a.toArray();
     itemData.policy_input = policyTrace.policyInput;
     itemData.policy_output = policyTrace.policyOutput;
 
