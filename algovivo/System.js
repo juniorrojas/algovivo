@@ -150,7 +150,6 @@ class System {
     if (this.rsi != null) this.rsi.dispose();
     this.rsi = rsi;
     
-    const rsiF32 = rsi.slot.f32();
     if (data.trianglesRsi == null) {
       this.wasmInstance.exports.rsi_of_x(
         this.numVertices(),
@@ -159,35 +158,8 @@ class System {
         this.triangles.ptr,
         rsi.ptr
       );
-      // for (let i = 0; i < numTriangles; i++) {
-        // const triangle = data.triangles[i];
-        // const a = data.x[triangle[0]];
-        // const b = data.x[triangle[1]];
-        // const c = data.x[triangle[2]];
-        // const abx = b[0] - a[0];
-        // const aby = b[1] - a[1];
-        // const acx = c[0] - a[0];
-        // const acy = c[1] - a[1];
-        // const restShape = [
-        //   [abx, acx],
-        //   [aby, acy]
-        // ];
-        // const d = abx * acy - acx * aby;
-        // const offset = i * 4;
-        // rsiF32[offset] = acy / d;
-        // rsiF32[offset + 1] = -acx / d;
-        // rsiF32[offset + 2] = -aby / d;
-        // rsiF32[offset + 3] = abx / d;
-      // }
     } else {
-      for (let i = 0; i < numTriangles; i++) {
-        const rsi1 = data.trianglesRsi[i];
-        const offset = i * 4;
-        rsiF32[offset    ] = rsi1[0][0];
-        rsiF32[offset + 1] = rsi1[0][1];
-        rsiF32[offset + 2] = rsi1[1][0];
-        rsiF32[offset + 3] = rsi1[1][1];
-      }
+      rsi.set(data.trianglesRsi);
     }
   }
 

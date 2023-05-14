@@ -31,3 +31,34 @@ test("set x and triangles", async () => {
   ];
   expect(system.rsi.toArray()).toBeCloseToArray(expectedRsi);
 });
+
+test("set rsi", async () => {
+  const wasmInstance = await utils.loadWasm();
+  const system = new algovivo.System({ wasmInstance });
+  system.set({
+    x: [
+      [0, 0],
+      [2, 0],
+      [1, 1],
+      [-0.3, 0.8]
+    ],
+    triangles: [
+      [0, 1, 2],
+      [0, 2, 3]
+    ],
+    trianglesRsi: [
+      [[1, 2],
+       [3, 4]],
+      [[5, 6],
+       [7, 8]],
+    ]
+  });
+  expect(system.numTriangles()).toBe(2);
+  const expectedRsi = [
+    [[1, 2],
+     [3, 4]],
+    [[5, 6],
+     [7, 8]],
+  ];
+  expect(system.rsi.toArray()).toBeCloseToArray(expectedRsi);
+});
