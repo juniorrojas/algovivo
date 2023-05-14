@@ -73,13 +73,22 @@ class System {
     const ten = this.ten;
     const mgr = this.memoryManager;
 
-    if (this.springs != null) this.springs.free();
     const springs = mgr.malloc32(numSprings * 2);
+    if (this.springs != null) this.springs.free();
     this.springs = springs;
 
     const l0 = ten.zeros([numSprings]);
     if (this.l0 != null) this.l0.dispose();
     this.l0 = l0;
+
+    // TODO a = ten.ones([numSprings]);
+    const a = ten.zeros([numSprings]);
+    if (this.a != null) this.a.dispose();
+    this.a = a;
+    const aF32 = a.slot.f32();
+    for (let i = 0; i < numSprings; i++) {
+      aF32[i] = 1;
+    }
 
     const springsU32 = springs.u32();
 
@@ -98,15 +107,6 @@ class System {
       );
     } else {
       this.l0.set(args.l0);
-    }
-
-    // TODO a = ten.ones([numSprings]);
-    const a = ten.zeros([numSprings]);
-    if (this.a != null) this.a.dispose();
-    this.a = a;
-    const aF32 = a.slot.f32();
-    for (let i = 0; i < numSprings; i++) {
-      aF32[i] = 1;
     }
   }
 
@@ -138,7 +138,7 @@ class System {
         triangles.u32()[i * 3 + 2] = t[2];
       });
     }
-    
+
     this.setSprings({
       indices: data.springs ?? [],
       l0: data.springsL0
