@@ -88,13 +88,17 @@ class System {
       springsU32[i * 2 + 1] = e[1];
     });
 
-    this.wasmInstance.exports.l0_of_x(
-      this.numVertices(),
-      this.x0.ptr,
-      numSprings,
-      this.springs.ptr,
-      this.l0.ptr
-    );
+    if (args.l0 == null) {
+      this.wasmInstance.exports.l0_of_x(
+        this.numVertices(),
+        this.x0.ptr,
+        numSprings,
+        this.springs.ptr,
+        this.l0.ptr
+      );
+    } else {
+      this.l0.set(args.l0);
+    }
   }
 
   set(data) {
