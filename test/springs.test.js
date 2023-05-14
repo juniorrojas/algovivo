@@ -20,6 +20,7 @@ test("set x and springs", async () => {
       [3, 4]
     ]
   });
+  expect(system.numSprings()).toBe(3);
   const expectedL0 = [1.4142135381698608, 1.4142135381698608, 2];
   expect(system.l0.toArray()).toBeCloseToArray(expectedL0);
 });
