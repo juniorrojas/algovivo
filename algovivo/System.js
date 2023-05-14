@@ -63,6 +63,13 @@ class System {
     this.updateTmpBuffers();
   }
 
+  setSprings(args = {}) {
+    if (args.indices == null) {
+      throw new Error("indices required");
+    }
+    const indices = args.indices;
+  }
+
   set(data) {
     const ten = this.ten;
     
