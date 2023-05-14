@@ -1278,15 +1278,6 @@
 	    if (this.l0 != null) this.l0.dispose();
 	    this.l0 = l0;
 
-	    // TODO a = ten.ones([numSprings]);
-	    const a = ten.zeros([numSprings]);
-	    if (this.a != null) this.a.dispose();
-	    this.a = a;
-	    const aF32 = a.slot.f32();
-	    for (let i = 0; i < numSprings; i++) {
-	      aF32[i] = 1;
-	    }
-
 	    if (args.l0 == null) {
 	      this.wasmInstance.exports.l0_of_x(
 	        this.numVertices(),
@@ -1297,6 +1288,15 @@
 	      );
 	    } else {
 	      this.l0.set(args.l0);
+	    }
+
+	    // TODO a = ten.ones([numSprings]);
+	    const a = ten.zeros([numSprings]);
+	    if (this.a != null) this.a.dispose();
+	    this.a = a;
+	    const aF32 = a.slot.f32();
+	    for (let i = 0; i < numSprings; i++) {
+	      aF32[i] = 1;
 	    }
 	  }
 
@@ -1321,9 +1321,7 @@
 	      trianglesU32[i * 3 + 2] = t[2];
 	    });
 
-	    const rsi = ten.zeros([
-	      numTriangles, 2, 2
-	    ]);
+	    const rsi = ten.zeros([numTriangles, 2, 2]);
 	    if (this.rsi != null) this.rsi.dispose();
 	    this.rsi = rsi;
 	    
@@ -1333,10 +1331,10 @@
 	        this.x0.ptr,
 	        numTriangles,
 	        this.triangles.ptr,
-	        rsi.ptr
+	        this.rsi.ptr
 	      );
 	    } else {
-	      rsi.set(args.rsi);
+	      this.rsi.set(args.rsi);
 	    }
 	  }
 
