@@ -12,7 +12,13 @@ async function main() {
   const [meshData, policyData] = (await Promise.all([
     meshDataPromise, policyDataPromise
   ])).map(r => JSON.parse(r));
-  system.set(meshData);
+  system.set({
+    x: meshData.x,
+    springs: meshData.springs,
+    springsL0: meshData.l0,
+    triangles: meshData.triangles,
+    trianglesRsi: meshData.rsi
+  });
   const policy = new NeuralPolicy({
     system: system,
     stochastic: false,

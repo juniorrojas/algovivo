@@ -15,7 +15,15 @@ test("neural policy", async () => {
   const [meshData, policyData] = (await Promise.all([
     meshDataPromise, policyDataPromise
   ])).map(r => JSON.parse(r));
-  system.set(meshData);
+  system.set({
+    x: meshData.x,
+    springs: meshData.springs,
+    springsL0: meshData.l0,
+    triangles: meshData.triangles,
+    trianglesRsi: meshData.rsi
+  });
+  expect(system.l0.toArray()).toEqual(meshData.l0);
+  expect(system.rsi.toArray()).toEqual(meshData.rsi);
   const policy = new NeuralPolicy({
     system: system,
     stochastic: false,

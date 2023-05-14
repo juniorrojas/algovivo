@@ -1,10 +1,11 @@
 const algovivo = require("algovivo");
 const utils = require("./utils");
 
-test("system", async () => {
-  const system = new algovivo.System({
-    wasmInstance: await utils.loadWasm()
-  });
+expect.extend({ toBeCloseToArray: utils.toBeCloseToArray });
+
+test("set x", async () => {
+  const wasmInstance = await utils.loadWasm();
+  const system = new algovivo.System({ wasmInstance });
   expect(system.numVertices()).toBe(0);
   expect(system.numSprings()).toBe(0);
   expect(system.numTriangles()).toBe(0);

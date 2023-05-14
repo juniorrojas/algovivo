@@ -50,9 +50,10 @@ async function main() {
   const meshData = await meshDataResponse.json();
   system.set({
     x: meshData.x,
-    triangles: meshData.triangles,
     springs: meshData.springs,
-    springsL0: meshData.l0
+    springsL0: meshData.l0,
+    triangles: meshData.triangles,
+    trianglesRsi: meshData.rsi
   });
 
   const policy = new NeuralPolicy({

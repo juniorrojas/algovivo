@@ -121,21 +121,19 @@ class System {
     if (data.springsL0 == null) {
       for (let i = 0; i < numSprings; i++) {
         a.slot.f32()[i] = 1;
-        const [i1, i2] = edges[i];
-        const p1 = data.x[i1];
-        const p2 = data.x[i2]
-        const dx = p2[0] - p1[0];
-        const dy = p2[1] - p1[1];
-        const q = dx * dx + dy * dy;
-        const l0i = Math.sqrt(q);
-        l0.slot.f32()[i] = l0i;
       }
+      this.wasmInstance.exports.l0_of_x(
+        numVertices,
+        this.x0.ptr,
+        numSprings,
+        this.springs.ptr,
+        this.l0.ptr
+      );
     } else {
       for (let i = 0; i < numSprings; i++) {
         a.slot.f32()[i] = 1;
-        const l0i = data.springsL0[i];
-        l0.slot.f32()[i] = l0i;
       }
+      l0.set(data.springsL0);
     }
 
     const rsi = ten.zeros([
