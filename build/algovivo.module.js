@@ -1248,10 +1248,57 @@ class System$1 {
     this.updateTmpBuffers();
   }
 
+  setSprings(args = {}) {
+    if (args.indices == null) {
+      throw new Error("indices required");
+    }
+    const indices = args.indices;
+    const numSprings = indices.length;
+
+    const ten = this.ten;
+    const mgr = this.memoryManager;
+
+    const springs = mgr.malloc32(numSprings * 2);
+    if (this.springs != null) this.springs.free();
+    this.springs = springs;
+
+    const l0 = ten.zeros([numSprings]);
+    if (this.l0 != null) this.l0.dispose();
+    this.l0 = l0;
+
+    // TODO a = ten.ones([numSprings]);
+    const a = ten.zeros([numSprings]);
+    if (this.a != null) this.a.dispose();
+    this.a = a;
+    const aF32 = a.slot.f32();
+    for (let i = 0; i < numSprings; i++) {
+      aF32[i] = 1;
+    }
+
+    const springsU32 = springs.u32();
+
+    indices.forEach((e, i) => {
+      springsU32[i * 2    ] = e[0];
+      springsU32[i * 2 + 1] = e[1];
+    });
+
+    if (args.l0 == null) {
+      this.wasmInstance.exports.l0_of_x(
+        this.numVertices(),
+        this.x0.ptr,
+        numSprings,
+        this.springs.ptr,
+        this.l0.ptr
+      );
+    } else {
+      this.l0.set(args.l0);
+    }
+  }
+
   set(data) {
     const ten = this.ten;
     
-    const numVertices = data.x.length;
+    data.x.length;
 
     const mgr = this.memoryManager;
 
@@ -1277,49 +1324,10 @@ class System$1 {
       });
     }
 
-    let edges;
-
-    if (data.springs == null) {
-      edges = [];
-    } else {
-      edges = data.springs;
-    }
-    
-    const numSprings = edges.length;
-    const springs = mgr.malloc32(numSprings * 2);
-
-    edges.forEach((e, i) => {
-      springs.u32()[i * 2] = e[0];
-      springs.u32()[i * 2 + 1] = e[1];
+    this.setSprings({
+      indices: data.springs ?? [],
+      l0: data.springsL0
     });
-    
-    if (this.springs != null) this.springs.free();
-    this.springs = springs;
-
-    const a = ten.zeros([numSprings]);
-    if (this.a != null) this.a.dispose();
-    this.a = a;
-
-    const l0 = ten.zeros([numSprings]);
-    if (this.l0 != null) this.l0.dispose();
-    this.l0 = l0;
-    if (data.springsL0 == null) {
-      for (let i = 0; i < numSprings; i++) {
-        a.slot.f32()[i] = 1;
-      }
-      this.wasmInstance.exports.l0_of_x(
-        numVertices,
-        this.x0.ptr,
-        numSprings,
-        this.springs.ptr,
-        this.l0.ptr
-      );
-    } else {
-      for (let i = 0; i < numSprings; i++) {
-        a.slot.f32()[i] = 1;
-      }
-      l0.set(data.springsL0);
-    }
 
     const rsi = ten.zeros([
       numTriangles, 2, 2
