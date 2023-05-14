@@ -32,21 +32,21 @@ void framenorm_projection(
   vec2_get(f, x, forward_id);
 
   // a, b are the normalized vectors of the frame
-  float ax = fx - cx;
-  float ay = fy - cy;
+  auto ax = fx - cx;
+  auto ay = fy - cy;
   normalize2d_(&ax, &ay);
-  float bx = -ay;
-  float by =  ax;
+  const auto bx = -ay;
+  const auto by =  ax;
 
   for (int i = 0; i < num_vertices; i++) {
     const auto offset = i * space_dim;    
-    float px = data[offset]; // - cx;
-    float py = data[offset + 1]; // - cy;
+    auto px = data[offset]; // - cx;
+    auto py = data[offset + 1]; // - cy;
     if (subtract_origin) {
       px -= cx;
       py -= cy;
     }
-    projected_data[offset] = dot2d(ax, ay, px, py);
+    projected_data[offset    ] = dot2d(ax, ay, px, py);
     projected_data[offset + 1] = dot2d(bx, by, px, py);
   }
 }
