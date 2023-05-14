@@ -147,42 +147,10 @@ class System {
       edges = data.springs;
     }
     
-    // TODO move to setSprings
-    const numSprings = edges.length;
-    const springs = mgr.malloc32(numSprings * 2);
-
-    edges.forEach((e, i) => {
-      springs.u32()[i * 2] = e[0];
-      springs.u32()[i * 2 + 1] = e[1];
+    this.setSprings({
+      indices: edges,
+      l0: data.springsL0
     });
-    
-    if (this.springs != null) this.springs.free();
-    this.springs = springs;
-
-    const a = ten.zeros([numSprings]);
-    if (this.a != null) this.a.dispose();
-    this.a = a;
-
-    const l0 = ten.zeros([numSprings]);
-    if (this.l0 != null) this.l0.dispose();
-    this.l0 = l0;
-    if (data.springsL0 == null) {
-      for (let i = 0; i < numSprings; i++) {
-        a.slot.f32()[i] = 1;
-      }
-      this.wasmInstance.exports.l0_of_x(
-        numVertices,
-        this.x0.ptr,
-        numSprings,
-        this.springs.ptr,
-        this.l0.ptr
-      );
-    } else {
-      for (let i = 0; i < numSprings; i++) {
-        a.slot.f32()[i] = 1;
-      }
-      l0.set(data.springsL0);
-    }
 
     const rsi = ten.zeros([
       numTriangles, 2, 2
