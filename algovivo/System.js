@@ -70,7 +70,16 @@ class System {
     const indices = args.indices;
     const numSprings = indices.length;
 
+    const ten = this.ten;
+    const mgr = this.memoryManager;
+
+    if (this.springs != null) this.springs.free();
     const springs = mgr.malloc32(numSprings * 2);
+    this.springs = springs;
+
+    const l0 = ten.zeros([numSprings]);
+    if (this.l0 != null) this.l0.dispose();
+    this.l0 = l0;
 
     indices.forEach((e, i) => {
       springs.u32()[i * 2    ] = e[0];
@@ -78,7 +87,7 @@ class System {
     });
 
     this.wasmInstance.exports.l0_of_x(
-      numVertices,
+      this.numVertices(),
       this.x0.ptr,
       numSprings,
       this.springs.ptr,
