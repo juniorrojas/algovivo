@@ -1301,6 +1301,10 @@
 	    }
 	  }
 
+	  setTriangles(args={}) {
+	    // TODO
+	  }
+
 	  set(data) {
 	    const ten = this.ten;
 	    
@@ -1315,6 +1319,7 @@
 	    // this.r = r;
 	    this.r = null;
 	    
+	    // TODO move to setTriangles
 	    let numTriangles;
 	    if (data.triangles == null) numTriangles = 0;
 	    else numTriangles = data.triangles.length;
