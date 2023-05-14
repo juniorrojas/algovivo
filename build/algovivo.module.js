@@ -1295,44 +1295,24 @@ class System$1 {
     }
   }
 
-  setTriangles(args={}) {
-    // TODO
-  }
-
-  set(data) {
-    const ten = this.ten;
-    
-    data.x.length;
-
+  setTriangles(args = {}) {
     const mgr = this.memoryManager;
+    const ten = this.ten;
 
-    this.setX(data.x);
-    
-    // const r = ten.zeros([numVertices]);
-    // if (this.r != null) this.r.dispose();
-    // this.r = r;
-    this.r = null;
-    
-    // TODO move to setTriangles
     let numTriangles;
-    if (data.triangles == null) numTriangles = 0;
-    else numTriangles = data.triangles.length;
+    if (args.indices == null) numTriangles = 0;
+    else numTriangles = args.indices.length;
     
     const triangles = mgr.malloc32(numTriangles * 3);
     if (this.triangles != null) this.triangles.free();
     this.triangles = triangles;
-    if (data.triangles != null) {
-      data.triangles.forEach((t, i) => {
+    if (args.indices != null) {
+      args.indices.forEach((t, i) => {
         triangles.u32()[i * 3]     = t[0];
         triangles.u32()[i * 3 + 1] = t[1];
         triangles.u32()[i * 3 + 2] = t[2];
       });
     }
-
-    this.setSprings({
-      indices: data.springs ?? [],
-      l0: data.springsL0
-    });
 
     const rsi = ten.zeros([
       numTriangles, 2, 2
@@ -1340,7 +1320,7 @@ class System$1 {
     if (this.rsi != null) this.rsi.dispose();
     this.rsi = rsi;
     
-    if (data.trianglesRsi == null) {
+    if (args.rsi == null) {
       this.wasmInstance.exports.rsi_of_x(
         this.numVertices(),
         this.x0.ptr,
@@ -1349,8 +1329,33 @@ class System$1 {
         rsi.ptr
       );
     } else {
-      rsi.set(data.trianglesRsi);
+      rsi.set(args.rsi);
     }
+  }
+
+  set(data) {
+    this.ten;
+    
+    data.x.length;
+
+    this.memoryManager;
+
+    this.setX(data.x);
+    
+    // const r = ten.zeros([numVertices]);
+    // if (this.r != null) this.r.dispose();
+    // this.r = r;
+    this.r = null;
+
+    this.setSprings({
+      indices: data.springs ?? [],
+      l0: data.springsL0
+    });
+    
+    this.setTriangles({
+      indices: data.triangles ?? [],
+      rsi: data.trianglesRsi
+    });
   }
 
   backwardEulerLoss() {
