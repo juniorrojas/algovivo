@@ -2,13 +2,15 @@
 
 extern "C"
 void rsi_of_x(int num_vertices, const float* x, int num_triangles, const int* indices, float* rsi) {
-  const auto space_dim = 2;
-
   for (int i = 0; i < num_triangles; i++) {
     const auto offset = 3 * i;
     const auto ia = indices[offset    ];
     const auto ib = indices[offset + 1];
     const auto ic = indices[offset + 2];
+
+    get_vertex_2d(x, ia, a);
+    get_vertex_2d(x, ib, b);
+    get_vertex_2d(x, ic, c);
 
     // const auto ax = x[space_dim * ia    ];
     // const auto ay = x[space_dim * ia + 1];
