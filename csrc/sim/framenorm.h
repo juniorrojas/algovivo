@@ -1,7 +1,7 @@
 #pragma once
 
 void normalize2d_(float* vx, float* vy) {
-  float q = *vx * *vx + *vy * *vy;
+  const auto q = *vx * *vx + *vy * *vy;
   if (q == 0) {
     *vx = 1.0;
     *vy = 0.0;
@@ -27,11 +27,9 @@ void framenorm_projection(
   float* projected_data,
   bool subtract_origin
 ) {
-  int space_dim = 2;
-  float cx = x[space_dim * center_id];
-  float cy = x[space_dim * center_id + 1];
-  float fx = x[space_dim * forward_id];
-  float fy = x[space_dim * forward_id + 1];
+  const auto space_dim = 2;
+  get_vertex_2d(c, x, center_id);
+  get_vertex_2d(f, x, forward_id);
 
   // a, b are the normalized vectors of the frame
   float ax = fx - cx;
