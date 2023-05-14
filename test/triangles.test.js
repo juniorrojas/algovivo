@@ -62,3 +62,25 @@ test("set rsi", async () => {
   ];
   expect(system.rsi.toArray()).toBeCloseToArray(expectedRsi);
 });
+
+test("set triangles", async () => {
+  const wasmInstance = await utils.loadWasm();
+  const system = new algovivo.System({ wasmInstance });
+  system.set({
+    x: [
+      [0, 0],
+      [2, 0],
+      [1, 1],
+      [-0.3, 0.8]
+    ]
+  });
+  expect(system.numTriangles()).toBe(0);
+
+  system.setTriangles({
+    indices: [
+      [0, 1, 2],
+      [0, 2, 3]
+    ]
+  });
+  expect(system.numTriangles()).toBe(2);
+});

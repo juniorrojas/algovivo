@@ -1255,32 +1255,22 @@ class System$1 {
     const indices = args.indices;
     const numSprings = indices.length;
 
-    const ten = this.ten;
     const mgr = this.memoryManager;
+    const ten = this.ten;
 
     const springs = mgr.malloc32(numSprings * 2);
     if (this.springs != null) this.springs.free();
     this.springs = springs;
 
+    const springsU32 = springs.u32();
+    indices.forEach((s, i) => {
+      springsU32[i * 2    ] = s[0];
+      springsU32[i * 2 + 1] = s[1];
+    });
+
     const l0 = ten.zeros([numSprings]);
     if (this.l0 != null) this.l0.dispose();
     this.l0 = l0;
-
-    // TODO a = ten.ones([numSprings]);
-    const a = ten.zeros([numSprings]);
-    if (this.a != null) this.a.dispose();
-    this.a = a;
-    const aF32 = a.slot.f32();
-    for (let i = 0; i < numSprings; i++) {
-      aF32[i] = 1;
-    }
-
-    const springsU32 = springs.u32();
-
-    indices.forEach((e, i) => {
-      springsU32[i * 2    ] = e[0];
-      springsU32[i * 2 + 1] = e[1];
-    });
 
     if (args.l0 == null) {
       this.wasmInstance.exports.l0_of_x(
@@ -1293,59 +1283,72 @@ class System$1 {
     } else {
       this.l0.set(args.l0);
     }
+
+    // TODO a = ten.ones([numSprings]);
+    const a = ten.zeros([numSprings]);
+    if (this.a != null) this.a.dispose();
+    this.a = a;
+    const aF32 = a.slot.f32();
+    for (let i = 0; i < numSprings; i++) {
+      aF32[i] = 1;
+    }
+  }
+
+  setTriangles(args = {}) {
+    if (args.indices == null) {
+      throw new Error("indices required");
+    }
+    const indices = args.indices;
+    const numTriangles = indices.length;
+
+    const mgr = this.memoryManager;
+    const ten = this.ten;
+    
+    const triangles = mgr.malloc32(numTriangles * 3);
+    if (this.triangles != null) this.triangles.free();
+    this.triangles = triangles;
+
+    const trianglesU32 = triangles.u32();
+    indices.forEach((t, i) => {
+      trianglesU32[i * 3    ] = t[0];
+      trianglesU32[i * 3 + 1] = t[1];
+      trianglesU32[i * 3 + 2] = t[2];
+    });
+
+    const rsi = ten.zeros([numTriangles, 2, 2]);
+    if (this.rsi != null) this.rsi.dispose();
+    this.rsi = rsi;
+    
+    if (args.rsi == null) {
+      this.wasmInstance.exports.rsi_of_x(
+        this.numVertices(),
+        this.x0.ptr,
+        numTriangles,
+        this.triangles.ptr,
+        this.rsi.ptr
+      );
+    } else {
+      this.rsi.set(args.rsi);
+    }
   }
 
   set(data) {
-    const ten = this.ten;
-    
-    data.x.length;
-
-    const mgr = this.memoryManager;
-
     this.setX(data.x);
     
     // const r = ten.zeros([numVertices]);
     // if (this.r != null) this.r.dispose();
     // this.r = r;
     this.r = null;
-    
-    let numTriangles;
-    if (data.triangles == null) numTriangles = 0;
-    else numTriangles = data.triangles.length;
-    
-    const triangles = mgr.malloc32(numTriangles * 3);
-    if (this.triangles != null) this.triangles.free();
-    this.triangles = triangles;
-    if (data.triangles != null) {
-      data.triangles.forEach((t, i) => {
-        triangles.u32()[i * 3]     = t[0];
-        triangles.u32()[i * 3 + 1] = t[1];
-        triangles.u32()[i * 3 + 2] = t[2];
-      });
-    }
 
     this.setSprings({
       indices: data.springs ?? [],
       l0: data.springsL0
     });
-
-    const rsi = ten.zeros([
-      numTriangles, 2, 2
-    ]);
-    if (this.rsi != null) this.rsi.dispose();
-    this.rsi = rsi;
     
-    if (data.trianglesRsi == null) {
-      this.wasmInstance.exports.rsi_of_x(
-        this.numVertices(),
-        this.x0.ptr,
-        numTriangles,
-        this.triangles.ptr,
-        rsi.ptr
-      );
-    } else {
-      rsi.set(data.trianglesRsi);
-    }
+    this.setTriangles({
+      indices: data.triangles ?? [],
+      rsi: data.trianglesRsi
+    });
   }
 
   backwardEulerLoss() {

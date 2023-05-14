@@ -9,23 +9,23 @@
 extern "C"
 float backward_euler_loss(
   int num_vertices,
-  float* x, float* x0,
-  float* v,
+  const float* x,
+  const float* x0, const float* v,
   
   float h,
-  float* r,
+  const float* r,
 
   int num_springs,
-  int* springs,
+  const int* springs,
 
   int num_triangles,
-  int* triangles,
-  float* rsi,
+  const int* triangles,
+  const float* rsi,
 
-  float* a,
-  float* l0
+  const float* a,
+  const float* l0
 ) {
-  int space_dim = 2;
+  const auto space_dim = 2;
 
   float inertial_energy = 0.0;
   float potential_energy = 0.0;
