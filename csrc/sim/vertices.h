@@ -1,6 +1,6 @@
 #pragma once
 
-#define get_vertex_2d(x, i, name) \
+#define get_vertex_2d(name, x, i) \
   const auto (name##x) = x[2 * i    ]; \
   const auto (name##y) = x[2 * i + 1];
 

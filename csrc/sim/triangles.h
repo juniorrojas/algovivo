@@ -9,9 +9,9 @@ void rsi_of_x(int num_vertices, const float* x, int num_triangles, const int* in
     const auto ib = indices[offset + 1];
     const auto ic = indices[offset + 2];
 
-    get_vertex_2d(x, ia, a);
-    get_vertex_2d(x, ib, b);
-    get_vertex_2d(x, ic, c);
+    get_vertex_2d(a, x, ia);
+    get_vertex_2d(b, x, ib);
+    get_vertex_2d(c, x, ic);
     
     vec2_sub(ab, b, a);
     vec2_sub(ac, c, a);

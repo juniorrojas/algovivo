@@ -9,8 +9,8 @@ void l0_of_x(int num_vertices, const float* x, int num_springs, const int* indic
     const auto i1 = indices[offset    ];
     const auto i2 = indices[offset + 1];
     
-    get_vertex_2d(x, i1, p1);
-    get_vertex_2d(x, i2, p2);
+    get_vertex_2d(p1, x, i1);
+    get_vertex_2d(p2, x, i2);
 
     const auto dx = p1x - p2x;
     const auto dy = p1y - p2y;
