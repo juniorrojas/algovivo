@@ -39,7 +39,7 @@ void framenorm_projection(
   float by =  ax;
 
   for (int i = 0; i < num_vertices; i++) {
-    int offset = i * space_dim;    
+    const auto offset = i * space_dim;    
     float px = data[offset]; // - cx;
     float py = data[offset + 1]; // - cy;
     if (subtract_origin) {
