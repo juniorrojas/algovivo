@@ -54,19 +54,19 @@ void framenorm_projection(
 extern "C"
 void cat_xv(
   int num_vertices,
-  float* x,
-  float* v,
+  const float* x,
+  const float* v,
   float* policy_input
 ) {
   int space_dim = 2;
   for (int i = 0; i < num_vertices; i++) {
-    int offset = i * space_dim;
+    const auto offset = i * space_dim;
     policy_input[offset    ] = x[offset    ];
     policy_input[offset + 1] = x[offset + 1];
   }
   for (int i = 0; i < num_vertices; i++) {
-    int offset = i * space_dim;
-    int offset2 = num_vertices * 2 + offset;
+    const auto offset = i * space_dim;
+    const auto offset2 = num_vertices * 2 + offset;
     policy_input[offset2    ] = v[offset    ];
     policy_input[offset2 + 1] = v[offset + 1];
   }
