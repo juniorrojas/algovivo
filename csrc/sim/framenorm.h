@@ -28,8 +28,8 @@ void framenorm_projection(
   bool subtract_origin
 ) {
   const auto space_dim = 2;
-  get_vertex_2d(c, x, center_id);
-  get_vertex_2d(f, x, forward_id);
+  vec2_get(c, x, center_id);
+  vec2_get(f, x, forward_id);
 
   // a, b are the normalized vectors of the frame
   float ax = fx - cx;
