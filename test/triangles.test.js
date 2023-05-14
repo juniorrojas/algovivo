@@ -21,10 +21,13 @@ test("set x and triangles", async () => {
   expect(system.numTriangles()).toBe(2);
   console.log(system.rsi.toArray());
   const expectedRsi = [
-    [ [ 0.5, -0.5 ], [ -0, 1 ] ],
     [
-      [ 0.7272727489471436, 0.27272728085517883 ],
-      [ -0.9090909361839294, 0.9090909361839294 ]
+      [0.5, -0.5],
+      [0, 1]
+    ],
+    [
+      [0.7272727489471436, 0.27272728085517883],
+      [-0.9090909361839294, 0.90909093618392940]
     ]
   ];
   expect(system.rsi.toArray()).toBeCloseToArray(expectedRsi);
