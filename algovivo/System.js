@@ -68,6 +68,22 @@ class System {
       throw new Error("indices required");
     }
     const indices = args.indices;
+    const numSprings = indices.length;
+
+    const springs = mgr.malloc32(numSprings * 2);
+
+    indices.forEach((e, i) => {
+      springs.u32()[i * 2    ] = e[0];
+      springs.u32()[i * 2 + 1] = e[1];
+    });
+
+    this.wasmInstance.exports.l0_of_x(
+      numVertices,
+      this.x0.ptr,
+      numSprings,
+      this.springs.ptr,
+      this.l0.ptr
+    );
   }
 
   set(data) {
@@ -107,6 +123,7 @@ class System {
       edges = data.springs;
     }
     
+    // TODO move to setSprings
     const numSprings = edges.length;
     const springs = mgr.malloc32(numSprings * 2);
 
