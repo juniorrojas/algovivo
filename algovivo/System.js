@@ -138,17 +138,9 @@ class System {
         triangles.u32()[i * 3 + 2] = t[2];
       });
     }
-
-    let edges;
-
-    if (data.springs == null) {
-      edges = [];
-    } else {
-      edges = data.springs;
-    }
     
     this.setSprings({
-      indices: edges,
+      indices: data.springs ?? [],
       l0: data.springsL0
     });
 
