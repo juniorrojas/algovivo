@@ -2,7 +2,13 @@
 #include "vec2.h"
 
 extern "C"
-void rsi_of_x(int num_vertices, const float* x, int num_triangles, const int* indices, float* rsi) {
+void rsi_of_x(
+  int num_vertices,
+  const float* x,
+  int num_triangles,
+  const int* indices,
+  float* rsi
+) {
   for (int i = 0; i < num_triangles; i++) {
     const auto offset = 3 * i;
     const auto ia = indices[offset    ];

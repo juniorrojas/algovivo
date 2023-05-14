@@ -4,7 +4,13 @@
 #include "vertices.h"
 
 extern "C"
-void l0_of_x(int num_vertices, const float* x, int num_springs, const int* indices, float* l0) {
+void l0_of_x(
+  int num_vertices,
+  const float* x,
+  int num_springs,
+  const int* indices,
+  float* l0
+) {
   for (int i = 0; i < num_springs; i++) {
     const auto offset = 2 * i;
     const auto i1 = indices[offset    ];
