@@ -1296,12 +1296,14 @@ class System$1 {
   }
 
   setTriangles(args = {}) {
+    if (args.indices == null) {
+      throw new Error("indices required");
+    }
+    const indices = args.indices;
+    const numTriangles = indices.length;
+
     const mgr = this.memoryManager;
     const ten = this.ten;
-
-    let numTriangles;
-    if (args.indices == null) numTriangles = 0;
-    else numTriangles = args.indices.length;
     
     const triangles = mgr.malloc32(numTriangles * 3);
     if (this.triangles != null) this.triangles.free();
@@ -1334,12 +1336,6 @@ class System$1 {
   }
 
   set(data) {
-    this.ten;
-    
-    data.x.length;
-
-    this.memoryManager;
-
     this.setX(data.x);
     
     // const r = ten.zeros([numVertices]);
