@@ -19,7 +19,6 @@ test("set x and triangles", async () => {
     ]
   });
   expect(system.numTriangles()).toBe(2);
-  console.log(system.rsi.toArray());
   const expectedRsi = [
     [
       [0.5, -0.5],
