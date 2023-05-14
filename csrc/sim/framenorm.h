@@ -75,7 +75,7 @@ void cat_xv(
 }
 
 extern "C"
-void make_framenorm_neural_policy_input(
+void make_neural_policy_input(
   int num_vertices,
   const float* x,
   const float* v,

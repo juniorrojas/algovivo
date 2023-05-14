@@ -39,7 +39,7 @@ class NeuralPolicy {
 
     let output;
     if (this.active) {
-      wasmInstance.exports.make_framenorm_neural_policy_input(
+      wasmInstance.exports.make_neural_policy_input(
         numVertices,
         system.x0.ptr,
         system.v0.ptr,
