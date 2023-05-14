@@ -70,12 +70,18 @@ class System {
     const indices = args.indices;
     const numSprings = indices.length;
 
-    const ten = this.ten;
     const mgr = this.memoryManager;
+    const ten = this.ten;
 
     const springs = mgr.malloc32(numSprings * 2);
     if (this.springs != null) this.springs.free();
     this.springs = springs;
+
+    const springsU32 = springs.u32();
+    indices.forEach((s, i) => {
+      springsU32[i * 2    ] = s[0];
+      springsU32[i * 2 + 1] = s[1];
+    });
 
     const l0 = ten.zeros([numSprings]);
     if (this.l0 != null) this.l0.dispose();
@@ -89,13 +95,6 @@ class System {
     for (let i = 0; i < numSprings; i++) {
       aF32[i] = 1;
     }
-
-    const springsU32 = springs.u32();
-
-    indices.forEach((e, i) => {
-      springsU32[i * 2    ] = e[0];
-      springsU32[i * 2 + 1] = e[1];
-    });
 
     if (args.l0 == null) {
       this.wasmInstance.exports.l0_of_x(
@@ -123,13 +122,13 @@ class System {
     const triangles = mgr.malloc32(numTriangles * 3);
     if (this.triangles != null) this.triangles.free();
     this.triangles = triangles;
-    if (args.indices != null) {
-      args.indices.forEach((t, i) => {
-        triangles.u32()[i * 3]     = t[0];
-        triangles.u32()[i * 3 + 1] = t[1];
-        triangles.u32()[i * 3 + 2] = t[2];
-      });
-    }
+
+    const trianglesU32 = triangles.u32();
+    indices.forEach((t, i) => {
+      trianglesU32[i * 3    ] = t[0];
+      trianglesU32[i * 3 + 1] = t[1];
+      trianglesU32[i * 3 + 2] = t[2];
+    });
 
     const rsi = ten.zeros([
       numTriangles, 2, 2
