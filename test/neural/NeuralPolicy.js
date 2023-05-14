@@ -59,7 +59,7 @@ class NeuralPolicy {
         false
       );
 
-      wasmInstance.exports.make_policy_input(
+      wasmInstance.exports.cat_xv(
         numVertices,
         this.projectedX.slot.ptr,
         this.projectedV.slot.ptr,

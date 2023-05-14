@@ -54,7 +54,7 @@ void framenorm_projection(
 }
 
 extern "C"
-void make_policy_input(
+void cat_xv(
   int num_vertices,
   float* x,
   float* v,
@@ -72,4 +72,14 @@ void make_policy_input(
     policy_input[offset2    ] = v[offset    ];
     policy_input[offset2 + 1] = v[offset + 1];
   }
+}
+
+extern "C"
+void make_framenorm_neural_policy_input(
+  int num_vertices,
+  float* x,
+  float* v,
+  float* policy_input
+) {
+  
 }
