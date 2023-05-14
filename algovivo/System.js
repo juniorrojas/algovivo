@@ -99,6 +99,15 @@ class System {
     } else {
       this.l0.set(args.l0);
     }
+
+    // TODO a = ten.ones([numSprings]);
+    const a = ten.zeros([numSprings]);
+    if (this.a != null) this.a.dispose();
+    this.a = a;
+    const aF32 = a.slot.f32();
+    for (let i = 0; i < numSprings; i++) {
+      aF32[i] = 1;
+    }
   }
 
   set(data) {
