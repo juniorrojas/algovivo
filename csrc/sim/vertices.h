@@ -1,8 +1,8 @@
 #pragma once
 
 #define get_vertex_2d(x, i, name) \
-  const int name##x = x[2 * i    ]; \
-  const int name##y = x[2 * i + 1];
+  const auto (name##x) = x[2 * i    ]; \
+  const auto (name##y) = x[2 * i + 1];
 
 #define vertex_loop_context(i, space_dim, x0, x, v) \
   int offset = i * space_dim;\

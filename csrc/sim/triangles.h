@@ -1,9 +1,5 @@
 #pragma once
-
-#define vec2_sub(a, b, c) \
-  const auto (c##x) = (a##x) - (b##x); \
-  const auto (c##y) = (a##y) - (b##y);
-
+#include "vec2.h"
 
 extern "C"
 void rsi_of_x(int num_vertices, const float* x, int num_triangles, const int* indices, float* rsi) {
@@ -13,20 +9,12 @@ void rsi_of_x(int num_vertices, const float* x, int num_triangles, const int* in
     const auto ib = indices[offset + 1];
     const auto ic = indices[offset + 2];
 
-    // get_vertex_2d(x, ia, a);
-    const auto ax = x[2 * ia   ];
-    const auto ay = x[2 * ia + 1];
-
-    // get_vertex_2d(x, ib, b);
-    const auto bx = x[2 * ib   ];
-    const auto by = x[2 * ib + 1];
-
-    // get_vertex_2d(x, ic, c);
-    const auto cx = x[2 * ic   ];
-    const auto cy = x[2 * ic + 1];
+    get_vertex_2d(x, ia, a);
+    get_vertex_2d(x, ib, b);
+    get_vertex_2d(x, ic, c);
     
-    vec2_sub(b, a, ab);
-    vec2_sub(c, a, ac);
+    vec2_sub(ab, b, a);
+    vec2_sub(ac, c, a);
 
     const auto d = abx * acy - acx * aby;
     const auto offset_rsi = i * 4;
