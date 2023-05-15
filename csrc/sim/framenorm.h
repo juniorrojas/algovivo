@@ -1,7 +1,7 @@
 #pragma once
 
 void normalize2d_(float* vx, float* vy) {
-  float q = *vx * *vx + *vy * *vy;
+  const auto q = *vx * *vx + *vy * *vy;
   if (q == 0) {
     *vx = 1.0;
     *vy = 0.0;
@@ -20,56 +20,88 @@ float dot2d(float ax, float ay, float bx, float by) {
 extern "C"
 void framenorm_projection(
   int num_vertices,
-  float* x,
+  const float* x,
   int center_id,
   int forward_id,
-  float* data,
+  const float* data,
   float* projected_data,
   bool subtract_origin
 ) {
-  int space_dim = 2;
-  float cx = x[space_dim * center_id];
-  float cy = x[space_dim * center_id + 1];
-  float fx = x[space_dim * forward_id];
-  float fy = x[space_dim * forward_id + 1];
+  const auto space_dim = 2;
+  vec2_get(c, x, center_id);
+  vec2_get(f, x, forward_id);
 
   // a, b are the normalized vectors of the frame
-  float ax = fx - cx;
-  float ay = fy - cy;
+  auto ax = fx - cx;
+  auto ay = fy - cy;
   normalize2d_(&ax, &ay);
-  float bx = -ay;
-  float by =  ax;
+  const auto bx = -ay;
+  const auto by =  ax;
 
   for (int i = 0; i < num_vertices; i++) {
-    int offset = i * space_dim;    
-    float px = data[offset]; // - cx;
-    float py = data[offset + 1]; // - cy;
+    const auto offset = i * space_dim;    
+    auto px = data[offset]; // - cx;
+    auto py = data[offset + 1]; // - cy;
     if (subtract_origin) {
       px -= cx;
       py -= cy;
     }
-    projected_data[offset] = dot2d(ax, ay, px, py);
+    projected_data[offset    ] = dot2d(ax, ay, px, py);
     projected_data[offset + 1] = dot2d(bx, by, px, py);
   }
 }
 
 extern "C"
-void make_policy_input(
+void cat_xv(
   int num_vertices,
-  float* x,
-  float* v,
+  const float* x,
+  const float* v,
   float* policy_input
 ) {
   int space_dim = 2;
   for (int i = 0; i < num_vertices; i++) {
-    int offset = i * space_dim;
+    const auto offset = i * space_dim;
     policy_input[offset    ] = x[offset    ];
     policy_input[offset + 1] = x[offset + 1];
   }
   for (int i = 0; i < num_vertices; i++) {
-    int offset = i * space_dim;
-    int offset2 = num_vertices * 2 + offset;
+    const auto offset = i * space_dim;
+    const auto offset2 = num_vertices * 2 + offset;
     policy_input[offset2    ] = v[offset    ];
     policy_input[offset2 + 1] = v[offset + 1];
   }
+}
+
+extern "C"
+void make_neural_policy_input(
+  int num_vertices,
+  const float* x,
+  const float* v,
+  int center_vertex_id,
+  int forward_vertex_id,
+  float* projected_x,
+  float* projected_v,
+  float* policy_input
+) {
+  framenorm_projection(
+    num_vertices,
+    x,
+    center_vertex_id,
+    forward_vertex_id,
+    x,
+    projected_x,
+    true
+  );
+
+  framenorm_projection(
+    num_vertices,
+    x,
+    center_vertex_id,
+    forward_vertex_id,
+    v,
+    projected_v,
+    false
+  );
+
+  cat_xv(num_vertices, projected_x, projected_v, policy_input);
 }

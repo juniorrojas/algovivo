@@ -2,16 +2,22 @@
 #include "vec2.h"
 
 extern "C"
-void rsi_of_x(int num_vertices, const float* x, int num_triangles, const int* indices, float* rsi) {
+void rsi_of_x(
+  int num_vertices,
+  const float* x,
+  int num_triangles,
+  const int* indices,
+  float* rsi
+) {
   for (int i = 0; i < num_triangles; i++) {
     const auto offset = 3 * i;
     const auto ia = indices[offset    ];
     const auto ib = indices[offset + 1];
     const auto ic = indices[offset + 2];
 
-    get_vertex_2d(a, x, ia);
-    get_vertex_2d(b, x, ib);
-    get_vertex_2d(c, x, ic);
+    vec2_get(a, x, ia);
+    vec2_get(b, x, ib);
+    vec2_get(c, x, ic);
     
     vec2_sub(ab, b, a);
     vec2_sub(ac, c, a);

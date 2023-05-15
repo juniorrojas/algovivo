@@ -39,31 +39,15 @@ class NeuralPolicy {
 
     let output;
     if (this.active) {
-      wasmInstance.exports.framenorm_projection(
+      wasmInstance.exports.make_neural_policy_input(
         numVertices,
         system.x0.ptr,
-        this.centerVertexId,
-        this.forwardVertexId,
-        system.x0.ptr,
-        this.projectedX.slot.ptr,
-        true
-      );
-
-      wasmInstance.exports.framenorm_projection(
-        numVertices,
-        system.x0.ptr,
-        this.centerVertexId,
-        this.forwardVertexId,
         system.v0.ptr,
-        this.projectedV.slot.ptr,
-        false
-      );
-
-      wasmInstance.exports.make_policy_input(
-        numVertices,
-        this.projectedX.slot.ptr,
-        this.projectedV.slot.ptr,
-        this.input.slot.ptr
+        this.centerVertexId,
+        this.forwardVertexId,
+        this.projectedX.ptr,
+        this.projectedV.ptr,
+        this.input.ptr
       );
 
       output = this.model.forward(this.input);

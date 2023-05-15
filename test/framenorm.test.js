@@ -67,7 +67,7 @@ test("make_policy_input", async () => {
 
   const policyInput = ten.zeros([spaceDim * numVertices * 2]);
 
-  ten.wasmInstance.exports.make_policy_input(
+  ten.wasmInstance.exports.cat_xv(
     numVertices,
     x.ptr,
     v.ptr,
