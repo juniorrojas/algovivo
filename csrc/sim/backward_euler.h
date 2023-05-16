@@ -1,6 +1,7 @@
 #pragma once
 
 #include "arr.h"
+#include "vec2.h"
 #include "vertices.h"
 #include "inertia.h"
 #include "framenorm.h"
@@ -30,7 +31,7 @@ float backward_euler_loss(
   float inertial_energy = 0.0;
   float potential_energy = 0.0;
 
-  float vertex_mass = 6.0714287757873535;
+  const float vertex_mass = 6.0714287757873535;
 
   for (int i = 0; i < num_vertices; i++) {
     vertex_loop_context(i, space_dim, x0, x, v);
@@ -44,24 +45,17 @@ float backward_euler_loss(
   }
 
   for (int i = 0; i < num_springs; i++) {
-    auto offset = i * 2;
-    int i1 = springs[offset    ];
-    int i2 = springs[offset + 1];
-
-    int offset_i1 = i1 * space_dim;
-    int offset_i2 = i2 * space_dim;
+    const auto offset = i * 2;
+    const auto i1 = springs[offset    ];
+    const auto i2 = springs[offset + 1];
 
     float se = 0.0;
 
-    float p1x = x[offset_i1];
-    float p1y = x[offset_i1 + 1];
-    float p2x = x[offset_i2];
-    float p2y = x[offset_i2 + 1];
+    vec2_get(p1, x, i1);
+    vec2_get(p2, x, i2);
 
-    float dx = p1x - p2x;
-    float dy = p1y - p2y;
+    vec2_sub(d, p1, p2);
     float q = dx * dx + dy * dy;
-
     float l = __builtin_sqrt(q + 1e-6);
     float al0 = a[i] * l0[i];
 
@@ -72,26 +66,17 @@ float backward_euler_loss(
   }
 
   for (int i = 0; i < num_triangles; i++) {
-    auto offset = i * 3;
-    int i1 = triangles[offset    ];
-    int i2 = triangles[offset + 1];
-    int i3 = triangles[offset + 2];
+    const auto offset = i * 3;
+    const auto i1 = triangles[offset    ];
+    const auto i2 = triangles[offset + 1];
+    const auto i3 = triangles[offset + 2];
 
-    int offset_i1 = i1 * space_dim;
-    int offset_i2 = i2 * space_dim;
-    int offset_i3 = i3 * space_dim;
-    
-    float ax = x[offset_i1];
-    float ay = x[offset_i1 + 1];
-    float bx = x[offset_i2];
-    float by = x[offset_i2 + 1];
-    float cx = x[offset_i3];
-    float cy = x[offset_i3 + 1];
+    vec2_get(a, x, i1);
+    vec2_get(b, x, i2);
+    vec2_get(c, x, i3);
 
-    float abx = bx - ax;
-    float aby = by - ay;
-    float acx = cx - ax;
-    float acy = cy - ay;
+    vec2_sub(ab, b, a);
+    vec2_sub(ac, c, a);
 
     float sm00 = abx;
     float sm10 = aby;
@@ -122,7 +107,7 @@ float backward_euler_loss(
   }
 
   for (int i = 0; i < num_vertices; i++) {
-    int offset = space_dim * i;
+    const auto offset = space_dim * i;
     
     float xi0 = x[i * space_dim + 0];
     float xi1 = x[i * space_dim + 1];
@@ -195,7 +180,7 @@ void backward_euler_loss_grad(
 #define eval_loss(x1) backward_euler_loss(num_vertices, x1, x0, v, h, r, num_springs, springs, num_triangles, triangles, rsi, a, l0)
 
 extern "C"
-void be_step(
+void backward_euler_update_x(
   int num_vertices,
   float* x, float* x_grad, float* x_tmp,
   float* x0,
@@ -277,11 +262,21 @@ void be_step(
     
     addmuls_(num_vertices * space_dim, x, x_grad, -step_size, x);
   }
+}
 
-  // v = (x - x0) / h
+
+extern "C"
+void backward_euler_update_v(
+  float num_vertices,
+  float* x0, float* v0,
+  float* x1, float* v1,
+  float h
+) {
+  auto const space_dim = 2;
+  // v = (x1 - x0) / h
   addmuls_(
     num_vertices * space_dim,
-    x, x0,
+    x1, x0,
     -1.0,
     v1
   );
@@ -289,4 +284,48 @@ void be_step(
     num_vertices * space_dim,
     v1, 1 / h
   );
+}
+
+extern "C"
+void backward_euler_update(
+  int num_vertices,
+  float* x, float* x_grad, float* x_tmp,
+  float* x0,
+  float* v, float* v1,
+  float h,
+  float* r,
+
+  int num_springs,
+  int* springs,
+
+  int num_triangles,
+  int* triangles,
+  float* rsi,
+
+  float* a,
+  float* l0,
+
+  int fixed_vertex_id
+) {
+  backward_euler_update_x(
+    num_vertices,
+    x, x_grad, x_tmp,
+    x0,
+    v, v1,
+    h,
+    r,
+
+    num_springs,
+    springs,
+
+    num_triangles,
+    triangles,
+    rsi,
+
+    a,
+    l0,
+
+    fixed_vertex_id
+  );
+  backward_euler_update_v(num_vertices, x0, v, x, v1, h);
 }
