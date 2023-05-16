@@ -82,10 +82,8 @@ float backward_euler_loss(
     vec2_get(b, x, i2);
     vec2_get(c, x, i3);
 
-    float abx = bx - ax;
-    float aby = by - ay;
-    float acx = cx - ax;
-    float acy = cy - ay;
+    vec2_sub(ab, b, a);
+    vec2_sub(ac, c, a);
 
     float sm00 = abx;
     float sm10 = aby;
