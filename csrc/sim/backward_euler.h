@@ -54,10 +54,8 @@ float backward_euler_loss(
     vec2_get(p1, x, i1);
     vec2_get(p2, x, i2);
 
-    float dx = p1x - p2x;
-    float dy = p1y - p2y;
+    vec2_sub(d, p1, p2);
     float q = dx * dx + dy * dy;
-
     float l = __builtin_sqrt(q + 1e-6);
     float al0 = a[i] * l0[i];
 
