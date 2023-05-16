@@ -166,28 +166,6 @@ class System {
     });
   }
 
-  backwardEulerLoss() {
-    const wasmInstance = this.wasmInstance;
-    return wasmInstance.exports.be_loss(
-      this.numVertices(),
-      this.x0.ptr, this.x0.ptr,
-      this.v0.ptr,
-
-      this.h,
-      0,
-
-      this.numSprings(),
-      this.springs.ptr,
-
-      this.numTriangles(),
-      this.triangles.ptr,
-      this.rsi.ptr,
-
-      this.a.ptr,
-      this.l0.ptr
-    );
-  }
-
   updateTmpBuffers() {
     if (this.x0 == null) {
       throw new Error("x0 required");
