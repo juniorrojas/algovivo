@@ -213,7 +213,7 @@ class System {
 
     const fixedVertexId = this.fixedVertexId;
 
-    this.wasmInstance.exports.be_step(
+    this.wasmInstance.exports.backward_euler_update(
       numVertices,
       
       this.x1.ptr,
