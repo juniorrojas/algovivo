@@ -49,15 +49,10 @@ float backward_euler_loss(
     const auto i1 = springs[offset    ];
     const auto i2 = springs[offset + 1];
 
-    int offset_i1 = i1 * space_dim;
-    int offset_i2 = i2 * space_dim;
-
     float se = 0.0;
 
-    float p1x = x[offset_i1];
-    float p1y = x[offset_i1 + 1];
-    float p2x = x[offset_i2];
-    float p2y = x[offset_i2 + 1];
+    vec2_get(p1, x, i1);
+    vec2_get(p2, x, i2);
 
     float dx = p1x - p2x;
     float dy = p1y - p2y;
