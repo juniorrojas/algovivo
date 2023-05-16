@@ -1,6 +1,7 @@
 #pragma once
 
 #include "arr.h"
+#include "vec2.h"
 #include "vertices.h"
 #include "inertia.h"
 #include "framenorm.h"
@@ -77,16 +78,9 @@ float backward_euler_loss(
     const auto i2 = triangles[offset + 1];
     const auto i3 = triangles[offset + 2];
 
-    const auto offset_i1 = i1 * space_dim;
-    const auto offset_i2 = i2 * space_dim;
-    const auto offset_i3 = i3 * space_dim;
-    
-    const auto ax = x[offset_i1];
-    const auto ay = x[offset_i1 + 1];
-    const auto bx = x[offset_i2];
-    const auto by = x[offset_i2 + 1];
-    const auto cx = x[offset_i3];
-    const auto cy = x[offset_i3 + 1];
+    vec2_get(a, x, i1);
+    vec2_get(b, x, i2);
+    vec2_get(c, x, i3);
 
     float abx = bx - ax;
     float aby = by - ay;
