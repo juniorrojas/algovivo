@@ -30,7 +30,7 @@ float backward_euler_loss(
   float inertial_energy = 0.0;
   float potential_energy = 0.0;
 
-  float vertex_mass = 6.0714287757873535;
+  const float vertex_mass = 6.0714287757873535;
 
   for (int i = 0; i < num_vertices; i++) {
     vertex_loop_context(i, space_dim, x0, x, v);
@@ -44,9 +44,9 @@ float backward_euler_loss(
   }
 
   for (int i = 0; i < num_springs; i++) {
-    auto offset = i * 2;
-    int i1 = springs[offset    ];
-    int i2 = springs[offset + 1];
+    const auto offset = i * 2;
+    const auto i1 = springs[offset    ];
+    const auto i2 = springs[offset + 1];
 
     int offset_i1 = i1 * space_dim;
     int offset_i2 = i2 * space_dim;
@@ -122,7 +122,7 @@ float backward_euler_loss(
   }
 
   for (int i = 0; i < num_vertices; i++) {
-    int offset = space_dim * i;
+    const auto offset = space_dim * i;
     
     float xi0 = x[i * space_dim + 0];
     float xi1 = x[i * space_dim + 1];
