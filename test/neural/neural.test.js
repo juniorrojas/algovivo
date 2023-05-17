@@ -10,8 +10,9 @@ test("neural policy", async () => {
   const system = new algovivo.System({
     wasmInstance: await utils.loadWasm()
   });
-  const meshDataPromise = fsp.readFile(`${__dirname}/data/mesh.json`);
-  const policyDataPromise = fsp.readFile(`${__dirname}/data/policy.json`);
+  const dataDirname = `${__dirname}/data`;
+  const meshDataPromise = fsp.readFile(`${dataDirname}/mesh.json`);
+  const policyDataPromise = fsp.readFile(`${dataDirname}/policy.json`);
   const [meshData, policyData] = (await Promise.all([
     meshDataPromise, policyDataPromise
   ])).map(r => JSON.parse(r));
@@ -31,7 +32,7 @@ test("neural policy", async () => {
   });
   policy.loadData(policyData);
 
-  const trajectoryDataDirname = `${__dirname}/data/trajectory`;
+  const trajectoryDataDirname = `${dataDirname}/trajectory`;
 
   let expectedNumReservedBytes = null;
   const mgr = system.memoryManager;
