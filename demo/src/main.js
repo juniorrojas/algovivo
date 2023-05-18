@@ -40,6 +40,19 @@ async function main() {
   viewport.domElement.style.boxShadow = "0 0 10px rgba(0, 0, 0, 0.1)";
   divContent.appendChild(viewport.domElement);
   
+  const mq = window.matchMedia("(max-width: 420px)");
+  const updateMq = () => {
+    if (mq.matches) {
+      viewport.setSize({ width: 250, height: 250});
+    } else {
+      viewport.setSize({ width: 400, height: 400});
+    }
+  }
+  mq.addEventListener("change", (event) => {
+    updateMq();
+  });
+  updateMq();
+  
   const dataRoot = "data";
   const meshDataPromise = fetch(`${dataRoot}/mesh.json`);
   const policyDataPromise = fetch(`${dataRoot}/policy.json`);
