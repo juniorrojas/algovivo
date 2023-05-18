@@ -2567,7 +2567,7 @@
 
 	    const renderer = new mm2d$1.core.Renderer();
 	    renderer.domElement.style.border = "1px solid black";
-	    renderer.setSize({
+	    this.setSize({
 	      width: 400,
 	      height: 400
 	    });
@@ -2678,6 +2678,13 @@
 
 	    this.targetCenterX = null;
 	    this.currentCenterX = null;
+	  }
+
+	  setSize(width, height) {
+	    this.renderer.setSize({
+	      width: width,
+	      height: height
+	    });
 	  }
 
 	  render() {
