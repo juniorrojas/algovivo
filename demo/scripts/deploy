@@ -7,7 +7,6 @@ import sys
 sys.path.insert(0, str(this_dirpath))
 import deployutils
 import shutil
-import sys
 import argparse
 
 def populate_deploy_path(deploy_path):
