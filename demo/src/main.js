@@ -2,6 +2,7 @@ import algovivo from "../../build/algovivo.module.min.js";
 import NeuralPolicy from "./NeuralPolicy.js";
 import IconButton from "./IconButton.js";
 import { makeGitHubCorner, makeHeader } from "./ui.js";
+import SystemViewport from "./SystemViewport.js";
 
 async function loadWasm() {
   const response = await fetch("algovivo.wasm");
@@ -32,26 +33,8 @@ async function main() {
   document.body.style.padding = 0;
   document.body.style.alignItems = "center";
 
-  const viewport = new algovivo.SystemViewport({
-    system: system
-  });
-  viewport.domElement.style.borderRadius = "10px";
-  viewport.domElement.style.border = "2px solid #c9c9c9";
-  viewport.domElement.style.boxShadow = "0 0 10px rgba(0, 0, 0, 0.1)";
+  const viewport = new SystemViewport({ system });
   divContent.appendChild(viewport.domElement);
-  
-  const mq = window.matchMedia("(max-width: 420px)");
-  const updateMq = () => {
-    if (mq.matches) {
-      viewport.setSize({ width: 250, height: 250});
-    } else {
-      viewport.setSize({ width: 400, height: 400});
-    }
-  }
-  mq.addEventListener("change", (event) => {
-    updateMq();
-  });
-  updateMq();
   
   const dataRoot = "data";
   const meshDataPromise = fetch(`${dataRoot}/mesh.json`);
