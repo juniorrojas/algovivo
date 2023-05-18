@@ -71,6 +71,7 @@ export default class NeuralPolicy {
       if (this.active) {
         da = output.get([i]);
         if (this.stochastic) {
+          // TODO use normal sampling
           da += (Math.random() - 0.5) * 0.5;
         }
       } else {
