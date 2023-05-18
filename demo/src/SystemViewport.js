@@ -12,7 +12,7 @@ export default class SystemViewport extends algovivo.SystemViewport {
       if (mq.matches) {
         this.setSize({ width: 350, height: 350});
       } else {
-        viewport.setSize({ width: 400, height: 400});
+        this.setSize({ width: 400, height: 400});
       }this
     }
     mq.addEventListener("change", (event) => {
