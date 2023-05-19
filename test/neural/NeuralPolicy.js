@@ -6,7 +6,6 @@ class NeuralPolicy {
     this.system = args.system;
     this.ten = this.system.ten;
 
-    this.stochastic = args.stochastic ?? false;
     this.active = args.active ?? false;
 
     const system = this.system;
@@ -70,9 +69,6 @@ class NeuralPolicy {
       let da;
       if (this.active) {
         da = output.get([i]);
-        if (this.stochastic) {
-          da += (Math.random() - 0.5) * 0.5;
-        }
       } else {
         da = 1;
       }

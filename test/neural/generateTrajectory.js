@@ -29,7 +29,6 @@ async function main() {
   });
   const policy = new NeuralPolicy({
     system: system,
-    stochastic: false,
     active: true
   });
   policy.loadData(policyData);
