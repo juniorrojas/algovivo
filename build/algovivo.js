@@ -2567,12 +2567,12 @@
 
 	    const renderer = new mm2d$1.core.Renderer();
 	    renderer.domElement.style.border = "1px solid black";
-	    this.renderer = renderer;
-	    this.domElement = renderer.domElement;
-	    this.setSize({
+	    renderer.setSize({
 	      width: 400,
 	      height: 400
 	    });
+	    this.renderer = renderer;
+	    this.domElement = renderer.domElement;
 
 	    const scene = new mm2d$1.core.Scene();
 	    this.scene = scene;
@@ -2678,13 +2678,6 @@
 
 	    this.targetCenterX = null;
 	    this.currentCenterX = null;
-	  }
-
-	  setSize(args = {}) {
-	    this.renderer.setSize({
-	      width: args.width,
-	      height: args.height
-	    });
 	  }
 
 	  render() {
