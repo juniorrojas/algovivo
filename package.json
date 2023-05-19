@@ -9,6 +9,9 @@
     "watch": "rollup -c rollup.config.js --watch",
     "test": "export NODE_PATH=. && jest"
   },
+  "bin": {
+    "algovivo-hello": "bin/hello.js"
+  },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^24.1.0",
     "@rollup/plugin-node-resolve": "^15.0.2",
