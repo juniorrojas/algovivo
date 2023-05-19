@@ -1,8 +1,12 @@
+function _sampleNormal(mean, stdDev, u, v) {
+  const z = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+  return mean + z * stdDev;
+}
+
 function sampleNormal(mean, stdDev) {
   const u = Math.random();
   const v = Math.random();
-  const z = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
-  return mean + z * stdDev;
+  return _sampleNormal(mean, stdDev, u, v);
 }
 
 export default class NeuralPolicy {
