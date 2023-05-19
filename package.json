@@ -3,6 +3,7 @@
   "author": {
     "name": "Junior Rojas"
   },
+  "main": "./algovivo/index.js",
   "scripts": {
     "build": "rollup -c rollup.config.js",
     "watch": "rollup -c rollup.config.js --watch",
