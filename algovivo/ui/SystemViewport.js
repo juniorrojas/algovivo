@@ -30,12 +30,12 @@ class SystemViewport {
 
     const renderer = new mm2d.core.Renderer();
     renderer.domElement.style.border = "1px solid black";
-    renderer.setSize({
+    this.renderer = renderer;
+    this.domElement = renderer.domElement;
+    this.setSize({
       width: 400,
       height: 400
     });
-    this.renderer = renderer;
-    this.domElement = renderer.domElement;
 
     const scene = new mm2d.core.Scene();
     this.scene = scene;
@@ -141,6 +141,13 @@ class SystemViewport {
 
     this.targetCenterX = null;
     this.currentCenterX = null;
+  }
+
+  setSize(args = {}) {
+    this.renderer.setSize({
+      width: args.width,
+      height: args.height
+    });
   }
 
   render() {
