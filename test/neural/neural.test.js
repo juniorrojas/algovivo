@@ -11,11 +11,19 @@ test("neural policy", async () => {
     wasmInstance: await utils.loadWasm()
   });
   const dataDirname = `${__dirname}/data`;
-  const meshDataPromise = fsp.readFile(`${dataDirname}/mesh.json`);
-  const policyDataPromise = fsp.readFile(`${dataDirname}/policy.json`);
-  const [meshData, policyData] = (await Promise.all([
-    meshDataPromise, policyDataPromise
-  ])).map(r => JSON.parse(r));
+
+  async function loadMeshData() {
+    return JSON.parse(await fsp.readFile(`${dataDirname}/mesh.json`));
+  }
+
+  async function loadPolicyData() {
+    return JSON.parse(await fsp.readFile(`${dataDirname}/policy.json`));
+  }
+
+  const [meshData, policyData] = await Promise.all(
+    [loadMeshData, loadPolicyData].map(f => f())
+  );
+  
   system.set({
     x: meshData.x,
     springs: meshData.springs,
