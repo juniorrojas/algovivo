@@ -7,11 +7,21 @@ async function main() {
   const system = new algovivo.System({
     wasmInstance: await utils.loadWasm()
   });
-  const meshDataPromise = fsp.readFile(`${__dirname}/data/mesh.json`);
-  const policyDataPromise = fsp.readFile(`${__dirname}/data/policy.json`);
-  const [meshData, policyData] = (await Promise.all([
-    meshDataPromise, policyDataPromise
-  ])).map(r => JSON.parse(r));
+
+  const dataDirname = `${__dirname}/data`;
+
+  async function loadMeshData() {
+    return JSON.parse(await fsp.readFile(`${dataDirname}/mesh.json`));
+  }
+
+  async function loadPolicyData() {
+    return JSON.parse(await fsp.readFile(`${dataDirname}/policy.json`));
+  }
+
+  const [meshData, policyData] = await Promise.all(
+    [loadMeshData, loadPolicyData].map(f => f())
+  );
+  
   system.set({
     x: meshData.x,
     springs: meshData.springs,
