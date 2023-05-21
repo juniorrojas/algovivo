@@ -37,13 +37,21 @@ async function main() {
   divContent.appendChild(viewport.domElement);
   
   const dataRoot = "data";
-  const meshDataPromise = fetch(`${dataRoot}/mesh.json`);
-  const policyDataPromise = fetch(`${dataRoot}/policy.json`);
-  const [meshDataResponse, policyDataResponse] = await Promise.all([
-    meshDataPromise, policyDataPromise
-  ]);
 
-  const meshData = await meshDataResponse.json();
+  async function loadMeshData() {
+    const response = await fetch(`${dataRoot}/mesh.json`);
+    return await response.json();
+  }
+
+  async function loadPolicyData() {
+    const response = await fetch(`${dataRoot}/policy.json`);
+    return await response.json();
+  }
+
+  const [meshData, policyData] = await Promise.all(
+    [loadMeshData, loadPolicyData].map(f => f())
+  );
+
   system.set({
     x: meshData.x,
     springs: meshData.springs,
@@ -56,7 +64,6 @@ async function main() {
     system: system,
     stochastic: true
   });
-  const policyData = await policyDataResponse.json();
   policy.loadData(policyData);
 
   const btnBrain = new IconButton({
