@@ -6,23 +6,22 @@ const NeuralPolicy = require("./NeuralPolicy");
 
 expect.extend({ toBeCloseToArray: utils.toBeCloseToArray });
 
+const dataDirname = `${__dirname}/data`;
+
+async function loadMeshData() {
+  return JSON.parse(await fsp.readFile(`${dataDirname}/mesh.json`));
+}
+
+async function loadPolicyData() {
+  return JSON.parse(await fsp.readFile(`${dataDirname}/policy.json`));
+}
+
 test("neural policy", async () => {
-  const system = new algovivo.System({
-    wasmInstance: await utils.loadWasm()
-  });
-  const dataDirname = `${__dirname}/data`;
-
-  async function loadMeshData() {
-    return JSON.parse(await fsp.readFile(`${dataDirname}/mesh.json`));
-  }
-
-  async function loadPolicyData() {
-    return JSON.parse(await fsp.readFile(`${dataDirname}/policy.json`));
-  }
-
-  const [meshData, policyData] = await Promise.all(
-    [loadMeshData, loadPolicyData].map(f => f())
+  const [wasmInstance, meshData, policyData] = await Promise.all(
+    [utils.loadWasm, loadMeshData, loadPolicyData].map(f => f())
   );
+
+  const system = new algovivo.System({ wasmInstance });
   
   system.set({
     x: meshData.x,
