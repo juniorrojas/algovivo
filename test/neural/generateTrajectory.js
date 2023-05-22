@@ -3,25 +3,23 @@ const fsp = require("fs/promises");
 const NeuralPolicy = require("./NeuralPolicy");
 const utils = require("../utils");
 
+const dataDirname = `${__dirname}/data`;
+
+async function loadMeshData() {
+  return JSON.parse(await fsp.readFile(`${dataDirname}/mesh.json`));
+}
+
+async function loadPolicyData() {
+  return JSON.parse(await fsp.readFile(`${dataDirname}/policy.json`));
+}
+
 async function main() {
-  const system = new algovivo.System({
-    wasmInstance: await utils.loadWasm()
-  });
-
-  const dataDirname = `${__dirname}/data`;
-
-  async function loadMeshData() {
-    return JSON.parse(await fsp.readFile(`${dataDirname}/mesh.json`));
-  }
-
-  async function loadPolicyData() {
-    return JSON.parse(await fsp.readFile(`${dataDirname}/policy.json`));
-  }
-
-  const [meshData, policyData] = await Promise.all(
-    [loadMeshData, loadPolicyData].map(f => f())
+  const [wasmInstance, meshData, policyData] = await Promise.all(
+    [utils.loadWasm, loadMeshData, loadPolicyData].map(f => f())
   );
-  
+
+  const system = new algovivo.System({ wasmInstance });
+
   system.set({
     x: meshData.x,
     springs: meshData.springs,
