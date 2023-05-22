@@ -992,6 +992,12 @@ class Linear$1 extends Module$2 {
     F.add(this.output, this.bias, this.output);
     return this.output;
   }
+
+  dispose() {
+    this.weight.dispose();
+    this.bias.dispose();
+    this.output.dispose();
+  }
 }
 
 var Linear_1 = Linear$1;
