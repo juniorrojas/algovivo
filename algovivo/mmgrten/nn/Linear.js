@@ -21,6 +21,12 @@ class Linear extends Module {
     F.add(this.output, this.bias, this.output);
     return this.output;
   }
+
+  dispose() {
+    this.weight.dispose();
+    this.bias.dispose();
+    this.output.dispose();
+  }
 }
 
 module.exports = Linear;
