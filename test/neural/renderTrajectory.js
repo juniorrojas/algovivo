@@ -1,6 +1,5 @@
 const algovivo = require("algovivo");
 const { cleandir } = require("../utils");
-// const { Window, runWebServer } = require("../../demo/test/utils.js");
 const fs = require("fs");
 const { Window, runWebServer } = require("./utils");
 
