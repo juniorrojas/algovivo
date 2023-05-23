@@ -43,7 +43,7 @@ async function render(args = {}) {
         });
   
         const viewport = new algovivo.SystemViewport({ system });
-        viewport.domElement.style.border = "2px solid black";
+        viewport.domElement.style.border = "0px";
         viewport.domElement.style.boxSizing = "border-box";
         document.body.appendChild(viewport.domElement);
 
