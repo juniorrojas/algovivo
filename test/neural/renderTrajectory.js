@@ -19,7 +19,8 @@ async function render(args = {}) {
     await window.launch();
 
     const initData = JSON.parse(fs.readFileSync(`${rootDirname}/mesh.json`));
-    const d = JSON.parse(fs.readFileSync(`${rootDirname}/trajectory/0.json`));
+    const trajectoryDataDirname = `${rootDirname}/trajectory`;
+    const d = JSON.parse(fs.readFileSync(`${trajectoryDataDirname}/0.json`));
 
     await window.evaluate(async (data) => {
       async function loadWasm() {
@@ -57,7 +58,7 @@ async function render(args = {}) {
     const n = 100;
     for (let i = 0; i < n; i++) {
       console.log(i);
-      const di = JSON.parse(fs.readFileSync(`${rootDirname}/trajectory/${i}.json`));
+      const di = JSON.parse(fs.readFileSync(`${trajectoryDataDirname}/${i}.json`));
       await window.evaluate(async (data) => {
         system.x0.set(data.x);
         system.a.set(data.a);
