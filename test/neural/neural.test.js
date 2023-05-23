@@ -44,7 +44,7 @@ test("neural policy", async () => {
   let expectedNumReservedBytes = null;
   const mgr = system.memoryManager;
 
-  // TODO infer numbe of steps in trajectoryDataDirname
+  // TODO infer number of steps in trajectoryDataDirname
   for (let i = 0; i < 100; i++) {
     const data = JSON.parse(fs.readFileSync(`${trajectoryDataDirname}/${i}.json`));
 
