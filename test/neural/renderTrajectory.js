@@ -57,7 +57,7 @@ async function render(args = {}) {
     
     const n = 100;
     for (let i = 0; i < n; i++) {
-      console.log(i);
+      console.log(`${i + 1} / ${n}`);
       const di = JSON.parse(fs.readFileSync(`${trajectoryDataDirname}/${i}.json`));
       await window.evaluate(async (data) => {
         system.x0.set(data.x);
