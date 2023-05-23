@@ -2566,7 +2566,6 @@ class SystemViewport {
     this.system = args.system;
 
     const renderer = new mm2d$1.core.Renderer();
-    renderer.domElement.style.border = "1px solid black";
     this.renderer = renderer;
     this.domElement = renderer.domElement;
     this.setSize({
