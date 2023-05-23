@@ -10,10 +10,13 @@ async function render(args = {}) {
   await cleandir(framesDirname);
 
   const main = async (port) => {
+    const width = 300;
+    const height = 300;
+
     const window = new Window({
       indexUrl: `http://localhost:${port}`,
-      width: 400,
-      height: 400,
+      width: width,
+      height: height,
       headless: true
     });
     await window.launch();
@@ -44,6 +47,7 @@ async function render(args = {}) {
         });
   
         const viewport = new algovivo.SystemViewport({ system });
+        viewport.setSize({ width: data.width, height: data.height });
         viewport.domElement.style.border = "0px";
         viewport.domElement.style.boxSizing = "border-box";
         document.body.appendChild(viewport.domElement);
@@ -53,7 +57,7 @@ async function render(args = {}) {
       }
 
       await main();
-    }, { x: d.x0, triangles: initData.triangles, springs: initData.springs });
+    }, { width, height, x: d.x0, triangles: initData.triangles, springs: initData.springs });
     
     const n = 100;
     for (let i = 0; i < n; i++) {
