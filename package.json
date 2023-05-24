@@ -4,6 +4,11 @@
     "name": "Junior Rojas"
   },
   "main": "./algovivo/index.js",
+  "module": "./build/algovivo.module.js",
+  "exports": {
+    "import": "./build/algovivo.module.js",
+    "require": "./algovivo/index.js"
+  },
   "scripts": {
     "build": "rollup -c rollup.config.js",
     "watch": "rollup -c rollup.config.js --watch",
