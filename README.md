@@ -30,10 +30,10 @@ You can create a simple simulation with one triangle and two muscles, where one 
 </head>
 <body>
   <script type="module">
-    import algovivo from "https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@45c7b3c641886aa79f8d8ff8365a44517fc4320b/build/algovivo.module.min.js";
+    import algovivo from "https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@2c789142c3f0557cf1fe00ad1b22ecf68e31a6ea/build/algovivo.module.min.js";
 
     async function loadWasm() {
-      const response = await fetch("https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@45c7b3c641886aa79f8d8ff8365a44517fc4320b/build/algovivo.wasm");
+      const response = await fetch("https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@2c789142c3f0557cf1fe00ad1b22ecf68e31a6ea/build/algovivo.wasm");
       const wasm = await WebAssembly.instantiateStreaming(response);
       return wasm.instance;
     }
@@ -96,16 +96,3 @@ E(x, a) = \frac{k}{2} \left(\frac{l(x)}{a\ l_0} - 1\right)^2
 $$
 
 More details about this and other energy functions used in the simulation can be found [here](https://arxiv.org/abs/2102.05791).
-
-## BibTeX
-
-To cite this in an academic context, please use the following BibTeX entry:
-
-```bibtex
-@misc{algovivo,
-  author = {Junior Rojas},
-  title = {Algovivo: An energy-based formulation for soft-bodied virtual creatures},
-  howpublished = {\url{https://github.com/juniorrojas/algovivo}},
-  year = {2023}
-}
-```
