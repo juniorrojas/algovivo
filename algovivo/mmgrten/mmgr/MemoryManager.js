@@ -7,6 +7,8 @@ class MemoryManager {
 
     if (heapBase == null) heapBase = 0;
 
+    this.ptrToSlot = new Map();
+
     this.slots = new linked.List();
     this.freeSlots = new linked.List();
     this.reservedSlots = new linked.List();
@@ -109,6 +111,17 @@ class MemoryManager {
       throw new Error("no valid free slot available");
     }
     return validFreeSlot.reserve(size);
+  }
+
+  malloc(n) {
+    const slot = this._malloc(n);
+    this.ptrToSlot.set(slot.ptr, slot);
+    return slot.ptr;
+  }
+
+  free(ptr) {
+    const slot = this.ptrToSlot.get(ptr);
+    slot.free();
   }
 }
 

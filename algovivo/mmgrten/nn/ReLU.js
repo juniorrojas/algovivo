@@ -16,6 +16,10 @@ class ReLU extends Module {
     ten.functional.relu(x, this.output);
     return this.output;
   }
+
+  dispose() {
+    if (this.output != null) this.output.dispose();
+  }
 }
 
 module.exports = ReLU;

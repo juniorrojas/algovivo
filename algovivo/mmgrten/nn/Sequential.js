@@ -14,6 +14,12 @@ class Sequential extends Module {
     });
     return x1;
   }
+
+  dispose() {
+    this.layers.forEach(layer => {
+      layer.dispose();
+    });
+  }
 }
 
 module.exports = Sequential;
