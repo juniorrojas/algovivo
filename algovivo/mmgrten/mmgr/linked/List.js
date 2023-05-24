@@ -66,6 +66,15 @@ class List {
   iter() {
     return new ListIter(this);
   }
+
+  *[Symbol.iterator]() {
+    const it = this.iter();
+    let r = it.next();
+    while (!r.done) {
+      yield r.value;
+      r = it.next();
+    }
+  }
 }
 
 module.exports = List;

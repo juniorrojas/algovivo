@@ -16,6 +16,10 @@ class Tanh extends Module {
     ten.functional.tanh(x, this.output);
     return this.output;
   }
+
+  dispose() {
+    if (this.output != null) this.output.dispose();
+  }
 }
 
 module.exports = Tanh;

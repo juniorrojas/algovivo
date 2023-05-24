@@ -16,7 +16,9 @@ class Sequential extends Module {
   }
 
   dispose() {
-    
+    this.layers.forEach(layer => {
+      layer.dispose();
+    });
   }
 }
 

@@ -67,7 +67,7 @@ class Engine {
     if (!(x instanceof Tensor)) {
       throw new Error(`expected tensor, found ${typeof x}: ${x}`);
     }
-    return this.zeros(x.shape);
+    return this.zeros(x.shape.toArray());
   }
 
   zeros(_shape) {
