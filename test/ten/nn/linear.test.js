@@ -5,7 +5,6 @@ test("linear", async () => {
   const ten = await mmgrten.engine({
     wasmInstance: await utils.loadWasm()
   });
-
   const mgr = ten.mgr;
 
   const bytes0 = ten.mgr.numReservedBytes();
@@ -34,7 +33,7 @@ test("linear", async () => {
   ]);
 
   expect(mgr.numReservedBytes()).not.toBe(bytes0);
-  input.dispose();
   linear.dispose();
+  input.dispose();
   expect(mgr.numReservedBytes()).toBe(bytes0);
 });

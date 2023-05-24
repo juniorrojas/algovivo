@@ -27,8 +27,7 @@ test("sequential", async () => {
 
   const output = model.forward(input);
 
-  expect(output.toArray().length).toBe(2);
-  
+  expect(output.toArray().length).toBe(2);  
   expect(mgr.numReservedBytes()).not.toBe(bytes0);
   model.dispose();
   input.dispose();
