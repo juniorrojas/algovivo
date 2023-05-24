@@ -228,19 +228,52 @@ class System {
   }
 
   dispose() {
-    if (this.x0 != null) this.x0.dispose();
-    if (this.x1 != null) this.x1.dispose();
-    if (this.xGrad != null) this.xGrad.dispose();
-    if (this.xTmp != null) this.xTmp.dispose();
-    if (this.v0 != null) this.v0.dispose();
-    if (this.v1 != null) this.v1.dispose();
+    if (this.x0 != null) {
+      this.x0.dispose();
+      this.x0 = null;
+    }
+    if (this.x1 != null) {
+      this.x1.dispose();
+      this.x1 = null;
+    }
+    if (this.xGrad != null) {
+      this.xGrad.dispose();
+      this.xGrad = null;
+    }
+    if (this.xTmp != null) {
+      this.xTmp.dispose();
+      this.xTmp = null;
+    }
+    if (this.v0 != null) {
+      this.v0.dispose();
+      this.v0 = null;
+    }
+    if (this.v1 != null) {
+      this.v1.dispose();
+      this.v1 = null;
+    }
 
-    if (this.triangles != null) this.triangles.free();
-    if (this.rsi != null) this.rsi.dispose();
+    if (this.triangles != null) {
+      this.triangles.free();
+      this.triangles = null;
+    }
+    if (this.rsi != null) {
+      this.rsi.dispose();
+      this.rsi = null;
+    }
 
-    if (this.springs != null) this.springs.free();
-    if (this.l0 != null) this.l0.dispose();
-    if (this.a != null) this.a.dispose();
+    if (this.springs != null) {
+      this.springs.free();
+      this.springs = null;
+    }
+    if (this.l0 != null) {
+      this.l0.dispose();
+      this.l0 = null;
+    }
+    if (this.a != null) {
+      this.a.dispose();
+      this.a = null;
+    }
   }
 }
 
