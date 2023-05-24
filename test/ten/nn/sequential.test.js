@@ -7,6 +7,7 @@ test("sequential", async () => {
   });
   const nn = ten.nn;
   const mgr = ten.mgr;
+
   const bytes0 = ten.mgr.numReservedBytes();
 
   const inputSize = 3;
@@ -24,10 +25,10 @@ test("sequential", async () => {
     4,
     3
   ]);
-
+  
   const output = model.forward(input);
+  expect(output.toArray().length).toBe(2);
 
-  expect(output.toArray().length).toBe(2);  
   expect(mgr.numReservedBytes()).not.toBe(bytes0);
   model.dispose();
   input.dispose();
