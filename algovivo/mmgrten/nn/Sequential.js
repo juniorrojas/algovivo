@@ -14,6 +14,10 @@ class Sequential extends Module {
     });
     return x1;
   }
+
+  dispose() {
+    
+  }
 }
 
 module.exports = Sequential;
