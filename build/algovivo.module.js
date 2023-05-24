@@ -129,6 +129,15 @@ class List {
   iter() {
     return new ListIter(this);
   }
+
+  *[Symbol.iterator]() {
+    const it = this.iter();
+    let r = it.next();
+    while (!r.done) {
+      yield r.value;
+      r = it.next();
+    }
+  }
 }
 
 var List_1 = List;
@@ -328,6 +337,8 @@ class MemoryManager {
 
     if (heapBase == null) heapBase = 0;
 
+    this.ptrToSlot = new Map();
+
     this.slots = new linked.List();
     this.freeSlots = new linked.List();
     this.reservedSlots = new linked.List();
@@ -430,6 +441,17 @@ class MemoryManager {
       throw new Error("no valid free slot available");
     }
     return validFreeSlot.reserve(size);
+  }
+
+  malloc(n) {
+    const slot = this._malloc(n);
+    this.ptrToSlot.set(slot.ptr, slot);
+    return slot.ptr;
+  }
+
+  free(ptr) {
+    const slot = this.ptrToSlot.get(ptr);
+    slot.free();
   }
 }
 
@@ -965,6 +987,12 @@ class Sequential$1 extends Module$3 {
     });
     return x1;
   }
+
+  dispose() {
+    this.layers.forEach(layer => {
+      layer.dispose();
+    });
+  }
 }
 
 var Sequential_1 = Sequential$1;
@@ -1020,6 +1048,10 @@ class ReLU$1 extends Module$1 {
     ten.functional.relu(x, this.output);
     return this.output;
   }
+
+  dispose() {
+    if (this.output != null) this.output.dispose();
+  }
 }
 
 var ReLU_1 = ReLU$1;
@@ -1041,6 +1073,10 @@ class Tanh$1 extends Module {
     }
     ten.functional.tanh(x, this.output);
     return this.output;
+  }
+
+  dispose() {
+    if (this.output != null) this.output.dispose();
   }
 }
 
@@ -1145,7 +1181,7 @@ class Engine$1 {
     if (!(x instanceof Tensor)) {
       throw new Error(`expected tensor, found ${typeof x}: ${x}`);
     }
-    return this.zeros(x.shape);
+    return this.zeros(x.shape.toArray());
   }
 
   zeros(_shape) {
