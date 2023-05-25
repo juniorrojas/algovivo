@@ -1,6 +1,8 @@
 {
+  "name": "algovivo-compute-rest-shape",
   "type": "module",
   "dependencies": {
-    "algovivo": "file:.."
+    "algovivo": "file:..",
+    "argparse": "^2.0.1"
   }
 }

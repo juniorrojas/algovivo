@@ -2,6 +2,7 @@ import algovivo from "algovivo";
 import fsp from "fs/promises";
 import { fileURLToPath } from "url";
 import { dirname } from "path";
+import argparse from "argparse";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -14,10 +15,16 @@ async function loadWasm() {
 }
 
 async function main() {
+  const argParser = argparse.ArgumentParser();
+  argParser.addArgument("input");
+  const args = argParser.parseArgs();
+
   const wasmInstance = await loadWasm();
   const system = new algovivo.System({ wasmInstance });
-  
-  const filename = __dirname + "/data/sample.json";
+
+  // const filename = __dirname + "/data/sample.json";
+  const filename = args.input;
+
   const meshData = JSON.parse((await fsp.readFile(filename)).toString());
   system.set({
     x: meshData.x,
