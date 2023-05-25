@@ -66,13 +66,17 @@ async function main() {
   });
   policy.loadData(policyData);
 
+  window.togglePolicy = () => {
+    policy.active = !policy.active;
+    if (policy.active) btnBrain.setActiveStyle();
+    else btnBrain.setInactiveStyle();
+  }
+
   const btnBrain = new IconButton({
     src: "assets/brain.svg"
   });
   btnBrain.domElement.addEventListener("click", () => {
-    policy.active = !policy.active;
-    if (policy.active) btnBrain.setActiveStyle();
-    else btnBrain.setInactiveStyle();
+    togglePolicy();
   });
   document.body.appendChild(btnBrain.domElement);
 
