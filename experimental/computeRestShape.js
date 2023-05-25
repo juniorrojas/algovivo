@@ -24,8 +24,14 @@ async function main() {
     springs: meshData.springs,
     triangles: meshData.triangles
   });
-  console.log(system.l0.toArray());
-  console.log(system.rsi.toArray());
+  console.log(`vertices: ${system.numVertices()}`);
+  console.log(`springs: ${system.numSprings()}`);
+  console.log(`triangles: ${system.numTriangles()}`);
+  meshData.l0 = system.l0.toArray();
+  meshData.rsi = system.rsi.toArray();
+  const outputFilename = __dirname + "/mesh.out.json";
+  await fsp.writeFile(outputFilename, JSON.stringify(meshData));
+  console.log(`saved to ${outputFilename}`);
 }
 
 main();
