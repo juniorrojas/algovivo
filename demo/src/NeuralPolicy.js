@@ -98,4 +98,11 @@ export default class NeuralPolicy {
     this.centerVertexId = data.center_vertex_id ?? (() => { throw new Error("center_vertex_id required") })();
     this.forwardVertexId = data.forward_vertex_id ?? (() => { throw new Error("forward_vertex_id required") })();
   }
+
+  dispose() {
+    if (this.projectedX != null) this.projectedX.dispose();
+    if (this.projectedV != null) this.projectedV.dispose();
+    if (this.input != null) this.input.dispose();
+    this.model.dispose();
+  }
 }
