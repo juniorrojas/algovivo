@@ -59,7 +59,7 @@ async function render(args = {}) {
       await main();
     }, { width, height, x: d.x0, triangles: initData.triangles, springs: initData.springs });
     
-    const n = getNumFilesWithExtension(trajectoryDataDirname, ".json");
+    const n = await getNumFilesWithExtension(trajectoryDataDirname, ".json");
     for (let i = 0; i < n; i++) {
       console.log(`${i + 1} / ${n}`);
       const stepData = JSON.parse(fs.readFileSync(`${trajectoryDataDirname}/${i}.json`));
