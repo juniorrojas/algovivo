@@ -4,5 +4,8 @@
   "dependencies": {
     "algovivo": "file:..",
     "argparse": "^2.0.1"
+  },
+  "bin": {
+    "algovivo-compute-rest-shape": "bin/computeRestShape.js"
   }
 }
