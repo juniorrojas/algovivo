@@ -18,12 +18,12 @@ async function loadWasm() {
 async function main() {
   const argParser = argparse.ArgumentParser();
   argParser.addArgument("input");
+  argParser.addArgument("-o");
   const args = argParser.parseArgs();
 
   const wasmInstance = await loadWasm();
   const system = new algovivo.System({ wasmInstance });
 
-  // const filename = __dirname + "/data/sample.json";
   const filename = args.input;
 
   const meshData = JSON.parse((await fsp.readFile(filename)).toString());
@@ -37,7 +37,9 @@ async function main() {
   console.log(`triangles: ${system.numTriangles()}`);
   meshData.l0 = system.l0.toArray();
   meshData.rsi = system.rsi.toArray();
-  const outputFilename = "mesh.out.json";
+  
+  const outputFilename = args.o;
+
   await fsp.writeFile(outputFilename, JSON.stringify(meshData));
   console.log(`saved to ${outputFilename}`);
 }
