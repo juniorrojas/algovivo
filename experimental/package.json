@@ -2,7 +2,7 @@
   "name": "algovivo-compute-rest-shape",
   "type": "module",
   "dependencies": {
-    "algovivo": "file:..",
+    "algovivo": "github:juniorrojas/algovivo#master",
     "argparse": "^2.0.1"
   },
   "bin": {
