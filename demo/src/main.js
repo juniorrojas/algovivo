@@ -1,4 +1,4 @@
-import algovivo from "../../build/algovivo.module.min.js";
+import algovivo from "../../build/algovivo.min.mjs";
 import NeuralPolicy from "./NeuralPolicy.js";
 import IconButton from "./IconButton.js";
 import { makeGitHubCorner, makeHeader } from "./ui.js";

@@ -4,9 +4,9 @@
     "name": "Junior Rojas"
   },
   "main": "./algovivo/index.js",
-  "module": "./build/algovivo.module.js",
+  "module": "./build/algovivo.mjs",
   "exports": {
-    "import": "./build/algovivo.module.js",
+    "import": "./build/algovivo.mjs",
     "require": "./algovivo/index.js"
   },
   "scripts": {
