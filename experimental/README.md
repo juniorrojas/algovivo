@@ -1,7 +1,7 @@
 # bin utility to compute rest shapes
 
 ```sh
-npm install git+ssh://git@github.com/juniorrojas/algovivo#compute-rest-shape
+npm install https://gitpkg.now.sh/juniorrojas/algovivo/experimental?compute-rest-shape
 ```
 
 Add to your `package.json`

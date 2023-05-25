@@ -8,8 +8,7 @@ import argparse from "argparse";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-async function loadWasm() {
-  const wasmFilename = __dirname + "/../node_modules/algovivo/build/algovivo.wasm";
+async function loadWasm(wasmFilename) {
   const wasm = await WebAssembly.compile(await fsp.readFile(wasmFilename));
   const wasmInstance = await WebAssembly.instantiate(wasm);
   return wasmInstance;
@@ -19,9 +18,10 @@ async function main() {
   const argParser = argparse.ArgumentParser();
   argParser.addArgument("input");
   argParser.addArgument("-o");
+  argParser.addArgument("--wasm", { default: __dirname + "/../node_modules/algovivo/build/algovivo.wasm" })
   const args = argParser.parseArgs();
 
-  const wasmInstance = await loadWasm();
+  const wasmInstance = await loadWasm(args.wasm);
   const system = new algovivo.System({ wasmInstance });
 
   const filename = args.input;
