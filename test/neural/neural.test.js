@@ -57,7 +57,6 @@ test("neural policy", async () => {
   let expectedNumReservedBytes = null;
   const mgr = system.memoryManager;
 
-
   const n = await inferNumSteps(trajectoryDataDirname);
   expect(n).toBe(100);
   for (let i = 0; i < n; i++) {
