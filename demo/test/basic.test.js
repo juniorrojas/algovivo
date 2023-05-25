@@ -5,8 +5,8 @@ test("main", async () => {
     const window = new utils.Window({
       headless: true,
       indexUrl: `http://localhost:${port}`,
-      width: 800,
-      height: 800
+      width: 700,
+      height: 650
     });
     try {
       await window.launch();
@@ -25,6 +25,7 @@ test("main", async () => {
         return system.numVertices();
       });
       expect(numVertices).toBe(28);
+      await window.screenshot({ path: `${__dirname}/screenshot.out.png` });
     } finally {
       await window.close();
     }
