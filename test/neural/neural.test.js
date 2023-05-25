@@ -44,7 +44,7 @@ test("neural policy", async () => {
   let expectedNumReservedBytes = null;
   const mgr = system.memoryManager;
 
-  const n = await utils.getNumFilesWithExtension(trajectoryDataDirname);
+  const n = await utils.getNumFilesWithExtension(trajectoryDataDirname, ".json");
   expect(n).toBe(100);
   for (let i = 0; i < n; i++) {
     const data = JSON.parse(fs.readFileSync(`${trajectoryDataDirname}/${i}.json`));
