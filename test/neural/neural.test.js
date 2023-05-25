@@ -3,23 +3,10 @@ const utils = require("../utils");
 const fsp = require("fs/promises");
 const fs = require("fs");
 const NeuralPolicy = require("./NeuralPolicy");
-const path = require("path");
 
 expect.extend({ toBeCloseToArray: utils.toBeCloseToArray });
 
 const dataDirname = `${__dirname}/data`;
-
-function inferNumSteps(dirname) {
-  return new Promise((resolve, reject) => {
-    fs.readdir(dirname, (err, files) => {
-      if (err) {
-        throw new Error(`Error reading directory ${err}`);
-      }
-      const filenames = files.filter(file => path.extname(file).toLowerCase() === ".json");
-      resolve(filenames.length);
-    });
-  });
-}
 
 async function loadMeshData() {
   return JSON.parse(await fsp.readFile(`${dataDirname}/mesh.json`));
@@ -57,7 +44,7 @@ test("neural policy", async () => {
   let expectedNumReservedBytes = null;
   const mgr = system.memoryManager;
 
-  const n = await inferNumSteps(trajectoryDataDirname);
+  const n = await utils.getNumFilesWithExtension(trajectoryDataDirname);
   expect(n).toBe(100);
   for (let i = 0; i < n; i++) {
     const data = JSON.parse(fs.readFileSync(`${trajectoryDataDirname}/${i}.json`));

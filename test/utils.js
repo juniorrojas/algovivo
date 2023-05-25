@@ -1,5 +1,6 @@
 const fsp = require("fs/promises");
 const fs = require("fs");
+const path = require("path");
 
 function toBeCloseToArray(a, b) {
   if ((typeof a == "number") && (typeof b == "number")) {
@@ -62,8 +63,21 @@ async function cleandir(dirname) {
   }
 }
 
+function getNumFilesWithExtension(dirname, ext = ".json") {
+  return new Promise((resolve, reject) => {
+    fs.readdir(dirname, (err, files) => {
+      if (err) {
+        throw new Error(`Error reading directory ${err}`);
+      }
+      const filenames = files.filter(file => path.extname(file).toLowerCase() === ext);
+      resolve(filenames.length);
+    });
+  });
+}
+
 module.exports = {
   loadWasm,
   toBeCloseToArray,
-  cleandir
+  cleandir,
+  getNumFilesWithExtension
 };
