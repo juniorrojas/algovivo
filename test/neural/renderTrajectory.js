@@ -62,12 +62,12 @@ async function render(args = {}) {
     const n = getNumFilesWithExtension(trajectoryDataDirname, ".json");
     for (let i = 0; i < n; i++) {
       console.log(`${i + 1} / ${n}`);
-      const di = JSON.parse(fs.readFileSync(`${trajectoryDataDirname}/${i}.json`));
+      const stepData = JSON.parse(fs.readFileSync(`${trajectoryDataDirname}/${i}.json`));
       await window.evaluate(async (data) => {
         system.x0.set(data.x);
         system.a.set(data.a);
         viewport.render();
-      }, { x: di.x0, a: di.a0 });
+      }, { x: stepData.x0, a: stepData.a0 });
       await window.screenshot({ path: `${framesDirname}/${i}.png` });
     }
 
