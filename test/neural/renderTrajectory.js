@@ -1,5 +1,5 @@
 const algovivo = require("../../algovivo");
-const { cleandir } = require("../utils");
+const { cleandir, getNumFilesWithExtension } = require("../utils");
 const fs = require("fs");
 const { Window, runWebServer } = require("./utils");
 
@@ -59,7 +59,7 @@ async function render(args = {}) {
       await main();
     }, { width, height, x: d.x0, triangles: initData.triangles, springs: initData.springs });
     
-    const n = 100;
+    const n = getNumFilesWithExtension(trajectoryDataDirname, ".json");
     for (let i = 0; i < n; i++) {
       console.log(`${i + 1} / ${n}`);
       const di = JSON.parse(fs.readFileSync(`${trajectoryDataDirname}/${i}.json`));
