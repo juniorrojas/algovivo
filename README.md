@@ -30,10 +30,10 @@ You can create a simple simulation with one triangle and two muscles, where one 
 </head>
 <body>
   <script type="module">
-    import algovivo from "https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@375a5aa7497616fe2f8a7a39393226fe3c817bd4/build/algovivo.module.min.js";
+    import algovivo from "https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@0931d9a84724b4ef06093434ebfdf1125756f59c/build/algovivo.min.mjs";
 
     async function loadWasm() {
-      const response = await fetch("https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@375a5aa7497616fe2f8a7a39393226fe3c817bd4/build/algovivo.wasm");
+      const response = await fetch("https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@0931d9a84724b4ef06093434ebfdf1125756f59c/build/algovivo.wasm");
       const wasm = await WebAssembly.instantiateStreaming(response);
       return wasm.instance;
     }
@@ -79,7 +79,7 @@ You can create a simple simulation with one triangle and two muscles, where one 
 </html>
 ```
 
-The code above imports the ES6 module `algovivo.module.min.js` and loads the WASM `algovivo.wasm` from [jsDelivr](https://www.jsdelivr.com/). To serve these files from your own server, you can download them from the [build](./build) directory.
+The code above imports the ES6 module `algovivo.min.mjs` and loads the compiled WASM `algovivo.wasm` from [jsDelivr](https://www.jsdelivr.com/). To serve these files from your own server, you can download them from the [build](./build) directory.
 
 ## muscle commands
 
