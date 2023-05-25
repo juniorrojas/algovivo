@@ -14,6 +14,7 @@ export default class NeuralPolicy {
     this.ten = this.system.ten;
 
     this.stochastic = args.stochastic ?? false;
+    this.active = args.active ?? false;
 
     const system = this.system;
     const ten = this.ten;
@@ -27,8 +28,6 @@ export default class NeuralPolicy {
     const inputSize = numVertices * spaceDim * 2;
     const outputSize = numSprings;
     this.input = ten.zeros([inputSize]);
-
-    this.active = false;
 
     const nn = ten.nn;
     this.model = nn.Sequential(
