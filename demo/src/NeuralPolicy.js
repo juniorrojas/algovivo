@@ -13,8 +13,9 @@ export default class NeuralPolicy {
     this.system = args.system;
     this.ten = this.system.ten;
 
-    this.stochastic = args.stochastic ?? false;
     this.active = args.active ?? false;
+    this.stochastic = args.stochastic ?? false;
+    this.stdDev = args.stdDev ?? 0.05;
 
     const system = this.system;
     const ten = this.ten;
@@ -70,7 +71,7 @@ export default class NeuralPolicy {
       if (this.active) {
         da = output.get([i]);
         if (this.stochastic) {
-          da += sampleNormal(0, 0.1);
+          da += sampleNormal(0, this.stdDev);
         }
       } else {
         da = 1;
@@ -97,5 +98,12 @@ export default class NeuralPolicy {
     this.maxAbsDa = data.max_abs_da ?? (() => { throw new Error("max_abs_da required") })();
     this.centerVertexId = data.center_vertex_id ?? (() => { throw new Error("center_vertex_id required") })();
     this.forwardVertexId = data.forward_vertex_id ?? (() => { throw new Error("forward_vertex_id required") })();
+  }
+
+  dispose() {
+    if (this.projectedX != null) this.projectedX.dispose();
+    if (this.projectedV != null) this.projectedV.dispose();
+    if (this.input != null) this.input.dispose();
+    this.model.dispose();
   }
 }
