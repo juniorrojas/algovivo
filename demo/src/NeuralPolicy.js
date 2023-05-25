@@ -13,8 +13,9 @@ export default class NeuralPolicy {
     this.system = args.system;
     this.ten = this.system.ten;
 
-    this.stochastic = args.stochastic ?? false;
     this.active = args.active ?? false;
+    this.stochastic = args.stochastic ?? false;
+    this.stdDev = args.stdDev ?? 0.05;
 
     const system = this.system;
     const ten = this.ten;
@@ -70,7 +71,7 @@ export default class NeuralPolicy {
       if (this.active) {
         da = output.get([i]);
         if (this.stochastic) {
-          da += sampleNormal(0, 0.1);
+          da += sampleNormal(0, this.stdDev);
         }
       } else {
         da = 1;
