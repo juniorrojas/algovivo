@@ -1,6 +1,6 @@
 # algovivo
 
-[![test](https://github.com/juniorrojas/algovivo/actions/workflows/test.yml/badge.svg)](https://github.com/juniorrojas/algovivo/actions/workflows/test.yml)
+[![test](https://github.com/juniorrojas/algovivo/actions/workflows/test.yml/badge.svg)](https://github.com/juniorrojas/algovivo/actions/workflows/test.yml) [![test-demo](https://github.com/juniorrojas/algovivo/actions/workflows/test-demo.yml/badge.svg)](https://github.com/juniorrojas/algovivo/actions/workflows/test-demo.yml)
 
 A JavaScript + WebAssembly implementation of an energy-based formulation for soft-bodied virtual creatures.
 
