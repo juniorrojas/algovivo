@@ -1,3 +1,10 @@
+function sampleNormal(mean, stdDev) {
+  const u = 1 - Math.random();
+  const v = Math.random();
+  const z = Math.sqrt(-2.0 * Math.log(u)) * Math.cos(2.0 * Math.PI * v);
+  return mean + z * stdDev;
+}
+
 export default class NeuralPolicy {
   constructor(args = {}) {
     if (args.system == null) {
@@ -7,6 +14,7 @@ export default class NeuralPolicy {
     this.ten = this.system.ten;
 
     this.stochastic = args.stochastic ?? false;
+    this.active = args.active ?? false;
 
     const system = this.system;
     const ten = this.ten;
@@ -20,8 +28,6 @@ export default class NeuralPolicy {
     const inputSize = numVertices * spaceDim * 2;
     const outputSize = numSprings;
     this.input = ten.zeros([inputSize]);
-
-    this.active = false;
 
     const nn = ten.nn;
     this.model = nn.Sequential(
@@ -64,7 +70,7 @@ export default class NeuralPolicy {
       if (this.active) {
         da = output.get([i]);
         if (this.stochastic) {
-          da += (Math.random() - 0.5) * 0.5;
+          da += sampleNormal(0, 0.1);
         }
       } else {
         da = 1;
