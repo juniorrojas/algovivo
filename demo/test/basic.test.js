@@ -6,7 +6,7 @@ test("main", async () => {
       headless: true,
       indexUrl: `http://localhost:${port}`,
       width: 700,
-      height: 650
+      height: 700
     });
     try {
       await window.launch();
@@ -25,6 +25,9 @@ test("main", async () => {
         return system.numVertices();
       });
       expect(numVertices).toBe(28);
+      
+      await window.page.waitForNetworkIdle();
+
       await window.screenshot({ path: `${__dirname}/screenshot.out.png` });
     } finally {
       await window.close();
