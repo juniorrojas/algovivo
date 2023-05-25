@@ -9,11 +9,11 @@ Add to your `package.json`
 ```json
 {
   "scripts": {
-    "compute-rest": "algovivo-compute-rest-shape"
+    "compute-rest-shape": "algovivo-compute-rest-shape"
   }
 }
 ```
 
 ```sh
-npm run compute-rest-shape -- mesh.json -o mesh.out.json
+npm run compute-rest-shape -- mesh.json -o mesh.out.json --wasm node_modules/algovivo/build/algovivo.wasm
 ```
