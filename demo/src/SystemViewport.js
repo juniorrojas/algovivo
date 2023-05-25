@@ -1,4 +1,4 @@
-import algovivo from "../../build/algovivo.module.min.js";
+import algovivo from "../../build/algovivo.min.mjs";
 
 export default class SystemViewport extends algovivo.SystemViewport {
   constructor(args = {}) {
