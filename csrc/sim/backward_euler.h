@@ -7,6 +7,8 @@
 #include "framenorm.h"
 #include "enzyme.h"
 
+namespace sim {
+
 extern "C"
 float backward_euler_loss(
   int num_vertices,
@@ -286,7 +288,6 @@ void backward_euler_update_v(
   );
 }
 
-extern "C"
 void backward_euler_update(
   int num_vertices,
   float* x, float* x_grad, float* x_tmp,
@@ -328,4 +329,6 @@ void backward_euler_update(
     fixed_vertex_id
   );
   backward_euler_update_v(num_vertices, x0, v, x, v1, h);
+}
+
 }
