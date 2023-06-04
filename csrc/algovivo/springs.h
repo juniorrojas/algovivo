@@ -39,7 +39,7 @@ void accumulate_spring_energy(
 
   vec2_sub(d, p1, p2);
   const auto q = dx * dx + dy * dy;
-  float l = __builtin_sqrt(q + 1e-6);
+  const float l = __builtin_sqrt(q + 1e-6);
   const auto al0 = a * l0;
   const auto dl = (l - al0) / al0;
   const auto k = 90.0;
