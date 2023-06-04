@@ -40,7 +40,8 @@ float backward_euler_loss(
 
   for (int i = 0; i < num_vertices; i++) {
     vertex_loop_context(i, space_dim, x0, x, v0);
-    accumulate_inertial_energy(inertial_energy,
+    accumulate_inertial_energy(
+      inertial_energy,
       px, py,
       vx, vy,
       p0x, p0y,
@@ -53,7 +54,7 @@ float backward_euler_loss(
     const auto offset = i * 2;
     const auto i1 = springs[offset    ];
     const auto i2 = springs[offset + 1];
-    
+
     vec2_get(p1, x, i1);
     vec2_get(p2, x, i2);
 
@@ -179,56 +180,74 @@ void backward_euler_loss_grad(
   );
 }
 
-#define eval_loss(x1) backward_euler_loss(num_vertices, x1, x0, v0, h, r, num_springs, springs, num_triangles, triangles, rsi, a, l0)
+struct System {
+  int num_vertices;
+  
+  float* x_grad;
+  float* x_tmp;
+  float* x0;
+  float* v0;
+  float h;
+  float* r;
 
-extern "C"
+  int num_springs;
+  int* springs;
+
+  int num_triangles;
+  int* triangles;
+  float* rsi;
+
+  float* a;
+  float* l0;
+
+  int fixed_vertex_id;
+
+  float forward(float* x) {
+    return backward_euler_loss(
+      num_vertices, x,
+      x0, v0, h, r,
+      num_springs, springs,
+      num_triangles,
+      triangles,
+      rsi,
+      a, l0
+    );
+  }
+
+  void backward(float* x, float* x_grad) {
+    backward_euler_loss_grad(
+      num_vertices, x,
+      x_grad, x0, v0, h, r,
+      num_springs, springs,
+      num_triangles, triangles, rsi,
+      a, l0
+    );
+  }
+};
+
 void backward_euler_update_x(
-  int num_vertices,
-  float* x, float* x_grad, float* x_tmp,
-  float* x0,
-  float* v0, float* v1,
-  float h,
-  float* r,
-
-  int num_springs,
-  int* springs,
-
-  int num_triangles,
-  int* triangles,
-  float* rsi,
-
-  float* a,
-  float* l0,
-
-  int fixed_vertex_id
+  System system,
+  float* x // , float* x_grad, float* x_tmp,
 ) {
-  int space_dim = 2;
+  auto const space_dim = 2;
+  auto const num_vertices = system.num_vertices;
+  auto const x0 = system.x0;
+  auto const v = system.v0;
+  auto const fixed_vertex_id = system.fixed_vertex_id;
+  auto const h = system.h;
+  auto x_grad = system.x_grad;
+  auto x_tmp = system.x_tmp;
 
   for (int i = 0; i < num_vertices; i++) {
     int offset = i * space_dim;
-    x[offset    ] = x0[offset    ] + h * v0[offset    ];
-    x[offset + 1] = x0[offset + 1] + h * v0[offset + 1];
+    x[offset    ] = x0[offset    ] + h * v[offset    ];
+    x[offset + 1] = x0[offset + 1] + h * v[offset + 1];
   }
 
   int max_optim_iters = 100;
   for (int i = 0; i < max_optim_iters; i++) {
     zero_(num_vertices * space_dim, x_grad);
-    backward_euler_loss_grad(
-      num_vertices,
-      x, x_grad,
-      x0,
-      v0, h,
-      r,
-      num_springs,
-      springs,
-      
-      num_triangles,
-      triangles,
-      rsi,
-
-      a,
-      l0
-    );
+    system.backward(x, x_grad);
 
     if (fixed_vertex_id > -1) {
       x_grad[fixed_vertex_id * space_dim    ] = 0.0;
@@ -250,11 +269,11 @@ void backward_euler_update_x(
     int max_line_search_iters = 20;
     float backtracking_scale = 0.3;
 
-    float loss0 = eval_loss(x);
+    float loss0 = system.forward(x);
 
     for (int i = 0; i < max_line_search_iters; i++) {
       addmuls_(num_vertices * space_dim, x, x_grad, -step_size, x_tmp);
-      float loss1 = eval_loss(x_tmp);
+      float loss1 = system.forward(x_tmp);
       if (loss1 < loss0) {
         break;
       } else {
@@ -265,7 +284,6 @@ void backward_euler_update_x(
     addmuls_(num_vertices * space_dim, x, x_grad, -step_size, x);
   }
 }
-
 
 extern "C"
 void backward_euler_update_v(
@@ -289,46 +307,21 @@ void backward_euler_update_v(
 }
 
 void backward_euler_update(
-  int num_vertices,
-  float* x, float* x_grad, float* x_tmp,
-  float* x0,
-  float* v0, float* v1,
-  float h,
-  float* r,
-
-  int num_springs,
-  int* springs,
-
-  int num_triangles,
-  int* triangles,
-  float* rsi,
-
-  float* a,
-  float* l0,
-
-  int fixed_vertex_id
+  System system,
+  float* x1,
+  float* v1
 ) {
   backward_euler_update_x(
-    num_vertices,
-    x, x_grad, x_tmp,
-    x0,
-    v0, v1,
-    h,
-    r,
-
-    num_springs,
-    springs,
-
-    num_triangles,
-    triangles,
-    rsi,
-
-    a,
-    l0,
-
-    fixed_vertex_id
+    system,
+    x1
   );
-  backward_euler_update_v(num_vertices, x0, v0, x, v1, h);
+  backward_euler_update_v(
+    system.num_vertices,
+    system.x0,
+    system.v0,
+    x1, v1,
+    system.h
+  );
 }
 
 }
