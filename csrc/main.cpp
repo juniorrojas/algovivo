@@ -27,8 +27,6 @@ void backward_euler_update(
   system.h = h;
 
   system.num_vertices = num_vertices;
-  system.x_grad = x_grad;
-  system.x_tmp = x_tmp;
   system.x0 = x0;
   system.v0 = v0;
   system.r = r;
@@ -46,6 +44,7 @@ void backward_euler_update(
 
   algovivo::backward_euler_update(
     system,
-    x1, v1
+    x1, v1,
+    x_grad, x_tmp
   );
 }

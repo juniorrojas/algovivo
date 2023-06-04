@@ -182,12 +182,11 @@ void backward_euler_loss_grad(
 
 struct System {
   int num_vertices;
-  
-  float* x_grad;
-  float* x_tmp;
+
+  float h;
+
   float* x0;
   float* v0;
-  float h;
   float* r;
 
   int num_springs;
@@ -227,7 +226,8 @@ struct System {
 
 void backward_euler_update_x(
   System system,
-  float* x // , float* x_grad, float* x_tmp,
+  float* x,
+  float* x_grad, float* x_tmp
 ) {
   auto const space_dim = 2;
   auto const num_vertices = system.num_vertices;
@@ -235,8 +235,6 @@ void backward_euler_update_x(
   auto const v = system.v0;
   auto const fixed_vertex_id = system.fixed_vertex_id;
   auto const h = system.h;
-  auto x_grad = system.x_grad;
-  auto x_tmp = system.x_tmp;
 
   for (int i = 0; i < num_vertices; i++) {
     int offset = i * space_dim;
@@ -309,11 +307,13 @@ void backward_euler_update_v(
 void backward_euler_update(
   System system,
   float* x1,
-  float* v1
+  float* v1,
+  float* x_grad, float* x_tmp
 ) {
   backward_euler_update_x(
     system,
-    x1
+    x1,
+    x_grad, x_tmp
   );
   backward_euler_update_v(
     system.num_vertices,
