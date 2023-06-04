@@ -1,4 +1,5 @@
 name: render-trajectory
+
 on:
   push:
     branches:
