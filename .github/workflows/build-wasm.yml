@@ -40,7 +40,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v3
         with:
-          name: algovivo.wasm
+          name: algovivo.linux.wasm
           path: build/algovivo.wasm
   build-wasm-macos:
     runs-on: macos-latest
@@ -58,8 +58,19 @@ jobs:
       - name: Build Enzyme
         run: |
           cd Enzyme/enzyme
-          llvm_prefix=`brew --prefix llvm@11`
+          LLVM_PREFIX=`brew --prefix llvm@11`
           mkdir build_
           cd build_
-          cmake -G Ninja .. -DLLVM_DIR=${llvm_prefix}/lib/cmake/llvm
+          cmake -G Ninja .. -DLLVM_DIR=${LLVM_PREFIX}/lib/cmake/llvm
           ninja
+      - name: Build WASM
+        run: |
+          LLVM_PREFIX=`brew --prefix llvm@11`
+          export LLVM_BIN_DIR=${LLVM_PREFIX}/bin
+          export ENZYME=./Enzyme/enzyme/build/Enzyme/LLVMEnzyme-11.dylib
+          ./build.sh
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: algovivo.macos.wasm
+          path: build/algovivo.wasm
