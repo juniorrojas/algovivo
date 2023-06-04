@@ -4,6 +4,7 @@
 #include "vec2.h"
 #include "vertices.h"
 #include "inertia.h"
+#include "friction.h"
 #include "framenorm.h"
 #include "enzyme.h"
 
@@ -124,17 +125,12 @@ float backward_euler_loss(
       potential_energy += k_collision * d * d;
     }
 
-    // friction
-    float k_friction = 300.0;
-    float friction_eps = 1e-2;
-    float x0i1 = x0[offset + 1];
-    float interp = x0i1 - friction_eps;    
-    if (interp < 0) {
-      float xi0 = x[offset];
-      float x0i0 = x0[i * space_dim];
-      float vix = (xi0 - x0i0) / h;
-      potential_energy += k_friction * vix * vix * -interp;
-    }
+    accumulate_friction_energy(
+      potential_energy,
+      x[offset],
+      x0[offset], x0[offset + 1],
+      h
+    );
   }
 
   return 0.5 * inertial_energy + h * h * potential_energy;
