@@ -22,7 +22,7 @@ void backward_euler_update(
 
   int fixed_vertex_id
 ) {
-  backward_euler_update(
+  sim::backward_euler_update(
     num_vertices,
     x, x_grad, x_tmp,
     x0,
