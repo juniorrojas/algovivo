@@ -28,13 +28,10 @@ jobs:
           cmake -G Ninja .. -DLLVM_DIR=/usr/lib/llvm-11/
           ninja
       - uses: actions/checkout@v3
-        with:
-          path: algovivo
       - name: Build WASM
         run: |
-          cd algovivo
           export LLVM_BIN_DIR=/usr/lib/llvm-11/bin
-          export ENZYME=../Enzyme/enzyme/build/Enzyme/LLVMEnzyme-11.so
+          export ENZYME=Enzyme/enzyme/build/Enzyme/LLVMEnzyme-11.so
           ./build.sh
       - name: Upload artifact
         uses: actions/upload-artifact@v3
