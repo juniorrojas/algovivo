@@ -31,6 +31,7 @@ jobs:
         with:
           path: algovivo
       - name: Build WASM
+        run: |
           cd algovivo
           export LLVM_BIN_DIR=/usr/lib/llvm-11/bin
           export ENZYME=../Enzyme/enzyme/build/Enzyme/LLVMEnzyme-11.so
