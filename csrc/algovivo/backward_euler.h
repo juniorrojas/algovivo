@@ -4,16 +4,18 @@
 #include "vec2.h"
 #include "vertices.h"
 #include "inertia.h"
+#include "friction.h"
+#include "collision.h"
+#include "gravity.h"
 #include "framenorm.h"
 #include "enzyme.h"
 
 namespace algovivo {
 
-extern "C"
 float backward_euler_loss(
   int num_vertices,
   const float* x,
-  const float* x0, const float* v,
+  const float* x0, const float* v0,
   
   float h,
   const float* r,
@@ -36,8 +38,9 @@ float backward_euler_loss(
   const float vertex_mass = 6.0714287757873535;
 
   for (int i = 0; i < num_vertices; i++) {
-    vertex_loop_context(i, space_dim, x0, x, v);
-    inertial_energy(inertial_energy,
+    vertex_loop_context(i, space_dim, x0, x, v0);
+    accumulate_inertial_energy(
+      inertial_energy,
       px, py,
       vx, vy,
       p0x, p0y,
@@ -51,20 +54,12 @@ float backward_euler_loss(
     const auto i1 = springs[offset    ];
     const auto i2 = springs[offset + 1];
 
-    float se = 0.0;
-
-    vec2_get(p1, x, i1);
-    vec2_get(p2, x, i2);
-
-    vec2_sub(d, p1, p2);
-    float q = dx * dx + dy * dy;
-    float l = __builtin_sqrt(q + 1e-6);
-    float al0 = a[i] * l0[i];
-
-    float dl = (l - al0) / al0;
-    float k = 90.0;
-    
-    potential_energy += 0.5 * k * dl * dl;
+    accumulate_spring_energy(
+      potential_energy,
+      x,
+      i1, i2,
+      a[i], l0[i]
+    );
   }
 
   for (int i = 0; i < num_triangles; i++) {
@@ -73,79 +68,57 @@ float backward_euler_loss(
     const auto i2 = triangles[offset + 1];
     const auto i3 = triangles[offset + 2];
 
-    vec2_get(a, x, i1);
-    vec2_get(b, x, i2);
-    vec2_get(c, x, i3);
-
-    vec2_sub(ab, b, a);
-    vec2_sub(ac, c, a);
-
-    float sm00 = abx;
-    float sm10 = aby;
-    float sm01 = acx;
-    float sm11 = acy;
-
-    int rsi_offset = 4 * i;
-    float rsi00 = rsi[rsi_offset];
+    const auto rsi_offset = 4 * i;
+    float rsi00 = rsi[rsi_offset    ];
     float rsi01 = rsi[rsi_offset + 1];
     float rsi10 = rsi[rsi_offset + 2];
     float rsi11 = rsi[rsi_offset + 3];
 
-    float F00 = sm00 * rsi00 + sm01 * rsi10;
-    float F01 = sm00 * rsi01 + sm01 * rsi11;
-    float F10 = sm10 * rsi00 + sm11 * rsi10;
-    float F11 = sm10 * rsi01 + sm11 * rsi11;
-
-    float I1 = F00 * F00 + F01 * F01 + F10 * F10 + F11 * F11;
-    float J = F00 * F11 - F01 * F10;
-
-    float mu = 500;
-    float lambda = 50;
-    float qlogJ = -1.5 + 2 * J - 0.5 * J * J;
-    float psi_mu = 0.5 * mu * (I1 - 2) - mu * qlogJ;
-    float psi_lambda = 0.5 * lambda * qlogJ * qlogJ;
-    
-    potential_energy += psi_mu + psi_lambda;
+    accumulate_triangle_energy(
+      potential_energy,
+      x,
+      i1, i2, i3,
+      rsi00, rsi01,
+      rsi10, rsi11
+    );
   }
 
   for (int i = 0; i < num_vertices; i++) {
     const auto offset = space_dim * i;
     
-    float xi0 = x[i * space_dim + 0];
-    float xi1 = x[i * space_dim + 1];
+    const auto px = x[offset    ];
+    const auto py = x[offset + 1];
 
-    // gravity
-    potential_energy += xi1 * vertex_mass * 9.8;
-    
-    // collision
-    float k_collision = 14000.0;
-    if (xi1 < 0) {
-      float d = xi1;
-      potential_energy += k_collision * d * d;
-    }
+    const auto p0x = x0[offset    ];
+    const auto p0y = x0[offset + 1];
 
-    // friction
-    float k_friction = 300.0;
-    float friction_eps = 1e-2;
-    float x0i1 = x0[offset + 1];
-    float interp = x0i1 - friction_eps;    
-    if (interp < 0) {
-      float xi0 = x[offset];
-      float x0i0 = x0[i * space_dim];
-      float vix = (xi0 - x0i0) / h;
-      potential_energy += k_friction * vix * vix * -interp;
-    }
+    accumulate_gravity_energy(
+      potential_energy,
+      py,
+      vertex_mass
+    );
+
+    accumulate_collision_energy(
+      potential_energy,
+      py
+    );
+
+    accumulate_friction_energy(
+      potential_energy,
+      px,
+      p0x, p0y,
+      h
+    );
   }
 
   return 0.5 * inertial_energy + h * h * potential_energy;
 }
 
-extern "C"
 void backward_euler_loss_grad(
   int num_vertices,
   float* x, float* x_grad,
   float* x0,
-  float* v, float h,
+  float* v0, float h,
   float* r,
 
   int num_springs,
@@ -163,7 +136,7 @@ void backward_euler_loss_grad(
     enzyme_const, num_vertices,
     enzyme_dup, x, x_grad,
     enzyme_const, x0,
-    enzyme_const, v,
+    enzyme_const, v0,
     enzyme_const, h,
     enzyme_const, r,
 
@@ -179,30 +152,61 @@ void backward_euler_loss_grad(
   );
 }
 
-#define eval_loss(x1) backward_euler_loss(num_vertices, x1, x0, v, h, r, num_springs, springs, num_triangles, triangles, rsi, a, l0)
+struct System {
+  int num_vertices;
 
-extern "C"
+  float h;
+
+  float* x0;
+  float* v0;
+  float* r;
+
+  int num_springs;
+  int* springs;
+
+  int num_triangles;
+  int* triangles;
+  float* rsi;
+
+  float* a;
+  float* l0;
+
+  int fixed_vertex_id;
+
+  float forward(float* x) {
+    return backward_euler_loss(
+      num_vertices, x,
+      x0, v0, h, r,
+      num_springs, springs,
+      num_triangles,
+      triangles,
+      rsi,
+      a, l0
+    );
+  }
+
+  void backward(float* x, float* x_grad) {
+    backward_euler_loss_grad(
+      num_vertices, x,
+      x_grad, x0, v0, h, r,
+      num_springs, springs,
+      num_triangles, triangles, rsi,
+      a, l0
+    );
+  }
+};
+
 void backward_euler_update_x(
-  int num_vertices,
-  float* x, float* x_grad, float* x_tmp,
-  float* x0,
-  float* v, float* v1,
-  float h,
-  float* r,
-
-  int num_springs,
-  int* springs,
-
-  int num_triangles,
-  int* triangles,
-  float* rsi,
-
-  float* a,
-  float* l0,
-
-  int fixed_vertex_id
+  System system,
+  float* x,
+  float* x_grad, float* x_tmp
 ) {
-  int space_dim = 2;
+  auto const space_dim = 2;
+  auto const num_vertices = system.num_vertices;
+  auto const x0 = system.x0;
+  auto const v = system.v0;
+  auto const fixed_vertex_id = system.fixed_vertex_id;
+  auto const h = system.h;
 
   for (int i = 0; i < num_vertices; i++) {
     int offset = i * space_dim;
@@ -213,22 +217,7 @@ void backward_euler_update_x(
   int max_optim_iters = 100;
   for (int i = 0; i < max_optim_iters; i++) {
     zero_(num_vertices * space_dim, x_grad);
-    backward_euler_loss_grad(
-      num_vertices,
-      x, x_grad,
-      x0,
-      v, h,
-      r,
-      num_springs,
-      springs,
-      
-      num_triangles,
-      triangles,
-      rsi,
-
-      a,
-      l0
-    );
+    system.backward(x, x_grad);
 
     if (fixed_vertex_id > -1) {
       x_grad[fixed_vertex_id * space_dim    ] = 0.0;
@@ -250,11 +239,11 @@ void backward_euler_update_x(
     int max_line_search_iters = 20;
     float backtracking_scale = 0.3;
 
-    float loss0 = eval_loss(x);
+    float loss0 = system.forward(x);
 
     for (int i = 0; i < max_line_search_iters; i++) {
       addmuls_(num_vertices * space_dim, x, x_grad, -step_size, x_tmp);
-      float loss1 = eval_loss(x_tmp);
+      float loss1 = system.forward(x_tmp);
       if (loss1 < loss0) {
         break;
       } else {
@@ -265,7 +254,6 @@ void backward_euler_update_x(
     addmuls_(num_vertices * space_dim, x, x_grad, -step_size, x);
   }
 }
-
 
 extern "C"
 void backward_euler_update_v(
@@ -289,46 +277,23 @@ void backward_euler_update_v(
 }
 
 void backward_euler_update(
-  int num_vertices,
-  float* x, float* x_grad, float* x_tmp,
-  float* x0,
-  float* v, float* v1,
-  float h,
-  float* r,
-
-  int num_springs,
-  int* springs,
-
-  int num_triangles,
-  int* triangles,
-  float* rsi,
-
-  float* a,
-  float* l0,
-
-  int fixed_vertex_id
+  System system,
+  float* x1,
+  float* v1,
+  float* x_grad, float* x_tmp
 ) {
   backward_euler_update_x(
-    num_vertices,
-    x, x_grad, x_tmp,
-    x0,
-    v, v1,
-    h,
-    r,
-
-    num_springs,
-    springs,
-
-    num_triangles,
-    triangles,
-    rsi,
-
-    a,
-    l0,
-
-    fixed_vertex_id
+    system,
+    x1,
+    x_grad, x_tmp
   );
-  backward_euler_update_v(num_vertices, x0, v, x, v1, h);
+  backward_euler_update_v(
+    system.num_vertices,
+    system.x0,
+    system.v0,
+    x1, v1,
+    system.h
+  );
 }
 
 }

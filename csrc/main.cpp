@@ -4,9 +4,9 @@
 extern "C"
 void backward_euler_update(
   int num_vertices,
-  float* x, float* x_grad, float* x_tmp,
+  float* x1, float* x_grad, float* x_tmp,
   float* x0,
-  float* v, float* v1,
+  float* v0, float* v1,
   float h,
   float* r,
 
@@ -22,24 +22,29 @@ void backward_euler_update(
 
   int fixed_vertex_id
 ) {
+  algovivo::System system;
+
+  system.h = h;
+
+  system.num_vertices = num_vertices;
+  system.x0 = x0;
+  system.v0 = v0;
+  system.r = r;
+
+  system.num_springs = num_springs;
+  system.springs = springs;
+  system.a = a;
+  system.l0 = l0;
+
+  system.num_triangles = num_triangles;
+  system.triangles = triangles;
+  system.rsi = rsi;
+
+  system.fixed_vertex_id = fixed_vertex_id;
+
   algovivo::backward_euler_update(
-    num_vertices,
-    x, x_grad, x_tmp,
-    x0,
-    v, v1,
-    h,
-    r,
-
-    num_springs,
-    springs,
-
-    num_triangles,
-    triangles,
-    rsi,
-
-    a,
-    l0,
-
-    fixed_vertex_id
+    system,
+    x1, v1,
+    x_grad, x_tmp
   );
 }
