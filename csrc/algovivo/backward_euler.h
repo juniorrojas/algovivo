@@ -196,8 +196,9 @@ struct System {
   }
 };
 
+template <typename T>
 void backward_euler_update_x(
-  System system,
+  T system,
   float* x,
   float* x_grad, float* x_tmp
 ) {
@@ -276,8 +277,9 @@ void backward_euler_update_v(
   );
 }
 
+template <typename T>
 void backward_euler_update(
-  System system,
+  T system,
   float* x1,
   float* v1,
   float* x_grad, float* x_tmp
