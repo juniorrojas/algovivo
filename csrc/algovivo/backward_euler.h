@@ -113,8 +113,8 @@ float backward_euler_loss(
   for (int i = 0; i < num_vertices; i++) {
     const auto offset = space_dim * i;
     
-    float xi0 = x[i * space_dim + 0];
-    float xi1 = x[i * space_dim + 1];
+    float xi0 = x[offset + 0];
+    float xi1 = x[offset + 1];
 
     // gravity
     potential_energy += xi1 * vertex_mass * 9.8;
