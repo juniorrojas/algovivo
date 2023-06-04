@@ -37,7 +37,7 @@ float backward_euler_loss(
 
   for (int i = 0; i < num_vertices; i++) {
     vertex_loop_context(i, space_dim, x0, x, v);
-    inertial_energy(inertial_energy,
+    accumulate_inertial_energy(inertial_energy,
       px, py,
       vx, vy,
       p0x, p0y,
