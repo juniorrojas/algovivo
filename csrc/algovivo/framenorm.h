@@ -1,5 +1,7 @@
 #pragma once
 
+namespace algovivo {
+
 void normalize2d_(float* vx, float* vy) {
   const auto q = *vx * *vx + *vy * *vy;
   if (q == 0) {
@@ -104,4 +106,6 @@ void make_neural_policy_input(
   );
 
   cat_xv(num_vertices, projected_x, projected_v, policy_input);
+}
+
 }

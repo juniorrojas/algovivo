@@ -1,5 +1,7 @@
 #pragma once
 
+namespace algovivo {
+
 __attribute__((always_inline))
 void accumulate_inertial_energy(
   float &inertial_energy,
@@ -15,4 +17,6 @@ void accumulate_inertial_energy(
   float dy = py - yy;
   float d = (dx * dx + dy * dy) * m;
   inertial_energy += d;
+}
+
 }

@@ -1,6 +1,8 @@
 #pragma once
 #include "vec2.h"
 
+namespace algovivo {
+
 extern "C"
 void rsi_of_x(
   int num_vertices,
@@ -29,4 +31,6 @@ void rsi_of_x(
     rsi[offset_rsi + 2] = -aby / d;
     rsi[offset_rsi + 3] =  abx / d;
   }
+}
+
 }

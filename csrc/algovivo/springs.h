@@ -3,6 +3,8 @@
 #include "vec2.h"
 #include "vertices.h"
 
+namespace algovivo {
+
 extern "C"
 void l0_of_x(
   int num_vertices,
@@ -23,4 +25,6 @@ void l0_of_x(
     const auto q = dx * dx + dy * dy;
     l0[i] = __builtin_sqrt(q);
   }
+}
+
 }
