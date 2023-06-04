@@ -75,39 +75,19 @@ float backward_euler_loss(
     const auto i2 = triangles[offset + 1];
     const auto i3 = triangles[offset + 2];
 
-    vec2_get(a, x, i1);
-    vec2_get(b, x, i2);
-    vec2_get(c, x, i3);
-
-    vec2_sub(ab, b, a);
-    vec2_sub(ac, c, a);
-
-    float sm00 = abx;
-    float sm10 = aby;
-    float sm01 = acx;
-    float sm11 = acy;
-
-    int rsi_offset = 4 * i;
-    float rsi00 = rsi[rsi_offset];
+    const auto rsi_offset = 4 * i;
+    float rsi00 = rsi[rsi_offset    ];
     float rsi01 = rsi[rsi_offset + 1];
     float rsi10 = rsi[rsi_offset + 2];
     float rsi11 = rsi[rsi_offset + 3];
 
-    float F00 = sm00 * rsi00 + sm01 * rsi10;
-    float F01 = sm00 * rsi01 + sm01 * rsi11;
-    float F10 = sm10 * rsi00 + sm11 * rsi10;
-    float F11 = sm10 * rsi01 + sm11 * rsi11;
-
-    float I1 = F00 * F00 + F01 * F01 + F10 * F10 + F11 * F11;
-    float J = F00 * F11 - F01 * F10;
-
-    float mu = 500;
-    float lambda = 50;
-    float qlogJ = -1.5 + 2 * J - 0.5 * J * J;
-    float psi_mu = 0.5 * mu * (I1 - 2) - mu * qlogJ;
-    float psi_lambda = 0.5 * lambda * qlogJ * qlogJ;
-    
-    potential_energy += psi_mu + psi_lambda;
+    accumulate_triangle_energy(
+      potential_energy,
+      x,
+      i1, i2, i3,
+      rsi00, rsi01,
+      rsi10, rsi11
+    );
   }
 
   for (int i = 0; i < num_vertices; i++) {
