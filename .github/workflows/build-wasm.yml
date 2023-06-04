@@ -14,7 +14,7 @@ jobs:
     steps:
       - name: Install system dependencies
         run: |
-          sudo apt-get install llvm-11 ninja-build
+          sudo apt-get install llvm-11 llvm-11-dev ninja-build
           ls -l /usr/lib/llvm-11/bin
       - uses: actions/checkout@v3
         with:
