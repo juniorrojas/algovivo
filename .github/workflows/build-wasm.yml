@@ -23,6 +23,7 @@ jobs:
           path: Enzyme
       - name: Build Enzyme
         run: |
+          ls -l
           cd Enzyme/enzyme
           mkdir build
           cd build
@@ -31,7 +32,7 @@ jobs:
       - name: Build WASM
         run: |
           export LLVM_BIN_DIR=/usr/lib/llvm-11/bin
-          export ENZYME=Enzyme/enzyme/build/Enzyme/LLVMEnzyme-11.so
+          export ENZYME=./Enzyme/enzyme/build/Enzyme/LLVMEnzyme-11.so
           ./build.sh
       - name: Upload artifact
         uses: actions/upload-artifact@v3
