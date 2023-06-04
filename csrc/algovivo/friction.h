@@ -9,11 +9,11 @@ void accumulate_friction_energy(
   float p0x, float p0y,
   float h
 ) {
-  float k_friction = 300.0;
-  float friction_eps = 1e-2;
-  float height = p0y - friction_eps;
+  const auto k_friction = 300.0;
+  const auto friction_eps = 1e-2;
+  const auto height = p0y - friction_eps;
   if (height < 0) {
-    float vx = (px - p0x) / h;
+    const auto vx = (px - p0x) / h;
     energy += k_friction * vx * vx * -height;
   }
 }
