@@ -48,10 +48,10 @@ void accumulate_triangle_energy(
   vec2_sub(ab, b, a);
   vec2_sub(ac, c, a);
 
-  float sm00 = abx;
-  float sm10 = aby;
-  float sm01 = acx;
-  float sm11 = acy;
+  const auto sm00 = abx;
+  const auto sm10 = aby;
+  const auto sm01 = acx;
+  const auto sm11 = acy;
 
   float F00 = sm00 * rsi00 + sm01 * rsi10;
   float F01 = sm00 * rsi01 + sm01 * rsi11;

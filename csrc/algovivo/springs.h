@@ -38,11 +38,11 @@ void accumulate_spring_energy(
   vec2_get(p2, x, i2);
 
   vec2_sub(d, p1, p2);
-  float q = dx * dx + dy * dy;
+  const auto q = dx * dx + dy * dy;
   float l = __builtin_sqrt(q + 1e-6);
   float al0 = a * l0;
   float dl = (l - al0) / al0;
-  float k = 90.0;  
+  float k = 90.0;
   energy += 0.5 * k * dl * dl;
 }
 
