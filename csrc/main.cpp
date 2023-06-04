@@ -1,5 +1,5 @@
 #include "mmgrten/mmgrten.h"
-#include "sim/sim.h"
+#include "algovivo/algovivo.h"
 
 extern "C"
 void backward_euler_update(
@@ -22,7 +22,7 @@ void backward_euler_update(
 
   int fixed_vertex_id
 ) {
-  sim::backward_euler_update(
+  algovivo::backward_euler_update(
     num_vertices,
     x, x_grad, x_tmp,
     x0,

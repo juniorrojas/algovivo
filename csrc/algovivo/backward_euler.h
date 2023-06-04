@@ -7,7 +7,7 @@
 #include "framenorm.h"
 #include "enzyme.h"
 
-namespace sim {
+namespace algovivo {
 
 extern "C"
 float backward_euler_loss(
