@@ -55,18 +55,12 @@ float backward_euler_loss(
     const auto i1 = springs[offset    ];
     const auto i2 = springs[offset + 1];
 
-    vec2_get(p1, x, i1);
-    vec2_get(p2, x, i2);
-
-    vec2_sub(d, p1, p2);
-    float q = dx * dx + dy * dy;
-    float l = __builtin_sqrt(q + 1e-6);
-    float al0 = a[i] * l0[i];
-
-    float dl = (l - al0) / al0;
-    float k = 90.0;
-    
-    potential_energy += 0.5 * k * dl * dl;
+    accumulate_spring_energy(
+      potential_energy,
+      x,
+      i1, i2,
+      a[i], l0[i]
+    );
   }
 
   for (int i = 0; i < num_triangles; i++) {
