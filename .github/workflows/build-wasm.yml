@@ -12,8 +12,12 @@ jobs:
   build-wasm:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-      - run: |
+      - name: Install system dependencies
+        run: |
           sudo apt-get install llvm-11
           ls -l /usr/lib/llvm-11
+      - uses: actions/checkout@v3
+        with:
+          repository: EnzymeAD/Enzyme
+      # - name: Checkout code
+      #   uses: actions/checkout@v3
