@@ -67,7 +67,7 @@ jobs:
         run: |
           LLVM_PREFIX=`brew --prefix llvm@11`
           export LLVM_BIN_DIR=${LLVM_PREFIX}/bin
-          export ENZYME=./Enzyme/enzyme/build/Enzyme/LLVMEnzyme-11.dylib
+          export ENZYME=./Enzyme/enzyme/build_/Enzyme/LLVMEnzyme-11.dylib
           ./build.sh
       - name: Upload artifact
         uses: actions/upload-artifact@v3
