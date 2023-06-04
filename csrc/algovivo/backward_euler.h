@@ -15,7 +15,7 @@ extern "C"
 float backward_euler_loss(
   int num_vertices,
   const float* x,
-  const float* x0, const float* v,
+  const float* x0, const float* v0,
   
   float h,
   const float* r,
@@ -38,7 +38,7 @@ float backward_euler_loss(
   const float vertex_mass = 6.0714287757873535;
 
   for (int i = 0; i < num_vertices; i++) {
-    vertex_loop_context(i, space_dim, x0, x, v);
+    vertex_loop_context(i, space_dim, x0, x, v0);
     accumulate_inertial_energy(inertial_energy,
       px, py,
       vx, vy,
@@ -140,7 +140,7 @@ void backward_euler_loss_grad(
   int num_vertices,
   float* x, float* x_grad,
   float* x0,
-  float* v, float h,
+  float* v0, float h,
   float* r,
 
   int num_springs,
@@ -158,7 +158,7 @@ void backward_euler_loss_grad(
     enzyme_const, num_vertices,
     enzyme_dup, x, x_grad,
     enzyme_const, x0,
-    enzyme_const, v,
+    enzyme_const, v0,
     enzyme_const, h,
     enzyme_const, r,
 
@@ -174,14 +174,14 @@ void backward_euler_loss_grad(
   );
 }
 
-#define eval_loss(x1) backward_euler_loss(num_vertices, x1, x0, v, h, r, num_springs, springs, num_triangles, triangles, rsi, a, l0)
+#define eval_loss(x1) backward_euler_loss(num_vertices, x1, x0, v0, h, r, num_springs, springs, num_triangles, triangles, rsi, a, l0)
 
 extern "C"
 void backward_euler_update_x(
   int num_vertices,
   float* x, float* x_grad, float* x_tmp,
   float* x0,
-  float* v, float* v1,
+  float* v0, float* v1,
   float h,
   float* r,
 
@@ -201,8 +201,8 @@ void backward_euler_update_x(
 
   for (int i = 0; i < num_vertices; i++) {
     int offset = i * space_dim;
-    x[offset    ] = x0[offset    ] + h * v[offset    ];
-    x[offset + 1] = x0[offset + 1] + h * v[offset + 1];
+    x[offset    ] = x0[offset    ] + h * v0[offset    ];
+    x[offset + 1] = x0[offset + 1] + h * v0[offset + 1];
   }
 
   int max_optim_iters = 100;
@@ -212,7 +212,7 @@ void backward_euler_update_x(
       num_vertices,
       x, x_grad,
       x0,
-      v, h,
+      v0, h,
       r,
       num_springs,
       springs,
@@ -287,7 +287,7 @@ void backward_euler_update(
   int num_vertices,
   float* x, float* x_grad, float* x_tmp,
   float* x0,
-  float* v, float* v1,
+  float* v0, float* v1,
   float h,
   float* r,
 
@@ -307,7 +307,7 @@ void backward_euler_update(
     num_vertices,
     x, x_grad, x_tmp,
     x0,
-    v, v1,
+    v0, v1,
     h,
     r,
 
@@ -323,7 +323,7 @@ void backward_euler_update(
 
     fixed_vertex_id
   );
-  backward_euler_update_v(num_vertices, x0, v, x, v1, h);
+  backward_euler_update_v(num_vertices, x0, v0, x, v1, h);
 }
 
 }
