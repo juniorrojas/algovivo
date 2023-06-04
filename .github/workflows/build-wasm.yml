@@ -1,0 +1,74 @@
+name: build-wasm
+
+on:
+  push:
+    branches:
+      - master
+      - devc-*
+  pull_request:
+    branches:
+      - master
+  schedule:
+    - cron: '0 */12 * * *'
+
+jobs:
+  build-wasm-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install llvm-11 clang-11 lld-11 ninja-build
+      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+        with:
+          repository: EnzymeAD/Enzyme
+          path: Enzyme
+      - name: Build Enzyme
+        run: |
+          cd Enzyme/enzyme
+          mkdir build
+          cd build
+          cmake -G Ninja .. -DLLVM_DIR=/usr/lib/llvm-11/
+          ninja
+      - name: Build WASM
+        run: |
+          export LLVM_BIN_DIR=/usr/lib/llvm-11/bin
+          export ENZYME=./Enzyme/enzyme/build/Enzyme/LLVMEnzyme-11.so
+          ./build.sh
+      - name: Upload WASM
+        uses: actions/upload-artifact@v3
+        with:
+          name: algovivo.linux.wasm
+          path: build/algovivo.wasm
+  build-wasm-macos:
+    runs-on: macos-latest
+    steps:
+      - name: Install system dependencies
+        run: |
+          brew update
+          brew install llvm@11 ninja
+      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+        with:
+          repository: EnzymeAD/Enzyme
+          path: Enzyme
+      - name: Build Enzyme
+        run: |
+          cd Enzyme/enzyme
+          LLVM_PREFIX=`brew --prefix llvm@11`
+          mkdir build_
+          cd build_
+          cmake -G Ninja .. -DLLVM_DIR=${LLVM_PREFIX}/lib/cmake/llvm
+          ninja
+      - name: Build WASM
+        run: |
+          LLVM_PREFIX=`brew --prefix llvm@11`
+          export LLVM_BIN_DIR=${LLVM_PREFIX}/bin
+          export ENZYME=./Enzyme/enzyme/build_/Enzyme/LLVMEnzyme-11.dylib
+          ./build.sh
+      - name: Upload WASM
+        uses: actions/upload-artifact@v3
+        with:
+          name: algovivo.macos.wasm
+          path: build/algovivo.wasm
