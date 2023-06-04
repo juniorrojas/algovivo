@@ -12,7 +12,6 @@
 
 namespace algovivo {
 
-extern "C"
 float backward_euler_loss(
   int num_vertices,
   const float* x,
@@ -115,7 +114,6 @@ float backward_euler_loss(
   return 0.5 * inertial_energy + h * h * potential_energy;
 }
 
-extern "C"
 void backward_euler_loss_grad(
   int num_vertices,
   float* x, float* x_grad,
