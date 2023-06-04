@@ -1,7 +1,6 @@
 #pragma once
 
 #include "vec2.h"
-#include "vertices.h"
 
 namespace algovivo {
 
