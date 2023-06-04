@@ -5,6 +5,7 @@
 #include "vertices.h"
 #include "inertia.h"
 #include "friction.h"
+#include "collision.h"
 #include "framenorm.h"
 #include "enzyme.h"
 
@@ -117,13 +118,11 @@ float backward_euler_loss(
 
     // gravity
     potential_energy += xi1 * vertex_mass * 9.8;
-    
-    // collision
-    float k_collision = 14000.0;
-    if (xi1 < 0) {
-      float d = xi1;
-      potential_energy += k_collision * d * d;
-    }
+
+    accumulate_collision_energy(
+      potential_energy,
+      xi1
+    );
 
     accumulate_friction_energy(
       potential_energy,
