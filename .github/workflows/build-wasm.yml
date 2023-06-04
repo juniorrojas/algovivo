@@ -17,6 +17,7 @@ jobs:
           sudo apt-get install llvm-11 clang-11 lld-11 ninja-build
           ls -l /usr/lib/llvm-11/bin
       - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
         with:
           repository: EnzymeAD/Enzyme
           path: Enzyme
@@ -27,7 +28,6 @@ jobs:
           cd build
           cmake -G Ninja .. -DLLVM_DIR=/usr/lib/llvm-11/
           ninja
-      - uses: actions/checkout@v3
       - name: Build WASM
         run: |
           export LLVM_BIN_DIR=/usr/lib/llvm-11/bin
