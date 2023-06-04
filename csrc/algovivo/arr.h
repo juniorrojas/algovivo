@@ -1,5 +1,7 @@
 #pragma once
 
+namespace algovivo {
+
 void copy_(int n, const float* src, float* dst) {
   for (int i = 0; i < n; i++) dst[i] = src[i];
 }
@@ -11,4 +13,6 @@ void addmuls_(int n, const float* a, const float* b, const float c, float* dst) 
 
 void scale_(int n, float* a, float c) {
   for (int i = 0; i < n; i++) a[i] *= c;
+}
+
 }
