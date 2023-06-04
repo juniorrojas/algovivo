@@ -21,9 +21,9 @@ jobs:
         with:
           repository: EnzymeAD/Enzyme
           path: Enzyme
+      - run: ls -l
       - name: Build Enzyme
         run: |
-          ls -l
           cd Enzyme/enzyme
           mkdir build
           cd build
