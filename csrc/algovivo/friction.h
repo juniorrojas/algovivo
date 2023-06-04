@@ -1,5 +1,7 @@
 #pragma once
 
+namespace algovivo {
+
 __attribute__((always_inline))
 void accumulate_friction_energy(
   float &energy,
@@ -14,4 +16,6 @@ void accumulate_friction_energy(
     float vx = (px - p0x) / h;
     energy += k_friction * vx * vx * -height;
   }
+}
+
 }
