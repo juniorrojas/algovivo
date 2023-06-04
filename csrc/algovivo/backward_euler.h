@@ -114,24 +114,27 @@ float backward_euler_loss(
   for (int i = 0; i < num_vertices; i++) {
     const auto offset = space_dim * i;
     
-    float xi0 = x[offset + 0];
-    float xi1 = x[offset + 1];
+    const auto px = x[offset    ];
+    const auto py = x[offset + 1];
+
+    const auto p0x = x0[offset    ];
+    const auto p0y = x0[offset + 1];
 
     accumulate_gravity_energy(
       potential_energy,
-      xi1,
+      py,
       vertex_mass
     );
 
     accumulate_collision_energy(
       potential_energy,
-      xi1
+      py
     );
 
     accumulate_friction_energy(
       potential_energy,
-      x[offset],
-      x0[offset], x0[offset + 1],
+      px,
+      p0x, p0y,
       h
     );
   }
