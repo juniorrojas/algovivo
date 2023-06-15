@@ -19,6 +19,9 @@ async function main() {
   document.body.style.flexDirection = "column";
 
   const divContent = document.createElement("div");
+  divContent.style.display = "flex";
+  divContent.style.flexDirection = "column";
+  divContent.style.alignItems = "center";
   document.body.appendChild(divContent);
 
   const wasmInstance = await loadWasm();
@@ -75,10 +78,12 @@ async function main() {
   const btnBrain = new IconButton({
     src: "assets/brain.svg"
   });
+  btnBrain.domElement.style.marginTop = "8px";
+  btnBrain.domElement.style.marginBottom = "8px";
   btnBrain.domElement.addEventListener("click", () => {
     togglePolicy();
   });
-  document.body.appendChild(btnBrain.domElement);
+  divContent.appendChild(btnBrain.domElement);
 
   viewport.render();
   setInterval(() => {
