@@ -8,22 +8,39 @@ const onReady = async (port) => {
     height: 700
   });
   try {
-    await window.launch();
-    await window.evaluate(async () => {
-      // function waitInit() {
-      //   return new Promise((resolve, reject) => {
-      //     const interval = setInterval(() => {
-      //       if (window.system != null) {
-      //         clearInterval(interval);
-      //         resolve();
-      //       }
-      //     }, 1);
-      //   });
-      // }
-      // await waitInit();
-    });
-    
+    await window.launch();    
     await window.page.waitForNetworkIdle();
+
+    await window.evaluate(() => {
+      const mm2d = algovivo.mm2d;
+
+      const renderer = new mm2d.core.Renderer();
+      renderer.setSize({ width: 200, height: 200 });
+      renderer.domElement.style.border = "1px solid black";
+      document.body.appendChild(renderer.domElement);
+
+      const scene = new mm2d.core.Scene();
+      const camera = new mm2d.core.Camera();
+
+      const mesh = scene.addMesh();
+      mesh.x = [
+        [0, 0],
+        [1, 0],
+        [1, 1]
+      ];
+      mesh.triangles = [
+        [0, 1, 2]
+      ];
+
+      camera.center({
+        worldCenter: mesh.computeCenter(),
+        worldWidth: 2,
+        viewportWidth: renderer.width,
+        viewportHeight: renderer.height,
+      });
+
+      renderer.render(scene, camera);
+    });
 
     await window.screenshot({ path: `${__dirname}/screenshot.out.png` });
   } finally {
