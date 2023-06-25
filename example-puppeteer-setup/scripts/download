@@ -43,3 +43,4 @@ with tempfile.TemporaryDirectory() as tmp_dirname:
     shutil.copy(os.path.join(tmp_dirname, "example-puppeteer-setup", "main.js"), "main.js")
     shutil.copytree(os.path.join(tmp_dirname, "example-puppeteer-setup", "utils"), "utils")
     shutil.copytree(os.path.join(tmp_dirname, "example-puppeteer-setup", "public"), "public")
+    shutil.copy(os.path.join(tmp_dirname, "package.json"), "package.json")
