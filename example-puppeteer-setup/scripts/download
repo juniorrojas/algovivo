@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import argparse
 import subprocess
 import os
 import tempfile
@@ -20,14 +19,6 @@ def yellow(text):
 
 def green(text):
     return color_text(TextColor.green, text)
-
-arg_parser = argparse.ArgumentParser()
-arg_parser.add_argument("-y", action="store_true")
-arg_parser.add_argument("-o", type=str)
-arg_parser.add_argument("--target", type=str)
-arg_parser.add_argument("--https", action="store_true")
-arg_parser.add_argument("--checkout", type=str)
-args = arg_parser.parse_args()
 
 remote_url = "git@github.com:juniorrojas/algovivo.git"
 checkout = "sample-puppeteer-setup"
