@@ -1,0 +1,54 @@
+#!/usr/bin/env python3
+import argparse
+import subprocess
+import os
+import tempfile
+import shutil
+
+class TextColor:
+    blue = "\033[94m"
+    green = "\033[92m"
+    yellow = "\033[93m"
+    red = "\033[91m"
+    end = "\033[0m"
+
+def color_text(color, text):
+    return f"{color}{text}{TextColor.end}"
+
+def yellow(text):
+    return color_text(TextColor.yellow, text)
+
+def green(text):
+    return color_text(TextColor.green, text)
+
+arg_parser = argparse.ArgumentParser()
+arg_parser.add_argument("-y", action="store_true")
+arg_parser.add_argument("-o", type=str)
+arg_parser.add_argument("--target", type=str)
+arg_parser.add_argument("--https", action="store_true")
+arg_parser.add_argument("--checkout", type=str)
+args = arg_parser.parse_args()
+
+remote_url = "git@github.com:juniorrojas/algovivo.git"
+checkout = "sample-puppeteer-setup"
+
+with tempfile.TemporaryDirectory() as tmp_dirname:
+    e = subprocess.call([
+        "git", "clone", remote_url,
+        tmp_dirname
+    ])
+    if e != 0:
+        raise RuntimeError("git clone failed")
+
+    e = subprocess.call([
+        "git",
+        "--git-dir", os.path.join(tmp_dirname, ".git"),
+        "--work-tree", tmp_dirname,
+        "checkout", checkout
+    ])
+    if e != 0:
+        raise RuntimeError("checkout failed")
+
+    shutil.copy(os.path.join(tmp_dirname, "example-puppeteer-setup", "main.js"), "main.js")
+    shutil.copytree(os.path.join(tmp_dirname, "example-puppeteer-setup", "utils"), "utils")
+    shutil.copytree(os.path.join(tmp_dirname, "example-puppeteer-setup", "public"), "public")
