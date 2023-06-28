@@ -20,7 +20,7 @@ def yellow(text):
 def green(text):
     return color_text(TextColor.green, text)
 
-remote_url = "git@github.com:juniorrojas/algovivo.git"
+remote_url = "https://github.com/juniorrojas/algovivo.git"
 checkout = "sample-puppeteer-setup"
 
 with tempfile.TemporaryDirectory() as tmp_dirname:
