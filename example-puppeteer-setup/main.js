@@ -4,8 +4,8 @@ const onReady = async (port) => {
   const window = new utils.Window({
     headless: true,
     indexUrl: `http://localhost:${port}`,
-    width: 700,
-    height: 700
+    width: 300,
+    height: 300
   });
   try {
     await window.launch();    
@@ -15,7 +15,7 @@ const onReady = async (port) => {
       const mm2d = algovivo.mm2d;
 
       const renderer = new mm2d.core.Renderer();
-      renderer.setSize({ width: 200, height: 200 });
+      renderer.setSize({ width: 300, height: 300 });
       renderer.domElement.style.border = "1px solid black";
       document.body.appendChild(renderer.domElement);
 
