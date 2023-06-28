@@ -4,22 +4,6 @@ import os
 import tempfile
 import shutil
 
-class TextColor:
-    blue = "\033[94m"
-    green = "\033[92m"
-    yellow = "\033[93m"
-    red = "\033[91m"
-    end = "\033[0m"
-
-def color_text(color, text):
-    return f"{color}{text}{TextColor.end}"
-
-def yellow(text):
-    return color_text(TextColor.yellow, text)
-
-def green(text):
-    return color_text(TextColor.green, text)
-
 remote_url = "https://github.com/juniorrojas/algovivo.git"
 checkout = "sample-puppeteer-setup"
 
