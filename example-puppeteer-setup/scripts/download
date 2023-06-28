@@ -22,7 +22,7 @@ with tempfile.TemporaryDirectory() as tmp_dirname:
         "checkout", checkout
     ])
     if e != 0:
-        raise RuntimeError("checkout failed")
+        raise RuntimeError("git checkout failed")
 
     shutil.copy(os.path.join(tmp_dirname, "example-puppeteer-setup", "main.js"), "main.js")
     shutil.copytree(os.path.join(tmp_dirname, "example-puppeteer-setup", "utils"), "utils")
