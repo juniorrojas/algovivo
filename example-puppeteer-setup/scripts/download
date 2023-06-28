@@ -24,7 +24,8 @@ with tempfile.TemporaryDirectory() as tmp_dirname:
     if e != 0:
         raise RuntimeError("git checkout failed")
 
-    shutil.copy(os.path.join(tmp_dirname, "example-puppeteer-setup", "main.js"), "main.js")
-    shutil.copytree(os.path.join(tmp_dirname, "example-puppeteer-setup", "utils"), "utils")
-    shutil.copytree(os.path.join(tmp_dirname, "example-puppeteer-setup", "public"), "public")
-    shutil.copy(os.path.join(tmp_dirname, "package.json"), "package.json")
+    root_src_dirname = os.path.join(tmp_dirname, "example-puppeteer-setup")
+    shutil.copy(os.path.join(root_src_dirname, "main.js"), "main.js")
+    shutil.copytree(os.path.join(root_src_dirname, "utils"), "utils")
+    shutil.copytree(os.path.join(root_src_dirname, "public"), "public")
+    shutil.copy(os.path.join(root_src_dirname, "package.json"), "package.json")
