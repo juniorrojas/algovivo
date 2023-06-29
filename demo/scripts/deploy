@@ -13,6 +13,11 @@ def populate_deploy_path(deploy_path):
     public_path = this_dirpath.parent.joinpath("public")
 
     shutil.copy(
+        public_path.joinpath(".gitignore"),
+        deploy_path.joinpath(".gitignore")
+    )
+
+    shutil.copy(
         public_path.joinpath("index.html"),
         deploy_path.joinpath("index.html")
     )

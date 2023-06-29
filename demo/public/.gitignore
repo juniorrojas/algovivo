@@ -1,0 +1,12 @@
+__pycache__
+*.pyc
+.mypy_cache
+node_modules
+*.swo
+*.swp
+.DS_Store
+.vscode
+*.out
+*.out.*
+*.log
+*.log.*
