@@ -38,6 +38,8 @@ test("set springs", async () => {
     ]
   });
   expect(system.numSprings()).toBe(0);
+  expect(system.l0).toBeNull();
+  expect(system.a).toBeNull();
   
   system.setSprings({
     indices: [
