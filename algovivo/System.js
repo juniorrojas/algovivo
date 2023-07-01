@@ -103,10 +103,11 @@ class System {
       }
     }
 
-    // TODO a = ten.ones([numSprings]);
     if (this.a != null) this.a.dispose();
     this.a = null;
+
     if (numSprings != 0) {
+      // TODO a = ten.ones([numSprings]);
       const a = ten.zeros([numSprings]);
       this.a = a;
       const aF32 = a.slot.f32();
