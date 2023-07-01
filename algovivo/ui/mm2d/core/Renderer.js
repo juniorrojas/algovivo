@@ -121,16 +121,34 @@ class Renderer {
   }
 
   renderMesh(renderer, mesh, camera, customArgs = {}) {
-    for (let i = 0; i < mesh.triangles.length; i++) {
-      this.renderTriangle(renderer, mesh, camera, i, customArgs);
-    }
+    const sortedElements = mesh.sortedElements;
 
-    for (let i = 0; i < mesh.lines.length; i++) {
-      this.renderLine(renderer, mesh, camera, i, customArgs);
-    }
-    
-    for (let i = 0; i < mesh.x.length; i++) {
-      this.renderPoint(renderer, mesh, camera, i, customArgs);
+    if (sortedElements == null) {
+      for (let i = 0; i < mesh.triangles.length; i++) {
+        this.renderTriangle(renderer, mesh, camera, i, customArgs);
+      }
+
+      for (let i = 0; i < mesh.lines.length; i++) {
+        this.renderLine(renderer, mesh, camera, i, customArgs);
+      }
+      
+      for (let i = 0; i < mesh.x.length; i++) {
+        this.renderPoint(renderer, mesh, camera, i, customArgs);
+      }
+    } else {
+      sortedElements.forEach((element) => {
+        if (element.order == 1) {
+          this.renderPoint(renderer, mesh, camera, element.id, customArgs);
+        } else
+        if (element.order == 2) {
+          this.renderLine(renderer, mesh, camera, element.id, customArgs);
+        } else
+        if (element.order == 3) {
+          this.renderTriangle(renderer, mesh, camera, element.id, customArgs);
+        } else {
+          throw new Error(`invalid element ${element}`);
+        }
+      });
     }
   }
 

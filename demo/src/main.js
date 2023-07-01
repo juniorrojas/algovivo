@@ -36,6 +36,7 @@ async function main() {
   document.body.style.padding = 0;
   document.body.style.alignItems = "center";
 
+  // TODO sortedVertexIds
   const viewport = new SystemViewport({ system });
   divContent.appendChild(viewport.domElement);
   
