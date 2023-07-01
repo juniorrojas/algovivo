@@ -38,6 +38,8 @@ test("set springs", async () => {
     ]
   });
   expect(system.numSprings()).toBe(0);
+  expect(system.l0).toBeNull();
+  expect(system.a).toBeNull();
   
   system.setSprings({
     indices: [
@@ -49,6 +51,7 @@ test("set springs", async () => {
   expect(system.numSprings()).toBe(3);
   const expectedL0 = [1.4142135381698608, 1.4142135381698608, 2];
   expect(system.l0.toArray()).toBeCloseToArray(expectedL0);
+  expect(system.a.toArray()).toBeCloseToArray([1, 1, 1]);
 
   system.setSprings({
     indices: [
@@ -59,4 +62,5 @@ test("set springs", async () => {
   });
   expect(system.numSprings()).toBe(2);
   expect(system.l0.toArray()).toBeCloseToArray([10, 15]);
+  expect(system.a.toArray()).toBeCloseToArray([1, 1]);
 });
