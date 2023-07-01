@@ -1316,25 +1316,31 @@
 	      springsU32[i * 2 + 1] = s[1];
 	    });
 
-	    const l0 = ten.zeros([numSprings]);
 	    if (this.l0 != null) this.l0.dispose();
-	    this.l0 = l0;
+	    this.l0 = null;
 
-	    if (args.l0 == null) {
-	      this.wasmInstance.exports.l0_of_x(
-	        this.numVertices(),
-	        this.x0.ptr,
-	        numSprings,
-	        this.springs.ptr,
-	        this.l0.ptr
-	      );
-	    } else {
-	      this.l0.set(args.l0);
+	    if (numSprings != 0) {
+	      const l0 = ten.zeros([numSprings]);
+	      this.l0 = l0;
+
+	      if (args.l0 == null) {
+	        this.wasmInstance.exports.l0_of_x(
+	          this.numVertices(),
+	          this.x0.ptr,
+	          numSprings,
+	          this.springs.ptr,
+	          this.l0.ptr
+	        );
+	      } else {
+	        this.l0.set(args.l0);
+	      }
 	    }
 
-	    // TODO a = ten.ones([numSprings]);
-	    // if (this.a != null) this.a.dispose();
-	    if (this.a == null) {
+	    if (this.a != null) this.a.dispose();
+	    this.a = null;
+
+	    if (numSprings != 0) {
+	      // TODO a = ten.ones([numSprings]);
 	      const a = ten.zeros([numSprings]);
 	      this.a = a;
 	      const aF32 = a.slot.f32();
