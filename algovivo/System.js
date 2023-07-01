@@ -100,8 +100,9 @@ class System {
     }
 
     // TODO a = ten.ones([numSprings]);
-    // if (this.a != null) this.a.dispose();
-    if (this.a == null) {
+    if (this.a != null) this.a.dispose();
+    this.a = null;
+    if (numSprings != 0) {
       const a = ten.zeros([numSprings]);
       this.a = a;
       const aF32 = a.slot.f32();
