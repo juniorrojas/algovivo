@@ -2200,6 +2200,10 @@
 	      }
 	    } else {
 	      sortedElements.forEach((element) => {
+	        if (element.order == null) {
+	          throw new Error(`invalid element, order not defined ${element}`);
+	        }
+
 	        if (element.order == 1) {
 	          this.renderPoint(renderer, mesh, camera, element.id, customArgs);
 	        } else
