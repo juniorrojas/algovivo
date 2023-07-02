@@ -2178,16 +2178,34 @@ class Renderer {
   }
 
   renderMesh(renderer, mesh, camera, customArgs = {}) {
-    for (let i = 0; i < mesh.triangles.length; i++) {
-      this.renderTriangle(renderer, mesh, camera, i, customArgs);
-    }
+    const sortedElements = mesh.sortedElements;
 
-    for (let i = 0; i < mesh.lines.length; i++) {
-      this.renderLine(renderer, mesh, camera, i, customArgs);
-    }
-    
-    for (let i = 0; i < mesh.x.length; i++) {
-      this.renderPoint(renderer, mesh, camera, i, customArgs);
+    if (sortedElements == null) {
+      for (let i = 0; i < mesh.triangles.length; i++) {
+        this.renderTriangle(renderer, mesh, camera, i, customArgs);
+      }
+
+      for (let i = 0; i < mesh.lines.length; i++) {
+        this.renderLine(renderer, mesh, camera, i, customArgs);
+      }
+      
+      for (let i = 0; i < mesh.x.length; i++) {
+        this.renderPoint(renderer, mesh, camera, i, customArgs);
+      }
+    } else {
+      sortedElements.forEach((element) => {
+        if (element.order == 1) {
+          this.renderPoint(renderer, mesh, camera, element.id, customArgs);
+        } else
+        if (element.order == 2) {
+          this.renderLine(renderer, mesh, camera, element.id, customArgs);
+        } else
+        if (element.order == 3) {
+          this.renderTriangle(renderer, mesh, camera, element.id, customArgs);
+        } else {
+          throw new Error(`invalid element ${element}`);
+        }
+      });
     }
   }
 
@@ -2603,13 +2621,238 @@ var background = {
   Background: Background_1
 };
 
+class Simplex$1 {
+  constructor(id, vertexIds) {
+    if (id == null) {
+      throw new Error("id required to create simplex");
+    }
+    this.order = vertexIds.length;
+    this.id = id;
+    this.vertexIds = vertexIds;
+  }
+}
+
+var Simplex_1 = Simplex$1;
+
+const Simplex = Simplex_1;
+
+function hashSimplex$1(vids) {
+  vids.sort();
+  return vids.join("_");
+}
+
+class Simplices$3 {
+  constructor(args = {}) {
+    if (args.order == null) throw new Error("order required");
+    this.order = args.order;
+    this.simplicesByHash = new Map();
+  }
+
+  forEach(f) {
+    this.simplicesByHash.forEach(f);
+  }
+
+  size() {
+    return this.simplicesByHash.size;
+  }
+
+  has(simplex) {
+    return this.simplicesByHash.has(hashSimplex$1(simplex.vertexIds));
+  }
+
+  add(simplex, id) {
+    let vertexIds = null;
+    if (Array.isArray(simplex)) {
+      if (id == null) throw new Error("id required");
+      vertexIds = simplex;
+      simplex = new Simplex(id, vertexIds);
+    } else {
+      vertexIds = simplex.vertexIds;
+      if (vertexIds == null) {
+        throw new Error(`vertexIds required ${simplex}`);
+      }
+      id = simplex.id;
+    }
+    if (vertexIds.length != this.order) {
+      throw new Error(`expected ${this.order} vertices, found ${vertexIds.length}`);
+    }
+    const h = hashSimplex$1(vertexIds);
+    this.simplicesByHash.set(h, simplex);
+    return simplex;
+  }
+}
+
+var Simplices_1 = Simplices$3;
+
+const Simplices$2 = Simplices_1;
+
+class Vertex$1 {
+  constructor(id) {
+    this.id = id;
+    this.edges = new Simplices$2({ order: 2 });
+    this.triangles = new Simplices$2({ order: 3 });
+  }
+
+  addTriangle(triangle, id) {
+    this.triangles.add(triangle, id);
+  }
+
+  addEdge(edge, id) {
+    this.edges.add(edge, id);
+  }
+}
+
+var Vertex_1 = Vertex$1;
+
+const Simplices$1 = Simplices_1;
+const Vertex = Vertex_1;
+
+class MeshTopology$1 {
+  constructor(args = {}) {
+    this.vertices = new Map();
+    this.edges = new Simplices$1({ order: 2 });
+    this.triangles = new Simplices$1({ order: 3 });
+    
+    const edges = args.edges ?? [];
+    edges.forEach((e, i) => {
+      this.addEdge(i, e);
+    });
+    
+    const triangles = args.triangles ?? [];
+    triangles.forEach((t, i) => {
+      this.addTriangle(i, t);
+    });
+  }
+
+  numVertices() {
+    return this.vertices.size;
+  }
+
+  numEdges() {
+    return this.edges.size();
+  }
+
+  numTriangles() {
+    return this.triangles.size();
+  }
+
+  getVertexById(id, create = false) {
+    let vertex = this.vertices.get(id);
+    if (vertex == null && create) {
+      vertex = new Vertex(id);
+      this.vertices.set(id, vertex);
+    }
+    return vertex;
+  }
+
+  addEdge(id, vertexIds) {
+    const edge = this.edges.add(vertexIds, id);
+    vertexIds.forEach(vid => {
+      this.getVertexById(vid, true).addEdge(edge);
+    });
+    return edge;
+  }
+
+  addTriangle(id, vertexIds) {
+    const triangle = this.triangles.add(vertexIds, id);
+    vertexIds.forEach(vid => {
+      this.getVertexById(vid, true).addTriangle(triangle);
+    });
+    return triangle;
+  }
+}
+
+var MeshTopology_1 = MeshTopology$1;
+
+const MeshTopology = MeshTopology_1;
+const Simplices = Simplices_1;
+
+function makeSortedElements(args = {}) {
+  if (args.sortedVertexIds == null) {
+    throw new Error("sortedVertexIds required");
+  }
+  if (args.triangles == null) {
+    throw new Error("triangles required");
+  }
+  if (args.edges == null) {
+    throw new Error("edges required");
+  }
+  const sortedVertexIds = args.sortedVertexIds;
+  
+  const vertexIdToOrder = new Map();
+  sortedVertexIds.forEach((id, order) => {
+    vertexIdToOrder.set(id, order);
+  });
+
+  const triangleTopology = new MeshTopology({
+    triangles: args.triangles
+  });
+  const edgeTopology = new MeshTopology({
+    edges: args.edges
+  });
+  
+  const sortedElements = [];
+  const trianglesAdded = new Simplices({ order: 3 });
+  const edgesAdded = new Simplices({ order: 2 });
+
+  sortedVertexIds.forEach((vertexId) => {
+    const triangles = triangleTopology.getVertexById(vertexId, true).triangles;
+    const edges = edgeTopology.getVertexById(vertexId, true).edges;
+
+    const sortedSimplices = [];
+    triangles.forEach(t => { sortedSimplices.push(t); });
+    edges.forEach(e => { sortedSimplices.push(e); });
+
+    sortedSimplices.sort((a, b) => {
+      // TODO max order vertex could pre-sorted in the simplex
+      const ai1 = Math.max(a.vertexIds.map(i => vertexIdToOrder.get(i)));
+      const bi1 = Math.max(b.vertexIds.map(i => vertexIdToOrder.get(i)));
+      if (ai1 < bi1) {
+        return -1;
+      } else {
+        return 1;
+      }
+    });
+
+    sortedSimplices.forEach(simplex => {
+      if (simplex.order == 2) {
+        const edge = simplex;
+        if (!edgesAdded.has(edge)) {
+          sortedElements.push(edge);
+          edgesAdded.add(edge);
+        }
+      } else {
+        const triangle = simplex;
+        if (!trianglesAdded.has(triangle)) {
+          sortedElements.push(triangle);
+          trianglesAdded.add(triangle);
+        }
+      }
+    });
+
+    sortedElements.push({
+      order: 1,
+      id: vertexId
+    });
+  });
+  return sortedElements;
+}
+
+var sorted = {
+  makeSortedElements: makeSortedElements,
+  MeshTopology: MeshTopology_1,
+  Simplex: Simplex_1,
+  Simplices: Simplices_1
+};
+
 var mm2d$2 = {
   math: math$2,
   ui: ui$2,
   shaders: shaders$1,
   core: core,
   custom: custom,
-  background: background
+  background: background,
+  sorted: sorted
 };
 
 const mm2d$1 = mm2d$2;

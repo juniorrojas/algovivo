@@ -29,6 +29,7 @@ export default class SystemViewport {
     }
     this.system = args.system;
     this.sortedVertexIds = args.sortedVertexIds;
+    console.log(args.sortedVertexIds);
 
     const renderer = new mm2d.core.Renderer();
     this.renderer = renderer;
