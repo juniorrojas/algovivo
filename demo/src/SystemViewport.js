@@ -319,6 +319,9 @@ export default class SystemViewport {
         sortedVertexIds.push(i);
       }
     }
+    if (sortedVertexIds.length != this.system.numVertices()) {
+      throw new Error(`invalid size for sortedVertexIds, found ${sortedVertexIds.length}, expected ${this.system.numVertices()}`);
+    }
 
     mesh.sortedElements = mm2d.sorted.makeSortedElements({
       sortedVertexIds: sortedVertexIds,
