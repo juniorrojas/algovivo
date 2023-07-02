@@ -35,12 +35,6 @@ async function main() {
   document.body.style.margin = 0;
   document.body.style.padding = 0;
   document.body.style.alignItems = "center";
-
-  const viewport = new SystemViewport({
-    system: system,
-    sortedVertexIds: [25, 23, 14, 17, 18, 22, 19, 24, 13, 15, 10, 11, 16, 27, 12, 8, 1, 9, 6, 2, 0, 7, 3, 26, 20, 5, 4, 21]
-  });
-  divContent.appendChild(viewport.domElement);
   
   const dataRoot = "data";
 
@@ -57,6 +51,12 @@ async function main() {
   const [meshData, policyData] = await Promise.all(
     [loadMeshData, loadPolicyData].map(f => f())
   );
+
+  const viewport = new SystemViewport({
+    system: system,
+    sortedVertexIds: meshData.sortedVertexIds
+  });
+  divContent.appendChild(viewport.domElement);
 
   system.set({
     x: meshData.x,
