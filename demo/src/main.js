@@ -54,7 +54,7 @@ async function main() {
 
   const viewport = new SystemViewport({
     system: system,
-    sortedVertexIds: meshData.sortedVertexIds
+    sortedVertexIds: meshData.sorted_vertex_ids
   });
   divContent.appendChild(viewport.domElement);
 
