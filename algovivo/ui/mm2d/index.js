@@ -4,5 +4,6 @@ module.exports = {
   shaders: require("./shaders"),
   core: require("./core"),
   custom: require("./custom"),
-  background: require("./background")
+  background: require("./background"),
+  sorted: require("./sorted")
 }
