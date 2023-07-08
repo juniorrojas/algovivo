@@ -112,13 +112,6 @@ export default class SystemViewport {
         const borderColor = "black";
         const lineCap = "butt";
         const muscleIntensityAttributeName = "muscleIntensity";
-        
-        // const ctx = args.ctx;
-        // const a = args.a;
-        // const b = args.b;
-        // const mesh = args.mesh;
-        // const camera = args.camera;
-        // const scale = camera.inferScale();
 
         ctx.beginPath();
         ctx.lineCap = lineCap;
