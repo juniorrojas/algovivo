@@ -186,8 +186,6 @@ class SystemViewport {
 
     this.targetCenterX = null;
     this.currentCenterX = null;
-
-    this.setStyle();
   }
 
   setSize(args = {}) {
