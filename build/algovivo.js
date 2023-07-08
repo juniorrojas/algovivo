@@ -1851,7 +1851,7 @@
 
 	var DragBehavior_1 = DragBehavior;
 
-	var ui$2 = {
+	var ui = {
 	  cursorUtils: cursorUtils$1,
 	  DragBehavior: DragBehavior_1
 	};
@@ -2857,7 +2857,7 @@
 
 	var mm2d$2 = {
 	  math: math$2,
-	  ui: ui$2,
+	  ui: ui,
 	  shaders: shaders$1,
 	  core: core,
 	  custom: custom,
@@ -3144,51 +3144,47 @@
 	  }
 
 	  setVertexPos(i, p) {
-	    const sim = this.system;
-	    const xF32 = sim.x0.slot.f32();
+	    const xF32 = this.system.x0.slot.f32();
 	    const offset = i * 2;
 	    xF32[offset] = p[0];
 	    xF32[offset + 1] = p[1];
 	  }
 
 	  setVertexVel(i, p) {
-	    const sim = this.system;
-	    const vF32 = sim.v0.slot.f32();
+	    const vF32 = this.system.v0.slot.f32();
 	    const offset = i * 2;
 	    vF32[offset] = p[0];
 	    vF32[offset + 1] = p[1];
 	  }
 
 	  fixVertex(vertexId) {
-	    const sim = this.system;
 	    this.setVertexVel(vertexId, [0, 0]);
 	    if (vertexId == null) {
 	      vertexId = -1;
 	    }
-	    sim.fixedVertexId = vertexId;
+	    this.system.fixedVertexId = vertexId;
 	  }
 
 	  freeVertex() {
-	    const sim = this.system;
-	    sim.fixedVertexId = -1;
+	    this.system.fixedVertexId = -1;
 	  }
 	}
 
 	var SystemViewport_1 = SystemViewport;
 
-	var ui$1 = {
+	var render$1 = {
 	  SystemViewport: SystemViewport_1
 	};
 
 	const System = System_1;
 	const mmgrten = mmgrten$2;
-	const ui = ui$1;
+	const render = render$1;
 	const mm2d = mm2d$2;
 
 	var algovivo = {
 	  System: System,
 	  mmgrten: mmgrten,
-	  SystemViewport: ui.SystemViewport,
+	  SystemViewport: render.SystemViewport,
 	  mm2d: mm2d
 	};
 
