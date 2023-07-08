@@ -277,33 +277,29 @@ class SystemViewport {
   }
 
   setVertexPos(i, p) {
-    const sim = this.system;
-    const xF32 = sim.x0.slot.f32();
+    const xF32 = this.system.x0.slot.f32();
     const offset = i * 2;
     xF32[offset] = p[0];
     xF32[offset + 1] = p[1];
   }
 
   setVertexVel(i, p) {
-    const sim = this.system;
-    const vF32 = sim.v0.slot.f32();
+    const vF32 = this.system.v0.slot.f32();
     const offset = i * 2;
     vF32[offset] = p[0];
     vF32[offset + 1] = p[1];
   }
 
   fixVertex(vertexId) {
-    const sim = this.system;
     this.setVertexVel(vertexId, [0, 0]);
     if (vertexId == null) {
       vertexId = -1;
     }
-    sim.fixedVertexId = vertexId;
+    this.system.fixedVertexId = vertexId;
   }
 
   freeVertex() {
-    const sim = this.system;
-    sim.fixedVertexId = -1;
+    this.system.fixedVertexId = -1;
   }
 }
 
