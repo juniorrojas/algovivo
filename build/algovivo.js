@@ -3149,13 +3149,12 @@
 	    mesh.lines = edgesFromTriangles(meshData.triangles);
 
 	    const springsHashToId = new Map();
-	    // this.springsHashToId = springsHashToId;
+	    const springsU32 = this.system.springs.u32();
 	    for (let i = 0; i < this.system.numSprings(); i++) {
 	      const s = [
-	        this.system.springs.u32()[i * 2    ],
-	        this.system.springs.u32()[i * 2 + 1]
+	        springsU32[i * 2    ],
+	        springsU32[i * 2 + 1]
 	      ];
-	      // console.log(s);
 	      springsHashToId.set(
 	        hashSimplex(s),
 	        i
