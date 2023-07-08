@@ -27,6 +27,7 @@ class SystemViewport {
       throw new Error("system required");
     }
     this.system = args.system;
+    this.sortedVertexIds = args.sortedVertexIds;
 
     const renderer = new mm2d.core.Renderer();
     this.renderer = renderer;
@@ -62,9 +63,6 @@ class SystemViewport {
 
     const mesh = scene.addMesh();
     this.mesh = mesh;
-
-    const muscleMesh = scene.addMesh();
-    this.muscleMesh = muscleMesh;
     
     mesh.pointShader.renderPoint = mm2d.custom.makePointShader();
 
@@ -91,23 +89,71 @@ class SystemViewport {
       const camera = args.camera;
       const scale = camera.inferScale();
 
-      const borderWidth = 0.029;
-      const borderColor = "black";
-      ctx.beginPath();
-      ctx.lineJoin = "round";
-      ctx.lineCap = "round";
-      ctx.strokeStyle = borderColor;
-      ctx.lineWidth = (borderWidth) * scale;
-      ctx.moveTo(a[0], a[1]);
-      ctx.lineTo(b[0], b[1]);
-      ctx.closePath();
-      ctx.stroke();
-    }
+      const lineIdToSpringId = args.mesh.getCustomAttribute("lineIdToSpringId");
+      const springId = lineIdToSpringId[args.id];
+      if (springId == null) {
+        const borderWidth = 0.029;
+        const borderColor = "black";
+        ctx.beginPath();
+        ctx.lineJoin = "round";
+        ctx.lineCap = "round";
+        ctx.strokeStyle = borderColor;
+        ctx.lineWidth = (borderWidth) * scale;
+        ctx.moveTo(a[0], a[1]);
+        ctx.lineTo(b[0], b[1]);
+        ctx.closePath();
+        ctx.stroke();
+      } else {
+        const color0 = [255, 0, 0];
+        const color1 = [250, 190, 190];
+        const width = 0.065;
+        const borderWidth = 0.017;
+        const borderColor = "black";
+        const lineCap = "butt";
+        const muscleIntensityAttributeName = "muscleIntensity";
 
-    muscleMesh.pointShader.renderPoint = mm2d.custom.makePointShader({});
-    
-    muscleMesh.lineShader.renderLine = mm2d.custom.makeFiberShader({
-    });
+        ctx.beginPath();
+        ctx.lineCap = lineCap;
+        ctx.strokeStyle = borderColor;
+        ctx.lineWidth = (width + borderWidth * 2) * scale;
+        ctx.moveTo(a[0], a[1]);
+        ctx.lineTo(b[0], b[1]);
+        ctx.stroke();
+
+        ctx.beginPath();
+
+        const muscleIntensity = mesh.getCustomAttribute(muscleIntensityAttributeName);
+        if (muscleIntensity == null) {
+          throw new Error(`muscle intensity attribute (${muscleIntensityAttributeName}) not found, call setCustomAttribute("${muscleIntensityAttributeName}", value) before rendering.`);
+        }
+        if (!Array.isArray(muscleIntensity)) {
+          throw new Error(`muscle intensity attribute must be an array with values for each fiber, found ${typeof muscleIntensity}`);
+        }
+        
+        const t = muscleIntensity[springId];
+        
+        const cr0 = color0[0];
+        const cr1 = color1[0];
+
+        const cg0 = color0[1];
+        const cg1 = color1[1];
+
+        const cb0 = color0[2];
+        const cb1 = color1[2];
+
+        const cr = (1 - t) * cr0 + t * cr1;
+        const cg = (1 - t) * cg0 + t * cg1;
+        const cb = (1 - t) * cb0 + t * cb1;
+
+        ctx.strokeStyle = `rgb(${cr}, ${cg}, ${cb})`;
+        ctx.lineCap = lineCap;
+        ctx.lineWidth = width * scale;
+        ctx.moveTo(a[0], a[1]);
+        ctx.lineTo(b[0], b[1]);
+
+        ctx.stroke();
+      }
+    }
 
     const dragBehavior = this.dragBehavior = new mm2d.ui.DragBehavior({
       onDomCursorDown: (domCursor, event) => {
@@ -225,40 +271,73 @@ class SystemViewport {
 
   _updateMesh(meshData) {
     const mesh = this.mesh;
-    const muscleMesh = this.muscleMesh;
 
     if (meshData.x != null) {
       mesh.x = meshData.x;
-      muscleMesh.x = meshData.x;
     }
 
     mesh.triangles = meshData.triangles;
     mesh.lines = edgesFromTriangles(meshData.triangles);
-    muscleMesh.lines = meshData.springs;
+
+    const springsHashToId = new Map();
+    const springsU32 = this.system.springs.u32();
+    for (let i = 0; i < this.system.numSprings(); i++) {
+      const s = [
+        springsU32[i * 2    ],
+        springsU32[i * 2 + 1]
+      ];
+      springsHashToId.set(
+        hashSimplex(s),
+        i
+      );
+    }
+    
+    const lineIdToSpringId = [];
+    mesh.setCustomAttribute("lineIdToSpringId", lineIdToSpringId);
+    mesh.lines.forEach(line => {
+      const h = hashSimplex(line);
+      const springId = springsHashToId.get(h);
+      lineIdToSpringId.push(springId);
+    });
+    
+    let sortedVertexIds = this.sortedVertexIds;
+    if (sortedVertexIds == null) {
+      sortedVertexIds = [];
+      for (let i = 0; i < this.system.numVertices(); i++) {
+        sortedVertexIds.push(i);
+      }
+    }
+    if (sortedVertexIds.length != this.system.numVertices()) {
+      throw new Error(`invalid size for sortedVertexIds, found ${sortedVertexIds.length}, expected ${this.system.numVertices()}`);
+    }
+
+    mesh.sortedElements = mm2d.sorted.makeSortedElements({
+      sortedVertexIds: sortedVertexIds,
+      triangles: mesh.triangles,
+      edges: mesh.lines
+    });
 
     const muscleIntensity = [];
-    const numSprings = muscleMesh.lines.length;
+    const numSprings = this.system.numSprings();
     for (let i = 0; i < numSprings; i++) {
       muscleIntensity.push(1);
     }
-    muscleMesh.setCustomAttribute("muscleIntensity", muscleIntensity);
+    mesh.setCustomAttribute("muscleIntensity", muscleIntensity);
   }
 
   _updateSim(sim) {
     this.system = sim;
     const mesh = this.mesh;
-    const muscleMesh = this.muscleMesh;
 
     const x = sim.x0.toArray();
     mesh.x = x
-    muscleMesh.x = x;
 
     const muscleIntensity = [];
     const numSprings = sim.numSprings();
     for (let i = 0; i < numSprings; i++) {
       muscleIntensity.push(sim.a.slot.f32()[i]);
     }
-    muscleMesh.setCustomAttribute("muscleIntensity", muscleIntensity);
+    mesh.setCustomAttribute("muscleIntensity", muscleIntensity);
   }
 
   hitTestVertex(p) {

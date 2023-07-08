@@ -1,11 +1,11 @@
 const System = require("./System");
 const mmgrten = require("./mmgrten/index");
-const ui = require("./ui");
-const mm2d = require("./ui/mm2d");
+const render = require("./render");
+const mm2d = require("./render/mm2d");
 
 module.exports = {
   System: System,
   mmgrten: mmgrten,
-  SystemViewport: ui.SystemViewport,
+  SystemViewport: render.SystemViewport,
   mm2d: mm2d
 };
