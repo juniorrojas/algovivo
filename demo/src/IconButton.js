@@ -1,11 +1,12 @@
 export default class IconButton {
   constructor(args = {}) {
     const div = this.domElement = document.createElement("div");
-    
+
     div.style.userSelect = "none";
     div.style.webkitTapHighlightColor = "transparent";
     div.style.padding = "12px";
     div.style.cursor = "pointer";
+    div.style.padding = "0";
     div.style.borderRadius = "50%";
     div.style.width = "78px";
     div.style.height = "78px";
