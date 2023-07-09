@@ -12,17 +12,7 @@ import argparse
 def populate_deploy_path(deploy_path):
     public_path = this_dirpath.parent.joinpath("public")
 
-    shutil.copy(
-        public_path.joinpath(".gitignore"),
-        deploy_path.joinpath(".gitignore")
-    )
-
-    shutil.copy(
-        public_path.joinpath("index.html"),
-        deploy_path.joinpath("index.html")
-    )
-
-    for filename in ["main.js", "algovivo.wasm"]:
+    for filename in [".gitignore", "index.html", "main.js", "algovivo.wasm"]:
         shutil.copy(
             public_path.joinpath(filename),
             deploy_path.joinpath(filename)

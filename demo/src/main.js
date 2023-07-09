@@ -10,6 +10,18 @@ async function loadWasm() {
   return wasm.instance;
 }
 
+const dataRoot = "data";
+
+async function loadMeshData() {
+  const response = await fetch(`${dataRoot}/mesh.json`);
+  return await response.json();
+}
+
+async function loadPolicyData() {
+  const response = await fetch(`${dataRoot}/policy.json`);
+  return await response.json();
+}
+
 async function main() {
   makeGitHubCorner();
   makeHeader();
@@ -35,18 +47,6 @@ async function main() {
   document.body.style.margin = 0;
   document.body.style.padding = 0;
   document.body.style.alignItems = "center";
-  
-  const dataRoot = "data";
-
-  async function loadMeshData() {
-    const response = await fetch(`${dataRoot}/mesh.json`);
-    return await response.json();
-  }
-
-  async function loadPolicyData() {
-    const response = await fetch(`${dataRoot}/policy.json`);
-    return await response.json();
-  }
 
   const [meshData, policyData] = await Promise.all(
     [loadMeshData, loadPolicyData].map(f => f())
