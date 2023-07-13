@@ -8,6 +8,7 @@ sys.path.insert(0, str(this_dirpath))
 import deployutils
 import shutil
 import argparse
+from glob import glob
 
 def populate_deploy_path(deploy_path):
     public_path = this_dirpath.parent.joinpath("public")
@@ -16,6 +17,17 @@ def populate_deploy_path(deploy_path):
         shutil.copy(
             public_path.joinpath(filename),
             deploy_path.joinpath(filename)
+        )
+
+    for filename in (
+        [str(public_path.joinpath(".gitignore"))] +
+        glob(str(public_path.joinpath("*.html"))) +
+        glob(str(public_path.joinpath("*.js"))) +
+        glob(str(public_path.joinpath("*.wasm")))
+    ):
+        shutil.copy(
+            filename,
+            deploy_path.joinpath(os.path.basename(filename))
         )
 
     for dirname in ["assets", "data"]:
