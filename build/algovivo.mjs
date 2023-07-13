@@ -2265,109 +2265,6 @@ var ui = {
   DragBehavior: DragBehavior_1
 };
 
-class Floor$1 {
-  constructor(args = {}) {
-    if (args.scene == null) {
-      throw new Error("scene required");
-    }
-    const scene = this.scene = args.scene;
-    const mesh = this.mesh = scene.addMesh();
-    mesh.x = [
-      [-10, 0],
-      [10, 0]
-    ];
-    mesh.lines = [
-      [0, 1]
-    ];
-
-    mesh.lineShader.renderLine = Floor$1.makeFloorLineShader({
-      width: args.width
-    });
-
-    mesh.setCustomAttribute("translation", [0, 0]);
-  }
-
-  static makeFloorLineShader(args = {}) {
-    const width = (args.width == null) ? 0.055 : args.width;
-    return (args) => {
-      const ctx = args.ctx;
-      const a = args.a;
-      const b = args.b;
-      const camera = args.camera;
-      const mesh = args.mesh;
-      const scale = camera.inferScale();
-
-      const _translation = mesh.getCustomAttribute("translation");
-      const translation = [scale * _translation[0], scale * _translation[1]];
-
-      ctx.strokeStyle = "black";
-      ctx.lineWidth = scale * width;
-      ctx.beginPath();
-      ctx.moveTo(a[0] + translation[0], a[1] + translation[1]);
-      ctx.lineTo(b[0] + translation[0], b[1] + translation[1]);
-      ctx.stroke();
-    }
-  }
-}
-
-var Floor_1 = Floor$1;
-
-const Floor = Floor_1;
-
-function makePointShader(args = {}) {
-  const radius = (args.radius == null) ? 0.028 : args.radius;
-  const borderColor = (args.borderColor == null) ? "black" : args.borderColor;
-  const fillColor = (args.fillColor == null) ? "white" : args.fillColor;
-  const borderWidth = (args.borderWidth == null) ? 0.023 : args.borderWidth;
-
-  return (args) => {
-    const ctx = args.ctx;
-    const p = args.p;
-    const camera = args.camera;
-    const scale = camera.inferScale();
-    
-    const radius1 = (radius + borderWidth) * scale;
-    ctx.fillStyle = borderColor;
-    ctx.beginPath();
-    ctx.arc(p[0], p[1], radius1, 0, 2 * Math.PI);
-    ctx.fill();
-
-    const radius2 = radius * scale;
-    ctx.fillStyle = fillColor;
-    ctx.beginPath();
-    ctx.arc(p[0], p[1], radius2, 0, 2 * Math.PI);
-    ctx.fill();
-  }
-}
-
-function makeFloorShader(args = {}) {
-  // TODO parameterize
-  const color = "black";
-  const width = 0.055;
-  return (args) => {
-    const ctx = args.ctx;
-    const a = args.a;
-    const b = args.b;
-    const camera = args.camera;
-    const scale = camera.inferScale();
-
-    ctx.beginPath();
-    ctx.strokeStyle = color;
-    ctx.lineCap = "round";
-    ctx.lineWidth = width * scale;
-    ctx.moveTo(a[0], a[1]);
-    ctx.lineTo(b[0], b[1]);
-    ctx.closePath();
-    ctx.stroke();
-  }
-}
-
-var custom = {
-  makePointShader: makePointShader,
-  makeFloorShader: makeFloorShader,
-  Floor: Floor
-};
-
 function makeGridData(args = {}) {
   const cellSize = (args.cellSize == null) ? 1 : args.cellSize;
   const innerDivs = (args.innerCells == null) ? 3 : args.innerCells;
@@ -2756,10 +2653,9 @@ var mm2d$2 = {
   math: math$2,
   ui: ui,
   shaders: shaders$1,
-  core: core,
-  custom: custom,
   background: background,
   sorted: sorted,
+  core: core,
   Renderer: core.Renderer,
   Camera: core.Camera,
   Scene: core.Scene
@@ -2786,6 +2682,77 @@ function edgesFromTriangles(triangles) {
     addEdge(t[0], t[2]);
   });
   return Array.from(edges.values());
+}
+
+function makePointShader(args = {}) {
+  const radius = (args.radius == null) ? 0.028 : args.radius;
+  const borderColor = (args.borderColor == null) ? "black" : args.borderColor;
+  const fillColor = (args.fillColor == null) ? "white" : args.fillColor;
+  const borderWidth = (args.borderWidth == null) ? 0.023 : args.borderWidth;
+
+  return (args) => {
+    const ctx = args.ctx;
+    const p = args.p;
+    const camera = args.camera;
+    const scale = camera.inferScale();
+    
+    const radius1 = (radius + borderWidth) * scale;
+    ctx.fillStyle = borderColor;
+    ctx.beginPath();
+    ctx.arc(p[0], p[1], radius1, 0, 2 * Math.PI);
+    ctx.fill();
+
+    const radius2 = radius * scale;
+    ctx.fillStyle = fillColor;
+    ctx.beginPath();
+    ctx.arc(p[0], p[1], radius2, 0, 2 * Math.PI);
+    ctx.fill();
+  }
+}
+
+class Floor {
+  constructor(args = {}) {
+    if (args.scene == null) {
+      throw new Error("scene required");
+    }
+    const scene = this.scene = args.scene;
+    const mesh = this.mesh = scene.addMesh();
+    mesh.x = [
+      [-10, 0],
+      [10, 0]
+    ];
+    mesh.lines = [
+      [0, 1]
+    ];
+
+    mesh.lineShader.renderLine = Floor.makeFloorLineShader({
+      width: args.width
+    });
+
+    mesh.setCustomAttribute("translation", [0, 0]);
+  }
+
+  static makeFloorLineShader(args = {}) {
+    const width = (args.width == null) ? 0.055 : args.width;
+    return (args) => {
+      const ctx = args.ctx;
+      const a = args.a;
+      const b = args.b;
+      const camera = args.camera;
+      const mesh = args.mesh;
+      const scale = camera.inferScale();
+
+      const _translation = mesh.getCustomAttribute("translation");
+      const translation = [scale * _translation[0], scale * _translation[1]];
+
+      ctx.strokeStyle = "black";
+      ctx.lineWidth = scale * width;
+      ctx.beginPath();
+      ctx.moveTo(a[0] + translation[0], a[1] + translation[1]);
+      ctx.lineTo(b[0] + translation[0], b[1] + translation[1]);
+      ctx.stroke();
+    }
+  }
 }
 
 class SystemViewport {
@@ -2824,14 +2791,14 @@ class SystemViewport {
       secondaryLineWidth: 0.005,
       color: "#acadad"
     });
-    this.floor = new mm2d$1.custom.Floor({
+    this.floor = new Floor({
       scene: scene
     });
 
     const mesh = scene.addMesh();
     this.mesh = mesh;
     
-    mesh.pointShader.renderPoint = mm2d$1.custom.makePointShader();
+    mesh.pointShader.renderPoint = makePointShader();
 
     mesh.triangleShader.renderTriangle = (args = {}) => {
       const ctx = args.ctx;
