@@ -29,7 +29,7 @@ class SystemViewport {
     this.system = args.system;
     this.sortedVertexIds = args.sortedVertexIds;
 
-    const renderer = new mm2d.core.Renderer();
+    const renderer = new mm2d.Renderer();
     this.renderer = renderer;
     this.domElement = renderer.domElement;
     this.setSize({

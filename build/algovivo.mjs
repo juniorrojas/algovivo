@@ -1752,103 +1752,66 @@ var math$2 = {
   AABB: AABB_1
 };
 
-function computeDomCursor(event, domElement) {
-  const rect = domElement.getBoundingClientRect();
-  let clientX, clientY;
-  if (event.touches == null) {
-    clientX = event.clientX;
-    clientY = event.clientY;
-  } else {
-    if (event.touches.length == 0) return null;
-    const touch = event.touches[0];
-    clientX = touch.clientX;
-    clientY = touch.clientY;
-  }
-  const left = clientX - rect.left;
-  const top = clientY - rect.top;
-  const cursor = [left, top];
-  return cursor;
-}
+const math$1 = math$2;
 
-var cursorUtils$1 = {
-  computeDomCursor: computeDomCursor
-};
-
-const cursorUtils = cursorUtils$1;
-
-class DragBehavior {
-  constructor(args = {}) {
-    this._dragging = false;
-
-    this.onDomCursorDown = args.onDomCursorDown;
-    this.onDragProgress = args.onDragProgress;
-    this.onDomCursorUp = args.onDomCursorUp;
-
-    this.domElement = null;
+class Camera {
+  constructor() {
+    this.transform = new math$1.Transform2d();
   }
 
-  beginDrag() {
-    this._dragging = true;
+  domToWorldSpace(pos) {
+    if (!Array.isArray(pos)) throw new Error(`array expected, found ${typeof pos}`);
+    if (pos.length != 2) throw new Error(`array with 2 elements expected, found ${pos.length}`);
+    const worldPos = this.transform.inv().apply(pos);
+    return worldPos;
   }
 
-  endDrag() {
-    this._dragging = false;
+  inferScale() {
+    return this.transform.inferScale();
   }
 
-  dragging() {
-    return this._dragging;
-  }
-
-  domCursorDown(domCursor, event) {
-    if (this.onDomCursorDown != null) this.onDomCursorDown(domCursor, event);
-  }
-
-  domCursorMove(domCursor, event) {
-    if (!this.dragging()) return;
-    if (this.onDragProgress != null) this.onDragProgress(domCursor, event);
-  }
-
-  domCursorUp(domCursor, event) {
-    this.endDrag();
-    if (this.onDomCursorUp != null) this.onDomCursorUp(domCursor, event);
-  }
-
-  linkToDom(domElement) {
-    if (this.domElement != null) {
-      throw new Error("already linked to DOM");
-    }
-    this.domElement = domElement;
-    const onDomCursorDown = (event) => {
-      event.preventDefault();
-      const domCursor = cursorUtils.computeDomCursor(event, domElement);
-      this.domCursorDown(domCursor, event);
-    };
-    domElement.addEventListener("mousedown", onDomCursorDown, {passive: false});
-    domElement.addEventListener("touchstart", onDomCursorDown, {passive: false});
+  center(args) {
+    let scale = args.zoom ? args.zoom : 1;
     
-    const onDomCursorMove = (event) => {
-      const domCursor = cursorUtils.computeDomCursor(event, domElement);
-      this.domCursorMove(domCursor, event);
-    };
-    domElement.addEventListener("mousemove", onDomCursorMove, {passive: false});
-    domElement.addEventListener("touchmove", onDomCursorMove, {passive: false});
+    let viewportWidth = args.viewportWidth;
+    let viewportHeight = args.viewportHeight;
+    if (args.renderer != null) {
+      // if present, args.renderer overwrites
+      // viewportWidth and viewportHeight
+      viewportWidth = args.renderer.width;
+      viewportHeight = args.renderer.height;
+    }
 
-    const onDomCursorUp = (event) => {
-      const domCursor = cursorUtils.computeDomCursor(event, domElement);
-      this.domCursorUp(domCursor, event);
-    };
-    window.addEventListener("mouseup", onDomCursorUp);
-    window.addEventListener("touchend", onDomCursorUp);
-    window.addEventListener("touchcancel", onDomCursorUp);
+    if (args.worldWidth != null) {
+      if (viewportWidth == null) {
+        throw new Error("viewportWidth required");
+      }
+      scale = viewportWidth / args.worldWidth;
+    }
+    
+    this.transform.linear = new math$1.Matrix2x2(
+      scale, 0,
+      0, -scale
+    );
+
+    let translation;
+    if (args.worldCenter != null) {
+      const worldCenter = args.worldCenter;
+      translation = [
+        viewportWidth * 0.5 - worldCenter[0] * scale,
+        viewportHeight * 0.5 + worldCenter[1] * scale
+      ];
+    } else {
+      translation = [
+        viewportWidth * 0.5,
+        viewportHeight * 0.5
+      ];
+    }
+    this.transform.translation = translation;
   }
 }
 
-var DragBehavior_1 = DragBehavior;
-
-var ui = {
-  cursorUtils: cursorUtils$1,
-  DragBehavior: DragBehavior_1
-};
+var Camera_1 = Camera;
 
 class PointShader {
   constructor() {
@@ -1917,67 +1880,6 @@ var shaders$1 = {
   LineShader: LineShader_1,
   TriangleShader: TriangleShader_1
 };
-
-const math$1 = math$2;
-
-class Camera {
-  constructor() {
-    this.transform = new math$1.Transform2d();
-  }
-
-  domToWorldSpace(pos) {
-    if (!Array.isArray(pos)) throw new Error(`array expected, found ${typeof pos}`);
-    if (pos.length != 2) throw new Error(`array with 2 elements expected, found ${pos.length}`);
-    const worldPos = this.transform.inv().apply(pos);
-    return worldPos;
-  }
-
-  inferScale() {
-    return this.transform.inferScale();
-  }
-
-  center(args) {
-    let scale = args.zoom ? args.zoom : 1;
-    
-    let viewportWidth = args.viewportWidth;
-    let viewportHeight = args.viewportHeight;
-    if (args.renderer != null) {
-      // if present, args.renderer overwrites
-      // viewportWidth and viewportHeight
-      viewportWidth = args.renderer.width;
-      viewportHeight = args.renderer.height;
-    }
-
-    if (args.worldWidth != null) {
-      if (viewportWidth == null) {
-        throw new Error("viewportWidth required");
-      }
-      scale = viewportWidth / args.worldWidth;
-    }
-    
-    this.transform.linear = new math$1.Matrix2x2(
-      scale, 0,
-      0, -scale
-    );
-
-    let translation;
-    if (args.worldCenter != null) {
-      const worldCenter = args.worldCenter;
-      translation = [
-        viewportWidth * 0.5 - worldCenter[0] * scale,
-        viewportHeight * 0.5 + worldCenter[1] * scale
-      ];
-    } else {
-      translation = [
-        viewportWidth * 0.5,
-        viewportHeight * 0.5
-      ];
-    }
-    this.transform.translation = translation;
-  }
-}
-
-var Camera_1 = Camera;
 
 const math = math$2;
 const shaders = shaders$1;
@@ -2258,11 +2160,109 @@ class Scene {
 
 var Scene_1 = Scene;
 
-var core = {
+var core$1 = {
   Camera: Camera_1,
   Mesh: Mesh_1,
   Renderer: Renderer_1,
   Scene: Scene_1
+};
+
+function computeDomCursor(event, domElement) {
+  const rect = domElement.getBoundingClientRect();
+  let clientX, clientY;
+  if (event.touches == null) {
+    clientX = event.clientX;
+    clientY = event.clientY;
+  } else {
+    if (event.touches.length == 0) return null;
+    const touch = event.touches[0];
+    clientX = touch.clientX;
+    clientY = touch.clientY;
+  }
+  const left = clientX - rect.left;
+  const top = clientY - rect.top;
+  const cursor = [left, top];
+  return cursor;
+}
+
+var cursorUtils$1 = {
+  computeDomCursor: computeDomCursor
+};
+
+const cursorUtils = cursorUtils$1;
+
+class DragBehavior {
+  constructor(args = {}) {
+    this._dragging = false;
+
+    this.onDomCursorDown = args.onDomCursorDown;
+    this.onDragProgress = args.onDragProgress;
+    this.onDomCursorUp = args.onDomCursorUp;
+
+    this.domElement = null;
+  }
+
+  beginDrag() {
+    this._dragging = true;
+  }
+
+  endDrag() {
+    this._dragging = false;
+  }
+
+  dragging() {
+    return this._dragging;
+  }
+
+  domCursorDown(domCursor, event) {
+    if (this.onDomCursorDown != null) this.onDomCursorDown(domCursor, event);
+  }
+
+  domCursorMove(domCursor, event) {
+    if (!this.dragging()) return;
+    if (this.onDragProgress != null) this.onDragProgress(domCursor, event);
+  }
+
+  domCursorUp(domCursor, event) {
+    this.endDrag();
+    if (this.onDomCursorUp != null) this.onDomCursorUp(domCursor, event);
+  }
+
+  linkToDom(domElement) {
+    if (this.domElement != null) {
+      throw new Error("already linked to DOM");
+    }
+    this.domElement = domElement;
+    const onDomCursorDown = (event) => {
+      event.preventDefault();
+      const domCursor = cursorUtils.computeDomCursor(event, domElement);
+      this.domCursorDown(domCursor, event);
+    };
+    domElement.addEventListener("mousedown", onDomCursorDown, {passive: false});
+    domElement.addEventListener("touchstart", onDomCursorDown, {passive: false});
+    
+    const onDomCursorMove = (event) => {
+      const domCursor = cursorUtils.computeDomCursor(event, domElement);
+      this.domCursorMove(domCursor, event);
+    };
+    domElement.addEventListener("mousemove", onDomCursorMove, {passive: false});
+    domElement.addEventListener("touchmove", onDomCursorMove, {passive: false});
+
+    const onDomCursorUp = (event) => {
+      const domCursor = cursorUtils.computeDomCursor(event, domElement);
+      this.domCursorUp(domCursor, event);
+    };
+    window.addEventListener("mouseup", onDomCursorUp);
+    window.addEventListener("touchend", onDomCursorUp);
+    window.addEventListener("touchcancel", onDomCursorUp);
+  }
+}
+
+var DragBehavior_1 = DragBehavior;
+
+var ui = {
+  cursorUtils: cursorUtils$1,
+  DragBehavior: DragBehavior_1
 };
 
 class Floor$1 {
@@ -2849,6 +2849,8 @@ var sorted = {
   Simplices: Simplices_1
 };
 
+const core = core$1;
+
 var mm2d$2 = {
   math: math$2,
   ui: ui,
@@ -2856,7 +2858,10 @@ var mm2d$2 = {
   core: core,
   custom: custom,
   background: background,
-  sorted: sorted
+  sorted: sorted,
+  Renderer: core.Renderer,
+  Camera: core.Camera,
+  Scene: core.Scene
 };
 
 const mm2d$1 = mm2d$2;
@@ -2890,7 +2895,7 @@ class SystemViewport {
     this.system = args.system;
     this.sortedVertexIds = args.sortedVertexIds;
 
-    const renderer = new mm2d$1.core.Renderer();
+    const renderer = new mm2d$1.Renderer();
     this.renderer = renderer;
     this.domElement = renderer.domElement;
     this.setSize({
