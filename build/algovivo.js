@@ -1758,103 +1758,66 @@
 	  AABB: AABB_1
 	};
 
-	function computeDomCursor(event, domElement) {
-	  const rect = domElement.getBoundingClientRect();
-	  let clientX, clientY;
-	  if (event.touches == null) {
-	    clientX = event.clientX;
-	    clientY = event.clientY;
-	  } else {
-	    if (event.touches.length == 0) return null;
-	    const touch = event.touches[0];
-	    clientX = touch.clientX;
-	    clientY = touch.clientY;
-	  }
-	  const left = clientX - rect.left;
-	  const top = clientY - rect.top;
-	  const cursor = [left, top];
-	  return cursor;
-	}
+	const math$1 = math$2;
 
-	var cursorUtils$1 = {
-	  computeDomCursor: computeDomCursor
-	};
-
-	const cursorUtils = cursorUtils$1;
-
-	class DragBehavior {
-	  constructor(args = {}) {
-	    this._dragging = false;
-
-	    this.onDomCursorDown = args.onDomCursorDown;
-	    this.onDragProgress = args.onDragProgress;
-	    this.onDomCursorUp = args.onDomCursorUp;
-
-	    this.domElement = null;
+	class Camera {
+	  constructor() {
+	    this.transform = new math$1.Transform2d();
 	  }
 
-	  beginDrag() {
-	    this._dragging = true;
+	  domToWorldSpace(pos) {
+	    if (!Array.isArray(pos)) throw new Error(`array expected, found ${typeof pos}`);
+	    if (pos.length != 2) throw new Error(`array with 2 elements expected, found ${pos.length}`);
+	    const worldPos = this.transform.inv().apply(pos);
+	    return worldPos;
 	  }
 
-	  endDrag() {
-	    this._dragging = false;
+	  inferScale() {
+	    return this.transform.inferScale();
 	  }
 
-	  dragging() {
-	    return this._dragging;
-	  }
-
-	  domCursorDown(domCursor, event) {
-	    if (this.onDomCursorDown != null) this.onDomCursorDown(domCursor, event);
-	  }
-
-	  domCursorMove(domCursor, event) {
-	    if (!this.dragging()) return;
-	    if (this.onDragProgress != null) this.onDragProgress(domCursor, event);
-	  }
-
-	  domCursorUp(domCursor, event) {
-	    this.endDrag();
-	    if (this.onDomCursorUp != null) this.onDomCursorUp(domCursor, event);
-	  }
-
-	  linkToDom(domElement) {
-	    if (this.domElement != null) {
-	      throw new Error("already linked to DOM");
-	    }
-	    this.domElement = domElement;
-	    const onDomCursorDown = (event) => {
-	      event.preventDefault();
-	      const domCursor = cursorUtils.computeDomCursor(event, domElement);
-	      this.domCursorDown(domCursor, event);
-	    };
-	    domElement.addEventListener("mousedown", onDomCursorDown, {passive: false});
-	    domElement.addEventListener("touchstart", onDomCursorDown, {passive: false});
+	  center(args) {
+	    let scale = args.zoom ? args.zoom : 1;
 	    
-	    const onDomCursorMove = (event) => {
-	      const domCursor = cursorUtils.computeDomCursor(event, domElement);
-	      this.domCursorMove(domCursor, event);
-	    };
-	    domElement.addEventListener("mousemove", onDomCursorMove, {passive: false});
-	    domElement.addEventListener("touchmove", onDomCursorMove, {passive: false});
+	    let viewportWidth = args.viewportWidth;
+	    let viewportHeight = args.viewportHeight;
+	    if (args.renderer != null) {
+	      // if present, args.renderer overwrites
+	      // viewportWidth and viewportHeight
+	      viewportWidth = args.renderer.width;
+	      viewportHeight = args.renderer.height;
+	    }
 
-	    const onDomCursorUp = (event) => {
-	      const domCursor = cursorUtils.computeDomCursor(event, domElement);
-	      this.domCursorUp(domCursor, event);
-	    };
-	    window.addEventListener("mouseup", onDomCursorUp);
-	    window.addEventListener("touchend", onDomCursorUp);
-	    window.addEventListener("touchcancel", onDomCursorUp);
+	    if (args.worldWidth != null) {
+	      if (viewportWidth == null) {
+	        throw new Error("viewportWidth required");
+	      }
+	      scale = viewportWidth / args.worldWidth;
+	    }
+	    
+	    this.transform.linear = new math$1.Matrix2x2(
+	      scale, 0,
+	      0, -scale
+	    );
+
+	    let translation;
+	    if (args.worldCenter != null) {
+	      const worldCenter = args.worldCenter;
+	      translation = [
+	        viewportWidth * 0.5 - worldCenter[0] * scale,
+	        viewportHeight * 0.5 + worldCenter[1] * scale
+	      ];
+	    } else {
+	      translation = [
+	        viewportWidth * 0.5,
+	        viewportHeight * 0.5
+	      ];
+	    }
+	    this.transform.translation = translation;
 	  }
 	}
 
-	var DragBehavior_1 = DragBehavior;
-
-	var ui = {
-	  cursorUtils: cursorUtils$1,
-	  DragBehavior: DragBehavior_1
-	};
+	var Camera_1 = Camera;
 
 	class PointShader {
 	  constructor() {
@@ -1923,67 +1886,6 @@
 	  LineShader: LineShader_1,
 	  TriangleShader: TriangleShader_1
 	};
-
-	const math$1 = math$2;
-
-	class Camera {
-	  constructor() {
-	    this.transform = new math$1.Transform2d();
-	  }
-
-	  domToWorldSpace(pos) {
-	    if (!Array.isArray(pos)) throw new Error(`array expected, found ${typeof pos}`);
-	    if (pos.length != 2) throw new Error(`array with 2 elements expected, found ${pos.length}`);
-	    const worldPos = this.transform.inv().apply(pos);
-	    return worldPos;
-	  }
-
-	  inferScale() {
-	    return this.transform.inferScale();
-	  }
-
-	  center(args) {
-	    let scale = args.zoom ? args.zoom : 1;
-	    
-	    let viewportWidth = args.viewportWidth;
-	    let viewportHeight = args.viewportHeight;
-	    if (args.renderer != null) {
-	      // if present, args.renderer overwrites
-	      // viewportWidth and viewportHeight
-	      viewportWidth = args.renderer.width;
-	      viewportHeight = args.renderer.height;
-	    }
-
-	    if (args.worldWidth != null) {
-	      if (viewportWidth == null) {
-	        throw new Error("viewportWidth required");
-	      }
-	      scale = viewportWidth / args.worldWidth;
-	    }
-	    
-	    this.transform.linear = new math$1.Matrix2x2(
-	      scale, 0,
-	      0, -scale
-	    );
-
-	    let translation;
-	    if (args.worldCenter != null) {
-	      const worldCenter = args.worldCenter;
-	      translation = [
-	        viewportWidth * 0.5 - worldCenter[0] * scale,
-	        viewportHeight * 0.5 + worldCenter[1] * scale
-	      ];
-	    } else {
-	      translation = [
-	        viewportWidth * 0.5,
-	        viewportHeight * 0.5
-	      ];
-	    }
-	    this.transform.translation = translation;
-	  }
-	}
-
-	var Camera_1 = Camera;
 
 	const math = math$2;
 	const shaders = shaders$1;
@@ -2264,213 +2166,109 @@
 
 	var Scene_1 = Scene;
 
-	var core = {
+	var core$1 = {
 	  Camera: Camera_1,
 	  Mesh: Mesh_1,
 	  Renderer: Renderer_1,
 	  Scene: Scene_1
 	};
 
-	class Floor$1 {
+	function computeDomCursor(event, domElement) {
+	  const rect = domElement.getBoundingClientRect();
+	  let clientX, clientY;
+	  if (event.touches == null) {
+	    clientX = event.clientX;
+	    clientY = event.clientY;
+	  } else {
+	    if (event.touches.length == 0) return null;
+	    const touch = event.touches[0];
+	    clientX = touch.clientX;
+	    clientY = touch.clientY;
+	  }
+	  const left = clientX - rect.left;
+	  const top = clientY - rect.top;
+	  const cursor = [left, top];
+	  return cursor;
+	}
+
+	var cursorUtils$1 = {
+	  computeDomCursor: computeDomCursor
+	};
+
+	const cursorUtils = cursorUtils$1;
+
+	class DragBehavior {
 	  constructor(args = {}) {
-	    if (args.scene == null) {
-	      throw new Error("scene required");
-	    }
-	    const scene = this.scene = args.scene;
-	    const mesh = this.mesh = scene.addMesh();
-	    mesh.x = [
-	      [-10, 0],
-	      [10, 0]
-	    ];
-	    mesh.lines = [
-	      [0, 1]
-	    ];
+	    this._dragging = false;
 
-	    mesh.lineShader.renderLine = Floor$1.makeFloorLineShader({
-	      width: args.width
-	    });
+	    this.onDomCursorDown = args.onDomCursorDown;
+	    this.onDragProgress = args.onDragProgress;
+	    this.onDomCursorUp = args.onDomCursorUp;
 
-	    mesh.setCustomAttribute("translation", [0, 0]);
+	    this.domElement = null;
 	  }
 
-	  static makeFloorLineShader(args = {}) {
-	    const width = (args.width == null) ? 0.055 : args.width;
-	    return (args) => {
-	      const ctx = args.ctx;
-	      const a = args.a;
-	      const b = args.b;
-	      const camera = args.camera;
-	      const mesh = args.mesh;
-	      const scale = camera.inferScale();
-
-	      const _translation = mesh.getCustomAttribute("translation");
-	      const translation = [scale * _translation[0], scale * _translation[1]];
-
-	      ctx.strokeStyle = "black";
-	      ctx.lineWidth = scale * width;
-	      ctx.beginPath();
-	      ctx.moveTo(a[0] + translation[0], a[1] + translation[1]);
-	      ctx.lineTo(b[0] + translation[0], b[1] + translation[1]);
-	      ctx.stroke();
-	    }
+	  beginDrag() {
+	    this._dragging = true;
 	  }
-	}
 
-	var Floor_1 = Floor$1;
+	  endDrag() {
+	    this._dragging = false;
+	  }
 
-	const Floor = Floor_1;
+	  dragging() {
+	    return this._dragging;
+	  }
 
-	function makePointShader(args = {}) {
-	  const radius = (args.radius == null) ? 0.028 : args.radius;
-	  const borderColor = (args.borderColor == null) ? "black" : args.borderColor;
-	  const fillColor = (args.fillColor == null) ? "white" : args.fillColor;
-	  const borderWidth = (args.borderWidth == null) ? 0.023 : args.borderWidth;
+	  domCursorDown(domCursor, event) {
+	    if (this.onDomCursorDown != null) this.onDomCursorDown(domCursor, event);
+	  }
 
-	  return (args) => {
-	    const ctx = args.ctx;
-	    const p = args.p;
-	    const camera = args.camera;
-	    const scale = camera.inferScale();
+	  domCursorMove(domCursor, event) {
+	    if (!this.dragging()) return;
+	    if (this.onDragProgress != null) this.onDragProgress(domCursor, event);
+	  }
+
+	  domCursorUp(domCursor, event) {
+	    this.endDrag();
+	    if (this.onDomCursorUp != null) this.onDomCursorUp(domCursor, event);
+	  }
+
+	  linkToDom(domElement) {
+	    if (this.domElement != null) {
+	      throw new Error("already linked to DOM");
+	    }
+	    this.domElement = domElement;
+	    const onDomCursorDown = (event) => {
+	      event.preventDefault();
+	      const domCursor = cursorUtils.computeDomCursor(event, domElement);
+	      this.domCursorDown(domCursor, event);
+	    };
+	    domElement.addEventListener("mousedown", onDomCursorDown, {passive: false});
+	    domElement.addEventListener("touchstart", onDomCursorDown, {passive: false});
 	    
-	    const radius1 = (radius + borderWidth) * scale;
-	    ctx.fillStyle = borderColor;
-	    ctx.beginPath();
-	    ctx.arc(p[0], p[1], radius1, 0, 2 * Math.PI);
-	    ctx.fill();
+	    const onDomCursorMove = (event) => {
+	      const domCursor = cursorUtils.computeDomCursor(event, domElement);
+	      this.domCursorMove(domCursor, event);
+	    };
+	    domElement.addEventListener("mousemove", onDomCursorMove, {passive: false});
+	    domElement.addEventListener("touchmove", onDomCursorMove, {passive: false});
 
-	    const radius2 = radius * scale;
-	    ctx.fillStyle = fillColor;
-	    ctx.beginPath();
-	    ctx.arc(p[0], p[1], radius2, 0, 2 * Math.PI);
-	    ctx.fill();
+	    const onDomCursorUp = (event) => {
+	      const domCursor = cursorUtils.computeDomCursor(event, domElement);
+	      this.domCursorUp(domCursor, event);
+	    };
+	    window.addEventListener("mouseup", onDomCursorUp);
+	    window.addEventListener("touchend", onDomCursorUp);
+	    window.addEventListener("touchcancel", onDomCursorUp);
 	  }
 	}
 
-	function makeFiberShader(args = {}) {
-	  const color0 = (args.color0 == null) ? [255, 0, 0] : args.color0;
-	  const color1 = (args.color1 == null) ? [250, 190, 190] : args.color1;
-	  const width = (args.width == null) ? 0.065 : args.width;
-	  const borderWidth = (args.borderWidth == null) ? 0.017 : args.borderWidth;
-	  const borderColor = (args.borderColor == null) ? "black" : args.borderColor;
-	  const lineCap = (args.lineCap == null) ? "butt" : args.lineCap;
-	  const muscleIntensityAttributeName = (args.muscleIntensityAttributeName == null) ? "muscleIntensity" : args.muscleIntensityAttributeName;
-	  return (args) => {
-	    const ctx = args.ctx;
-	    const a = args.a;
-	    const b = args.b;
-	    const mesh = args.mesh;
-	    const camera = args.camera;
-	    const scale = camera.inferScale();
+	var DragBehavior_1 = DragBehavior;
 
-	    ctx.beginPath();
-	    ctx.lineCap = lineCap;
-	    ctx.strokeStyle = borderColor;
-	    ctx.lineWidth = (width + borderWidth * 2) * scale;
-	    ctx.moveTo(a[0], a[1]);
-	    ctx.lineTo(b[0], b[1]);
-	    ctx.stroke();
-
-	    ctx.beginPath();
-
-	    const muscleIntensity = mesh.getCustomAttribute(muscleIntensityAttributeName);
-	    if (muscleIntensity == null) {
-	      throw new Error(`muscle intensity attribute (${muscleIntensityAttributeName}) not found, call setCustomAttribute("${muscleIntensityAttributeName}", value) before rendering.`);
-	    }
-	    if (!Array.isArray(muscleIntensity)) {
-	      throw new Error(`muscle intensity attribute must be an array with values for each fiber, found ${typeof muscleIntensity}`);
-	    }
-	    const numLines = mesh.lines.length;
-	    if (muscleIntensity.length != numLines) {
-	      throw new Error(`expected ${numLines} values in muscle intensity attribute, found ${muscleIntensity.length}`);
-	    }
-	    const t = muscleIntensity[args.id];
-	    
-	    const cr0 = color0[0];
-	    const cr1 = color1[0];
-
-	    const cg0 = color0[1];
-	    const cg1 = color1[1];
-
-	    const cb0 = color0[2];
-	    const cb1 = color1[2];
-
-	    const cr = (1 - t) * cr0 + t * cr1;
-	    const cg = (1 - t) * cg0 + t * cg1;
-	    const cb = (1 - t) * cb0 + t * cb1;
-
-	    ctx.strokeStyle = `rgb(${cr}, ${cg}, ${cb})`;
-	    ctx.lineCap = lineCap;
-	    ctx.lineWidth = width * scale;
-	    ctx.moveTo(a[0], a[1]);
-	    ctx.lineTo(b[0], b[1]);
-
-	    ctx.stroke();
-	  }
-	}
-
-	function makeTriangleShader(args = {}) {
-	  const borderWidth = (args.borderWidth == null) ? 0.029 : args.borderWidth;
-	  const borderColor = (args.borderColor == null) ? "black" : args.borderColor;
-	  const fillColor = (args.fillColor == null) ? "white" : args.fillColor;
-	  return (args) => {
-	    const ctx = args.ctx;
-	    const a = args.a;
-	    const b = args.b;
-	    const c = args.c;
-	    const camera = args.camera;
-	    const scale = camera.inferScale();
-
-	    ctx.beginPath();
-	    ctx.lineJoin = "round";
-	    ctx.lineCap = "round";
-	    ctx.strokeStyle = borderColor;
-	    ctx.lineWidth = (borderWidth * 2) * scale;
-	    ctx.moveTo(a[0], a[1]);
-	    ctx.lineTo(b[0], b[1]);
-	    ctx.lineTo(c[0], c[1]);
-	    ctx.closePath();
-	    ctx.stroke();
-
-	    ctx.beginPath();
-	    ctx.lineJoin = "round";
-	    ctx.lineCap = "round";
-	    ctx.fillStyle = fillColor;
-	    ctx.moveTo(a[0], a[1]);
-	    ctx.lineTo(b[0], b[1]);
-	    ctx.lineTo(c[0], c[1]);
-	    ctx.closePath();
-	    ctx.fill();
-	  }
-	}
-
-	function makeFloorShader(args = {}) {
-	  // TODO parameterize
-	  const color = "black";
-	  const width = 0.055;
-	  return (args) => {
-	    const ctx = args.ctx;
-	    const a = args.a;
-	    const b = args.b;
-	    const camera = args.camera;
-	    const scale = camera.inferScale();
-
-	    ctx.beginPath();
-	    ctx.strokeStyle = color;
-	    ctx.lineCap = "round";
-	    ctx.lineWidth = width * scale;
-	    ctx.moveTo(a[0], a[1]);
-	    ctx.lineTo(b[0], b[1]);
-	    ctx.closePath();
-	    ctx.stroke();
-	  }
-	}
-
-	var custom = {
-	  makePointShader: makePointShader,
-	  makeFiberShader: makeFiberShader,
-	  makeTriangleShader: makeTriangleShader,
-	  makeFloorShader: makeFloorShader,
-	  Floor: Floor
+	var ui = {
+	  cursorUtils: cursorUtils$1,
+	  DragBehavior: DragBehavior_1
 	};
 
 	function makeGridData(args = {}) {
@@ -2855,14 +2653,18 @@
 	  Simplices: Simplices_1
 	};
 
+	const core = core$1;
+
 	var mm2d$2 = {
 	  math: math$2,
 	  ui: ui,
 	  shaders: shaders$1,
-	  core: core,
-	  custom: custom,
 	  background: background,
-	  sorted: sorted
+	  sorted: sorted,
+	  core: core,
+	  Renderer: core.Renderer,
+	  Camera: core.Camera,
+	  Scene: core.Scene
 	};
 
 	const mm2d$1 = mm2d$2;
@@ -2888,6 +2690,77 @@
 	  return Array.from(edges.values());
 	}
 
+	function makePointShader(args = {}) {
+	  const radius = (args.radius == null) ? 0.028 : args.radius;
+	  const borderColor = (args.borderColor == null) ? "black" : args.borderColor;
+	  const fillColor = (args.fillColor == null) ? "white" : args.fillColor;
+	  const borderWidth = (args.borderWidth == null) ? 0.023 : args.borderWidth;
+
+	  return (args) => {
+	    const ctx = args.ctx;
+	    const p = args.p;
+	    const camera = args.camera;
+	    const scale = camera.inferScale();
+	    
+	    const radius1 = (radius + borderWidth) * scale;
+	    ctx.fillStyle = borderColor;
+	    ctx.beginPath();
+	    ctx.arc(p[0], p[1], radius1, 0, 2 * Math.PI);
+	    ctx.fill();
+
+	    const radius2 = radius * scale;
+	    ctx.fillStyle = fillColor;
+	    ctx.beginPath();
+	    ctx.arc(p[0], p[1], radius2, 0, 2 * Math.PI);
+	    ctx.fill();
+	  }
+	}
+
+	class Floor {
+	  constructor(args = {}) {
+	    if (args.scene == null) {
+	      throw new Error("scene required");
+	    }
+	    const scene = this.scene = args.scene;
+	    const mesh = this.mesh = scene.addMesh();
+	    mesh.x = [
+	      [-10, 0],
+	      [10, 0]
+	    ];
+	    mesh.lines = [
+	      [0, 1]
+	    ];
+
+	    mesh.lineShader.renderLine = Floor.makeFloorLineShader({
+	      width: args.width
+	    });
+
+	    mesh.setCustomAttribute("translation", [0, 0]);
+	  }
+
+	  static makeFloorLineShader(args = {}) {
+	    const width = (args.width == null) ? 0.055 : args.width;
+	    return (args) => {
+	      const ctx = args.ctx;
+	      const a = args.a;
+	      const b = args.b;
+	      const camera = args.camera;
+	      const mesh = args.mesh;
+	      const scale = camera.inferScale();
+
+	      const _translation = mesh.getCustomAttribute("translation");
+	      const translation = [scale * _translation[0], scale * _translation[1]];
+
+	      ctx.strokeStyle = "black";
+	      ctx.lineWidth = scale * width;
+	      ctx.beginPath();
+	      ctx.moveTo(a[0] + translation[0], a[1] + translation[1]);
+	      ctx.lineTo(b[0] + translation[0], b[1] + translation[1]);
+	      ctx.stroke();
+	    }
+	  }
+	}
+
 	class SystemViewport {
 	  constructor(args = {}) {
 	    if (args.system == null) {
@@ -2896,7 +2769,7 @@
 	    this.system = args.system;
 	    this.sortedVertexIds = args.sortedVertexIds;
 
-	    const renderer = new mm2d$1.core.Renderer();
+	    const renderer = new mm2d$1.Renderer();
 	    this.renderer = renderer;
 	    this.domElement = renderer.domElement;
 	    this.setSize({
@@ -2904,10 +2777,10 @@
 	      height: 400
 	    });
 
-	    const scene = new mm2d$1.core.Scene();
+	    const scene = new mm2d$1.Scene();
 	    this.scene = scene;
 
-	    const camera = new mm2d$1.core.Camera();
+	    const camera = new mm2d$1.Camera();
 	    this.camera = camera;
 
 	    new mm2d$1.background.Background({
@@ -2924,22 +2797,20 @@
 	      secondaryLineWidth: 0.005,
 	      color: "#acadad"
 	    });
-	    this.floor = new mm2d$1.custom.Floor({
+	    this.floor = new Floor({
 	      scene: scene
 	    });
 
 	    const mesh = scene.addMesh();
 	    this.mesh = mesh;
 	    
-	    mesh.pointShader.renderPoint = mm2d$1.custom.makePointShader();
+	    mesh.pointShader.renderPoint = makePointShader();
 
 	    mesh.triangleShader.renderTriangle = (args = {}) => {
 	      const ctx = args.ctx;
 	      const a = args.a;
 	      const b = args.b;
 	      const c = args.c;
-	      const camera = args.camera;
-	      camera.inferScale();
 
 	      ctx.beginPath();
 	      ctx.fillStyle = "white";
@@ -2965,7 +2836,7 @@
 	        ctx.lineJoin = "round";
 	        ctx.lineCap = "round";
 	        ctx.strokeStyle = borderColor;
-	        ctx.lineWidth = (borderWidth) * scale;
+	        ctx.lineWidth = borderWidth * scale;
 	        ctx.moveTo(a[0], a[1]);
 	        ctx.lineTo(b[0], b[1]);
 	        ctx.closePath();
