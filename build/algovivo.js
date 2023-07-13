@@ -2943,8 +2943,6 @@
 	      const a = args.a;
 	      const b = args.b;
 	      const c = args.c;
-	      const camera = args.camera;
-	      camera.inferScale();
 
 	      ctx.beginPath();
 	      ctx.fillStyle = "white";
@@ -2970,7 +2968,7 @@
 	        ctx.lineJoin = "round";
 	        ctx.lineCap = "round";
 	        ctx.strokeStyle = borderColor;
-	        ctx.lineWidth = (borderWidth) * scale;
+	        ctx.lineWidth = borderWidth * scale;
 	        ctx.moveTo(a[0], a[1]);
 	        ctx.lineTo(b[0], b[1]);
 	        ctx.closePath();
