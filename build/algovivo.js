@@ -2909,10 +2909,10 @@
 	      height: 400
 	    });
 
-	    const scene = new mm2d$1.core.Scene();
+	    const scene = new mm2d$1.Scene();
 	    this.scene = scene;
 
-	    const camera = new mm2d$1.core.Camera();
+	    const camera = new mm2d$1.Camera();
 	    this.camera = camera;
 
 	    new mm2d$1.background.Background({

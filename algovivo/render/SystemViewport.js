@@ -37,10 +37,10 @@ class SystemViewport {
       height: 400
     });
 
-    const scene = new mm2d.core.Scene();
+    const scene = new mm2d.Scene();
     this.scene = scene;
 
-    const camera = new mm2d.core.Camera();
+    const camera = new mm2d.Camera();
     this.camera = camera;
 
     const background = new mm2d.background.Background({
