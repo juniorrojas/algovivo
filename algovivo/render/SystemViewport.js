@@ -67,6 +67,8 @@ class Floor {
       color: args.color
     });
 
+    mesh.pointShader.renderPoint = () => {};
+
     mesh.setCustomAttribute("translation", [0, 0]);
   }
 
