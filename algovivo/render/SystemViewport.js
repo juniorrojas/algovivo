@@ -21,7 +21,7 @@ function edgesFromTriangles(triangles) {
   return Array.from(edges.values());
 }
 
-function makePointShader(args = {}) {
+function makePointShaderFunction(args = {}) {
   const radius = args.radius ?? 0.028;
   const borderColor = args.borderColor ?? "black";
   const fillColor = args.fillColor ?? "white";
@@ -137,7 +137,7 @@ class SystemViewport {
 
     const borderColor = args.borderColor ?? "black";
     
-    mesh.pointShader.renderPoint = makePointShader({
+    mesh.pointShader.renderPoint = makePointShaderFunction({
       borderColor: borderColor
     });
 
