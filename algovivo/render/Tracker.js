@@ -2,9 +2,12 @@ class Tracker {
   constructor() {
     this.targetCenterX = null;
     this.currentCenterX = null;
+    this.active = true;
   }
 
   step(args = {}) {
+    if (!this.active) return;
+    
     const renderer = args.renderer;
     const camera = args.camera;
     const mesh = args.mesh;
