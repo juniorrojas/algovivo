@@ -137,6 +137,8 @@ class SystemViewport {
 
     const borderColor = args.borderColor ?? "black";
     const fillColor = args.fillColor ?? "white";
+    const activeMuscleColor = args.activeMuscleColor ?? [255, 0, 0];
+    const inactiveMuscleColor = args.inactiveMuscleColor ?? [250, 190, 190];
     
     mesh.pointShader.renderPoint = makePointShaderFunction({
       borderColor: borderColor,
@@ -178,9 +180,8 @@ class SystemViewport {
         ctx.closePath();
         ctx.stroke();
       } else {
-        // TODO parameterize muscle colors
-        const color0 = [255, 0, 0];
-        const color1 = [250, 190, 190];
+        const color0 = activeMuscleColor;
+        const color1 = inactiveMuscleColor;
         
         const width = 0.065;
         const borderWidth = 0.017;
