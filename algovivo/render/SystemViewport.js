@@ -136,9 +136,11 @@ class SystemViewport {
     this.mesh = mesh;
 
     const borderColor = args.borderColor ?? "black";
+    const fillColor = args.fillColor ?? "white";
     
     mesh.pointShader.renderPoint = makePointShaderFunction({
-      borderColor: borderColor
+      borderColor: borderColor,
+      fillColor: fillColor
     });
 
     mesh.triangleShader.renderTriangle = (args = {}) => {
@@ -148,7 +150,7 @@ class SystemViewport {
       const c = args.c;
 
       ctx.beginPath();
-      ctx.fillStyle = "white";
+      ctx.fillStyle = fillColor;
       ctx.moveTo(a[0], a[1]);
       ctx.lineTo(b[0], b[1]);
       ctx.lineTo(c[0], c[1]);
