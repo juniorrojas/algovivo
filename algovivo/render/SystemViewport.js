@@ -176,8 +176,10 @@ class SystemViewport {
         ctx.closePath();
         ctx.stroke();
       } else {
+        // parameterize muscle colors
         const color0 = [255, 0, 0];
         const color1 = [250, 190, 190];
+        
         const width = 0.065;
         const borderWidth = 0.017;
         const borderColor = "black";

@@ -2797,8 +2797,12 @@ class SystemViewport {
 
     const mesh = scene.addMesh();
     this.mesh = mesh;
+
+    const borderColor = args.borderColor ?? "black";
     
-    mesh.pointShader.renderPoint = makePointShader();
+    mesh.pointShader.renderPoint = makePointShader({
+      borderColor: borderColor
+    });
 
     mesh.triangleShader.renderTriangle = (args = {}) => {
       const ctx = args.ctx;
@@ -2825,7 +2829,6 @@ class SystemViewport {
       const springId = lineIdToSpringId[args.id];
       if (springId == null) {
         const borderWidth = 0.029;
-        const borderColor = "black";
         ctx.beginPath();
         ctx.lineJoin = "round";
         ctx.lineCap = "round";
@@ -2836,8 +2839,10 @@ class SystemViewport {
         ctx.closePath();
         ctx.stroke();
       } else {
+        // parameterize muscle colors
         const color0 = [255, 0, 0];
         const color1 = [250, 190, 190];
+        
         const width = 0.065;
         const borderWidth = 0.017;
         const borderColor = "black";
