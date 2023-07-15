@@ -1518,6 +1518,57 @@
 
 	var System_1 = System$1;
 
+	class Tracker$1 {
+	  constructor() {
+	    this.targetCenterX = null;
+	    this.currentCenterX = null;
+	    this.active = true;
+	  }
+
+	  step(args = {}) {
+	    if (!this.active) return;
+	    
+	    const renderer = args.renderer;
+	    const camera = args.camera;
+	    const mesh = args.mesh;
+	    const floor = args.floor;
+	    const grid = args.grid;
+
+	    const meshCenter = mesh.computeCenter();
+	    const meshCenterX = meshCenter[0];
+
+	    this.targetCenterX = meshCenterX;
+
+	    if (this.currentCenterX == null) {
+	      this.currentCenterX = this.targetCenterX;
+	    } else {
+	      this.currentCenterX += (this.targetCenterX - this.currentCenterX) * 0.5;
+	    }
+
+	    const recenterThreshold = 3;
+	    const cx = this.currentCenterX;
+	    const tx = Math.floor(cx / recenterThreshold) * recenterThreshold;
+	    grid.mesh.setCustomAttribute(
+	      "translation",
+	      [tx, 0]
+	    );
+	    floor.mesh.setCustomAttribute(
+	      "translation",
+	      [tx, 0]
+	    );
+
+	    const center = [this.currentCenterX, 1];
+	    camera.center({
+	      worldCenter: center,
+	      worldWidth: 3.8,
+	      viewportWidth: renderer.width,
+	      viewportHeight: renderer.height,
+	    });
+	  }
+	}
+
+	var Tracker_1 = Tracker$1;
+
 	function clone(a) {
 	  return [a[0], a[1]];
 	}
@@ -2669,6 +2720,7 @@
 	  Scene: core.Scene
 	};
 
+	const Tracker = Tracker_1;
 	const mm2d$1 = mm2d$2;
 
 	function hashSimplex(vids) {
@@ -2920,37 +2972,39 @@
 	      }
 	    };
 
-	    const dragBehavior = this.dragBehavior = new mm2d$1.ui.DragBehavior({
-	      onDomCursorDown: (domCursor, event) => {
-	        if ("button" in event && event.button != 0) return;
-	        const sim = this.system;
-	        const worldCursor = camera.domToWorldSpace(domCursor);
-	        const vertexId = this.hitTestVertex(worldCursor);
-	        if (vertexId != null) {
-	          this.fixVertex(vertexId);
-	          dragBehavior.beginDrag();
+	    const draggable = args.draggable ?? true;
+	    if (draggable) {
+	      const dragBehavior = this.dragBehavior = new mm2d$1.ui.DragBehavior({
+	        onDomCursorDown: (domCursor, event) => {
+	          if ("button" in event && event.button != 0) return;
+	          const sim = this.system;
+	          const worldCursor = camera.domToWorldSpace(domCursor);
+	          const vertexId = this.hitTestVertex(worldCursor);
+	          if (vertexId != null) {
+	            this.fixVertex(vertexId);
+	            dragBehavior.beginDrag();
+	            this.setVertexPos(
+	              sim.fixedVertexId,
+	              [worldCursor[0], Math.max(0, worldCursor[1])]
+	            );
+	          }
+	        },
+	        onDragProgress: (domCursor) => {
+	          const sim = this.system;
+	          const worldCursor = camera.domToWorldSpace(domCursor);
 	          this.setVertexPos(
 	            sim.fixedVertexId,
 	            [worldCursor[0], Math.max(0, worldCursor[1])]
 	          );
+	        },
+	        onDomCursorUp: () => {
+	          this.freeVertex();
 	        }
-	      },
-	      onDragProgress: (domCursor) => {
-	        const sim = this.system;
-	        const worldCursor = camera.domToWorldSpace(domCursor);
-	        this.setVertexPos(
-	          sim.fixedVertexId,
-	          [worldCursor[0], Math.max(0, worldCursor[1])]
-	        );
-	      },
-	      onDomCursorUp: () => {
-	        this.freeVertex();
-	      }
-	    });
-	    dragBehavior.linkToDom(renderer.domElement);
-
-	    this.targetCenterX = null;
-	    this.currentCenterX = null;
+	      });
+	      dragBehavior.linkToDom(renderer.domElement);
+	    }
+	    
+	    this.tracker = new Tracker();
 	  }
 
 	  setSize(args = {}) {
@@ -2998,36 +3052,13 @@
 
 	    this._updateSim(this.system);
 
-	    if (!this.dragBehavior.dragging()) {
-	      const meshCenter = mesh.computeCenter();
-	      const meshCenterX = meshCenter[0];
-
-	      this.targetCenterX = meshCenterX;
-
-	      if (this.currentCenterX == null) {
-	        this.currentCenterX = this.targetCenterX;
-	      } else {
-	        this.currentCenterX += (this.targetCenterX - this.currentCenterX) * 0.5;
-	      }
-
-	      const recenterThreshold = 3;
-	      const cx = this.currentCenterX;
-	      const tx = Math.floor(cx / recenterThreshold) * recenterThreshold;
-	      this.grid.mesh.setCustomAttribute(
-	        "translation",
-	        [tx, 0]
-	      );
-	      this.floor.mesh.setCustomAttribute(
-	        "translation",
-	        [tx, 0]
-	      );
-
-	      const center = [this.currentCenterX, 1];
-	      camera.center({
-	        worldCenter: center,
-	        worldWidth: 3.8,
-	        viewportWidth: renderer.width,
-	        viewportHeight: renderer.height,
+	    if (this.dragBehavior == null || !this.dragBehavior.dragging()) {
+	      this.tracker.step({
+	        mesh: mesh,
+	        camera: camera,
+	        floor: this.floor,
+	        grid: this.grid,
+	        renderer: this.renderer
 	      });
 	    }
 	    
