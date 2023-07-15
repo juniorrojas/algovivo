@@ -52,7 +52,7 @@ class Mesh {
       if (minY == null || y < minY) minY = y;
       if (maxY == null || y > maxY) maxY = y;
     });
-  return new math.AABB({
+    return new math.AABB({
       x0: minX,
       y0: minY,
       x1: maxX,

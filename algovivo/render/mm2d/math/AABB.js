@@ -24,12 +24,14 @@ class AABB {
     this._y1 = y1;
   }
 
-  x0() { return this._x0; }
-  x1() { return this._x1; }
-  y0() { return this._y0; }
-  y1() { return this._y1; }
+  get x0() { return this._x0; }
+  get x1() { return this._x1; }
+  get y0() { return this._y0; }
+  get y1() { return this._y1; }
+  get width() { return this._x1 - this._x0; }
+  get height() { return this._y1 - this._y0; }
 
-  center() {
+  get center() {
     return [
       (this.x0 + this.x1) * 0.5,
       (this.y0 + this.y1) * 0.5
