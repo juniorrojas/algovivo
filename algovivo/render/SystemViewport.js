@@ -122,9 +122,13 @@ class SystemViewport {
     const activeMuscleColor = args.activeMuscleColor ?? [255, 0, 0];
     const inactiveMuscleColor = args.inactiveMuscleColor ?? [250, 190, 190];
     const gridColor = args.gridColor ?? "#acadad";
+    const backgroundCenterColor = args.backgroundCenterColor ?? "#fcfcfc";
+    const backgroundOuterColor = args.backgroundOuterColor ?? "#d7d8d8";
 
     const background = new mm2d.background.Background({
-      scene: scene
+      scene: scene,
+      color1: backgroundCenterColor,
+      color2: backgroundOuterColor
     });
     const grid = this.grid = new mm2d.background.Grid({
       scene: scene,
