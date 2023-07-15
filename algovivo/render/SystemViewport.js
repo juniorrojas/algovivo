@@ -114,6 +114,12 @@ class SystemViewport {
     const camera = new mm2d.Camera();
     this.camera = camera;
 
+    const borderColor = args.borderColor ?? "black";
+    const fillColor = args.fillColor ?? "white";
+    const activeMuscleColor = args.activeMuscleColor ?? [255, 0, 0];
+    const inactiveMuscleColor = args.inactiveMuscleColor ?? [250, 190, 190];
+    const gridColor = args.gridColor ?? "#acadad";
+
     const background = new mm2d.background.Background({
       scene: scene
     });
@@ -126,7 +132,7 @@ class SystemViewport {
       innerCells: 2,
       primaryLineWidth: 0.022,
       secondaryLineWidth: 0.005,
-      color: "#acadad"
+      color: gridColor
     });
     const floor = this.floor = new Floor({
       scene: scene
@@ -134,11 +140,6 @@ class SystemViewport {
 
     const mesh = scene.addMesh();
     this.mesh = mesh;
-
-    const borderColor = args.borderColor ?? "black";
-    const fillColor = args.fillColor ?? "white";
-    const activeMuscleColor = args.activeMuscleColor ?? [255, 0, 0];
-    const inactiveMuscleColor = args.inactiveMuscleColor ?? [250, 190, 190];
     
     mesh.pointShader.renderPoint = makePointShaderFunction({
       borderColor: borderColor,
