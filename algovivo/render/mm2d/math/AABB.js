@@ -31,8 +31,8 @@ class AABB {
 
   center() {
     return [
-      (this.x0 + this.x1) * 0.5,
-      (this.y0 + this.y1) * 0.5
+      (this.x0() + this.x1()) * 0.5,
+      (this.y0() + this.y1()) * 0.5
     ];
   }
 }
