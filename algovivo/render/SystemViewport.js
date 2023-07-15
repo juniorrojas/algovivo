@@ -22,10 +22,10 @@ function edgesFromTriangles(triangles) {
 }
 
 function makePointShader(args = {}) {
-  const radius = (args.radius == null) ? 0.028 : args.radius;
-  const borderColor = (args.borderColor == null) ? "black" : args.borderColor;
-  const fillColor = (args.fillColor == null) ? "white" : args.fillColor;
-  const borderWidth = (args.borderWidth == null) ? 0.023 : args.borderWidth;
+  const radius = args.radius ?? 0.028;
+  const borderColor = args.borderColor ?? "black";
+  const fillColor = args.fillColor ?? "white";
+  const borderWidth = args.borderWidth ?? 0.023;
 
   return (args) => {
     const ctx = args.ctx;
@@ -70,7 +70,7 @@ class Floor {
   }
 
   static makeFloorLineShader(args = {}) {
-    const width = (args.width == null) ? 0.055 : args.width;
+    const width = args.width ?? 0.055;
     return (args) => {
       const ctx = args.ctx;
       const a = args.a;
