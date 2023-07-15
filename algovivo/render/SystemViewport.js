@@ -1,3 +1,4 @@
+const Tracker = require("./Tracker");
 const mm2d = require("./mm2d");
 
 function hashSimplex(vids) {
@@ -249,37 +250,39 @@ class SystemViewport {
       }
     }
 
-    const dragBehavior = this.dragBehavior = new mm2d.ui.DragBehavior({
-      onDomCursorDown: (domCursor, event) => {
-        if ("button" in event && event.button != 0) return;
-        const sim = this.system;
-        const worldCursor = camera.domToWorldSpace(domCursor);
-        const vertexId = this.hitTestVertex(worldCursor);
-        if (vertexId != null) {
-          this.fixVertex(vertexId);
-          dragBehavior.beginDrag();
+    const draggable = args.draggable ?? true;
+    if (draggable) {
+      const dragBehavior = this.dragBehavior = new mm2d.ui.DragBehavior({
+        onDomCursorDown: (domCursor, event) => {
+          if ("button" in event && event.button != 0) return;
+          const sim = this.system;
+          const worldCursor = camera.domToWorldSpace(domCursor);
+          const vertexId = this.hitTestVertex(worldCursor);
+          if (vertexId != null) {
+            this.fixVertex(vertexId);
+            dragBehavior.beginDrag();
+            this.setVertexPos(
+              sim.fixedVertexId,
+              [worldCursor[0], Math.max(0, worldCursor[1])]
+            );
+          }
+        },
+        onDragProgress: (domCursor) => {
+          const sim = this.system;
+          const worldCursor = camera.domToWorldSpace(domCursor);
           this.setVertexPos(
             sim.fixedVertexId,
             [worldCursor[0], Math.max(0, worldCursor[1])]
           );
+        },
+        onDomCursorUp: () => {
+          this.freeVertex();
         }
-      },
-      onDragProgress: (domCursor) => {
-        const sim = this.system;
-        const worldCursor = camera.domToWorldSpace(domCursor);
-        this.setVertexPos(
-          sim.fixedVertexId,
-          [worldCursor[0], Math.max(0, worldCursor[1])]
-        );
-      },
-      onDomCursorUp: () => {
-        this.freeVertex();
-      }
-    });
-    dragBehavior.linkToDom(renderer.domElement);
-
-    this.targetCenterX = null;
-    this.currentCenterX = null;
+      });
+      dragBehavior.linkToDom(renderer.domElement);
+    }
+    
+    this.tracker = new Tracker();
   }
 
   setSize(args = {}) {
@@ -327,36 +330,13 @@ class SystemViewport {
 
     this._updateSim(this.system);
 
-    if (!this.dragBehavior.dragging()) {
-      const meshCenter = mesh.computeCenter();
-      const meshCenterX = meshCenter[0];
-
-      this.targetCenterX = meshCenterX;
-
-      if (this.currentCenterX == null) {
-        this.currentCenterX = this.targetCenterX;
-      } else {
-        this.currentCenterX += (this.targetCenterX - this.currentCenterX) * 0.5;
-      }
-
-      const recenterThreshold = 3;
-      const cx = this.currentCenterX;
-      const tx = Math.floor(cx / recenterThreshold) * recenterThreshold;
-      this.grid.mesh.setCustomAttribute(
-        "translation",
-        [tx, 0]
-      );
-      this.floor.mesh.setCustomAttribute(
-        "translation",
-        [tx, 0]
-      );
-
-      const center = [this.currentCenterX, 1];
-      camera.center({
-        worldCenter: center,
-        worldWidth: 3.8,
-        viewportWidth: renderer.width,
-        viewportHeight: renderer.height,
+    if (this.dragBehavior == null || !this.dragBehavior.dragging()) {
+      this.tracker.step({
+        mesh: mesh,
+        camera: camera,
+        floor: this.floor,
+        grid: this.grid,
+        renderer: this.renderer
       });
     }
     
