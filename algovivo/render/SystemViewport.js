@@ -166,7 +166,6 @@ class SystemViewport {
       const springId = lineIdToSpringId[args.id];
       if (springId == null) {
         const borderWidth = 0.029;
-        const borderColor = "black";
         ctx.beginPath();
         ctx.lineJoin = "round";
         ctx.lineCap = "round";
