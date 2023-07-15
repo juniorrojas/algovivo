@@ -330,8 +330,7 @@ class SystemViewport {
 
     this._updateSim(this.system);
 
-    // TODO dragBehavior could be null
-    if (!this.dragBehavior.dragging()) {
+    if (this.dragBehavior == null || !this.dragBehavior.dragging()) {
       const meshCenter = mesh.computeCenter();
       const meshCenterX = meshCenter[0];
 
