@@ -2839,7 +2839,7 @@ class SystemViewport {
         ctx.closePath();
         ctx.stroke();
       } else {
-        // parameterize muscle colors
+        // TODO parameterize muscle colors
         const color0 = [255, 0, 0];
         const color1 = [250, 190, 190];
         
