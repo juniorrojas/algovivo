@@ -13,12 +13,6 @@ from glob import glob
 def populate_deploy_path(deploy_path):
     public_path = this_dirpath.parent.joinpath("public")
 
-    for filename in [".gitignore", "index.html", "main.js", "algovivo.wasm"]:
-        shutil.copy(
-            public_path.joinpath(filename),
-            deploy_path.joinpath(filename)
-        )
-
     for filename in (
         [str(public_path.joinpath(".gitignore"))] +
         glob(str(public_path.joinpath("*.html"))) +
