@@ -182,7 +182,6 @@ class SystemViewport {
         
         const width = 0.065;
         const borderWidth = 0.017;
-        const borderColor = "black";
         const lineCap = "butt";
         const muscleIntensityAttributeName = "muscleIntensity";
 
