@@ -97,6 +97,10 @@ class Floor {
   }
 }
 
+function hexToRgb(s) {
+  throw new Error("not implemented");
+}
+
 class SystemViewport {
   constructor(args = {}) {
     if (args.system == null) {
@@ -122,9 +126,16 @@ class SystemViewport {
     const borderColor = args.borderColor ?? "black";
     const floorColor = borderColor;
     const fillColor = args.fillColor ?? "white";
-    const activeMuscleColor = args.activeMuscleColor ?? [255, 0, 0];
-    const inactiveMuscleColor = args.inactiveMuscleColor ?? [250, 190, 190];
     const gridColor = args.gridColor ?? "#acadad";
+    
+    let activeMuscleColor = args.activeMuscleColor ?? [255, 0, 0];
+    let inactiveMuscleColor = args.inactiveMuscleColor ?? [250, 190, 190];
+    if (typeof activeMuscleColor === "string") {
+      activeMuscleColor = hexToRgb(activeMuscleColor);
+    }
+    if (typeof inactiveMuscleColor === "string") {
+      inactiveMuscleColor = hexToRgb(inactiveMuscleColor)
+    }
 
     let backgroundCenterColor, backgroundOuterColor;
     if (args.backgroundColor != null) {
