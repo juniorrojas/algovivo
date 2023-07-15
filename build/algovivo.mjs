@@ -2684,11 +2684,11 @@ function edgesFromTriangles(triangles) {
   return Array.from(edges.values());
 }
 
-function makePointShader(args = {}) {
-  const radius = (args.radius == null) ? 0.028 : args.radius;
-  const borderColor = (args.borderColor == null) ? "black" : args.borderColor;
-  const fillColor = (args.fillColor == null) ? "white" : args.fillColor;
-  const borderWidth = (args.borderWidth == null) ? 0.023 : args.borderWidth;
+function makePointShaderFunction(args = {}) {
+  const radius = args.radius ?? 0.028;
+  const borderColor = args.borderColor ?? "black";
+  const fillColor = args.fillColor ?? "white";
+  const borderWidth = args.borderWidth ?? 0.023;
 
   return (args) => {
     const ctx = args.ctx;
@@ -2725,15 +2725,19 @@ class Floor {
       [0, 1]
     ];
 
-    mesh.lineShader.renderLine = Floor.makeFloorLineShader({
-      width: args.width
+    mesh.lineShader.renderLine = Floor.makeFloorLineShaderFunction({
+      width: args.width,
+      color: args.color
     });
+
+    mesh.pointShader.renderPoint = () => {};
 
     mesh.setCustomAttribute("translation", [0, 0]);
   }
 
-  static makeFloorLineShader(args = {}) {
-    const width = (args.width == null) ? 0.055 : args.width;
+  static makeFloorLineShaderFunction(args = {}) {
+    const width = args.width ?? 0.055;
+    const color = args.color ?? "black";
     return (args) => {
       const ctx = args.ctx;
       const a = args.a;
@@ -2745,7 +2749,7 @@ class Floor {
       const _translation = mesh.getCustomAttribute("translation");
       const translation = [scale * _translation[0], scale * _translation[1]];
 
-      ctx.strokeStyle = "black";
+      ctx.strokeStyle = color;
       ctx.lineWidth = scale * width;
       ctx.beginPath();
       ctx.moveTo(a[0] + translation[0], a[1] + translation[1]);
@@ -2777,8 +2781,26 @@ class SystemViewport {
     const camera = new mm2d$1.Camera();
     this.camera = camera;
 
+    const borderColor = args.borderColor ?? "black";
+    const floorColor = borderColor;
+    const fillColor = args.fillColor ?? "white";
+    const activeMuscleColor = args.activeMuscleColor ?? [255, 0, 0];
+    const inactiveMuscleColor = args.inactiveMuscleColor ?? [250, 190, 190];
+    const gridColor = args.gridColor ?? "#acadad";
+
+    let backgroundCenterColor, backgroundOuterColor;
+    if (args.backgroundColor != null) {
+      backgroundCenterColor = args.backgroundColor;
+      backgroundOuterColor = args.backgroundColor;
+    } else {
+      backgroundCenterColor = args.backgroundCenterColor ?? "#fcfcfc";
+      backgroundOuterColor = args.backgroundOuterColor ?? "#d7d8d8";
+    }
+
     new mm2d$1.background.Background({
-      scene: scene
+      scene: scene,
+      color1: backgroundCenterColor,
+      color2: backgroundOuterColor
     });
     this.grid = new mm2d$1.background.Grid({
       scene: scene,
@@ -2789,16 +2811,20 @@ class SystemViewport {
       innerCells: 2,
       primaryLineWidth: 0.022,
       secondaryLineWidth: 0.005,
-      color: "#acadad"
+      color: gridColor
     });
     this.floor = new Floor({
-      scene: scene
+      scene: scene,
+      color: floorColor
     });
 
     const mesh = scene.addMesh();
     this.mesh = mesh;
     
-    mesh.pointShader.renderPoint = makePointShader();
+    mesh.pointShader.renderPoint = makePointShaderFunction({
+      borderColor: borderColor,
+      fillColor: fillColor
+    });
 
     mesh.triangleShader.renderTriangle = (args = {}) => {
       const ctx = args.ctx;
@@ -2807,7 +2833,7 @@ class SystemViewport {
       const c = args.c;
 
       ctx.beginPath();
-      ctx.fillStyle = "white";
+      ctx.fillStyle = fillColor;
       ctx.moveTo(a[0], a[1]);
       ctx.lineTo(b[0], b[1]);
       ctx.lineTo(c[0], c[1]);
@@ -2825,7 +2851,6 @@ class SystemViewport {
       const springId = lineIdToSpringId[args.id];
       if (springId == null) {
         const borderWidth = 0.029;
-        const borderColor = "black";
         ctx.beginPath();
         ctx.lineJoin = "round";
         ctx.lineCap = "round";
@@ -2836,11 +2861,11 @@ class SystemViewport {
         ctx.closePath();
         ctx.stroke();
       } else {
-        const color0 = [255, 0, 0];
-        const color1 = [250, 190, 190];
+        const color0 = activeMuscleColor;
+        const color1 = inactiveMuscleColor;
+        
         const width = 0.065;
         const borderWidth = 0.017;
-        const borderColor = "black";
         const lineCap = "butt";
         const muscleIntensityAttributeName = "muscleIntensity";
 
