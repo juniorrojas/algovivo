@@ -134,8 +134,12 @@ class SystemViewport {
 
     const mesh = scene.addMesh();
     this.mesh = mesh;
+
+    const borderColor = args.borderColor ?? "black";
     
-    mesh.pointShader.renderPoint = makePointShader();
+    mesh.pointShader.renderPoint = makePointShader({
+      borderColor: borderColor
+    });
 
     mesh.triangleShader.renderTriangle = (args = {}) => {
       const ctx = args.ctx;
