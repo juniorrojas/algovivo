@@ -2813,6 +2813,20 @@ class Floor {
   }
 }
 
+function hexToRgb(hex) {
+  if (hex.length != 7) {
+    throw new Error(`invalid hex string ${hex}`);
+  }
+  if (hex[0] != "#") {
+    throw new Error(`invalid hex string ${hex}, expected #, found ${hex[0]}`);
+  }
+  hex = hex.substring(1);
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
+  return [r, g, b];
+}
+
 class SystemViewport {
   constructor(args = {}) {
     if (args.system == null) {
@@ -2838,9 +2852,16 @@ class SystemViewport {
     const borderColor = args.borderColor ?? "black";
     const floorColor = borderColor;
     const fillColor = args.fillColor ?? "white";
-    const activeMuscleColor = args.activeMuscleColor ?? [255, 0, 0];
-    const inactiveMuscleColor = args.inactiveMuscleColor ?? [250, 190, 190];
     const gridColor = args.gridColor ?? "#acadad";
+    
+    let activeMuscleColor = args.activeMuscleColor ?? [255, 0, 0];
+    let inactiveMuscleColor = args.inactiveMuscleColor ?? [250, 190, 190];
+    if (typeof activeMuscleColor === "string") {
+      activeMuscleColor = hexToRgb(activeMuscleColor);
+    }
+    if (typeof inactiveMuscleColor === "string") {
+      inactiveMuscleColor = hexToRgb(inactiveMuscleColor);
+    }
 
     let backgroundCenterColor, backgroundOuterColor;
     if (args.backgroundColor != null) {
