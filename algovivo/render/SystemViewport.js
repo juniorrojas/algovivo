@@ -97,8 +97,18 @@ class Floor {
   }
 }
 
-function hexToRgb(s) {
-  throw new Error("not implemented");
+function hexToRgb(hex) {
+  if (hex.length != 7) {
+    throw new Error(`invalid hex string ${hex}`);
+  }
+  if (hex[0] != "#") {
+    throw new Error(`invalid hex string ${hex}, expected #, found ${hex[0]}`);
+  }
+  hex = hex.substring(1);
+  const r = parseInt(hex.substring(0, 2), 16);
+  const g = parseInt(hex.substring(2, 4), 16);
+  const b = parseInt(hex.substring(4, 6), 16);
+  return [r, g, b];
 }
 
 class SystemViewport {
