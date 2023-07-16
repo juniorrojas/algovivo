@@ -2663,7 +2663,7 @@ function makeSortedElements(args = {}) {
     });
 
     sortedSimplices.sort((a, b) => {
-      // TODO max order vertex could pre-sorted in the simplex
+      // TODO max order vertex could be pre-sorted in the simplex
       const aOrders = a.vertexIds.map(i => vertexIdToOrder.get(i));
       const bOrders = b.vertexIds.map(i => vertexIdToOrder.get(i));
       const ai1 = Math.max(...aOrders);
