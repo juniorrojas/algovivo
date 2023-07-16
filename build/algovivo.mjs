@@ -2485,14 +2485,6 @@ class Simplex$1 {
     this.id = id;
     this.vertexIds = vertexIds;
   }
-
-  toString() {
-    return JSON.stringify({
-      order: this.order,
-      id: this.id,
-      vertexIds: this.vertexIds
-    });
-  }
 }
 
 var Simplex_1 = Simplex$1;
