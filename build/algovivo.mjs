@@ -2655,26 +2655,17 @@ function makeSortedElements(args = {}) {
     const edges = edgeTopology.getVertexById(vertexId, true).edges;
 
     const sortedSimplices = [];
-    triangles.forEach(t => {
-      sortedSimplices.push(t);
-    });
-    edges.forEach(e => {
-      sortedSimplices.push(e);
-    });
+    triangles.forEach(t => { sortedSimplices.push(t); });
+    edges.forEach(e => { sortedSimplices.push(e); });
 
     sortedSimplices.sort((a, b) => {
-      // TODO max order vertex could be pre-sorted in the simplex
-      const aOrders = a.vertexIds.map(i => vertexIdToOrder.get(i));
-      const bOrders = b.vertexIds.map(i => vertexIdToOrder.get(i));
-      const ai1 = Math.max(...aOrders);
-      const bi1 = Math.max(...bOrders);
+      // TODO max order vertex could pre-sorted in the simplex
+      const ai1 = Math.max(a.vertexIds.map(i => vertexIdToOrder.get(i)));
+      const bi1 = Math.max(b.vertexIds.map(i => vertexIdToOrder.get(i)));
       if (ai1 < bi1) {
-        return 1;
-      } else
-      if (ai1 == bi1) {
-        return 0;
-      } else {
         return -1;
+      } else {
+        return 1;
       }
     });
 
