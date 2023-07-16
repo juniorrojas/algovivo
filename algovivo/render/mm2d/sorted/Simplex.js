@@ -7,6 +7,14 @@ class Simplex {
     this.id = id;
     this.vertexIds = vertexIds;
   }
+
+  toString() {
+    return JSON.stringify({
+      order: this.order,
+      id: this.id,
+      vertexIds: this.vertexIds
+    });
+  }
 }
 
 module.exports = Simplex;
