@@ -1,4 +1,4 @@
-const algovivo = require("../../algovivo");
+const algovivo = require("algovivo");
 const { cleandir, getNumFilesWithExtension } = require("../utils");
 const fs = require("fs");
 const { Window, runWebServer } = require("./utils");
