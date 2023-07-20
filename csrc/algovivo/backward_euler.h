@@ -36,8 +36,9 @@ void backward_euler_update_x(
     system.backward(x, x_grad);
 
     if (fixed_vertex_id > -1) {
-      x_grad[fixed_vertex_id * space_dim    ] = 0.0;
-      x_grad[fixed_vertex_id * space_dim + 1] = 0.0;
+      const auto offset = fixed_vertex_id * space_dim;
+      x_grad[offset    ] = 0.0;
+      x_grad[offset + 1] = 0.0;
     }
     
     float grad_max_q = 0.0;
@@ -52,14 +53,14 @@ void backward_euler_update_x(
     if (grad_max_q < grad_q_tol) break;
 
     float step_size = 1.0;
-    int max_line_search_iters = 20;
+    const auto max_line_search_iters = 20;
     float backtracking_scale = 0.3;
 
-    float loss0 = system.forward(x);
+    const auto loss0 = system.forward(x);
 
     for (int i = 0; i < max_line_search_iters; i++) {
       addmuls_(num_vertices * space_dim, x, x_grad, -step_size, x_tmp);
-      float loss1 = system.forward(x_tmp);
+      const auto loss1 = system.forward(x_tmp);
       if (loss1 < loss0) {
         break;
       } else {
