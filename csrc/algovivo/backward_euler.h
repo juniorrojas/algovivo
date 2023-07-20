@@ -36,8 +36,9 @@ void backward_euler_update_x(
     system.backward(x, x_grad);
 
     if (fixed_vertex_id > -1) {
-      x_grad[fixed_vertex_id * space_dim    ] = 0.0;
-      x_grad[fixed_vertex_id * space_dim + 1] = 0.0;
+      const auto offset = fixed_vertex_id * space_dim;
+      x_grad[offset    ] = 0.0;
+      x_grad[offset + 1] = 0.0;
     }
     
     float grad_max_q = 0.0;
