@@ -52,14 +52,14 @@ void backward_euler_update_x(
     if (grad_max_q < grad_q_tol) break;
 
     float step_size = 1.0;
-    int max_line_search_iters = 20;
+    const auto max_line_search_iters = 20;
     float backtracking_scale = 0.3;
 
-    float loss0 = system.forward(x);
+    const auto loss0 = system.forward(x);
 
     for (int i = 0; i < max_line_search_iters; i++) {
       addmuls_(num_vertices * space_dim, x, x_grad, -step_size, x_tmp);
-      float loss1 = system.forward(x_tmp);
+      const auto loss1 = system.forward(x_tmp);
       if (loss1 < loss0) {
         break;
       } else {
