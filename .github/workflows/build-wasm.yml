@@ -11,6 +11,9 @@ on:
   pull_request:
     branches:
       - master
+    paths:
+      - csrc/*
+      - build.sh
   schedule:
     - cron: '0 */12 * * *'
 
