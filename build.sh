@@ -4,9 +4,11 @@ llc=${LLVM_BIN_DIR}/llc
 ld=${LLVM_BIN_DIR}/wasm-ld
 opt=${LLVM_BIN_DIR}/opt
 
-src_filename="csrc/main.cpp"
 lib_name="algovivo"
-build_dirname=build
+
+this_dirname=$(dirname "$0")
+src_filename="${this_dirname}/csrc/main.cpp"
+build_dirname="${this_dirname}/build"
 
 ll_filename="${build_dirname}/${lib_name}.out.ll"
 ll_diff_filename="${build_dirname}/${lib_name}.diff.out.ll"
