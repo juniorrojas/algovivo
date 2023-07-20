@@ -38,7 +38,9 @@ async function main() {
   await utils.cleandir(outputDirname);
 
   const writePromises = [];
-  for (let i = 0; i < 100; i++) {
+  const n = 100;
+  for (let i = 0; i < n; i++) {
+    console.log(`${i + 1} / ${n}`);
     const itemData = {
       x0: system.x0.toArray(),
       v0: system.v0.toArray(),
