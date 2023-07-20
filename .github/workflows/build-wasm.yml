@@ -5,13 +5,13 @@ on:
     branches:
       - master
     paths:
-      - csrc/*
+      - csrc/**
       - build.sh
   pull_request:
     branches:
       - master
     paths:
-      - csrc/*
+      - csrc/**
       - build.sh
   schedule:
     - cron: '0 */12 * * *'
