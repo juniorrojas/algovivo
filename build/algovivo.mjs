@@ -715,6 +715,12 @@ class Tensor$1 {
     return this.order == 0;
   }
 
+  zero_() {
+    // TODO WASM function
+    const data = utils$1.makeNdArray(this.shape, 0);
+    this.set(data);
+  }
+
   flattenIdx(_idx) {
     let idx;
     let tmpIdx = false;
@@ -864,7 +870,6 @@ class Tensor$1 {
   }
 
   dispose() {
-    // TODO if (this.ownedMemory)
     this.slot.free();
     this.shape.dispose();
     this.stride.dispose();
