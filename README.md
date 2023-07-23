@@ -16,8 +16,6 @@ For example, AD can be used for [energy minimization](https://github.com/juniorr
 
 ## quick start
 
-**Just one HTML file, no download or installation required.**
-
 You can create a simple simulation with one triangle and two muscles, where one muscle is controlled by a periodic signal, with the following HTML code.
 
 <img src="media/periodic.gif" width="250px">
@@ -30,10 +28,10 @@ You can create a simple simulation with one triangle and two muscles, where one 
 </head>
 <body>
   <script type="module">
-    import algovivo from "https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@78b8cf571b0370d08a22520aaa5794d50e3cd160/build/algovivo.min.mjs";
+    import algovivo from "https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@93ab705e3f2e752825ad400ed7c039e1032f88e7/build/algovivo.min.mjs";
 
     async function loadWasm() {
-      const response = await fetch("https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@78b8cf571b0370d08a22520aaa5794d50e3cd160/build/algovivo.wasm");
+      const response = await fetch("https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@93ab705e3f2e752825ad400ed7c039e1032f88e7/build/algovivo.wasm");
       const wasm = await WebAssembly.instantiateStreaming(response);
       return wasm.instance;
     }
