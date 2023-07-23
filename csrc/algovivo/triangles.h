@@ -1,5 +1,6 @@
 #pragma once
 #include "vec2.h"
+#include "mat2x2.h"
 
 namespace algovivo {
 
@@ -23,13 +24,19 @@ void rsi_of_x(
     
     vec2_sub(ab, b, a);
     vec2_sub(ac, c, a);
+    
+    const auto rs00 = abx;
+    const auto rs01 = acx;
+    const auto rs10 = aby;
+    const auto rs11 = acy;
 
-    const auto d = abx * acy - acx * aby;
+    mat2x2_inv(rsi, rs);
+
     const auto offset_rsi = i * 4;
-    rsi[offset_rsi    ] =  acy / d;
-    rsi[offset_rsi + 1] = -acx / d;
-    rsi[offset_rsi + 2] = -aby / d;
-    rsi[offset_rsi + 3] =  abx / d;
+    rsi[offset_rsi    ] = rsi00;
+    rsi[offset_rsi + 1] = rsi01;
+    rsi[offset_rsi + 2] = rsi10;
+    rsi[offset_rsi + 3] = rsi11;
   }
 }
 
