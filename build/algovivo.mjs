@@ -1540,7 +1540,7 @@ class Tracker$1 {
     const meshCenter = mesh.computeCenter();
     const meshCenterX = meshCenter[0];
 
-    this.targetCenterX = meshCenterX;
+    if (!isNaN(meshCenterX)) this.targetCenterX = meshCenterX;
 
     if (this.currentCenterX == null) {
       this.currentCenterX = this.targetCenterX;
