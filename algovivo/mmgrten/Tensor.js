@@ -50,16 +50,14 @@ class Tensor {
     return this.order == 0;
   }
 
-  zero_() {
-    // TODO WASM function
-    const data = utils.makeNdArray(this.shape, 0);
-    this.set(data);
-  }
-
   fill_(x) {
     // TODO WASM function
     const data = utils.makeNdArray(this.shape, x);
     this.set(data);
+  }
+
+  zero_() {
+    this.fill_(0)
   }
 
   flattenIdx(_idx) {
