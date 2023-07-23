@@ -57,7 +57,7 @@ class Tensor {
   }
 
   zero_() {
-    this.fill_(0)
+    this.fill_(0);
   }
 
   flattenIdx(_idx) {
