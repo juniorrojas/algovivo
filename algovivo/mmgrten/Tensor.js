@@ -56,6 +56,12 @@ class Tensor {
     this.set(data);
   }
 
+  fill_(x) {
+    // TODO WASM function
+    const data = utils.makeNdArray(this.shape, x);
+    this.set(data);
+  }
+
   flattenIdx(_idx) {
     let idx;
     let tmpIdx = false;
