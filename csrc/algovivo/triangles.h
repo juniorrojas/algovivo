@@ -1,6 +1,13 @@
 #pragma once
 #include "vec2.h"
 
+#define mat2x2_inv(inv, m) \
+  const auto (m##_det) = (m##00) * (m##11) - (m##01) * (m##10); \
+  const auto (inv##00) =  (m##11) / (m##_det); \
+  const auto (inv##01) = (-m##01) / (m##_det); \
+  const auto (inv##10) = (-m##10) / (m##_det); \
+  const auto (inv##11) =  (m##00) / (m##_det);
+
 namespace algovivo {
 
 extern "C"
@@ -23,13 +30,19 @@ void rsi_of_x(
     
     vec2_sub(ab, b, a);
     vec2_sub(ac, c, a);
+    
+    const auto rs00 = abx;
+    const auto rs01 = acx;
+    const auto rs10 = aby;
+    const auto rs11 = acy;
 
-    const auto d = abx * acy - acx * aby;
+    mat2x2_inv(rsi, rs);
+
     const auto offset_rsi = i * 4;
-    rsi[offset_rsi    ] =  acy / d;
-    rsi[offset_rsi + 1] = -acx / d;
-    rsi[offset_rsi + 2] = -aby / d;
-    rsi[offset_rsi + 3] =  abx / d;
+    rsi[offset_rsi    ] = rsi00;
+    rsi[offset_rsi + 1] = rsi01;
+    rsi[offset_rsi + 2] = rsi10;
+    rsi[offset_rsi + 3] = rsi11;
   }
 }
 
