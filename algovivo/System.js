@@ -187,7 +187,7 @@ class System {
     if (this.xGrad != null) this.xGrad.dispose();
     this.xGrad = xGrad;
 
-    const xTmp =ten.zeros([numVertices, spaceDim]);
+    const xTmp = ten.zeros([numVertices, spaceDim]);
     if (this.xTmp != null) this.xTmp.dispose();
     this.xTmp = xTmp;
   }
