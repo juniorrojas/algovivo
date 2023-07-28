@@ -19,14 +19,16 @@ static float backward_euler_loss(
   const float* rsi,
 
   const float* a,
-  const float* l0
+  const float* l0,
+
+  float vertex_mass
 ) {
   const auto space_dim = 2;
 
   float inertial_energy = 0.0;
   float potential_energy = 0.0;
 
-  const float vertex_mass = 6.0714287757873535;
+  // const float vertex_mass = 6.0714287757873535;
 
   for (int i = 0; i < num_vertices; i++) {
     vec2_get(p, x, i);
@@ -122,7 +124,9 @@ static void backward_euler_loss_grad(
   float* rsi,
 
   float* a,
-  float* l0
+  float* l0,
+
+  float vertex_mass
 ) {
   __enzyme_autodiff(
     backward_euler_loss,
@@ -141,7 +145,8 @@ static void backward_euler_loss_grad(
     enzyme_const, rsi,
 
     enzyme_const, a,
-    enzyme_const, l0
+    enzyme_const, l0,
+    enzyme_const, vertex_mass
   );
 }
 
@@ -150,6 +155,7 @@ struct System {
 
   float h;
 
+  float vertex_mass;
   float* x0;
   float* v0;
   float* r;
@@ -174,7 +180,8 @@ struct System {
       num_triangles,
       triangles,
       rsi,
-      a, l0
+      a, l0,
+      vertex_mass
     );
   }
 
@@ -184,7 +191,8 @@ struct System {
       x_grad, x0, v0, h, r,
       num_springs, springs,
       num_triangles, triangles, rsi,
-      a, l0
+      a, l0,
+      vertex_mass
     );
   }
 };
@@ -208,13 +216,15 @@ void backward_euler_update(
   float* a,
   float* l0,
 
-  int fixed_vertex_id
+  int fixed_vertex_id,
+  float vertex_mass
 ) {
   algovivo::System system;
 
   system.h = h;
 
   system.num_vertices = num_vertices;
+  system.vertex_mass = 6.0714287757873535;
   system.x0 = x0;
   system.v0 = v0;
   system.r = r;
