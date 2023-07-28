@@ -1369,9 +1369,10 @@ class System$1 {
 
     const trianglesU32 = triangles.u32();
     indices.forEach((t, i) => {
-      trianglesU32[i * 3    ] = t[0];
-      trianglesU32[i * 3 + 1] = t[1];
-      trianglesU32[i * 3 + 2] = t[2];
+      const offset = i * 3;
+      trianglesU32[offset    ] = t[0];
+      trianglesU32[offset + 1] = t[1];
+      trianglesU32[offset + 2] = t[2];
     });
 
     const rsi = ten.zeros([numTriangles, 2, 2]);
@@ -1415,7 +1416,7 @@ class System$1 {
       throw new Error("x0 required");
     }
     const numVertices = this.numVertices();
-    const spaceDim = 2;
+    const spaceDim = this.spaceDim;
     const ten = this.ten;
     
     // TODO only allocate new memory if necessary
@@ -1423,7 +1424,7 @@ class System$1 {
     if (this.xGrad != null) this.xGrad.dispose();
     this.xGrad = xGrad;
 
-    const xTmp =ten.zeros([numVertices, spaceDim]);
+    const xTmp = ten.zeros([numVertices, spaceDim]);
     if (this.xTmp != null) this.xTmp.dispose();
     this.xTmp = xTmp;
   }
