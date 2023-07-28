@@ -107,7 +107,7 @@ class System {
     this.a = null;
 
     if (numSprings != 0) {
-      // TODO a = ten.ones([numSprings]);
+      // TODO sometimes a should not be reset to 1
       const a = ten.zeros([numSprings]);
       this.a = a;
       const aF32 = a.slot.f32();
