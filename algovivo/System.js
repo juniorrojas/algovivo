@@ -179,7 +179,7 @@ class System {
       throw new Error("x0 required");
     }
     const numVertices = this.numVertices();
-    const spaceDim = 2;
+    const spaceDim = this.spaceDim;
     const ten = this.ten;
     
     // TODO only allocate new memory if necessary
