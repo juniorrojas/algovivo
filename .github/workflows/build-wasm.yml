@@ -23,7 +23,7 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install llvm-11 clang-11 lld-11 ninja-build
+          sudo apt-get install llvm-11 clang-11 lld-11 ninja-build build-essential cmake
       - uses: actions/checkout@v3
       - uses: actions/checkout@v3
         with:
