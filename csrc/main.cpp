@@ -224,7 +224,7 @@ void backward_euler_update(
   system.h = h;
 
   system.num_vertices = num_vertices;
-  system.vertex_mass = 6.0714287757873535;
+  system.vertex_mass = vertex_mass;
   system.x0 = x0;
   system.v0 = v0;
   system.r = r;
