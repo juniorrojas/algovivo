@@ -51,8 +51,6 @@ jobs:
     steps:
       - name: Install system dependencies
         run: |
-          brew cleanup llvm@11
-          brew update
           brew install llvm@11 ninja
       - uses: actions/checkout@v3
       - uses: actions/checkout@v3
