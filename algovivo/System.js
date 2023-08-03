@@ -21,8 +21,6 @@ class System {
     this.h = h;
 
     this.spaceDim = 2;
-
-    this.a = null;
   }
 
   numVertices() {
@@ -113,6 +111,10 @@ class System {
         this.a = a;
         a.fill_(1);
       }
+    } else
+    if (numSprings == 0) {
+      if (this.a != null) this.a.dispose();
+      this.a = null;
     }
   }
 
