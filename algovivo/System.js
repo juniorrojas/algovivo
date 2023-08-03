@@ -21,6 +21,8 @@ class System {
     this.h = h;
 
     this.spaceDim = 2;
+
+    this.a = null;
   }
 
   numVertices() {
@@ -69,6 +71,7 @@ class System {
     }
     const indices = args.indices;
     const numSprings = indices.length;
+    const numSprings0 = this.numSprings();
 
     const mgr = this.memoryManager;
     const ten = this.ten;
@@ -103,16 +106,19 @@ class System {
       }
     }
 
-    if (this.a != null) this.a.dispose();
-    this.a = null;
+    if (numSprings != numSprings0) {
+      if (this.a != null) this.a.dispose();
+      this.a = null;
 
-    if (numSprings != 0) {
-      // TODO sometimes a should not be reset to 1
-      const a = ten.zeros([numSprings]);
-      this.a = a;
-      const aF32 = a.slot.f32();
-      for (let i = 0; i < numSprings; i++) {
-        aF32[i] = 1;
+      if (numSprings != 0) {
+        // TODO sometimes a should not be reset to 1
+        const a = ten.zeros([numSprings]);
+        this.a = a;
+
+        const aF32 = a.slot.f32();
+        for (let i = 0; i < numSprings; i++) {
+          aF32[i] = 1;
+        }
       }
     }
   }
