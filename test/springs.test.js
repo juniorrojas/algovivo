@@ -64,3 +64,42 @@ test("set springs", async () => {
   expect(system.l0.toArray()).toBeCloseToArray([10, 15]);
   expect(system.a.toArray()).toBeCloseToArray([1, 1]);
 });
+
+test("update l0, keep a", async () => {
+  const wasmInstance = await utils.loadWasm();
+  const system = new algovivo.System({ wasmInstance });
+  system.setX([
+    [0.5, 0.5],
+    [1.5, 0.5]
+  ]);
+  system.setSprings({
+    indices: [
+      [0, 1]
+    ],
+    l0: [
+      1.0
+    ]
+  });
+  expect(system.a.toArray()).toBeCloseToArray([1.0]);
+  system.a.set([0.3]);
+  expect(system.a.toArray()).toBeCloseToArray([0.3]);
+  system.setSprings({
+    indices: [
+      [0, 1]
+    ],
+    l0: [
+      2.0
+    ],
+    keepA: true
+  });
+  expect(system.a.toArray()).toBeCloseToArray([0.3]);
+  system.setSprings({
+    indices: [
+      [0, 1]
+    ],
+    l0: [
+      2.0
+    ]
+  });
+  expect(system.a.toArray()).toBeCloseToArray([1]);
+});
