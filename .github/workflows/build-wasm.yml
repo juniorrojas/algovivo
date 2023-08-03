@@ -47,7 +47,7 @@ jobs:
           name: algovivo.linux.wasm
           path: build/algovivo.wasm
   build-wasm-macos:
-    runs-on: macos-latest
+    runs-on: macos-11
     steps:
       - name: Install system dependencies
         run: |
