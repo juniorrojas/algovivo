@@ -114,11 +114,7 @@ class System {
         // TODO sometimes a should not be reset to 1
         const a = ten.zeros([numSprings]);
         this.a = a;
-
-        const aF32 = a.slot.f32();
-        for (let i = 0; i < numSprings; i++) {
-          aF32[i] = 1;
-        }
+        a.fill_(1);
       }
     }
   }
