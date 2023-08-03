@@ -108,10 +108,7 @@ class System {
 
     if (numSprings != numSprings0) {
       if (this.a != null) this.a.dispose();
-      this.a = null;
-
       if (numSprings != 0) {
-        // TODO sometimes a should not be reset to 1
         const a = ten.zeros([numSprings]);
         this.a = a;
         a.fill_(1);
