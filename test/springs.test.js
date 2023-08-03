@@ -89,7 +89,17 @@ test("update l0, keep a", async () => {
     ],
     l0: [
       2.0
-    ]
+    ],
+    keepA: true
   });
   expect(system.a.toArray()).toBeCloseToArray([0.3]);
+  system.setSprings({
+    indices: [
+      [0, 1]
+    ],
+    l0: [
+      2.0
+    ]
+  });
+  expect(system.a.toArray()).toBeCloseToArray([1]);
 });

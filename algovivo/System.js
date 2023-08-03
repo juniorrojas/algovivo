@@ -104,7 +104,11 @@ class System {
       }
     }
 
+    const keepA = args.keepA ?? false;
     if (numSprings != numSprings0) {
+      if (keepA) {
+        throw new Error(`keepA can only be true when the number of springs is the same`);
+      }
       if (this.a != null) this.a.dispose();
       if (numSprings != 0) {
         const a = ten.zeros([numSprings]);
@@ -115,6 +119,11 @@ class System {
     if (numSprings == 0) {
       if (this.a != null) this.a.dispose();
       this.a = null;
+    } else {
+      // numSprings == numSprings0 != 0
+      if (!keepA) {
+        this.a.fill_(1);
+      }
     }
   }
 
