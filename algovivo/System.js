@@ -16,6 +16,7 @@ class System {
     this.wasmInstance = wasmInstance;
     this.memoryManager = memoryManager;
     this.fixedVertexId = -1;
+    this.vertexMass = args.vertexMass ?? 6.0714287757873535;
 
     const h = 0.033;
     this.h = h;
@@ -209,6 +210,7 @@ class System {
     const numTriangles = this.numTriangles();
 
     const fixedVertexId = this.fixedVertexId;
+    const vertexMass = this.vertexMass;
 
     this.wasmInstance.exports.backward_euler_update(
       numVertices,
@@ -237,7 +239,9 @@ class System {
       numSprings == 0 ? 0 : this.a.ptr,
       numSprings == 0 ? 0 : this.l0.ptr,
       
-      fixedVertexId
+      fixedVertexId,
+
+      vertexMass
     );
 
     this.x0.slot.f32().set(this.x1.slot.f32());
