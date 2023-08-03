@@ -107,7 +107,7 @@ class System {
     const keepA = args.keepA ?? false;
     if (numSprings != numSprings0) {
       if (keepA) {
-        throw new Error(`keepA can only be true when the number of springs is the same`);
+        throw new Error(`keepA can only be true when the number of springs is the same (${numSprings} != ${numSprings0})`);
       }
       if (this.a != null) this.a.dispose();
       if (numSprings != 0) {
