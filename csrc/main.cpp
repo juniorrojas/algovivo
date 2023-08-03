@@ -28,8 +28,6 @@ static float backward_euler_loss(
   float inertial_energy = 0.0;
   float potential_energy = 0.0;
 
-  // const float vertex_mass = 6.0714287757873535;
-
   for (int i = 0; i < num_vertices; i++) {
     vec2_get(p, x, i);
     vec2_get(v, v0, i);
