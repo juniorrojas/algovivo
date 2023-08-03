@@ -1258,6 +1258,7 @@
 	    this.wasmInstance = wasmInstance;
 	    this.memoryManager = memoryManager;
 	    this.fixedVertexId = -1;
+	    this.vertexMass = args.vertexMass ?? 6.0714287757873535;
 
 	    const h = 0.033;
 	    this.h = h;
@@ -1311,6 +1312,7 @@
 	    }
 	    const indices = args.indices;
 	    const numSprings = indices.length;
+	    const numSprings0 = this.numSprings();
 
 	    const mgr = this.memoryManager;
 	    const ten = this.ten;
@@ -1345,16 +1347,25 @@
 	      }
 	    }
 
-	    if (this.a != null) this.a.dispose();
-	    this.a = null;
-
-	    if (numSprings != 0) {
-	      // TODO a = ten.ones([numSprings]);
-	      const a = ten.zeros([numSprings]);
-	      this.a = a;
-	      const aF32 = a.slot.f32();
-	      for (let i = 0; i < numSprings; i++) {
-	        aF32[i] = 1;
+	    const keepA = args.keepA ?? false;
+	    if (numSprings != numSprings0) {
+	      if (keepA) {
+	        throw new Error(`keepA can only be true when the number of springs is the same (${numSprings} != ${numSprings0})`);
+	      }
+	      if (this.a != null) this.a.dispose();
+	      if (numSprings != 0) {
+	        const a = ten.zeros([numSprings]);
+	        this.a = a;
+	        a.fill_(1);
+	      }
+	    } else
+	    if (numSprings == 0) {
+	      if (this.a != null) this.a.dispose();
+	      this.a = null;
+	    } else {
+	      // numSprings == numSprings0 != 0
+	      if (!keepA) {
+	        this.a.fill_(1);
 	      }
 	    }
 	  }
@@ -1441,6 +1452,7 @@
 	    const numTriangles = this.numTriangles();
 
 	    const fixedVertexId = this.fixedVertexId;
+	    const vertexMass = this.vertexMass;
 
 	    this.wasmInstance.exports.backward_euler_update(
 	      numVertices,
@@ -1469,7 +1481,9 @@
 	      numSprings == 0 ? 0 : this.a.ptr,
 	      numSprings == 0 ? 0 : this.l0.ptr,
 	      
-	      fixedVertexId
+	      fixedVertexId,
+
+	      vertexMass
 	    );
 
 	    this.x0.slot.f32().set(this.x1.slot.f32());
