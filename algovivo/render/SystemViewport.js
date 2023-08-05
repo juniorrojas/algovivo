@@ -316,26 +316,28 @@ class SystemViewport {
   render() {
     if (this.needsMeshUpdate == null || this.needsMeshUpdate) {
       const trianglesArr = [];
-      // TODO no triangles?
-      const trianglesU32 = this.system.triangles.u32();
-      for (let i = 0; i < this.system.numTriangles(); i++) {
-        const offset = i * 3;
-        trianglesArr.push([
-          trianglesU32[offset    ],
-          trianglesU32[offset + 1],
-          trianglesU32[offset + 2]
-        ]);
+      if (this.system.triangles != null) {
+        const trianglesU32 = this.system.triangles.u32();
+        for (let i = 0; i < this.system.numTriangles(); i++) {
+          const offset = i * 3;
+          trianglesArr.push([
+            trianglesU32[offset    ],
+            trianglesU32[offset + 1],
+            trianglesU32[offset + 2]
+          ]);
+        }
       }
 
       const springsArr = [];
-      // TODO no springs?
-      const springsU32 = this.system.springs.u32();
-      for (let i = 0; i < this.system.numSprings(); i++) {
-        const offset = i * 2;
-        springsArr.push([
-          springsU32[offset    ],
-          springsU32[offset + 1]
-        ]);
+      if (this.system.springs != null) {
+        const springsU32 = this.system.springs.u32();
+        for (let i = 0; i < this.system.numSprings(); i++) {
+          const offset = i * 2;
+          springsArr.push([
+            springsU32[offset    ],
+            springsU32[offset + 1]
+          ]);
+        }
       }
 
       this._updateMesh({
