@@ -382,9 +382,10 @@ class SystemViewport {
     if (this.system.springs != null) {
       const springsU32 = this.system.springs.u32();
       for (let i = 0; i < this.system.numSprings(); i++) {
+        const offset = i * 2;
         const s = [
-          springsU32[i * 2    ],
-          springsU32[i * 2 + 1]
+          springsU32[offset    ],
+          springsU32[offset + 1]
         ];
         springsHashToId.set(
           hashSimplex(s),
