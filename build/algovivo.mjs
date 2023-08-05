@@ -3186,8 +3186,12 @@ class SystemViewport {
     const mesh = this.mesh;
     const system = this.system;
 
-    const x = system.x0.toArray();
-    mesh.x = x;
+    if (system.numVertices() == 0) {
+      mesh.x = [];
+    } else {
+      const x = system.x0.toArray();
+      mesh.x = x;
+    }
   }
 
   _updateMuscleIntensityFromSystem() {
@@ -3195,9 +3199,11 @@ class SystemViewport {
     const system = this.system;
     const muscleIntensity = [];
     const numSprings = system.numSprings();
-    const aF32 = system.a.slot.f32();
-    for (let i = 0; i < numSprings; i++) {
-      muscleIntensity.push(aF32[i]);
+    if (numSprings > 0) {
+      const aF32 = system.a.slot.f32();
+      for (let i = 0; i < numSprings; i++) {
+        muscleIntensity.push(aF32[i]);
+      }
     }
     mesh.setCustomAttribute("muscleIntensity", muscleIntensity);
   }
