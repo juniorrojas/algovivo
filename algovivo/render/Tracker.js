@@ -1,8 +1,9 @@
 class Tracker {
-  constructor() {
+  constructor(args = {}) {
     this.targetCenterX = null;
     this.currentCenterX = null;
     this.active = true;
+    this.visibleWorldWidth = args.visibleWorldWidth ?? 3.8;
   }
 
   step(args = {}) {
@@ -40,7 +41,7 @@ class Tracker {
     const center = [this.currentCenterX, 1];
     camera.center({
       worldCenter: center,
-      worldWidth: 3.8,
+      worldWidth: this.visibleWorldWidth,
       viewportWidth: renderer.width,
       viewportHeight: renderer.height,
     });
