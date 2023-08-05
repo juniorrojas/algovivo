@@ -379,17 +379,18 @@ class SystemViewport {
     mesh.lines = edgesFromTriangles(meshData.triangles);
 
     const springsHashToId = new Map();
-    // TODO no springs?
-    const springsU32 = this.system.springs.u32();
-    for (let i = 0; i < this.system.numSprings(); i++) {
-      const s = [
-        springsU32[i * 2    ],
-        springsU32[i * 2 + 1]
-      ];
-      springsHashToId.set(
-        hashSimplex(s),
-        i
-      );
+    if (this.system.springs != null) {
+      const springsU32 = this.system.springs.u32();
+      for (let i = 0; i < this.system.numSprings(); i++) {
+        const s = [
+          springsU32[i * 2    ],
+          springsU32[i * 2 + 1]
+        ];
+        springsHashToId.set(
+          hashSimplex(s),
+          i
+        );
+      }
     }
     
     const lineIdToSpringId = [];
