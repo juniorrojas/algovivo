@@ -1543,10 +1543,11 @@
 	var System_1 = System$1;
 
 	class Tracker$1 {
-	  constructor() {
+	  constructor(args = {}) {
 	    this.targetCenterX = null;
 	    this.currentCenterX = null;
 	    this.active = true;
+	    this.visibleWorldWidth = args.visibleWorldWidth ?? 3.8;
 	  }
 
 	  step(args = {}) {
@@ -1584,7 +1585,7 @@
 	    const center = [this.currentCenterX, 1];
 	    camera.center({
 	      worldCenter: center,
-	      worldWidth: 3.8,
+	      worldWidth: this.visibleWorldWidth,
 	      viewportWidth: renderer.width,
 	      viewportHeight: renderer.height,
 	    });
@@ -2948,9 +2949,9 @@
 
 	      ctx.beginPath();
 	      ctx.fillStyle = fillColor;
-	      ctx.moveTo(a[0], a[1]);
-	      ctx.lineTo(b[0], b[1]);
-	      ctx.lineTo(c[0], c[1]);
+	      ctx.moveTo(...a);
+	      ctx.lineTo(...b);
+	      ctx.lineTo(...c);
 	      ctx.closePath();
 	      ctx.fill();
 	    };
@@ -3031,23 +3032,23 @@
 	      const dragBehavior = this.dragBehavior = new mm2d$1.ui.DragBehavior({
 	        onDomCursorDown: (domCursor, event) => {
 	          if ("button" in event && event.button != 0) return;
-	          const sim = this.system;
+	          const system = this.system;
 	          const worldCursor = camera.domToWorldSpace(domCursor);
 	          const vertexId = this.hitTestVertex(worldCursor);
 	          if (vertexId != null) {
 	            this.fixVertex(vertexId);
 	            dragBehavior.beginDrag();
 	            this.setVertexPos(
-	              sim.fixedVertexId,
+	              system.fixedVertexId,
 	              [worldCursor[0], Math.max(0, worldCursor[1])]
 	            );
 	          }
 	        },
 	        onDragProgress: (domCursor) => {
-	          const sim = this.system;
+	          const system = this.system;
 	          const worldCursor = camera.domToWorldSpace(domCursor);
 	          this.setVertexPos(
-	            sim.fixedVertexId,
+	            system.fixedVertexId,
 	            [worldCursor[0], Math.max(0, worldCursor[1])]
 	          );
 	        },
@@ -3071,24 +3072,28 @@
 	  render() {
 	    if (this.needsMeshUpdate == null || this.needsMeshUpdate) {
 	      const trianglesArr = [];
-	      const trianglesU32 = this.system.triangles.u32();
-	      for (let i = 0; i < this.system.numTriangles(); i++) {
-	        const offset = i * 3;
-	        trianglesArr.push([
-	          trianglesU32[offset    ],
-	          trianglesU32[offset + 1],
-	          trianglesU32[offset + 2]
-	        ]);
+	      if (this.system.triangles != null) {
+	        const trianglesU32 = this.system.triangles.u32();
+	        for (let i = 0; i < this.system.numTriangles(); i++) {
+	          const offset = i * 3;
+	          trianglesArr.push([
+	            trianglesU32[offset    ],
+	            trianglesU32[offset + 1],
+	            trianglesU32[offset + 2]
+	          ]);
+	        }
 	      }
 
 	      const springsArr = [];
-	      const springsU32 = this.system.springs.u32();
-	      for (let i = 0; i < this.system.numSprings(); i++) {
-	        const offset = i * 2;
-	        springsArr.push([
-	          springsU32[offset    ],
-	          springsU32[offset + 1]
-	        ]);
+	      if (this.system.springs != null) {
+	        const springsU32 = this.system.springs.u32();
+	        for (let i = 0; i < this.system.numSprings(); i++) {
+	          const offset = i * 2;
+	          springsArr.push([
+	            springsU32[offset    ],
+	            springsU32[offset + 1]
+	          ]);
+	        }
 	      }
 
 	      this._updateMesh({
@@ -3104,7 +3109,7 @@
 	    const camera = this.camera;
 	    const mesh = this.mesh;
 
-	    this._updateSim(this.system);
+	    this._updateFromSystem();
 
 	    if (this.dragBehavior == null || !this.dragBehavior.dragging()) {
 	      this.tracker.step({
@@ -3130,16 +3135,19 @@
 	    mesh.lines = edgesFromTriangles(meshData.triangles);
 
 	    const springsHashToId = new Map();
-	    const springsU32 = this.system.springs.u32();
-	    for (let i = 0; i < this.system.numSprings(); i++) {
-	      const s = [
-	        springsU32[i * 2    ],
-	        springsU32[i * 2 + 1]
-	      ];
-	      springsHashToId.set(
-	        hashSimplex(s),
-	        i
-	      );
+	    if (this.system.springs != null) {
+	      const springsU32 = this.system.springs.u32();
+	      for (let i = 0; i < this.system.numSprings(); i++) {
+	        const offset = i * 2;
+	        const s = [
+	          springsU32[offset    ],
+	          springsU32[offset + 1]
+	        ];
+	        springsHashToId.set(
+	          hashSimplex(s),
+	          i
+	        );
+	      }
 	    }
 	    
 	    const lineIdToSpringId = [];
@@ -3175,17 +3183,27 @@
 	    mesh.setCustomAttribute("muscleIntensity", muscleIntensity);
 	  }
 
-	  _updateSim(sim) {
-	    this.system = sim;
+	  _updateFromSystem() {
+	    this._updateVertexPositionsFromSystem();
+	    this._updateMuscleIntensityFromSystem();
+	  }
+
+	  _updateVertexPositionsFromSystem() {
 	    const mesh = this.mesh;
+	    const system = this.system;
 
-	    const x = sim.x0.toArray();
+	    const x = system.x0.toArray();
 	    mesh.x = x;
+	  }
 
+	  _updateMuscleIntensityFromSystem() {
+	    const mesh = this.mesh;
+	    const system = this.system;
 	    const muscleIntensity = [];
-	    const numSprings = sim.numSprings();
+	    const numSprings = system.numSprings();
+	    const aF32 = system.a.slot.f32();
 	    for (let i = 0; i < numSprings; i++) {
-	      muscleIntensity.push(sim.a.slot.f32()[i]);
+	      muscleIntensity.push(aF32[i]);
 	    }
 	    mesh.setCustomAttribute("muscleIntensity", muscleIntensity);
 	  }
@@ -3206,33 +3224,33 @@
 	  }
 
 	  setVertexPos(i, p) {
-	    const sim = this.system;
-	    const xF32 = sim.x0.slot.f32();
+	    const system = this.system;
+	    const xF32 = system.x0.slot.f32();
 	    const offset = i * 2;
 	    xF32[offset] = p[0];
 	    xF32[offset + 1] = p[1];
 	  }
 
 	  setVertexVel(i, p) {
-	    const sim = this.system;
-	    const vF32 = sim.v0.slot.f32();
+	    const system = this.system;
+	    const vF32 = system.v0.slot.f32();
 	    const offset = i * 2;
 	    vF32[offset] = p[0];
 	    vF32[offset + 1] = p[1];
 	  }
 
 	  fixVertex(vertexId) {
-	    const sim = this.system;
+	    const system = this.system;
 	    this.setVertexVel(vertexId, [0, 0]);
 	    if (vertexId == null) {
 	      vertexId = -1;
 	    }
-	    sim.fixedVertexId = vertexId;
+	    system.fixedVertexId = vertexId;
 	  }
 
 	  freeVertex() {
-	    const sim = this.system;
-	    sim.fixedVertexId = -1;
+	    const system = this.system;
+	    system.fixedVertexId = -1;
 	  }
 	}
 
