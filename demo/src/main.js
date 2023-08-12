@@ -1,7 +1,7 @@
 import algovivo from "../../build/algovivo.min.mjs";
 import NeuralPolicy from "./NeuralPolicy.js";
 import IconButton from "./IconButton.js";
-import { makeGitHubLink, makeHeader } from "./ui.js";
+import { makeGitHubCorner, makeHeader } from "./ui.js";
 import SystemViewport from "./SystemViewport.js";
 
 async function loadWasm() {
@@ -23,7 +23,7 @@ async function loadPolicyData() {
 }
 
 async function main() {
-  makeGitHubLink();
+  makeGitHubCorner();
   makeHeader();
 
   document.body.style.background = "rgb(248, 248, 248)";
