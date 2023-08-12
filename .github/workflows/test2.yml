@@ -1,0 +1,72 @@
+name: test
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+    paths:
+      - 'csrc'
+
+jobs:
+  build-wasm:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install llvm-11 clang-11 lld-11 ninja-build build-essential cmake
+      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
+        with:
+          repository: EnzymeAD/Enzyme
+          ref: 86197cb2d776d72e2063695be21b729f6cffeb9b
+          path: Enzyme
+      - name: Build Enzyme
+        run: |
+          cd Enzyme/enzyme
+          mkdir build
+          cd build
+          cmake -G Ninja .. -DLLVM_DIR=/usr/lib/llvm-11/
+          ninja
+      - name: Build WASM
+        run: |
+          export LLVM_BIN_DIR=/usr/lib/llvm-11/bin
+          export ENZYME=./Enzyme/enzyme/build/Enzyme/LLVMEnzyme-11.so
+          ./build.sh
+      - name: Upload WASM
+        uses: actions/upload-artifact@v3
+        with:
+          name: algovivo.linux.wasm
+          path: build/algovivo.wasm
+      - name: Test JS
+        run: |
+          npm ci
+          npm test
+      - name: Test demo
+        run: |
+          cd demo
+          npm ci
+          npm run build
+          npm test
+      - name: Upload demo screenshot
+        uses: actions/upload-artifact@v3
+        with:
+          name: screenshot
+          path: ./demo/test/screenshot.out.png
+      - name: Install ffmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install ffmpeg
+      - run: |
+          npm ci
+          npm run build
+          node test/neural/renderTrajectory.js
+          ffmpeg -framerate 30 -i test/neural/frames.out/%d.png -pix_fmt yuv420p video.out.mp4 -y
+      - name: Upload trajectory video
+        uses: actions/upload-artifact@v3
+        with:
+          name: video
+          path: video.out.mp4
