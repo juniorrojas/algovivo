@@ -37,7 +37,7 @@ jobs:
       - name: Upload WASM
         uses: actions/upload-artifact@v3
         with:
-          name: algovivo.linux.wasm
+          name: algovivo.wasm
           path: build/algovivo.wasm
   test-js:
     runs-on: ubuntu-latest
@@ -45,8 +45,11 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
-      - name: Download artifacts
+      - name: Download WASM build
         uses: actions/download-artifact@v3
+        with:
+          name: algovivo.wasm
+          path: build/algovivo.wasm
       - name: Test JS
         run: |
           npm ci
