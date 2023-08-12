@@ -9,7 +9,7 @@ on:
       - master
 
 jobs:
-  build-wasm:
+  test:
     runs-on: ubuntu-latest
     steps:
       - name: Install system dependencies
