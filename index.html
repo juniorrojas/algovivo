@@ -23,7 +23,7 @@
     (function() {
       const script = document.createElement("script");
       const now = new Date();
-      const nstr = now.toISOString();
+      const nstr = now.getTime().toString();
       script.type = "module";
       script.src = `main.js?t=${nstr}`;
       document.body.appendChild(script);
