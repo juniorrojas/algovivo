@@ -1,18 +1,6 @@
 name: build-wasm
 
 on:
-  push:
-    branches:
-      - master
-    paths:
-      - csrc/**
-      - build.sh
-  pull_request:
-    branches:
-      - master
-    paths:
-      - csrc/**
-      - build.sh
   schedule:
     - cron: '0 */12 * * *'
 
