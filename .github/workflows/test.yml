@@ -45,6 +45,8 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
       - name: Test JS
         run: |
           npm ci
@@ -55,6 +57,8 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
       - name: Test demo
         run: |
           cd demo
@@ -72,6 +76,8 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
       - name: Generate trajectory frames
         run: |
           npm ci
