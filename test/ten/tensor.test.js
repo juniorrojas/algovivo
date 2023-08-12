@@ -1,6 +1,8 @@
 const { mmgrten } = require("algovivo");
 const utils = require("../utils");
 
+expect.extend({ toBeCloseToArray: utils.toBeCloseToArray });
+
 test("tensor", async () => {
   const ten = await mmgrten.engine({
     wasmInstance: await utils.loadWasm()

@@ -44,46 +44,48 @@ export default class NeuralPolicy {
     const wasmInstance = this.ten.wasmInstance;
 
     const numVertices = system.numVertices();
+    
+    wasmInstance.exports.make_neural_policy_input(
+      numVertices,
+      system.x0.ptr,
+      system.v0.ptr,
+      this.centerVertexId,
+      this.forwardVertexId,
+      this.projectedX.ptr,
+      this.projectedV.ptr,
+      this.input.ptr
+    );
 
-    let output;
-    if (this.active) {
-      wasmInstance.exports.make_neural_policy_input(
-        numVertices,
-        system.x0.ptr,
-        system.v0.ptr,
-        this.centerVertexId,
-        this.forwardVertexId,
-        this.projectedX.ptr,
-        this.projectedV.ptr,
-        this.input.ptr
-      );
-
-      output = this.model.forward(this.input);
-    }
+    const da = this.model.forward(this.input);
 
     const minA = this.minA;
     const maxAbsDa = this.maxAbsDa;
 
-    const a = this.system.a.slot.f32();
+    const a = this.system.a;
+    const daF32 = da.slot.f32();
+    
     const numSprings = this.system.numSprings();
     for (let i = 0; i < numSprings; i++) {
-      let da;
+      let dai;
       if (this.active) {
-        da = output.get([i]);
+        dai = da.get([i]);
         if (this.stochastic) {
-          da += sampleNormal(0, this.stdDev);
+          dai += sampleNormal(0, this.stdDev);
         }
       } else {
-        da = 1;
+        dai = 1;
       }
-
-      if (da > maxAbsDa) da = maxAbsDa;
-      if (da < -maxAbsDa) da = -maxAbsDa;
-      let ai1 = a[i] + da;
-      if (ai1 < minA) ai1 = minA;
-      if (ai1 > 1) ai1 = 1;
-      a[i] = ai1;
+      daF32[i] = dai;
     }
+
+    da.clamp_({ min: -maxAbsDa, max: maxAbsDa });
+
+    const aF32 = a.slot.f32();
+    for (let i = 0; i < numSprings; i++) {
+      aF32[i] += daF32[i];
+    }
+
+    a.clamp_({ min: minA, max: 1.0 });
   }
 
   loadData(data) {

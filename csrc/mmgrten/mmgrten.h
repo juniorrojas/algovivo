@@ -5,3 +5,4 @@
 #include "matvec.h"
 #include "relu.h"
 #include "tanh.h"
+#include "clamp.h"

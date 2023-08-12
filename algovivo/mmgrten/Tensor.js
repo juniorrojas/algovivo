@@ -46,6 +46,10 @@ class Tensor {
     }
   }
 
+  get wasmInstance() {
+    return this.engine.wasmInstance;
+  }
+
   isScalar() {
     return this.order == 0;
   }
@@ -54,6 +58,16 @@ class Tensor {
     // TODO WASM function
     const data = utils.makeNdArray(this.shape, x);
     this.set(data);
+  }
+
+  clamp_(args = {}) {
+    const min = args.min;
+    const max = args.max;
+    this.wasmInstance.exports.clamp(
+      this.numel, this.ptr, this.ptr,
+      min, max,
+      min != null, max != null
+    );
   }
 
   zero_() {
