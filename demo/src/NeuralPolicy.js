@@ -56,19 +56,19 @@ export default class NeuralPolicy {
       this.input.ptr
     );
 
-    const output = this.model.forward(this.input);
+    const da = this.model.forward(this.input);
 
     const minA = this.minA;
     const maxAbsDa = this.maxAbsDa;
 
-    const a = this.system.a.slot.f32();
-    const da = output;
+    const a = this.system.a;
     const daF32 = da.slot.f32();
+    
     const numSprings = this.system.numSprings();
     for (let i = 0; i < numSprings; i++) {
       let dai;
       if (this.active) {
-        dai = output.get([i]);
+        dai = da.get([i]);
         if (this.stochastic) {
           dai += sampleNormal(0, this.stdDev);
         }
@@ -80,11 +80,12 @@ export default class NeuralPolicy {
 
     da.clamp_({ min: -maxAbsDa, max: maxAbsDa });
 
+    const aF32 = a.slot.f32();
     for (let i = 0; i < numSprings; i++) {
-      a[i] += daF32[i];
+      aF32[i] += daF32[i];
     }
 
-    this.system.a.clamp_({ min: minA, max: 1.0 });
+    a.clamp_({ min: minA, max: 1.0 });
   }
 
   loadData(data) {
