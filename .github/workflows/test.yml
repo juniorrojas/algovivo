@@ -49,10 +49,9 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: algovivo.wasm
-          path: build/algovivo.wasm
+          path: build/
       - run: |
           ls -l build
-          ls -l build/algovivo.wasm
           cat build/algovivo.wasm
       - name: Test JS
         run: |
