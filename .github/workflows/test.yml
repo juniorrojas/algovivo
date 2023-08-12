@@ -8,8 +8,7 @@ on:
     branches:
       - master
     paths:
-      - '*'
-      - '!csrc'
+      - !csrc
 
 jobs:
   build-wasm:
@@ -57,15 +56,16 @@ jobs:
         with:
           name: screenshot
           path: ./demo/test/screenshot.out.png
-      - name: Install ffmpeg
+      - name: Run trajectory
         run: |
-          sudo apt-get update
-          sudo apt-get install ffmpeg
-      - run: |
           npm ci
           npm run build
           node test/neural/renderTrajectory.js
           ffmpeg -framerate 30 -i test/neural/frames.out/%d.png -pix_fmt yuv420p video.out.mp4 -y
+      - name: Install ffmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install ffmpeg
       - name: Upload trajectory video
         uses: actions/upload-artifact@v3
         with:
