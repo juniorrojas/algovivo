@@ -79,7 +79,7 @@ class Engine {
         throw new Error(`expected array, found ${typeof _shape}: ${_shape}`);
       }
       shape = this.intTuple(_shape);
-    }    
+    }
     const numel = utils.numelOfShape(shape);
     const slot = this.mgr.malloc32(numel);
     const x = new Tensor({
@@ -92,7 +92,7 @@ class Engine {
 
   zeros(shape) {
     const x = this.empty(shape);
-    this.wasmInstance.exports.zero_(x.numel, x.ptr);
+    x.zero_();
     return x;
   }
 }

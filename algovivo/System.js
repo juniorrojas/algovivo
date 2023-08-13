@@ -81,8 +81,9 @@ class System {
 
     const springsU32 = springs.u32();
     indices.forEach((s, i) => {
-      springsU32[i * 2    ] = s[0];
-      springsU32[i * 2 + 1] = s[1];
+      const offset = i * 2;
+      springsU32[offset    ] = s[0];
+      springsU32[offset + 1] = s[1];
     });
 
     if (this.l0 != null) this.l0.dispose();
@@ -179,7 +180,7 @@ class System {
       indices: data.springs ?? [],
       l0: data.springsL0
     });
-    
+
     this.setTriangles({
       indices: data.triangles ?? [],
       rsi: data.trianglesRsi

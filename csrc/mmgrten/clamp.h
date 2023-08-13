@@ -1,6 +1,8 @@
 #pragma once
 #include "tensor.h"
 
+namespace mmgrten {
+
 extern "C"
 void clamp(
   int n,
@@ -17,4 +19,6 @@ void clamp(
     else bi = ai;
     b_data[i] = bi;
   }
+}
+
 }
