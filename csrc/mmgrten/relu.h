@@ -6,7 +6,7 @@ namespace mmgrten {
 extern "C"
 void relu(
   int n,
-  float* a_data,
+  const float* a_data,
   float* b_data
 ) {
   // TODO strides
