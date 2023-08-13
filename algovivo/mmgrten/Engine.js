@@ -87,7 +87,6 @@ class Engine {
       shape: shape,
       slot: slot
     });
-    this.wasmInstance.exports.zero_(numel, slot.ptr);
     return x;
   }
 
