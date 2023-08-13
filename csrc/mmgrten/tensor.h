@@ -1,5 +1,7 @@
 #pragma once
 
+namespace mmgrten {
+
 extern "C"
 int flatten_idx(
   int order,
@@ -41,4 +43,6 @@ void zero_(int n, float* data) {
   for (int i = 0; i < n; i++) {
     data[i] = 0.0;
   }
+}
+
 }

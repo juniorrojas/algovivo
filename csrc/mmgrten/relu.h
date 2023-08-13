@@ -1,6 +1,8 @@
 #pragma once
 #include "tensor.h"
 
+namespace mmgrten {
+
 extern "C"
 void relu(
   int n,
@@ -14,4 +16,6 @@ void relu(
     if (ai < 0) bi = 0; else bi = ai;
     b_data[i] = bi;
   }
+}
+
 }

@@ -1,3 +1,7 @@
+#pragma once
+
+namespace mmgrten {
+
 extern "C"
 void matvec(
   int a_rows,
@@ -31,4 +35,6 @@ void matvec(
       c_idx, s
     );
   }
+}
+
 }

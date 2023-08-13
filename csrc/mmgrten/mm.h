@@ -1,6 +1,8 @@
 #pragma once
 #include "tensor.h"
 
+namespace mmgrten {
+
 extern "C"
 void mm(
   int a_rows,
@@ -37,4 +39,6 @@ void mm(
       );
     }
   }
+}
+
 }

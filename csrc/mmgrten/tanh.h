@@ -1,6 +1,8 @@
 #pragma once
 #include "tensor.h"
 
+namespace mmgrten {
+
 extern "C"
 void tanh(
   int n,
@@ -14,4 +16,6 @@ void tanh(
     auto bi = ai; // tanh(ai);
     b_data[i] = bi;
   }
+}
+
 }
