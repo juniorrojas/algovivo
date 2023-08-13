@@ -92,7 +92,7 @@ class Engine {
 
   zeros(shape) {
     const x = this.empty(shape);
-    this.wasmInstance.exports.zero_(x.numel, x.ptr);
+    x.zero_();
     return x;
   }
 }

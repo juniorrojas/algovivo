@@ -180,10 +180,12 @@ class System {
       l0: data.springsL0
     });
     
-    this.setTriangles({
-      indices: data.triangles ?? [],
-      rsi: data.trianglesRsi
-    });
+    if (data.triangles != null) {
+      this.setTriangles({
+        indices: data.triangles ?? [],
+        rsi: data.trianglesRsi
+      });
+    }
   }
 
   updateTmpBuffers() {

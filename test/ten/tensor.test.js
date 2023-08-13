@@ -29,11 +29,19 @@ test("empty + zero", async () => {
   const ten = await mmgrten.engine({
     wasmInstance: await utils.loadWasm()
   });
+  
   const a = ten.empty([3, 1, 2]);
   expect(a.shape.toArray()).toEqual([3, 1, 2]);
   expect(a.order).toEqual(3);
   a.zero_();
   expect(a.toArray()).toBeCloseToArray([
+    [[0, 0]],
+    [[0, 0]],
+    [[0, 0]]
+  ]);
+
+  const b = ten.zeros([3, 1, 2]);
+  expect(b.toArray()).toBeCloseToArray([
     [[0, 0]],
     [[0, 0]],
     [[0, 0]]
