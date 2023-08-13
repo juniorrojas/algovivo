@@ -2,6 +2,10 @@
 
 namespace algovivo {
 
+void zero_(int n, float* data) {
+  for (int i = 0; i < n; i++) data[i] = 0.0;
+}
+
 void copy_(int n, const float* src, float* dst) {
   for (int i = 0; i < n; i++) dst[i] = src[i];
 }
