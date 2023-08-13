@@ -37,9 +37,6 @@ jobs:
         with:
           name: algovivo.wasm
           path: build/
-      - run: |
-          ls -l build
-          cat build/algovivo.wasm
       - name: Test JS
         run: |
           npm ci
