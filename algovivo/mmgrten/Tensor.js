@@ -205,10 +205,6 @@ class Tensor {
     });
   }
 
-  pow2(output) {
-    return this.engine.wasmInstance.exports.pow2(this.numel, this.slot.ptr, output.slot.ptr);
-  }
-
   add(b, c) {
     // c = a + b
     this.engine.functional.add(this, b, c);
