@@ -18,10 +18,10 @@ jobs:
         uses: actions/checkout@v3
         with:
           repository: EnzymeAD/Enzyme
-          path: Enzyme
+          path: /Enzyme
       - name: Build Enzyme
         run: |
-          cd Enzyme/enzyme
+          cd /Enzyme/enzyme
           mkdir build
           cd build
           cmake -G Ninja .. -DLLVM_DIR=/usr/lib/llvm-11/
@@ -29,7 +29,7 @@ jobs:
       - name: Build WASM
         run: |
           export LLVM_BIN_DIR=/usr/lib/llvm-11/bin
-          export ENZYME=./Enzyme/enzyme/build/Enzyme/LLVMEnzyme-11.so
+          export ENZYME=/Enzyme/enzyme/build/Enzyme/LLVMEnzyme-11.so
           ./build.sh
       - name: Upload WASM
         uses: actions/upload-artifact@v3
@@ -46,10 +46,10 @@ jobs:
       - uses: actions/checkout@v3
         with:
           repository: EnzymeAD/Enzyme
-          path: Enzyme
+          path: /Enzyme
       - name: Build Enzyme
         run: |
-          cd Enzyme/enzyme
+          cd /Enzyme/enzyme
           LLVM_PREFIX=`brew --prefix llvm@11`
           mkdir build_
           cd build_
@@ -59,7 +59,7 @@ jobs:
         run: |
           LLVM_PREFIX=`brew --prefix llvm@11`
           export LLVM_BIN_DIR=${LLVM_PREFIX}/bin
-          export ENZYME=./Enzyme/enzyme/build_/Enzyme/LLVMEnzyme-11.dylib
+          export ENZYME=/Enzyme/enzyme/build_/Enzyme/LLVMEnzyme-11.dylib
           ./build.sh
       - name: Upload WASM
         uses: actions/upload-artifact@v3
