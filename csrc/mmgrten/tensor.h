@@ -5,8 +5,8 @@ namespace mmgrten {
 extern "C"
 int flatten_idx(
   int order,
-  int* idx,
-  int* stride
+  const int* idx,
+  const int* stride
 ) {
   int flat_idx = 0;
   for (int i = 0; i < order; i++) {
@@ -18,9 +18,9 @@ int flatten_idx(
 extern "C"
 float get_tensor_elem(
   int order,
-  int* stride,
-  float* data,
-  int* idx
+  const int* stride,
+  const float* data,
+  const int* idx
 ) {
   int flat_idx = flatten_idx(order, idx, stride);
   return data[flat_idx];
@@ -29,9 +29,9 @@ float get_tensor_elem(
 extern "C"
 void set_tensor_elem(
   int order,
-  int* stride,
+  const int* stride,
   float* data,
-  int* idx,
+  const int* idx,
   float value
 ) {
   int flat_idx = flatten_idx(order, idx, stride);

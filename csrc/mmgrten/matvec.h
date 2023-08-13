@@ -7,9 +7,9 @@ void matvec(
   int a_rows,
   int a_cols,
 
-  int* a_stride, float* a_data,
-  int* b_stride, float* b_data,
-  int* c_stride, float* c_data
+  const int* a_stride, const float* a_data,
+  const int* b_stride, const float* b_data,
+  const int* c_stride, float* c_data
 ) {
   for (int i = 0; i < a_rows; i++) {
     float s = 0.0;
