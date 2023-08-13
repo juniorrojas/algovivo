@@ -11,7 +11,7 @@ void relu(
 ) {
   // TODO strides
   for (int i = 0; i < n; i++) {
-    auto ai = a_data[i];
+    const auto ai = a_data[i];
     float bi;
     if (ai < 0) bi = 0; else bi = ai;
     b_data[i] = bi;
