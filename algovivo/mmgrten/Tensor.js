@@ -96,6 +96,7 @@ class Tensor {
   }
 
   toArray() {
+    if (this.numel == 0) return [];
     const arr = utils.makeNdArray(this.shape, 0);
     this.forEach(idx => {
       const v = this.get(idx);
@@ -132,6 +133,8 @@ class Tensor {
   }
 
   setFromArray(arr) {
+    if (this.numel == 0) return;
+
     const isScalar = this.isScalar();
     if (isScalar) {
       // arr can be a number, for scalar tensors

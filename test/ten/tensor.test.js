@@ -61,3 +61,13 @@ test("matrix set", async () => {
     [0, 0, 10]
   ]);
 });
+
+test("set tensor with leading zero dim", async () => {
+  const ten = await mmgrten.engine({
+    wasmInstance: await utils.loadWasm()
+  });
+
+  const a = ten.zeros([0, 2, 3]);
+  expect(a.shape.toArray()).toEqual([0, 2, 3]);
+  expect(a.toArray()).toEqual([]);
+});
