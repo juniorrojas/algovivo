@@ -8,7 +8,7 @@ on:
     - cron: '0 */12 * * *'
 
 jobs:
-  build-wasm-linux:
+  build-enzyme-and-wasm-linux:
     runs-on: ubuntu-latest
     steps:
       - name: Install system dependencies
@@ -39,7 +39,7 @@ jobs:
         with:
           name: algovivo.linux.wasm
           path: build/algovivo.wasm
-  build-wasm-macos:
+  build-enzyme-and-wasm-macos:
     runs-on: macos-latest
     steps:
       - name: Install system dependencies
