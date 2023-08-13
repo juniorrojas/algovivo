@@ -1213,7 +1213,7 @@
 	    return this.zeros(x.shape.toArray());
 	  }
 
-	  zeros(_shape) {
+	  empty(_shape) {
 	    let shape;
 	    if (_shape instanceof IntTuple) {
 	      shape = _shape;
@@ -1230,7 +1230,12 @@
 	      shape: shape,
 	      slot: slot
 	    });
-	    this.wasmInstance.exports.zero_(numel, slot.ptr);
+	    return x;
+	  }
+
+	  zeros(shape) {
+	    const x = this.empty(shape);
+	    this.wasmInstance.exports.zero_(x.numel, x.ptr);
 	    return x;
 	  }
 	}
