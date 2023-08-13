@@ -1,5 +1,7 @@
 #pragma once
 
+namespace mmgrten {
+
 extern "C"
 void add(
   int a_numel,
@@ -12,4 +14,6 @@ void add(
     auto bi = b_data[i];
     c_data[i] = ai + bi;
   }
+}
+
 }
