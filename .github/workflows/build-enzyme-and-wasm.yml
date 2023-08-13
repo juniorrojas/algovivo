@@ -1,4 +1,4 @@
-name: build-wasm
+name: build-enzyme-and-wasm
 
 on:
   schedule:
