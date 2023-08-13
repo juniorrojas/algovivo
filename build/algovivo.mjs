@@ -761,6 +761,7 @@ class Tensor$1 {
   }
 
   toArray() {
+    if (this.numel == 0) return [];
     const arr = utils$1.makeNdArray(this.shape, 0);
     this.forEach(idx => {
       const v = this.get(idx);
@@ -797,6 +798,8 @@ class Tensor$1 {
   }
 
   setFromArray(arr) {
+    if (this.numel == 0) return;
+
     const isScalar = this.isScalar();
     if (isScalar) {
       // arr can be a number, for scalar tensors
@@ -868,10 +871,6 @@ class Tensor$1 {
       shape: unsqueezedShape,
       slot: this.slot
     });
-  }
-
-  pow2(output) {
-    return this.engine.wasmInstance.exports.pow2(this.numel, this.slot.ptr, output.slot.ptr);
   }
 
   add(b, c) {
@@ -1216,7 +1215,7 @@ class Engine$1 {
         throw new Error(`expected array, found ${typeof _shape}: ${_shape}`);
       }
       shape = this.intTuple(_shape);
-    }    
+    }
     const numel = utils.numelOfShape(shape);
     const slot = this.mgr.malloc32(numel);
     const x = new Tensor({
@@ -1229,7 +1228,7 @@ class Engine$1 {
 
   zeros(shape) {
     const x = this.empty(shape);
-    this.wasmInstance.exports.zero_(x.numel, x.ptr);
+    x.zero_();
     return x;
   }
 }
@@ -1336,8 +1335,9 @@ class System$1 {
 
     const springsU32 = springs.u32();
     indices.forEach((s, i) => {
-      springsU32[i * 2    ] = s[0];
-      springsU32[i * 2 + 1] = s[1];
+      const offset = i * 2;
+      springsU32[offset    ] = s[0];
+      springsU32[offset + 1] = s[1];
     });
 
     if (this.l0 != null) this.l0.dispose();
@@ -1434,7 +1434,7 @@ class System$1 {
       indices: data.springs ?? [],
       l0: data.springsL0
     });
-    
+
     this.setTriangles({
       indices: data.triangles ?? [],
       rsi: data.trianglesRsi
