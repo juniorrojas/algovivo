@@ -60,10 +60,9 @@ jobs:
           ninja
       - name: Build WASM
         run: |
-          ls -l ./Enzyme/enzyme/build_/Enzyme/
           LLVM_PREFIX=`brew --prefix llvm@12`
           export LLVM_BIN_DIR=${LLVM_PREFIX}/bin
-          export ENZYME=./Enzyme/enzyme/build_/Enzyme/LLVMEnzyme-11.dylib
+          export ENZYME=./Enzyme/enzyme/build_/Enzyme/LLVMEnzyme-12.dylib
           ./build.sh
       - name: Upload WASM
         uses: actions/upload-artifact@v3
