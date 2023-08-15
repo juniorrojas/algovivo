@@ -7,6 +7,9 @@ on:
   schedule:
     - cron: '0 */12 * * *'
 
+env:
+  LLVM_VERSION: 12
+
 jobs:
   build-enzyme-and-wasm-linux:
     runs-on: ubuntu-latest
@@ -44,7 +47,7 @@ jobs:
     steps:
       - name: Install system dependencies
         run: |
-          brew install llvm@12 ninja
+          brew install llvm@${LLVM_VERSION} ninja
       - uses: actions/checkout@v3
       - uses: actions/checkout@v3
         with:
@@ -53,16 +56,16 @@ jobs:
       - name: Build Enzyme
         run: |
           cd ./Enzyme/enzyme
-          LLVM_PREFIX=`brew --prefix llvm@12`
+          LLVM_PREFIX=`brew --prefix llvm@${LLVM_VERSION}`
           mkdir build_
           cd build_
           cmake -G Ninja .. -DLLVM_DIR=${LLVM_PREFIX}/lib/cmake/llvm
           ninja
       - name: Build WASM
         run: |
-          LLVM_PREFIX=`brew --prefix llvm@12`
+          LLVM_PREFIX=`brew --prefix llvm@${LLVM_VERSION}`
           export LLVM_BIN_DIR=${LLVM_PREFIX}/bin
-          export ENZYME=./Enzyme/enzyme/build_/Enzyme/LLVMEnzyme-12.dylib
+          export ENZYME=./Enzyme/enzyme/build_/Enzyme/LLVMEnzyme-${LLVM_VERSION}.dylib
           ./build.sh
       - name: Upload WASM
         uses: actions/upload-artifact@v3
