@@ -53,14 +53,15 @@ jobs:
       - name: Build Enzyme
         run: |
           cd ./Enzyme/enzyme
-          LLVM_PREFIX=`brew --prefix llvm@11`
+          LLVM_PREFIX=`brew --prefix llvm@12`
           mkdir build_
           cd build_
           cmake -G Ninja .. -DLLVM_DIR=${LLVM_PREFIX}/lib/cmake/llvm
           ninja
       - name: Build WASM
         run: |
-          LLVM_PREFIX=`brew --prefix llvm@11`
+          ls -l ./Enzyme/enzyme/build_/Enzyme/
+          LLVM_PREFIX=`brew --prefix llvm@12`
           export LLVM_BIN_DIR=${LLVM_PREFIX}/bin
           export ENZYME=./Enzyme/enzyme/build_/Enzyme/LLVMEnzyme-11.dylib
           ./build.sh
