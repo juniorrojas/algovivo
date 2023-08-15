@@ -8,7 +8,8 @@ on:
     - cron: '0 */12 * * *'
 
 env:
-  LLVM_VERSION: 12
+  LLVM_VERSION_LINUX: 11
+  LLVM_VERSION_MACOS: 12
 
 jobs:
   build-enzyme-and-wasm-linux:
@@ -17,7 +18,7 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install llvm-11 clang-11 lld-11 ninja-build build-essential cmake
+          sudo apt-get install llvm-${LLVM_VERSION_LINUX} clang-${LLVM_VERSION_LINUX} lld-${LLVM_VERSION_LINUX} ninja-build build-essential cmake
       - name: Checkout repo
         uses: actions/checkout@v3
       - name: Checkout Enzyme
@@ -30,12 +31,12 @@ jobs:
           cd ./Enzyme/enzyme
           mkdir build
           cd build
-          cmake -G Ninja .. -DLLVM_DIR=/usr/lib/llvm-11/
+          cmake -G Ninja .. -DLLVM_DIR=/usr/lib/llvm-${LLVM_VERSION_LINUX}/
           ninja
       - name: Build WASM
         run: |
-          export LLVM_BIN_DIR=/usr/lib/llvm-11/bin
-          export ENZYME=./Enzyme/enzyme/build/Enzyme/LLVMEnzyme-11.so
+          export LLVM_BIN_DIR=/usr/lib/llvm-${LLVM_VERSION_LINUX}/bin
+          export ENZYME=./Enzyme/enzyme/build/Enzyme/LLVMEnzyme-${LLVM_VERSION_LINUX}.so
           ./build.sh
       - name: Upload WASM
         uses: actions/upload-artifact@v3
@@ -47,7 +48,7 @@ jobs:
     steps:
       - name: Install system dependencies
         run: |
-          brew install llvm@${LLVM_VERSION} ninja
+          brew install llvm@${LLVM_VERSION_MACOS} ninja
       - uses: actions/checkout@v3
       - uses: actions/checkout@v3
         with:
@@ -56,16 +57,16 @@ jobs:
       - name: Build Enzyme
         run: |
           cd ./Enzyme/enzyme
-          LLVM_PREFIX=`brew --prefix llvm@${LLVM_VERSION}`
+          LLVM_PREFIX=`brew --prefix llvm@${LLVM_VERSION_MACOS}`
           mkdir build_
           cd build_
           cmake -G Ninja .. -DLLVM_DIR=${LLVM_PREFIX}/lib/cmake/llvm
           ninja
       - name: Build WASM
         run: |
-          LLVM_PREFIX=`brew --prefix llvm@${LLVM_VERSION}`
+          LLVM_PREFIX=`brew --prefix llvm@${LLVM_VERSION_MACOS}`
           export LLVM_BIN_DIR=${LLVM_PREFIX}/bin
-          export ENZYME=./Enzyme/enzyme/build_/Enzyme/LLVMEnzyme-${LLVM_VERSION}.dylib
+          export ENZYME=./Enzyme/enzyme/build_/Enzyme/LLVMEnzyme-${LLVM_VERSION_MACOS}.dylib
           ./build.sh
       - name: Upload WASM
         uses: actions/upload-artifact@v3
