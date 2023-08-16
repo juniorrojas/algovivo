@@ -1,4 +1,4 @@
-const utils = require("./utils");
+import utils from "./utils/index.js";
 
 test("main", async () => {
   const main = async (port) => {

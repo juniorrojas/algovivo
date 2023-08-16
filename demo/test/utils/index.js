@@ -1,12 +1,7 @@
-module.exports = {
-  Window: require("./Window")
-}
+import Window from "./Window.js";
+import { runWebServer } from "./server";
 
-function mergeModule(name) {
-  const m = require(name);
-  for (let k in m) {
-    module.exports[k] = m[k];
-  }
+export default {
+  Window: Window,
+  runWebServer: runWebServer
 }
-
-mergeModule("./server");

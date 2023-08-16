@@ -1,6 +1,6 @@
-const puppeteer = require("puppeteer");
+import puppeteer from "puppeteer";
 
-class Window {
+export default class Window {
   constructor(args = {}) {
     this.width = args.width ?? 400;
     this.height = args.height ?? 400;
@@ -37,5 +37,3 @@ class Window {
     await this.browser.close();
   }
 }
-
-module.exports = Window;
