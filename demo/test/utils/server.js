@@ -1,7 +1,7 @@
-const net = require("net");
-const express = require("express");
+import net from "net";
+import express from "express";
 
-function getFreePort() {
+export function getFreePort() {
   return new Promise((resolve) => {
     const server = net.createServer();
     server.listen(0, () => {
@@ -12,7 +12,7 @@ function getFreePort() {
   });
 }
 
-function runWebServer(args = {}) {
+export function runWebServer(args = {}) {
   const staticDirname = args.staticDirname;
   if (staticDirname == null) {
     throw new Error("staticDirname required");
@@ -39,9 +39,4 @@ function runWebServer(args = {}) {
     });
     })();
   });
-}
-
-module.exports = {
-  getFreePort: getFreePort,
-  runWebServer: runWebServer
 }
