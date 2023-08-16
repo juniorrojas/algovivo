@@ -23,20 +23,22 @@ export function runWebServer(args = {}) {
   }
   return new Promise((resolve, reject) => {
     (async () => {
-    const port = await getFreePort();
-    const app = express();
-    app.use(express.static(staticDirname));
-    const server = app.listen(port, async () => {
-      try {
-        await onReady(port);
-      } catch(e) {
-        reject(e);
-      } finally {
-        server.close(() => {
-          resolve();
+      const port = await getFreePort();
+      const app = express();
+      app.use(express.static(staticDirname));
+      const server = app.listen(
+        port,
+        async () => {
+          try {
+            await onReady(port);
+          } catch(e) {
+            reject(e);
+          } finally {
+            server.close(() => {
+              resolve();
+            });
+          }
         });
-      }
-    });
     })();
   });
 }
