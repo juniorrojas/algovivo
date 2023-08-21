@@ -1,4 +1,4 @@
-name: test
+name: render-trajectory
 
 on:
   push:
@@ -26,7 +26,7 @@ jobs:
         with:
           name: algovivo.wasm
           path: build/algovivo.wasm
-  test-js:
+  render-trajectory:
     runs-on: ubuntu-latest
     needs: build-wasm
     steps:
@@ -37,31 +37,20 @@ jobs:
         with:
           name: algovivo.wasm
           path: build/
-      - name: Test JS
-        run: |
-          npm ci
-          npm test
-  test-demo:
-    runs-on: ubuntu-latest
-    needs: build-wasm
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-      - name: Download WASM build
-        uses: actions/download-artifact@v3
-        with:
-          name: algovivo.wasm
-          path: build/
-      - name: Test demo
+      - name: Generate trajectory frames
         run: |
           npm ci
           npm run build
-          cd demo
-          npm ci
-          npm run build
-          npm test
-      - name: Upload demo screenshot
+          node test/neural/renderTrajectory.js
+      - name: Install ffmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install ffmpeg
+      - name: Make trajectory video
+        run: |
+          ffmpeg -framerate 30 -i test/neural/frames.out/%d.png -pix_fmt yuv420p video.out.mp4 -y
+      - name: Upload trajectory video
         uses: actions/upload-artifact@v3
         with:
-          name: screenshot
-          path: ./demo/test/screenshot.out.png
+          name: video
+          path: video.out.mp4
