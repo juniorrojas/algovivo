@@ -216,14 +216,14 @@ class System {
     this.wasmInstance.exports.backward_euler_update(
       numVertices,
       
-      this.x1.ptr,
-      this.xGrad.ptr,
-      this.xTmp.ptr,
+      numVertices == 0 ? 0 : this.x1.ptr,
+      numVertices == 0 ? 0 : this.xGrad.ptr,
+      numVertices == 0 ? 0 : this.xTmp.ptr,
 
-      this.x0.ptr,
+      numVertices == 0 ? 0 : this.x0.ptr,
 
-      this.v0.ptr,
-      this.v1.ptr,
+      numVertices == 0 ? 0 : this.v0.ptr,
+      numVertices == 0 ? 0 : this.v1.ptr,
       
       this.h,
 
@@ -244,9 +244,11 @@ class System {
 
       vertexMass
     );
-
-    this.x0.slot.f32().set(this.x1.slot.f32());
-    this.v0.slot.f32().set(this.v1.slot.f32());
+    
+    if (numVertices != 0) {
+      this.x0.slot.f32().set(this.x1.slot.f32());
+      this.v0.slot.f32().set(this.v1.slot.f32());
+    }
   }
 
   dispose() {
