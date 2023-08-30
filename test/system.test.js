@@ -19,7 +19,7 @@ test("set x", async () => {
   expect(system.numVertices()).toBe(1);
 });
 
-test("step empty", async () => {
+test("step with no vertices", async () => {
   const wasmInstance = await utils.loadWasm();
   const system = new algovivo.System({ wasmInstance });
   expect(system.numVertices()).toBe(0);
