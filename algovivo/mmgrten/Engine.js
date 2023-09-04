@@ -95,6 +95,12 @@ class Engine {
     x.zero_();
     return x;
   }
+
+  ones(shape) {
+    const x = this.empty(shape);
+    x.fill_(1);
+    return x;
+  }
 }
 
 module.exports = Engine;
