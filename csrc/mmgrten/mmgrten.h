@@ -6,3 +6,4 @@
 #include "relu.h"
 #include "tanh.h"
 #include "clamp.h"
+#include "fill.h"
