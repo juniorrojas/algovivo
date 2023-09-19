@@ -33,6 +33,10 @@ export default class Window {
     return await this.page.screenshot.apply(this.page, arguments);
   }
 
+  async waitForNetworkIdle() {
+    return await this.page.waitForNetworkIdle.apply(this.page, arguments);
+  }
+
   async close() {
     await this.browser.close();
   }

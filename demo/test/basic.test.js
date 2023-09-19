@@ -26,7 +26,7 @@ test("main", async () => {
       });
       expect(numVertices).toBe(28);
       
-      await window.page.waitForNetworkIdle();
+      await window.waitForNetworkIdle();
 
       await window.screenshot({ path: `${__dirname}/screenshot.out.png` });
     } finally {
