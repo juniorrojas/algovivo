@@ -119,7 +119,9 @@ class SystemViewport {
     this.system = args.system;
     this.sortedVertexIds = args.sortedVertexIds;
 
-    const renderer = new mm2d.Renderer();
+    const headless = args.headless ?? false;
+
+    const renderer = new mm2d.Renderer({ headless });
     this.renderer = renderer;
     this.domElement = renderer.domElement;
     this.setSize({
@@ -300,7 +302,7 @@ class SystemViewport {
           this.freeVertex();
         }
       });
-      dragBehavior.linkToDom(renderer.domElement);
+      if (!headless) dragBehavior.linkToDom(renderer.domElement);
     }
     
     this.tracker = new Tracker();
@@ -458,19 +460,23 @@ class SystemViewport {
     mesh.setCustomAttribute("muscleIntensity", muscleIntensity);
   }
 
-  hitTestVertex(p) {
+  hitTestVertex(p, hitTestRadius = 0.31) {
     const numVertices = this.system.numVertices();
     const xF32 = this.system.x0.slot.f32();
+    let closestVertex = null;
+    let closestQuadrance = Infinity;
+    const hitTestRadius2 = hitTestRadius * hitTestRadius;
     for (let i = 0; i < numVertices; i++) {
       const offset = i * 2;
       const xi = [xF32[offset], xF32[offset + 1]];
       const d = mm2d.math.Vec2.sub(xi, p);
       const q = mm2d.math.Vec2.quadrance(d);
-      if (q < 0.1) {
-        return i;
+      if (q < hitTestRadius2 && q < closestQuadrance) {
+        closestVertex = i;
+        closestQuadrance = q;
       }
     }
-    return null;
+    return closestVertex;
   }
 
   setVertexPos(i, p) {

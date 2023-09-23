@@ -1,10 +1,15 @@
 const Mesh = require("./Mesh");
 
 class Renderer {
-  constructor() {
-    const canvas = document.createElement("canvas");
-    this.domElement = canvas;
-    this.ctx = canvas.getContext("2d");
+  constructor(args = {}) {
+    const headless = args.headless ?? false;
+    this.headless = headless;
+
+    if (!headless) {
+      const canvas = document.createElement("canvas");
+      this.domElement = canvas;
+      this.ctx = canvas.getContext("2d");
+    }
 
     this.setSize({
       width: 200,
@@ -33,11 +38,13 @@ class Renderer {
     this.viewportWidth = viewportWidth;
     this.viewportHeight = viewportHeight;
 
-    const canvas = this.domElement;
-    canvas.width = viewportWidth;
-    canvas.height = viewportHeight;
-    canvas.style.width = `${width}px`;
-    canvas.style.height = `${height}px`;
+    if (!this.headless) {
+      const canvas = this.domElement;
+      canvas.width = viewportWidth;
+      canvas.height = viewportHeight;
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+    }
   }
 
   renderPoint(renderer, mesh, camera, id, customArgs) {
