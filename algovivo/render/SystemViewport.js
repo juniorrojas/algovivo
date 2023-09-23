@@ -119,7 +119,9 @@ class SystemViewport {
     this.system = args.system;
     this.sortedVertexIds = args.sortedVertexIds;
 
-    const renderer = new mm2d.Renderer();
+    const headless = args.headless ?? false;
+
+    const renderer = new mm2d.Renderer({ headless });
     this.renderer = renderer;
     this.domElement = renderer.domElement;
     this.setSize({
@@ -300,7 +302,7 @@ class SystemViewport {
           this.freeVertex();
         }
       });
-      dragBehavior.linkToDom(renderer.domElement);
+      if (!headless) dragBehavior.linkToDom(renderer.domElement);
     }
     
     this.tracker = new Tracker();
