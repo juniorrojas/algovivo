@@ -460,17 +460,18 @@ class SystemViewport {
     mesh.setCustomAttribute("muscleIntensity", muscleIntensity);
   }
 
-  hitTestVertex(p) {
+  hitTestVertex(p, hitTestRadius = 0.31) {
     const numVertices = this.system.numVertices();
     const xF32 = this.system.x0.slot.f32();
     let closestVertex = null;
     let closestQuadrance = Infinity;
+    const hitTestRadius2 = hitTestRadius * hitTestRadius;
     for (let i = 0; i < numVertices; i++) {
       const offset = i * 2;
       const xi = [xF32[offset], xF32[offset + 1]];
       const d = mm2d.math.Vec2.sub(xi, p);
       const q = mm2d.math.Vec2.quadrance(d);
-      if (q < 0.1 && q < closestQuadrance) {
+      if (q < hitTestRadius2 && q < closestQuadrance) {
         closestVertex = i;
         closestQuadrance = q;
       }
