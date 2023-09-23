@@ -1237,6 +1237,12 @@
 	    x.zero_();
 	    return x;
 	  }
+
+	  ones(shape) {
+	    const x = this.empty(shape);
+	    x.fill_(1);
+	    return x;
+	  }
 	}
 
 	var Engine_1 = Engine$1;
