@@ -1,8 +1,6 @@
 const algovivo = require("algovivo");
 const utils = require("./utils");
 
-expect.extend({ toBeCloseToArray: utils.toBeCloseToArray });
-
 test("hit test", async () => {
   const wasmInstance = await utils.loadWasm();
   const system = new algovivo.System({ wasmInstance });
