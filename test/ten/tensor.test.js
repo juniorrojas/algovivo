@@ -39,12 +39,25 @@ test("empty + zero", async () => {
     [[0, 0]],
     [[0, 0]]
   ]);
+});
 
-  const b = ten.zeros([3, 1, 2]);
-  expect(b.toArray()).toBeCloseToArray([
+test("constructors", async () => {
+  const ten = await mmgrten.engine({
+    wasmInstance: await utils.loadWasm()
+  });
+
+  const a = ten.zeros([3, 1, 2]);
+  expect(a.toArray()).toBeCloseToArray([
     [[0, 0]],
     [[0, 0]],
     [[0, 0]]
+  ]);
+
+  const b = ten.ones([3, 1, 2]);
+  expect(b.toArray()).toBeCloseToArray([
+    [[1, 1]],
+    [[1, 1]],
+    [[1, 1]]
   ]);
 });
 
