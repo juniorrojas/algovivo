@@ -55,9 +55,7 @@ class Tensor {
   }
 
   fill_(x) {
-    // TODO WASM function
-    const data = utils.makeNdArray(this.shape, x);
-    this.set(data);
+    this.wasmInstance.exports.fill_(this.numel, this.ptr, x);
   }
 
   clamp_(args = {}) {
