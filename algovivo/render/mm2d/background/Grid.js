@@ -71,16 +71,16 @@ class Grid {
     const secondaryLineWidth = (args.secondaryLineWidth == null) ? 0.008 : args.secondaryLineWidth;
 
     const mesh = this.mesh = args.scene.addMesh();
-    const data = makeGridData({
+    const [x, lines, lineWidths] = makeGridData({
       cellSize,
       innerCells,
       rows, cols,
       x0, y0,
       primaryLineWidth, secondaryLineWidth
     });
-    mesh.x = data[0];
-    mesh.lines = data[1];
-    mesh.setCustomAttribute("lineWidths", data[2]);
+    mesh.x = x;
+    mesh.lines = lines;
+    mesh.setCustomAttribute("lineWidths", lineWidths);
     mesh.setCustomAttribute("translation", [0, 0]);
 
     mesh.pointShader.renderPoint = () => {}
