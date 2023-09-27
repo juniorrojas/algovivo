@@ -90,6 +90,14 @@ class Grid {
     });
   }
 
+  get numVertices() {
+    return this.mesh.x.length;
+  }
+
+  get numLines() {
+    return this.mesh.lines.length;
+  }
+
   static makeGridLineShader(args = {}) {
     const color = (args.color == null) ? "black" : args.color;
     return (args) => {

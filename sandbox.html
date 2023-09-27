@@ -20,16 +20,17 @@
       x0: 0,
       y0: 0,
       rows: 2,
-      cols: 3
+      cols: 3,
+      innerCells: 1
     });
     camera.center({
       worldCenter: [0, 0],
       worldWidth: 7,
       renderer: renderer
     });
-    grid.set({
-      x0: -1
-    });
+    // grid.set({
+    //   x0: -1
+    // });
     renderer.render(scene, camera);
   </script>
 </body>
