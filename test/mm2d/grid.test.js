@@ -13,7 +13,8 @@ test("grid", () => {
   
   grid.set({
     rows: 1,
-    cols: 1
+    cols: 1,
+    innerCells: 1
   });
   expect(grid.numLines).toBe(4);
   expect(grid.numVertices).toBe(8);
