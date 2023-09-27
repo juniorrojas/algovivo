@@ -60,27 +60,13 @@ class Grid {
     if (args.scene == null) {
       throw new Error("scene required");
     }
+
     const color = (args.color == null) ? "rgba(0, 0, 0, 0.30)" : args.color;
-    const cellSize = (args.cellSize == null) ? 1 : args.cellSize;
-    const innerCells = (args.innerCells == null) ? 3 : args.innerCells;
-    const rows = (args.rows == null) ? 3 : args.rows;
-    const cols = (args.cols == null) ? 4 : args.cols;
-    const x0 = (args.x0 == null) ? -2 : args.x0;
-    const y0 = (args.y0 == null) ? 0 : args.y0;
-    const primaryLineWidth = (args.primaryLineWidth == null) ? 0.03 : args.primaryLineWidth;
-    const secondaryLineWidth = (args.secondaryLineWidth == null) ? 0.008 : args.secondaryLineWidth;
 
     const mesh = this.mesh = args.scene.addMesh();
-    const [x, lines, lineWidths] = makeGridData({
-      cellSize,
-      innerCells,
-      rows, cols,
-      x0, y0,
-      primaryLineWidth, secondaryLineWidth
-    });
-    mesh.x = x;
-    mesh.lines = lines;
-    mesh.setCustomAttribute("lineWidths", lineWidths);
+
+    this.set(args);
+    
     mesh.setCustomAttribute("translation", [0, 0]);
 
     mesh.pointShader.renderPoint = () => {}
@@ -96,6 +82,30 @@ class Grid {
 
   get numLines() {
     return this.mesh.lines.length;
+  }
+
+  set(args = {}) {
+    const cellSize = (args.cellSize == null) ? 1 : args.cellSize;
+    const innerCells = (args.innerCells == null) ? 3 : args.innerCells;
+    const rows = (args.rows == null) ? 3 : args.rows;
+    const cols = (args.cols == null) ? 4 : args.cols;
+    const x0 = (args.x0 == null) ? -2 : args.x0;
+    const y0 = (args.y0 == null) ? 0 : args.y0;
+    const primaryLineWidth = (args.primaryLineWidth == null) ? 0.03 : args.primaryLineWidth;
+    const secondaryLineWidth = (args.secondaryLineWidth == null) ? 0.008 : args.secondaryLineWidth;
+
+    const mesh = this.mesh;
+
+    const [x, lines, lineWidths] = makeGridData({
+      cellSize,
+      innerCells,
+      rows, cols,
+      x0, y0,
+      primaryLineWidth, secondaryLineWidth
+    });
+    mesh.x = x;
+    mesh.lines = lines;
+    mesh.setCustomAttribute("lineWidths", lineWidths);
   }
 
   static makeGridLineShader(args = {}) {
