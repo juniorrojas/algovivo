@@ -2443,7 +2443,31 @@
 	    if (args.scene == null) {
 	      throw new Error("scene required");
 	    }
+
 	    const color = (args.color == null) ? "rgba(0, 0, 0, 0.30)" : args.color;
+
+	    const mesh = this.mesh = args.scene.addMesh();
+
+	    this.set(args);
+	    
+	    mesh.setCustomAttribute("translation", [0, 0]);
+
+	    mesh.pointShader.renderPoint = () => {};
+
+	    mesh.lineShader.renderLine = Grid.makeGridLineShader({
+	      color: color
+	    });
+	  }
+
+	  get numVertices() {
+	    return this.mesh.x.length;
+	  }
+
+	  get numLines() {
+	    return this.mesh.lines.length;
+	  }
+
+	  set(args = {}) {
 	    const cellSize = (args.cellSize == null) ? 1 : args.cellSize;
 	    const innerCells = (args.innerCells == null) ? 3 : args.innerCells;
 	    const rows = (args.rows == null) ? 3 : args.rows;
@@ -2453,24 +2477,18 @@
 	    const primaryLineWidth = (args.primaryLineWidth == null) ? 0.03 : args.primaryLineWidth;
 	    const secondaryLineWidth = (args.secondaryLineWidth == null) ? 0.008 : args.secondaryLineWidth;
 
-	    const mesh = this.mesh = args.scene.addMesh();
-	    const data = makeGridData({
+	    const mesh = this.mesh;
+
+	    const [x, lines, lineWidths] = makeGridData({
 	      cellSize,
 	      innerCells,
 	      rows, cols,
 	      x0, y0,
 	      primaryLineWidth, secondaryLineWidth
 	    });
-	    mesh.x = data[0];
-	    mesh.lines = data[1];
-	    mesh.setCustomAttribute("lineWidths", data[2]);
-	    mesh.setCustomAttribute("translation", [0, 0]);
-
-	    mesh.pointShader.renderPoint = () => {};
-
-	    mesh.lineShader.renderLine = Grid.makeGridLineShader({
-	      color: color
-	    });
+	    mesh.x = x;
+	    mesh.lines = lines;
+	    mesh.setCustomAttribute("lineWidths", lineWidths);
 	  }
 
 	  static makeGridLineShader(args = {}) {
