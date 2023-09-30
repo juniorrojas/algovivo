@@ -163,17 +163,29 @@ class SystemViewport {
       color1: backgroundCenterColor,
       color2: backgroundOuterColor
     });
+
+    const gridInnerCells = 2;
+    const gridPrimaryLineWidth = 0.022;
+    const gridSecondaryLineWidth = 0.005;
     const grid = this.grid = new mm2d.background.Grid({
       scene: scene,
       x0: -3,
       y0: 0,
       rows: 4,
       cols: 10,
-      innerCells: 2,
-      primaryLineWidth: 0.022,
-      secondaryLineWidth: 0.005,
+
+      innerCells: gridInnerCells,
+      primaryLineWidth: gridPrimaryLineWidth,
+      secondaryLineWidth: gridSecondaryLineWidth,
       color: gridColor
     });
+
+    // TODO this should not be necessary if grid.set used previously assigned attributes
+    grid.innerCells = gridInnerCells;
+    grid.primaryLineWidth = gridPrimaryLineWidth;
+    grid.secondaryLineWidth = gridSecondaryLineWidth;
+    // grid.color = gridColor;
+
     const floor = this.floor = new Floor({
       scene: scene,
       color: floorColor

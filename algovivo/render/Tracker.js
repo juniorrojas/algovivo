@@ -58,7 +58,11 @@ class Tracker {
       x0: x0,
       y0: y0,
       rows: rows,
-      cols: cols
+      cols: cols,
+
+      innerCells: grid.innerCells,
+      primaryLineWidth: grid.primaryLineWidth,
+      secondaryLineWidth: grid.secondaryLineWidth
     });
 
     floor.mesh.x = [
