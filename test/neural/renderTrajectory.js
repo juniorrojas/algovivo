@@ -23,41 +23,49 @@ async function render(args = {}) {
 
     const initData = JSON.parse(fs.readFileSync(`${rootDirname}/mesh.json`));
     const trajectoryDataDirname = `${rootDirname}/trajectory`;
-    const d = JSON.parse(fs.readFileSync(`${trajectoryDataDirname}/0.json`));
+    const initStateData = JSON.parse(fs.readFileSync(`${trajectoryDataDirname}/0.json`));
 
-    await window.evaluate(async (data) => {
-      async function loadWasm() {
-        const response = await fetch("algovivo.wasm");
-        const wasm = await WebAssembly.instantiateStreaming(response);
-        return wasm.instance;
+    await window.evaluate(
+      async (data) => {
+        async function loadWasm() {
+          const response = await fetch("algovivo.wasm");
+          const wasm = await WebAssembly.instantiateStreaming(response);
+          return wasm.instance;
+        }
+    
+        async function main() {
+          document.body.style.boxSizing = "border-box";
+          document.body.style.margin = "0";
+          document.body.style.padding = "0";
+
+          const system = new algovivo.System({
+            wasmInstance: await loadWasm()
+          });
+          system.set({
+            x: data.x,
+            triangles: data.triangles,
+            springs: data.springs
+          });
+    
+          const viewport = new algovivo.SystemViewport({ system });
+          viewport.setSize({ width: data.width, height: data.height });
+          viewport.domElement.style.border = "0px";
+          viewport.domElement.style.boxSizing = "border-box";
+          document.body.appendChild(viewport.domElement);
+
+          window.system = system;
+          window.viewport = viewport;
+        }
+
+        await main();
+      },
+      {
+        width, height,
+        x: initStateData.x0,
+        triangles: initData.triangles,
+        springs: initData.springs
       }
-  
-      async function main() {
-        document.body.style.boxSizing = "border-box";
-        document.body.style.margin = "0";
-        document.body.style.padding = "0";
-
-        const system = new algovivo.System({
-          wasmInstance: await loadWasm()
-        });
-        system.set({
-          x: data.x,
-          triangles: data.triangles,
-          springs: data.springs
-        });
-  
-        const viewport = new algovivo.SystemViewport({ system });
-        viewport.setSize({ width: data.width, height: data.height });
-        viewport.domElement.style.border = "0px";
-        viewport.domElement.style.boxSizing = "border-box";
-        document.body.appendChild(viewport.domElement);
-
-        window.system = system;
-        window.viewport = viewport;
-      }
-
-      await main();
-    }, { width, height, x: d.x0, triangles: initData.triangles, springs: initData.springs });
+    );
     
     const n = await getNumFilesWithExtension(trajectoryDataDirname, ".json");
     for (let i = 0; i < n; i++) {
