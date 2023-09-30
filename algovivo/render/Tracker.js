@@ -37,10 +37,10 @@ class Tracker {
     const recenterThreshold = 3;
     const cx = this.currentCenterX;
     const tx = Math.floor(cx / recenterThreshold) * recenterThreshold;
-    const topLeft = viewport.camera.domToWorldSpace([0, 0]);
-    const topRight = viewport.camera.domToWorldSpace([viewport.renderer.width, 0]);
-    const bottomRight = viewport.camera.domToWorldSpace([viewport.renderer.width, viewport.renderer.height]);
-    const bottomLeft = viewport.camera.domToWorldSpace([0, viewport.renderer.height]);
+    const topLeft = camera.domToWorldSpace([0, 0]);
+    const topRight = camera.domToWorldSpace([renderer.width, 0]);
+    const bottomRight = camera.domToWorldSpace([renderer.width, renderer.height]);
+    const bottomLeft = camera.domToWorldSpace([0, renderer.height]);
     
     const [_x0, _y0] = bottomLeft;
     const x0 = Math.floor(_x0);
