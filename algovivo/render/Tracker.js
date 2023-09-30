@@ -26,6 +26,14 @@ class Tracker {
       this.currentCenterX += (this.targetCenterX - this.currentCenterX) * 0.5;
     }
 
+    const center = [this.currentCenterX, 1];
+    camera.center({
+      worldCenter: center,
+      worldWidth: this.visibleWorldWidth,
+      viewportWidth: renderer.width,
+      viewportHeight: renderer.height,
+    });
+
     const recenterThreshold = 3;
     const cx = this.currentCenterX;
     const tx = Math.floor(cx / recenterThreshold) * recenterThreshold;
@@ -44,8 +52,8 @@ class Tracker {
 
     const width = x1 - x0;
     const height = y1 - y0;
-    const rows = height;
-    const cols = width;
+    const rows = Math.ceil(height);
+    const cols = Math.ceil(width);
 
     grid.set({
       x0: x0,
@@ -59,13 +67,7 @@ class Tracker {
       [x1, 0]
     ];
 
-    const center = [this.currentCenterX, 1];
-    camera.center({
-      worldCenter: center,
-      worldWidth: this.visibleWorldWidth,
-      viewportWidth: renderer.width,
-      viewportHeight: renderer.height,
-    });
+    
   }
 }
 
