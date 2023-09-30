@@ -52,7 +52,7 @@ function makeGridData(args = {}) {
     x.push([_x, y1]);
   });
 
-  return [x, lineIndices, lineWidths];
+  return { x, lineIndices, lineWidths };
 }
 
 class Grid {
@@ -96,7 +96,7 @@ class Grid {
 
     const mesh = this.mesh;
 
-    const [x, lines, lineWidths] = makeGridData({
+    const { x, lines, lineWidths } = makeGridData({
       cellSize,
       innerCells,
       rows, cols,
