@@ -1589,18 +1589,6 @@ class Tracker$1 {
       this.currentCenterX += (this.targetCenterX - this.currentCenterX) * 0.5;
     }
 
-    const recenterThreshold = 3;
-    const cx = this.currentCenterX;
-    const tx = Math.floor(cx / recenterThreshold) * recenterThreshold;
-    grid.mesh.setCustomAttribute(
-      "translation",
-      [tx, 0]
-    );
-    floor.mesh.setCustomAttribute(
-      "translation",
-      [tx, 0]
-    );
-
     const center = [this.currentCenterX, 1];
     camera.center({
       worldCenter: center,
@@ -1608,6 +1596,42 @@ class Tracker$1 {
       viewportWidth: renderer.width,
       viewportHeight: renderer.height,
     });
+
+    const topRight = camera.domToWorldSpace([renderer.width, 0]);
+    const bottomLeft = camera.domToWorldSpace([0, renderer.height]);
+
+    const marginCells = 1;
+    
+    const [_x0, _y0] = bottomLeft;
+    const x0 = Math.floor(_x0) - marginCells;
+    let y0 = Math.floor(_y0);
+    if (y0 < 0) {
+      y0 = 0;
+    }
+    const [_x1, _y1] = topRight;
+    const x1 = _x1;
+    const y1 = _y1;
+
+    const width = x1 - x0;
+    const height = y1 - y0;
+    const rows = Math.ceil(height) + marginCells;
+    const cols = Math.ceil(width) + marginCells;
+
+    grid.set({
+      x0: x0,
+      y0: y0,
+      rows: rows,
+      cols: cols,
+
+      innerCells: grid.innerCells,
+      primaryLineWidth: grid.primaryLineWidth,
+      secondaryLineWidth: grid.secondaryLineWidth
+    });
+
+    floor.mesh.x = [
+      [x0, 0],
+      [x1, 0]
+    ];
   }
 }
 
@@ -2429,7 +2453,7 @@ function makeGridData(args = {}) {
     x.push([_x, y1]);
   });
 
-  return [x, lineIndices, lineWidths];
+  return { x, lineIndices, lineWidths };
 }
 
 class Grid {
@@ -2473,7 +2497,7 @@ class Grid {
 
     const mesh = this.mesh;
 
-    const [x, lines, lineWidths] = makeGridData({
+    const { x, lineIndices, lineWidths } = makeGridData({
       cellSize,
       innerCells,
       rows, cols,
@@ -2481,7 +2505,7 @@ class Grid {
       primaryLineWidth, secondaryLineWidth
     });
     mesh.x = x;
-    mesh.lines = lines;
+    mesh.lines = lineIndices;
     mesh.setCustomAttribute("lineWidths", lineWidths);
   }
 
@@ -2963,17 +2987,29 @@ class SystemViewport {
       color1: backgroundCenterColor,
       color2: backgroundOuterColor
     });
-    this.grid = new mm2d$1.background.Grid({
+
+    const gridInnerCells = 2;
+    const gridPrimaryLineWidth = 0.022;
+    const gridSecondaryLineWidth = 0.005;
+    const grid = this.grid = new mm2d$1.background.Grid({
       scene: scene,
       x0: -3,
       y0: 0,
       rows: 4,
       cols: 10,
-      innerCells: 2,
-      primaryLineWidth: 0.022,
-      secondaryLineWidth: 0.005,
+
+      innerCells: gridInnerCells,
+      primaryLineWidth: gridPrimaryLineWidth,
+      secondaryLineWidth: gridSecondaryLineWidth,
       color: gridColor
     });
+
+    // TODO this should not be necessary if grid.set used previously assigned attributes
+    grid.innerCells = gridInnerCells;
+    grid.primaryLineWidth = gridPrimaryLineWidth;
+    grid.secondaryLineWidth = gridSecondaryLineWidth;
+    // grid.color = gridColor;
+
     this.floor = new Floor({
       scene: scene,
       color: floorColor
