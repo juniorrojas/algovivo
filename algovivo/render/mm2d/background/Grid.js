@@ -96,7 +96,7 @@ class Grid {
 
     const mesh = this.mesh;
 
-    const { x, lines, lineWidths } = makeGridData({
+    const { x, lineIndices, lineWidths } = makeGridData({
       cellSize,
       innerCells,
       rows, cols,
@@ -104,7 +104,7 @@ class Grid {
       primaryLineWidth, secondaryLineWidth
     });
     mesh.x = x;
-    mesh.lines = lines;
+    mesh.lines = lineIndices;
     mesh.setCustomAttribute("lineWidths", lineWidths);
   }
 
