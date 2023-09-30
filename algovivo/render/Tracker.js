@@ -36,19 +36,23 @@ class Tracker {
 
     const topRight = camera.domToWorldSpace([renderer.width, 0]);
     const bottomLeft = camera.domToWorldSpace([0, renderer.height]);
+
+    const marginCells = 1
     
     const [_x0, _y0] = bottomLeft;
-    const x0 = Math.floor(_x0);
+    const x0 = Math.floor(_x0) - marginCells;
     let y0 = Math.floor(_y0);
     if (y0 < 0) {
       y0 = 0;
     }
-    const [x1, y1] = topRight;
+    const [_x1, _y1] = topRight;
+    const x1 = _x1;
+    const y1 = _y1;
 
     const width = x1 - x0;
     const height = y1 - y0;
-    const rows = Math.ceil(height);
-    const cols = Math.ceil(width);
+    const rows = Math.ceil(height) + marginCells;
+    const cols = Math.ceil(width) + marginCells;
 
     grid.set({
       x0: x0,
