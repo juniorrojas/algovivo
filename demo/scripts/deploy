@@ -24,7 +24,7 @@ def populate_deploy_path(deploy_path):
             deploy_path.joinpath(os.path.basename(filename))
         )
 
-    for dirname in ["assets", "data"]:
+    for dirname in ["data"]:
         shutil.copytree(
             public_path.joinpath(dirname),
             deploy_path.joinpath(dirname)
