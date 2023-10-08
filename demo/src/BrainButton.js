@@ -1,4 +1,4 @@
-export default class IconButton {
+export default class BrainButton {
   constructor(args = {}) {
     const div = this.domElement = document.createElement("div");
 
@@ -16,13 +16,6 @@ export default class IconButton {
     div.style.justifyContent = "center";
     div.style.boxShadow = "0 0 8px rgba(0, 0, 0, 0.2)";
     div.style.padding = "20px";
-
-    // const icon = new Image();
-    // icon.src = args.src;
-    // const iconSize = 40;
-    // icon.style.width = `${iconSize}px`;
-    // icon.style.height = `${iconSize}px`;
-    // div.appendChild(icon);
 
     this.initSvg();
     this.setInactiveStyle();

@@ -1,6 +1,6 @@
 import algovivo from "../../build/algovivo.min.mjs";
 import NeuralPolicy from "./NeuralPolicy.js";
-import IconButton from "./IconButton.js";
+import BrainButton from "./BrainButton.js";
 import { makeGitHubLink, makeHeader } from "./ui.js";
 import SystemViewport from "./SystemViewport.js";
 
@@ -78,9 +78,7 @@ async function main() {
     else btnBrain.setInactiveStyle();
   }
 
-  const btnBrain = new IconButton({
-    src: "assets/brain.svg"
-  });
+  const btnBrain = new BrainButton();
   btnBrain.domElement.style.marginTop = "8px";
   btnBrain.domElement.style.marginBottom = "8px";
   btnBrain.domElement.addEventListener("click", () => {
