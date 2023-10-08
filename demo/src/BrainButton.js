@@ -16,6 +16,7 @@ export default class BrainButton {
     div.style.justifyContent = "center";
     div.style.boxShadow = "0 0 8px rgba(0, 0, 0, 0.2)";
     div.style.padding = "20px";
+    div.style.overflow = "hidden";
 
     this.initSvg();
     this.setInactiveStyle();
@@ -42,7 +43,7 @@ export default class BrainButton {
     pathLeft.setAttribute("fill-rule", "evenodd");
     pathLeft.setAttribute("clip-rule", "evenodd");
     pathLeft.setAttribute("d", "M41 30.4169L24.5 37.8885V54.7333L44.6122 65.9962L67 54.5988V22.664H77V60.7291L49.5 74.7291V94.8101L24.5 106.81V130.664H14.5V100.518L39.5 88.5178V74.5946L19.5249 63.4085L0 74.5656V140.142L18.3669 153.718L40.5 141.243L41 114.725H51L50.5 141.288L78 157.288V194.164H68V163.04L45.4606 149.926L23.0796 162.54L23.4229 175.243L41 185.47V168.164H51V203.444L71.5262 216.725L92.5 203.415V88.2068L76.5 99.2837V127.664H66.5V94.0442L92.5 76.0442V12.5043L71.525 -3.05176e-05L51 12.476V47.164H41V30.4169Z");
-    pathLeft.setAttribute("fill", color);    
+    pathLeft.setAttribute("fill", color);
     svg.appendChild(pathLeft);
 
     this.domElement.appendChild(svg);
