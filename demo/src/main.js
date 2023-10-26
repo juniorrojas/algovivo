@@ -1,7 +1,7 @@
 import algovivo from "../../build/algovivo.min.mjs";
 import NeuralPolicy from "./NeuralPolicy.js";
 import BrainButton from "./BrainButton.js";
-import { makeGitHubLink, makeHeader } from "./ui.js";
+import { initStyle, makeGitHubLink, makeHeader } from "./ui.js";
 import SystemViewport from "./SystemViewport.js";
 
 async function loadWasm() {
@@ -23,12 +23,9 @@ async function loadPolicyData() {
 }
 
 async function main() {
+  initStyle();
   makeGitHubLink();
   makeHeader();
-
-  document.body.style.background = "rgb(248, 248, 248)";
-  document.body.style.display = "flex";
-  document.body.style.flexDirection = "column";
 
   const divContent = document.createElement("div");
   divContent.style.display = "flex";

@@ -1,5 +1,11 @@
 const headerBackgroundColor = "#000000";
 
+export function initStyle() {
+  document.body.style.background = "rgb(248, 248, 248)";
+  document.body.style.display = "flex";
+  document.body.style.flexDirection = "column";
+}
+
 export function makeGitHubLink() {
   const a = document.createElement("a");
   document.body.appendChild(a);
