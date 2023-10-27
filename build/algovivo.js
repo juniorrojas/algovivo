@@ -3304,6 +3304,7 @@
 
 	  hitTestVertex(p, hitTestRadius = 0.31) {
 	    const numVertices = this.system.numVertices();
+	    if (numVertices == 0) return null;
 	    const xF32 = this.system.x0.slot.f32();
 	    let closestVertex = null;
 	    let closestQuadrance = Infinity;
