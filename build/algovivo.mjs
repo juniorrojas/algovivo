@@ -2949,8 +2949,8 @@ class SystemViewport {
     this.renderer = renderer;
     this.domElement = renderer.domElement;
     this.setSize({
-      width: 400,
-      height: 400
+      width: args.width ?? 400,
+      height: args.height ?? 400
     });
 
     const scene = new mm2d$1.Scene();
