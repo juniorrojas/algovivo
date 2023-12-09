@@ -332,7 +332,7 @@ class SystemViewport {
       const trianglesArr = [];
       if (this.system.triangles != null) {
         const trianglesU32 = this.system.triangles.u32();
-        for (let i = 0; i < this.system.numTriangles(); i++) {
+        for (let i = 0; i < this.system.numTriangles; i++) {
           const offset = i * 3;
           trianglesArr.push([
             trianglesU32[offset    ],
@@ -345,7 +345,7 @@ class SystemViewport {
       const springsArr = [];
       if (this.system.springs != null) {
         const springsU32 = this.system.springs.u32();
-        for (let i = 0; i < this.system.numSprings(); i++) {
+        for (let i = 0; i < this.system.numMuscles; i++) {
           const offset = i * 2;
           springsArr.push([
             springsU32[offset    ],
@@ -395,7 +395,7 @@ class SystemViewport {
     const springsHashToId = new Map();
     if (this.system.springs != null) {
       const springsU32 = this.system.springs.u32();
-      for (let i = 0; i < this.system.numSprings(); i++) {
+      for (let i = 0; i < this.system.numMuscles; i++) {
         const offset = i * 2;
         const s = [
           springsU32[offset    ],
@@ -419,12 +419,12 @@ class SystemViewport {
     let sortedVertexIds = this.sortedVertexIds;
     if (sortedVertexIds == null) {
       sortedVertexIds = [];
-      for (let i = 0; i < this.system.numVertices(); i++) {
+      for (let i = 0; i < this.system.numVertices; i++) {
         sortedVertexIds.push(i);
       }
     }
-    if (sortedVertexIds.length != this.system.numVertices()) {
-      throw new Error(`invalid size for sortedVertexIds, found ${sortedVertexIds.length}, expected ${this.system.numVertices()}`);
+    if (sortedVertexIds.length != this.system.numVertices) {
+      throw new Error(`invalid size for sortedVertexIds, found ${sortedVertexIds.length}, expected ${this.system.numVertices}`);
     }
 
     mesh.sortedElements = mm2d.sorted.makeSortedElements({
@@ -434,8 +434,8 @@ class SystemViewport {
     });
 
     const muscleIntensity = [];
-    const numSprings = this.system.numSprings();
-    for (let i = 0; i < numSprings; i++) {
+    const numMuscles = this.system.numMuscles;
+    for (let i = 0; i < numMuscles; i++) {
       muscleIntensity.push(1);
     }
     mesh.setCustomAttribute("muscleIntensity", muscleIntensity);
@@ -450,7 +450,7 @@ class SystemViewport {
     const mesh = this.mesh;
     const system = this.system;
 
-    if (system.numVertices() == 0) {
+    if (system.numVertices == 0) {
       mesh.x = [];
     } else {
       const x = system.x0.toArray();
@@ -462,10 +462,10 @@ class SystemViewport {
     const mesh = this.mesh;
     const system = this.system;
     const muscleIntensity = [];
-    const numSprings = system.numSprings();
-    if (numSprings > 0) {
+    const numMuscles = system.numMuscles;
+    if (numMuscles > 0) {
       const aF32 = system.a.slot.f32();
-      for (let i = 0; i < numSprings; i++) {
+      for (let i = 0; i < numMuscles; i++) {
         muscleIntensity.push(aF32[i]);
       }
     }
@@ -473,7 +473,7 @@ class SystemViewport {
   }
 
   hitTestVertex(p, hitTestRadius = 0.31) {
-    const numVertices = this.system.numVertices();
+    const numVertices = this.system.numVertices;
     if (numVertices == 0) return null;
     const xF32 = this.system.x0.slot.f32();
     let closestVertex = null;

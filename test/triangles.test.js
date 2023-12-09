@@ -18,7 +18,7 @@ test("set pos and triangles", async () => {
       [0, 2, 3]
     ]
   });
-  expect(system.numTriangles()).toBe(2);
+  expect(system.numTriangles).toBe(2);
   const expectedRsi = [
     [
       [0.5, -0.5],
@@ -53,7 +53,7 @@ test("set rsi", async () => {
        [7, 8]],
     ]
   });
-  expect(system.numTriangles()).toBe(2);
+  expect(system.numTriangles).toBe(2);
   const expectedRsi = [
     [[1, 2],
      [3, 4]],
@@ -74,7 +74,7 @@ test("set triangles", async () => {
       [-0.3, 0.8]
     ]
   });
-  expect(system.numTriangles()).toBe(0);
+  expect(system.numTriangles).toBe(0);
 
   system.setTriangles({
     indices: [
@@ -82,5 +82,5 @@ test("set triangles", async () => {
       [0, 2, 3]
     ]
   });
-  expect(system.numTriangles()).toBe(2);
+  expect(system.numTriangles).toBe(2);
 });
