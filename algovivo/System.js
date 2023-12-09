@@ -177,8 +177,8 @@ class System {
     this.r = null;
 
     this.setSprings({
-      indices: data.springs ?? [],
-      l0: data.springsL0
+      indices: data.muscles ?? [],
+      l0: data.musclesL0
     });
 
     this.setTriangles({
