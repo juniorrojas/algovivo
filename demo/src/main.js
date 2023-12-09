@@ -56,9 +56,9 @@ async function main() {
   divContent.appendChild(viewport.domElement);
 
   system.set({
-    x: meshData.x,
-    springs: meshData.springs,
-    springsL0: meshData.l0,
+    pos: meshData.pos,
+    muscles: meshData.muscles,
+    musclesL0: meshData.l0,
     triangles: meshData.triangles,
     trianglesRsi: meshData.rsi
   });
