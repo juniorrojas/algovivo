@@ -22,7 +22,7 @@ test("main", async () => {
           });
         }
         await waitInit();
-        return system.numVertices();
+        return system.numVertices;
       });
       expect(numVertices).toBe(28);
       
