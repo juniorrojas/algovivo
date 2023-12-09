@@ -74,7 +74,7 @@ class System {
     this.updateTmpBuffers();
   }
 
-  setSprings(args = {}) {
+  setMuscles(args = {}) {
     if (args.indices == null) {
       throw new Error("indices required");
     }
@@ -119,7 +119,7 @@ class System {
     const keepA = args.keepA ?? false;
     if (numMuscles != numMuscles0) {
       if (keepA) {
-        throw new Error(`keepA can only be true when the number of springs is the same (${numMuscles} != ${numMuscles0})`);
+        throw new Error(`keepA can only be true when the number of muscles is the same (${numMuscles} != ${numMuscles0})`);
       }
       if (this.a != null) this.a.dispose();
       if (numMuscles != 0) {
@@ -186,7 +186,7 @@ class System {
     // this.r = r;
     this.r = null;
 
-    this.setSprings({
+    this.setMuscles({
       indices: data.muscles ?? [],
       l0: data.musclesL0
     });

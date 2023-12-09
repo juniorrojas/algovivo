@@ -3,7 +3,7 @@ const utils = require("./utils");
 
 expect.extend({ toBeCloseToArray: utils.toBeCloseToArray });
 
-test("set pos and springs", async () => {
+test("set pos and muscles", async () => {
   const wasmInstance = await utils.loadWasm();
   const system = new algovivo.System({ wasmInstance });
   system.set({
@@ -25,7 +25,7 @@ test("set pos and springs", async () => {
   expect(system.l0.toArray()).toBeCloseToArray(expectedL0);
 });
 
-test("set springs", async () => {
+test("set muscles", async () => {
   const wasmInstance = await utils.loadWasm();
   const system = new algovivo.System({ wasmInstance });
   system.set({
@@ -41,7 +41,7 @@ test("set springs", async () => {
   expect(system.l0).toBeNull();
   expect(system.a).toBeNull();
   
-  system.setSprings({
+  system.setMuscles({
     indices: [
       [0, 2],
       [1, 2],
@@ -53,7 +53,7 @@ test("set springs", async () => {
   expect(system.l0.toArray()).toBeCloseToArray(expectedL0);
   expect(system.a.toArray()).toBeCloseToArray([1, 1, 1]);
 
-  system.setSprings({
+  system.setMuscles({
     indices: [
       [0, 2],
       [3, 4]
@@ -72,7 +72,7 @@ test("update l0, keep a", async () => {
     [0.5, 0.5],
     [1.5, 0.5]
   ]);
-  system.setSprings({
+  system.setMuscles({
     indices: [
       [0, 1]
     ],
@@ -83,7 +83,7 @@ test("update l0, keep a", async () => {
   expect(system.a.toArray()).toBeCloseToArray([1.0]);
   system.a.set([0.3]);
   expect(system.a.toArray()).toBeCloseToArray([0.3]);
-  system.setSprings({
+  system.setMuscles({
     indices: [
       [0, 1]
     ],
@@ -93,7 +93,7 @@ test("update l0, keep a", async () => {
     keepA: true
   });
   expect(system.a.toArray()).toBeCloseToArray([0.3]);
-  system.setSprings({
+  system.setMuscles({
     indices: [
       [0, 1]
     ],
