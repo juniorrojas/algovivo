@@ -12,17 +12,17 @@ test("memory", async () => {
   expect(system.numTriangles()).toBe(0);
 
   const meshData = {
-    x: [
+    pos: [
       [0, 0],
       [1, 0],
       [1, 1]
     ],
-    springs: [
-      [0, 1],
-      [2, 1]
-    ],
     triangles: [
       [0, 1, 2]
+    ],
+    muscles: [
+      [0, 1],
+      [2, 1]
     ]
   };
 

@@ -7,7 +7,7 @@ test("set x and springs", async () => {
   const wasmInstance = await utils.loadWasm();
   const system = new algovivo.System({ wasmInstance });
   system.set({
-    x: [
+    pos: [
       [0, 0],
       [2, 0],
       [1, 1],

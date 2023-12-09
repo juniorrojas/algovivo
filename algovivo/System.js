@@ -51,6 +51,8 @@ class System {
     const ten = this.ten;
     
     const spaceDim = this.spaceDim;
+
+    if (x == null) throw new Error("pos required");
     const numVertices = x.length;
 
     const x0 = ten.tensor(x);

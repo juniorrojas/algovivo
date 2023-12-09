@@ -12,12 +12,12 @@ test("set pos", async () => {
 
   system.set({
     pos: [
-      [0, 0]
+      [1, 2]
     ]
   });
 
   expect(system.numVertices()).toBe(1);
-  expect(system.pos.toArray()).toBeCloseToArray([[0, 0]]);
+  expect(system.pos.toArray()).toBeCloseToArray([[1, 2]]);
   expect(system.vel.toArray()).toBeCloseToArray([[0, 0]]);
 });
 
