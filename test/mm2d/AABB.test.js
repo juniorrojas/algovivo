@@ -1,6 +1,6 @@
 const mm2d = require("algovivo").mm2d;
 
-test("basic", () => {
+test("aabb", () => {
   const aabb = new mm2d.math.AABB({
     x0: 20,
     y0: 15,
