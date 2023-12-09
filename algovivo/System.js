@@ -169,7 +169,7 @@ class System {
   }
 
   set(data) {
-    this.setX(data.x);
+    this.setX(data.pos);
     
     // const r = ten.zeros([numVertices]);
     // if (this.r != null) this.r.dispose();
