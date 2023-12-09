@@ -42,9 +42,9 @@ async function render(args = {}) {
             wasmInstance: await loadWasm()
           });
           system.set({
-            x: data.x,
+            pos: data.pos,
             triangles: data.triangles,
-            springs: data.springs
+            muscles: data.muscles
           });
     
           const viewport = new algovivo.SystemViewport({ system });
