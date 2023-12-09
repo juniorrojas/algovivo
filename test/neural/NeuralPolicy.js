@@ -38,8 +38,8 @@ class NeuralPolicy {
 
     wasmInstance.exports.make_neural_policy_input(
       numVertices,
-      system.x0.ptr,
-      system.v0.ptr,
+      system.pos.ptr,
+      system.vel.ptr,
       this.centerVertexId,
       this.forwardVertexId,
       this.projectedX.ptr,

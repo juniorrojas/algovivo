@@ -61,9 +61,9 @@ async function render(args = {}) {
       },
       {
         width, height,
-        x: initStateData.x0,
+        pos: initStateData.x0,
         triangles: initData.triangles,
-        springs: initData.springs
+        muscles: initData.muscles
       }
     );
     
