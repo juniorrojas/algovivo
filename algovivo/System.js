@@ -32,17 +32,17 @@ class System {
     return this.v0;
   }
 
-  numVertices() {
+  get numVertices() {
     if (this.x0 == null) return 0;
     return this.x0.shape.get(0);
   }
 
-  numTriangles() {
+  get numTriangles() {
     if (this.triangles == null) return 0;
     return this.triangles.u32().length / 3;
   }
 
-  numSprings() {
+  get numSprings() {
     if (this.springs == null) return 0;
     return this.springs.u32().length / 2;
   }
