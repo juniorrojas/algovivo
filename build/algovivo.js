@@ -1296,17 +1296,17 @@
 	    return this.v0;
 	  }
 
-	  numVertices() {
+	  get numVertices() {
 	    if (this.x0 == null) return 0;
 	    return this.x0.shape.get(0);
 	  }
 
-	  numTriangles() {
+	  get numTriangles() {
 	    if (this.triangles == null) return 0;
 	    return this.triangles.u32().length / 3;
 	  }
 
-	  numSprings() {
+	  get numMuscles() {
 	    if (this.springs == null) return 0;
 	    return this.springs.u32().length / 2;
 	  }
@@ -1338,18 +1338,18 @@
 	    this.updateTmpBuffers();
 	  }
 
-	  setSprings(args = {}) {
+	  setMuscles(args = {}) {
 	    if (args.indices == null) {
 	      throw new Error("indices required");
 	    }
 	    const indices = args.indices;
-	    const numSprings = indices.length;
-	    const numSprings0 = this.numSprings();
+	    const numMuscles = indices.length;
+	    const numMuscles0 = this.numMuscles;
 
 	    const mgr = this.memoryManager;
 	    const ten = this.ten;
 
-	    const springs = mgr.malloc32(numSprings * 2);
+	    const springs = mgr.malloc32(numMuscles * 2);
 	    if (this.springs != null) this.springs.free();
 	    this.springs = springs;
 
@@ -1363,15 +1363,15 @@
 	    if (this.l0 != null) this.l0.dispose();
 	    this.l0 = null;
 
-	    if (numSprings != 0) {
-	      const l0 = ten.zeros([numSprings]);
+	    if (numMuscles != 0) {
+	      const l0 = ten.zeros([numMuscles]);
 	      this.l0 = l0;
 
 	      if (args.l0 == null) {
 	        this.wasmInstance.exports.l0_of_x(
-	          this.numVertices(),
+	          this.numVertices,
 	          this.x0.ptr,
-	          numSprings,
+	          numMuscles,
 	          this.springs.ptr,
 	          this.l0.ptr
 	        );
@@ -1381,22 +1381,22 @@
 	    }
 
 	    const keepA = args.keepA ?? false;
-	    if (numSprings != numSprings0) {
+	    if (numMuscles != numMuscles0) {
 	      if (keepA) {
-	        throw new Error(`keepA can only be true when the number of springs is the same (${numSprings} != ${numSprings0})`);
+	        throw new Error(`keepA can only be true when the number of muscles is the same (${numMuscles} != ${numMuscles0})`);
 	      }
 	      if (this.a != null) this.a.dispose();
-	      if (numSprings != 0) {
-	        const a = ten.zeros([numSprings]);
+	      if (numMuscles != 0) {
+	        const a = ten.zeros([numMuscles]);
 	        this.a = a;
 	        a.fill_(1);
 	      }
 	    } else
-	    if (numSprings == 0) {
+	    if (numMuscles == 0) {
 	      if (this.a != null) this.a.dispose();
 	      this.a = null;
 	    } else {
-	      // numSprings == numSprings0 != 0
+	      // numMuscles == numMuscles0 != 0
 	      if (!keepA) {
 	        this.a.fill_(1);
 	      }
@@ -1431,7 +1431,7 @@
 	    
 	    if (args.rsi == null) {
 	      this.wasmInstance.exports.rsi_of_x(
-	        this.numVertices(),
+	        this.numVertices,
 	        this.x0.ptr,
 	        numTriangles,
 	        this.triangles.ptr,
@@ -1450,7 +1450,7 @@
 	    // this.r = r;
 	    this.r = null;
 
-	    this.setSprings({
+	    this.setMuscles({
 	      indices: data.muscles ?? [],
 	      l0: data.musclesL0
 	    });
@@ -1465,7 +1465,7 @@
 	    if (this.x0 == null) {
 	      throw new Error("x0 required");
 	    }
-	    const numVertices = this.numVertices();
+	    const numVertices = this.numVertices;
 	    const spaceDim = this.spaceDim;
 	    const ten = this.ten;
 	    
@@ -1480,9 +1480,9 @@
 	  }
 
 	  step() {
-	    const numVertices = this.numVertices();
-	    const numSprings = this.numSprings();
-	    const numTriangles = this.numTriangles();
+	    const numVertices = this.numVertices;
+	    const numMuscles = this.numMuscles;
+	    const numTriangles = this.numTriangles;
 
 	    const fixedVertexId = this.fixedVertexId;
 	    const vertexMass = this.vertexMass;
@@ -1504,15 +1504,15 @@
 	      // this.r.ptr,
 	      0,
 
-	      numSprings,
-	      numSprings == 0 ? 0 : this.springs.ptr,
+	      numMuscles,
+	      numMuscles == 0 ? 0 : this.springs.ptr,
 
 	      numTriangles,
 	      numTriangles == 0 ? 0 : this.triangles.ptr,
 	      numTriangles == 0 ? 0 : this.rsi.ptr,
 
-	      numSprings == 0 ? 0 : this.a.ptr,
-	      numSprings == 0 ? 0 : this.l0.ptr,
+	      numMuscles == 0 ? 0 : this.a.ptr,
+	      numMuscles == 0 ? 0 : this.l0.ptr,
 	      
 	      fixedVertexId,
 
@@ -3172,7 +3172,7 @@
 	      const trianglesArr = [];
 	      if (this.system.triangles != null) {
 	        const trianglesU32 = this.system.triangles.u32();
-	        for (let i = 0; i < this.system.numTriangles(); i++) {
+	        for (let i = 0; i < this.system.numTriangles; i++) {
 	          const offset = i * 3;
 	          trianglesArr.push([
 	            trianglesU32[offset    ],
@@ -3185,7 +3185,7 @@
 	      const springsArr = [];
 	      if (this.system.springs != null) {
 	        const springsU32 = this.system.springs.u32();
-	        for (let i = 0; i < this.system.numSprings(); i++) {
+	        for (let i = 0; i < this.system.numMuscles; i++) {
 	          const offset = i * 2;
 	          springsArr.push([
 	            springsU32[offset    ],
@@ -3235,7 +3235,7 @@
 	    const springsHashToId = new Map();
 	    if (this.system.springs != null) {
 	      const springsU32 = this.system.springs.u32();
-	      for (let i = 0; i < this.system.numSprings(); i++) {
+	      for (let i = 0; i < this.system.numMuscles; i++) {
 	        const offset = i * 2;
 	        const s = [
 	          springsU32[offset    ],
@@ -3259,12 +3259,12 @@
 	    let sortedVertexIds = this.sortedVertexIds;
 	    if (sortedVertexIds == null) {
 	      sortedVertexIds = [];
-	      for (let i = 0; i < this.system.numVertices(); i++) {
+	      for (let i = 0; i < this.system.numVertices; i++) {
 	        sortedVertexIds.push(i);
 	      }
 	    }
-	    if (sortedVertexIds.length != this.system.numVertices()) {
-	      throw new Error(`invalid size for sortedVertexIds, found ${sortedVertexIds.length}, expected ${this.system.numVertices()}`);
+	    if (sortedVertexIds.length != this.system.numVertices) {
+	      throw new Error(`invalid size for sortedVertexIds, found ${sortedVertexIds.length}, expected ${this.system.numVertices}`);
 	    }
 
 	    mesh.sortedElements = mm2d$1.sorted.makeSortedElements({
@@ -3274,8 +3274,8 @@
 	    });
 
 	    const muscleIntensity = [];
-	    const numSprings = this.system.numSprings();
-	    for (let i = 0; i < numSprings; i++) {
+	    const numMuscles = this.system.numMuscles;
+	    for (let i = 0; i < numMuscles; i++) {
 	      muscleIntensity.push(1);
 	    }
 	    mesh.setCustomAttribute("muscleIntensity", muscleIntensity);
@@ -3290,7 +3290,7 @@
 	    const mesh = this.mesh;
 	    const system = this.system;
 
-	    if (system.numVertices() == 0) {
+	    if (system.numVertices == 0) {
 	      mesh.x = [];
 	    } else {
 	      const x = system.x0.toArray();
@@ -3302,10 +3302,10 @@
 	    const mesh = this.mesh;
 	    const system = this.system;
 	    const muscleIntensity = [];
-	    const numSprings = system.numSprings();
-	    if (numSprings > 0) {
+	    const numMuscles = system.numMuscles;
+	    if (numMuscles > 0) {
 	      const aF32 = system.a.slot.f32();
-	      for (let i = 0; i < numSprings; i++) {
+	      for (let i = 0; i < numMuscles; i++) {
 	        muscleIntensity.push(aF32[i]);
 	      }
 	    }
@@ -3313,7 +3313,7 @@
 	  }
 
 	  hitTestVertex(p, hitTestRadius = 0.31) {
-	    const numVertices = this.system.numVertices();
+	    const numVertices = this.system.numVertices;
 	    if (numVertices == 0) return null;
 	    const xF32 = this.system.x0.slot.f32();
 	    let closestVertex = null;
