@@ -43,8 +43,8 @@ class System {
   }
 
   get numMuscles() {
-    if (this.springs == null) return 0;
-    return this.springs.u32().length / 2;
+    if (this.muscles == null) return 0;
+    return this.muscles.u32().length / 2;
   }
 
   setX(x) {
@@ -85,15 +85,15 @@ class System {
     const mgr = this.memoryManager;
     const ten = this.ten;
 
-    const springs = mgr.malloc32(numMuscles * 2);
-    if (this.springs != null) this.springs.free();
-    this.springs = springs;
+    const muscles = mgr.malloc32(numMuscles * 2);
+    if (this.muscles != null) this.muscles.free();
+    this.muscles = muscles;
 
-    const springsU32 = springs.u32();
+    const musclesU32 = muscles.u32();
     indices.forEach((s, i) => {
       const offset = i * 2;
-      springsU32[offset    ] = s[0];
-      springsU32[offset + 1] = s[1];
+      musclesU32[offset    ] = s[0];
+      musclesU32[offset + 1] = s[1];
     });
 
     if (this.l0 != null) this.l0.dispose();
@@ -108,7 +108,7 @@ class System {
           this.numVertices,
           this.x0.ptr,
           numMuscles,
-          this.springs.ptr,
+          this.muscles.ptr,
           this.l0.ptr
         );
       } else {
@@ -241,7 +241,7 @@ class System {
       0,
 
       numMuscles,
-      numMuscles == 0 ? 0 : this.springs.ptr,
+      numMuscles == 0 ? 0 : this.muscles.ptr,
 
       numTriangles,
       numTriangles == 0 ? 0 : this.triangles.ptr,
@@ -296,9 +296,9 @@ class System {
       this.rsi = null;
     }
 
-    if (this.springs != null) {
-      this.springs.free();
-      this.springs = null;
+    if (this.muscles != null) {
+      this.muscles.free();
+      this.muscles = null;
     }
     if (this.l0 != null) {
       this.l0.dispose();
