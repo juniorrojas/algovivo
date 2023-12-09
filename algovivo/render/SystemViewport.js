@@ -392,7 +392,7 @@ class SystemViewport {
     mesh.triangles = meshData.triangles;
     mesh.lines = edgesFromTriangles(meshData.triangles);
 
-    const musclesHashToId = new Map();
+    const muscleHashToId = new Map();
     if (this.system.muscles != null) {
       const musclesU32 = this.system.muscles.u32();
       for (let i = 0; i < this.system.numMuscles; i++) {
@@ -401,7 +401,7 @@ class SystemViewport {
           musclesU32[offset    ],
           musclesU32[offset + 1]
         ];
-        musclesHashToId.set(
+        muscleHashToId.set(
           hashSimplex(s),
           i
         );
@@ -412,7 +412,7 @@ class SystemViewport {
     mesh.setCustomAttribute("lineIdToMuscleId", lineIdToMuscleId);
     mesh.lines.forEach(line => {
       const h = hashSimplex(line);
-      const muscleId = musclesHashToId.get(h);
+      const muscleId = muscleHashToId.get(h);
       lineIdToMuscleId.push(muscleId);
     });
     
