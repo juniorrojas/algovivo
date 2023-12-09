@@ -28,10 +28,10 @@ You can create a simple simulation with one triangle and two muscles, where one 
 </head>
 <body>
   <script type="module">
-    import algovivo from "https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@237ca2b4f082f886584f54bbf429eff03f261dd5/build/algovivo.min.mjs";
+    import algovivo from "https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@cbd6216b37c93474800d7681dc9f3503d38ecfdc/build/algovivo.min.mjs";
 
     async function loadWasm() {
-      const response = await fetch("https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@237ca2b4f082f886584f54bbf429eff03f261dd5/build/algovivo.wasm");
+      const response = await fetch("https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@cbd6216b37c93474800d7681dc9f3503d38ecfdc/build/algovivo.wasm");
       const wasm = await WebAssembly.instantiateStreaming(response);
       return wasm.instance;
     }
