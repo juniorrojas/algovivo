@@ -6,9 +6,9 @@ expect.extend({ toBeCloseToArray: utils.toBeCloseToArray });
 test("set pos", async () => {
   const wasmInstance = await utils.loadWasm();
   const system = new algovivo.System({ wasmInstance });
-  expect(system.numVertices()).toBe(0);
-  expect(system.numSprings()).toBe(0);
-  expect(system.numTriangles()).toBe(0);
+  expect(system.numVertices).toBe(0);
+  expect(system.numMuscles).toBe(0);
+  expect(system.numTriangles).toBe(0);
 
   system.set({
     pos: [
@@ -16,7 +16,7 @@ test("set pos", async () => {
     ]
   });
 
-  expect(system.numVertices()).toBe(1);
+  expect(system.numVertices).toBe(1);
   expect(system.pos.toArray()).toBeCloseToArray([[1, 2]]);
   expect(system.vel.toArray()).toBeCloseToArray([[0, 0]]);
 });
@@ -24,11 +24,11 @@ test("set pos", async () => {
 test("step with no vertices", async () => {
   const wasmInstance = await utils.loadWasm();
   const system = new algovivo.System({ wasmInstance });
-  expect(system.numVertices()).toBe(0);
-  expect(system.numSprings()).toBe(0);
-  expect(system.numTriangles()).toBe(0);
+  expect(system.numVertices).toBe(0);
+  expect(system.numMuscles).toBe(0);
+  expect(system.numTriangles).toBe(0);
   system.step();
-  expect(system.numVertices()).toBe(0);
-  expect(system.numSprings()).toBe(0);
-  expect(system.numTriangles()).toBe(0);
+  expect(system.numVertices).toBe(0);
+  expect(system.numMuscles).toBe(0);
+  expect(system.numTriangles).toBe(0);
 });
