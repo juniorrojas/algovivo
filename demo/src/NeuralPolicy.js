@@ -20,14 +20,14 @@ export default class NeuralPolicy {
     const system = this.system;
     const ten = this.ten;
 
-    const numVertices = system.numVertices();
-    const numSprings = system.numSprings();
+    const numVertices = system.numVertices;
+    const numMuscles = system.numMuscles;
     const spaceDim = 2;
 
     this.projectedX = ten.zeros([numVertices, spaceDim]);
     this.projectedV = ten.zeros([numVertices, spaceDim]);
     const inputSize = numVertices * spaceDim * 2;
-    const outputSize = numSprings;
+    const outputSize = numMuscles;
     this.input = ten.zeros([inputSize]);
 
     const nn = ten.nn;
@@ -43,7 +43,7 @@ export default class NeuralPolicy {
     const system = this.system;
     const wasmInstance = this.ten.wasmInstance;
 
-    const numVertices = system.numVertices();
+    const numVertices = system.numVertices;
     
     wasmInstance.exports.make_neural_policy_input(
       numVertices,
@@ -64,8 +64,8 @@ export default class NeuralPolicy {
     const a = this.system.a;
     const daF32 = da.slot.f32();
     
-    const numSprings = this.system.numSprings();
-    for (let i = 0; i < numSprings; i++) {
+    const numMuscles = this.system.numMuscles;
+    for (let i = 0; i < numMuscles; i++) {
       let dai;
       if (this.active) {
         dai = da.get([i]);
@@ -81,7 +81,7 @@ export default class NeuralPolicy {
     da.clamp_({ min: -maxAbsDa, max: maxAbsDa });
 
     const aF32 = a.slot.f32();
-    for (let i = 0; i < numSprings; i++) {
+    for (let i = 0; i < numMuscles; i++) {
       aF32[i] += daF32[i];
     }
 

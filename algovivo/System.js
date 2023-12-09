@@ -79,13 +79,13 @@ class System {
       throw new Error("indices required");
     }
     const indices = args.indices;
-    const numSprings = indices.length;
-    const numSprings0 = this.numMuscles;
+    const numMuscles = indices.length;
+    const numMuscles0 = this.numMuscles;
 
     const mgr = this.memoryManager;
     const ten = this.ten;
 
-    const springs = mgr.malloc32(numSprings * 2);
+    const springs = mgr.malloc32(numMuscles * 2);
     if (this.springs != null) this.springs.free();
     this.springs = springs;
 
@@ -99,15 +99,15 @@ class System {
     if (this.l0 != null) this.l0.dispose();
     this.l0 = null;
 
-    if (numSprings != 0) {
-      const l0 = ten.zeros([numSprings]);
+    if (numMuscles != 0) {
+      const l0 = ten.zeros([numMuscles]);
       this.l0 = l0;
 
       if (args.l0 == null) {
         this.wasmInstance.exports.l0_of_x(
           this.numVertices,
           this.x0.ptr,
-          numSprings,
+          numMuscles,
           this.springs.ptr,
           this.l0.ptr
         );
@@ -117,22 +117,22 @@ class System {
     }
 
     const keepA = args.keepA ?? false;
-    if (numSprings != numSprings0) {
+    if (numMuscles != numMuscles0) {
       if (keepA) {
-        throw new Error(`keepA can only be true when the number of springs is the same (${numSprings} != ${numSprings0})`);
+        throw new Error(`keepA can only be true when the number of springs is the same (${numMuscles} != ${numMuscles0})`);
       }
       if (this.a != null) this.a.dispose();
-      if (numSprings != 0) {
-        const a = ten.zeros([numSprings]);
+      if (numMuscles != 0) {
+        const a = ten.zeros([numMuscles]);
         this.a = a;
         a.fill_(1);
       }
     } else
-    if (numSprings == 0) {
+    if (numMuscles == 0) {
       if (this.a != null) this.a.dispose();
       this.a = null;
     } else {
-      // numSprings == numSprings0 != 0
+      // numMuscles == numMuscles0 != 0
       if (!keepA) {
         this.a.fill_(1);
       }
@@ -217,7 +217,7 @@ class System {
 
   step() {
     const numVertices = this.numVertices;
-    const numSprings = this.numMuscles;
+    const numMuscles = this.numMuscles;
     const numTriangles = this.numTriangles;
 
     const fixedVertexId = this.fixedVertexId;
@@ -240,15 +240,15 @@ class System {
       // this.r.ptr,
       0,
 
-      numSprings,
-      numSprings == 0 ? 0 : this.springs.ptr,
+      numMuscles,
+      numMuscles == 0 ? 0 : this.springs.ptr,
 
       numTriangles,
       numTriangles == 0 ? 0 : this.triangles.ptr,
       numTriangles == 0 ? 0 : this.rsi.ptr,
 
-      numSprings == 0 ? 0 : this.a.ptr,
-      numSprings == 0 ? 0 : this.l0.ptr,
+      numMuscles == 0 ? 0 : this.a.ptr,
+      numMuscles == 0 ? 0 : this.l0.ptr,
       
       fixedVertexId,
 
