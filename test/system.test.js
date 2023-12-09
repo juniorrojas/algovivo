@@ -3,7 +3,7 @@ const utils = require("./utils");
 
 expect.extend({ toBeCloseToArray: utils.toBeCloseToArray });
 
-test("set x", async () => {
+test("set pos", async () => {
   const wasmInstance = await utils.loadWasm();
   const system = new algovivo.System({ wasmInstance });
   expect(system.numVertices()).toBe(0);
@@ -11,12 +11,14 @@ test("set x", async () => {
   expect(system.numTriangles()).toBe(0);
 
   system.set({
-    x: [
-      [0, 0]
+    pos: [
+      [1, 2]
     ]
   });
 
   expect(system.numVertices()).toBe(1);
+  expect(system.pos.toArray()).toBeCloseToArray([[1, 2]]);
+  expect(system.vel.toArray()).toBeCloseToArray([[0, 0]]);
 });
 
 test("step with no vertices", async () => {

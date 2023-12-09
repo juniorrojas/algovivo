@@ -42,9 +42,9 @@ async function render(args = {}) {
             wasmInstance: await loadWasm()
           });
           system.set({
-            x: data.x,
+            pos: data.pos,
             triangles: data.triangles,
-            springs: data.springs
+            muscles: data.muscles
           });
     
           const viewport = new algovivo.SystemViewport({ system });
@@ -61,9 +61,9 @@ async function render(args = {}) {
       },
       {
         width, height,
-        x: initStateData.x0,
+        pos: initStateData.x0,
         triangles: initData.triangles,
-        springs: initData.springs
+        muscles: initData.muscles
       }
     );
     

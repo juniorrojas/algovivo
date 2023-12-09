@@ -6,7 +6,7 @@ test("hit test", async () => {
   const system = new algovivo.System({ wasmInstance });
   
   system.set({
-    x: [
+    pos: [
       [0, 0],
       [1, 2]
     ]
