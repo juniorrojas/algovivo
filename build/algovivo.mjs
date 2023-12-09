@@ -1282,6 +1282,14 @@ class System$1 {
     this.spaceDim = 2;
   }
 
+  get pos() {
+    return this.x0;
+  }
+
+  get vel() {
+    return this.v0;
+  }
+
   numVertices() {
     if (this.x0 == null) return 0;
     return this.x0.shape.get(0);
@@ -1301,6 +1309,8 @@ class System$1 {
     const ten = this.ten;
     
     const spaceDim = this.spaceDim;
+
+    if (x == null) throw new Error("pos required");
     const numVertices = x.length;
 
     const x0 = ten.tensor(x);
@@ -1427,7 +1437,7 @@ class System$1 {
   }
 
   set(data) {
-    this.setX(data.x);
+    this.setX(data.pos);
     
     // const r = ten.zeros([numVertices]);
     // if (this.r != null) this.r.dispose();
@@ -1435,8 +1445,8 @@ class System$1 {
     this.r = null;
 
     this.setSprings({
-      indices: data.springs ?? [],
-      l0: data.springsL0
+      indices: data.muscles ?? [],
+      l0: data.musclesL0
     });
 
     this.setTriangles({
