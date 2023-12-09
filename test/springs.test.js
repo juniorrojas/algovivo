@@ -3,7 +3,7 @@ const utils = require("./utils");
 
 expect.extend({ toBeCloseToArray: utils.toBeCloseToArray });
 
-test("set x and springs", async () => {
+test("set pos and springs", async () => {
   const wasmInstance = await utils.loadWasm();
   const system = new algovivo.System({ wasmInstance });
   system.set({
@@ -14,7 +14,7 @@ test("set x and springs", async () => {
       [3, 7],
       [5, 7]
     ],
-    springs: [
+    muscles: [
       [0, 2],
       [1, 2],
       [3, 4]
@@ -29,7 +29,7 @@ test("set springs", async () => {
   const wasmInstance = await utils.loadWasm();
   const system = new algovivo.System({ wasmInstance });
   system.set({
-    x: [
+    pos: [
       [0, 0],
       [2, 0],
       [1, 1],
