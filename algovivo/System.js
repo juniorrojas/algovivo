@@ -42,7 +42,7 @@ class System {
     return this.triangles.u32().length / 3;
   }
 
-  get numSprings() {
+  get numMuscles() {
     if (this.springs == null) return 0;
     return this.springs.u32().length / 2;
   }
@@ -80,7 +80,7 @@ class System {
     }
     const indices = args.indices;
     const numSprings = indices.length;
-    const numSprings0 = this.numSprings();
+    const numSprings0 = this.numMuscles;
 
     const mgr = this.memoryManager;
     const ten = this.ten;
@@ -105,7 +105,7 @@ class System {
 
       if (args.l0 == null) {
         this.wasmInstance.exports.l0_of_x(
-          this.numVertices(),
+          this.numVertices,
           this.x0.ptr,
           numSprings,
           this.springs.ptr,
@@ -167,7 +167,7 @@ class System {
     
     if (args.rsi == null) {
       this.wasmInstance.exports.rsi_of_x(
-        this.numVertices(),
+        this.numVertices,
         this.x0.ptr,
         numTriangles,
         this.triangles.ptr,
@@ -201,7 +201,7 @@ class System {
     if (this.x0 == null) {
       throw new Error("x0 required");
     }
-    const numVertices = this.numVertices();
+    const numVertices = this.numVertices;
     const spaceDim = this.spaceDim;
     const ten = this.ten;
     
@@ -216,9 +216,9 @@ class System {
   }
 
   step() {
-    const numVertices = this.numVertices();
-    const numSprings = this.numSprings();
-    const numTriangles = this.numTriangles();
+    const numVertices = this.numVertices;
+    const numSprings = this.numMuscles;
+    const numTriangles = this.numTriangles;
 
     const fixedVertexId = this.fixedVertexId;
     const vertexMass = this.vertexMass;
