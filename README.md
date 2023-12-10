@@ -79,7 +79,7 @@ You can create a simple simulation with one triangle and two muscles, where one 
 
 The code above imports the ES6 module `algovivo.min.mjs` and loads the compiled WASM `algovivo.wasm` from [jsDelivr](https://www.jsdelivr.com/). To serve these files from your own server, you can download them from the [build](./build) directory.
 
-## muscle commands
+### muscle commands
 
 Muscle commands can be specified with `system.a.set([...])`. A value of 1 means that the muscle is relaxed and wants to keep its original rest length. Values less than 1 indicate that the muscle wants to contract to some fraction of its original rest length.
 
@@ -94,3 +94,23 @@ E(x, a) = \frac{k}{2} \left(\frac{l(x)}{a\ l_0} - 1\right)^2
 $$
 
 More details about this and other energy functions used in the simulation can be found [here](https://arxiv.org/abs/2102.05791).
+
+## build from source
+
+### build WASM
+
+```
+docker run -it -v $(pwd):/workspace juniorrojas/llvm-enzyme /bin/bash
+
+export LLVM_BIN_DIR=/usr/lib/llvm-11/bin
+export ENZYME=/Enzyme/enzyme/build/Enzyme/LLVMEnzyme-11.so
+cd /workspace
+./build.sh
+```
+
+### build JS
+
+```
+npm install
+npm run build
+```
