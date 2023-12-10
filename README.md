@@ -111,6 +111,6 @@ cd /workspace
 ### build JS
 
 ```sh
-npm install
+npm ci
 npm run build
 ```
