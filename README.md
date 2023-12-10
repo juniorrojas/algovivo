@@ -97,7 +97,7 @@ More details about this and other energy functions used in the simulation can be
 
 ## build from source
 
-### Build WASM
+### build WASM
 
 ```
 docker run -it -v $(pwd):/workspace juniorrojas/llvm-enzyme /bin/bash
@@ -108,7 +108,7 @@ cd /workspace
 ./build.sh
 ```
 
-### Build JS
+### build JS
 
 ```
 npm install
