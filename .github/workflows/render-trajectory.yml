@@ -29,6 +29,8 @@ jobs:
   generate-trajectory:
     runs-on: ubuntu-latest
     needs: build-wasm
+    env:
+      OUTPUT_DIRNAME: trajectory.out
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
@@ -38,10 +40,9 @@ jobs:
           name: algovivo.wasm
           path: build/
       - name: Generate trajectory frames
-        run: |
-          npm ci
-          npm run build
-          node test/neural/generateTrajectory.js
+        run: node test/neural/generateTrajectory.js
+      - name: Check trajectory output
+        run: test -d ${{ env.OUTPUT_DIRNAME }} || (echo "Directory does not exist" && exit 1)
   render-trajectory:
     runs-on: ubuntu-latest
     needs: generate-trajectory
