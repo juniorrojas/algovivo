@@ -1,16 +1,19 @@
 const algovivo = require("algovivo");
 const fsp = require("fs/promises");
+const path = require("path");
 const NeuralPolicy = require("./NeuralPolicy");
 const utils = require("../utils");
 
 const dataDirname = `${__dirname}/data`;
 
 async function loadMeshData() {
-  return JSON.parse(await fsp.readFile(`${dataDirname}/mesh.json`));
+  const meshFilename = path.join(dataDirname, "mesh.json");
+  return JSON.parse(await fsp.readFile(meshFilename));
 }
 
 async function loadPolicyData() {
-  return JSON.parse(await fsp.readFile(`${dataDirname}/policy.json`));
+  const policyFilename = path.join(dataDirname, "policy.json");
+  return JSON.parse(await fsp.readFile(policyFilename));
 }
 
 async function main() {
@@ -33,7 +36,7 @@ async function main() {
   });
   policy.loadData(policyData);
 
-  const outputDirname = `${__dirname}/data/trajectory`;
+  const outputDirname = path.join(__dirname, "data", "trajectory");
 
   await utils.cleandir(outputDirname);
 
