@@ -5,8 +5,8 @@ namespace algovivo {
 
 static float backward_euler_loss(
   int num_vertices,
-  const float* x,
-  const float* x0, const float* v0,
+  const float* pos,
+  const float* pos0, const float* vel0,
   
   float h,
   const float* r,
@@ -29,9 +29,9 @@ static float backward_euler_loss(
   float potential_energy = 0.0;
 
   for (int i = 0; i < num_vertices; i++) {
-    vec2_get(p, x, i);
-    vec2_get(v, v0, i);
-    vec2_get(p0, x0, i);
+    vec2_get(p, pos, i);
+    vec2_get(v, vel0, i);
+    vec2_get(p0, pos0, i);
     accumulate_inertial_energy(
       inertial_energy,
       px, py,
@@ -49,7 +49,7 @@ static float backward_euler_loss(
 
     accumulate_spring_energy(
       potential_energy,
-      x,
+      pos,
       i1, i2,
       a[i], l0[i]
     );
@@ -69,7 +69,7 @@ static float backward_euler_loss(
 
     accumulate_triangle_energy(
       potential_energy,
-      x,
+      pos,
       i1, i2, i3,
       rsi00, rsi01,
       rsi10, rsi11
@@ -79,11 +79,11 @@ static float backward_euler_loss(
   for (int i = 0; i < num_vertices; i++) {
     const auto offset = space_dim * i;
     
-    const auto px = x[offset    ];
-    const auto py = x[offset + 1];
+    const auto px = pos[offset    ];
+    const auto py = pos[offset + 1];
 
-    const auto p0x = x0[offset    ];
-    const auto p0y = x0[offset + 1];
+    const auto p0x = pos0[offset    ];
+    const auto p0y = pos0[offset + 1];
 
     accumulate_gravity_energy(
       potential_energy,
