@@ -42,8 +42,8 @@ async function main() {
   for (let i = 0; i < n; i++) {
     console.log(`${i + 1} / ${n}`);
     const itemData = {
-      x0: system.pos0.toArray(),
-      v0: system.vel0.toArray(),
+      pos0: system.pos0.toArray(),
+      vel0: system.vel0.toArray(),
       a0: system.a.toArray()
     };
 
@@ -51,8 +51,8 @@ async function main() {
     policy.step({ trace: policyTrace });
     system.step();
 
-    itemData.x1 = system.pos0.toArray();
-    itemData.v1 = system.vel0.toArray();
+    itemData.pos1 = system.pos0.toArray();
+    itemData.vel1 = system.vel0.toArray();
     itemData.a1 = system.a.toArray();
     itemData.policy_input = policyTrace.policyInput;
     itemData.policy_output = policyTrace.policyOutput;
