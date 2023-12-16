@@ -1,16 +1,19 @@
 const algovivo = require("algovivo");
 const fsp = require("fs/promises");
+const path = require("path");
 const NeuralPolicy = require("./NeuralPolicy");
 const utils = require("../utils");
 
-const dataDirname = `${__dirname}/data`;
+const dataDirname = path.join(__dirname, "data");
 
 async function loadMeshData() {
-  return JSON.parse(await fsp.readFile(`${dataDirname}/mesh.json`));
+  const meshFilename = path.join(dataDirname, "mesh.json");
+  return JSON.parse(await fsp.readFile(meshFilename));
 }
 
 async function loadPolicyData() {
-  return JSON.parse(await fsp.readFile(`${dataDirname}/policy.json`));
+  const policyFilename = path.join(dataDirname, "policy.json");
+  return JSON.parse(await fsp.readFile(policyFilename));
 }
 
 async function main() {
@@ -33,7 +36,7 @@ async function main() {
   });
   policy.loadData(policyData);
 
-  const outputDirname = `${__dirname}/data/trajectory`;
+  const outputDirname = path.join(__dirname, "data", "trajectory");
 
   await utils.cleandir(outputDirname);
 
@@ -42,8 +45,8 @@ async function main() {
   for (let i = 0; i < n; i++) {
     console.log(`${i + 1} / ${n}`);
     const itemData = {
-      x0: system.x0.toArray(),
-      v0: system.v0.toArray(),
+      pos0: system.pos0.toArray(),
+      vel0: system.vel0.toArray(),
       a0: system.a.toArray()
     };
 
@@ -51,8 +54,8 @@ async function main() {
     policy.step({ trace: policyTrace });
     system.step();
 
-    itemData.x1 = system.x0.toArray();
-    itemData.v1 = system.v0.toArray();
+    itemData.pos1 = system.pos0.toArray();
+    itemData.vel1 = system.vel0.toArray();
     itemData.a1 = system.a.toArray();
     itemData.policy_input = policyTrace.policyInput;
     itemData.policy_output = policyTrace.policyOutput;

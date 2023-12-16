@@ -61,7 +61,7 @@ async function render(args = {}) {
       },
       {
         width, height,
-        pos: initStateData.x0,
+        pos: initStateData.pos0,
         triangles: initData.triangles,
         muscles: initData.muscles
       }
@@ -75,7 +75,7 @@ async function render(args = {}) {
         system.pos0.set(data.x);
         system.a.set(data.a);
         viewport.render();
-      }, { x: stepData.x0, a: stepData.a0 });
+      }, { x: stepData.pos0, a: stepData.a0 });
       await window.screenshot({ path: `${framesDirname}/${i}.png` });
     }
 
