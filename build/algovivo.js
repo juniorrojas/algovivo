@@ -3342,7 +3342,7 @@
 
 	  setVertexVel(i, p) {
 	    const system = this.system;
-	    const vF32 = system.v0.slot.f32();
+	    const vF32 = system.vel.slot.f32();
 	    const offset = i * 2;
 	    vF32[offset] = p[0];
 	    vF32[offset + 1] = p[1];
