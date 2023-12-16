@@ -199,20 +199,20 @@ class System {
 
   updateTmpBuffers() {
     if (this.pos0 == null) {
-      throw new Error("x0 required");
+      throw new Error("pos0 required");
     }
     const numVertices = this.numVertices;
     const spaceDim = this.spaceDim;
     const ten = this.ten;
     
     // TODO only allocate new memory if necessary
-    const xGrad = ten.zeros([numVertices, spaceDim]);
-    if (this.xGrad != null) this.xGrad.dispose();
-    this.xGrad = xGrad;
+    const posGrad = ten.zeros([numVertices, spaceDim]);
+    if (this.posGrad != null) this.posGrad.dispose();
+    this.posGrad = posGrad;
 
-    const xTmp = ten.zeros([numVertices, spaceDim]);
-    if (this.xTmp != null) this.xTmp.dispose();
-    this.xTmp = xTmp;
+    const posTmp = ten.zeros([numVertices, spaceDim]);
+    if (this.posTmp != null) this.posTmp.dispose();
+    this.posTmp = posTmp;
   }
 
   step() {
@@ -227,8 +227,8 @@ class System {
       numVertices,
       
       numVertices == 0 ? 0 : this.pos1.ptr,
-      numVertices == 0 ? 0 : this.xGrad.ptr,
-      numVertices == 0 ? 0 : this.xTmp.ptr,
+      numVertices == 0 ? 0 : this.posGrad.ptr,
+      numVertices == 0 ? 0 : this.posTmp.ptr,
 
       numVertices == 0 ? 0 : this.pos0.ptr,
 
@@ -270,13 +270,13 @@ class System {
       this.pos1.dispose();
       this.pos1 = null;
     }
-    if (this.xGrad != null) {
-      this.xGrad.dispose();
-      this.xGrad = null;
+    if (this.posGrad != null) {
+      this.posGrad.dispose();
+      this.posGrad = null;
     }
-    if (this.xTmp != null) {
-      this.xTmp.dispose();
-      this.xTmp = null;
+    if (this.posTmp != null) {
+      this.posTmp.dispose();
+      this.posTmp = null;
     }
     if (this.vel0 != null) {
       this.vel0.dispose();
