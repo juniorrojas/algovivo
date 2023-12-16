@@ -29,12 +29,12 @@ void l0_of_pos(
 __attribute__((always_inline))
 void accumulate_spring_energy(
   float &energy,
-  const float* x,
+  const float* pos,
   int i1, int i2,
   float a, float l0
 ) {
-  vec2_get(p1, x, i1);
-  vec2_get(p2, x, i2);
+  vec2_get(p1, pos, i1);
+  vec2_get(p2, pos, i2);
 
   vec2_sub(d, p1, p2);
   const auto q = dx * dx + dy * dy;
