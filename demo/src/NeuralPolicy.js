@@ -22,10 +22,10 @@ export default class NeuralPolicy {
 
     const numVertices = system.numVertices;
     const numMuscles = system.numMuscles;
-    const spaceDim = 2;
+    const spaceDim = system.spaceDim;
 
-    this.projectedX = ten.zeros([numVertices, spaceDim]);
-    this.projectedV = ten.zeros([numVertices, spaceDim]);
+    this.projectedPos = ten.zeros([numVertices, spaceDim]);
+    this.projectedVel = ten.zeros([numVertices, spaceDim]);
     const inputSize = numVertices * spaceDim * 2;
     const outputSize = numMuscles;
     this.input = ten.zeros([inputSize]);
@@ -51,8 +51,8 @@ export default class NeuralPolicy {
       system.vel.ptr,
       this.centerVertexId,
       this.forwardVertexId,
-      this.projectedX.ptr,
-      this.projectedV.ptr,
+      this.projectedPos.ptr,
+      this.projectedVel.ptr,
       this.input.ptr
     );
 
@@ -103,8 +103,8 @@ export default class NeuralPolicy {
   }
 
   dispose() {
-    if (this.projectedX != null) this.projectedX.dispose();
-    if (this.projectedV != null) this.projectedV.dispose();
+    if (this.projectedPos != null) this.projectedPos.dispose();
+    if (this.projectedVel != null) this.projectedVel.dispose();
     if (this.input != null) this.input.dispose();
     this.model.dispose();
   }
