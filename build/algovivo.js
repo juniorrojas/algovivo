@@ -1368,7 +1368,7 @@
 	      this.l0 = l0;
 
 	      if (args.l0 == null) {
-	        this.wasmInstance.exports.l0_of_x(
+	        this.wasmInstance.exports.l0_of_pos(
 	          this.numVertices,
 	          this.x0.ptr,
 	          numMuscles,
@@ -1430,7 +1430,7 @@
 	    this.rsi = rsi;
 	    
 	    if (args.rsi == null) {
-	      this.wasmInstance.exports.rsi_of_x(
+	      this.wasmInstance.exports.rsi_of_pos(
 	        this.numVertices,
 	        this.x0.ptr,
 	        numTriangles,
