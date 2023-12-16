@@ -166,7 +166,7 @@ class System {
     this.rsi = rsi;
     
     if (args.rsi == null) {
-      this.wasmInstance.exports.rsi_of_x(
+      this.wasmInstance.exports.rsi_of_pos(
         this.numVertices,
         this.x0.ptr,
         numTriangles,
