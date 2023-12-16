@@ -90,10 +90,10 @@ class System {
     this.muscles = muscles;
 
     const musclesU32 = muscles.u32();
-    indices.forEach((s, i) => {
+    indices.forEach((m, i) => {
       const offset = i * 2;
-      musclesU32[offset    ] = s[0];
-      musclesU32[offset + 1] = s[1];
+      musclesU32[offset    ] = m[0];
+      musclesU32[offset + 1] = m[1];
     });
 
     if (this.l0 != null) this.l0.dispose();
