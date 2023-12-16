@@ -36,7 +36,7 @@ async function main() {
   });
   policy.loadData(policyData);
 
-  const outputDirname = path.join(__dirname, "data", "trajectory");
+  const outputDirname = process.env.OUTPUT_DIRNAME || path.join(__dirname, "data", "trajectory");
 
   await utils.cleandir(outputDirname);
 
