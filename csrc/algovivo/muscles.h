@@ -8,11 +8,11 @@ extern "C"
 void l0_of_pos(
   int num_vertices,
   const float* pos,
-  int num_springs,
+  int num_edges,
   const int* indices,
   float* l0
 ) {
-  for (int i = 0; i < num_springs; i++) {
+  for (int i = 0; i < num_edges; i++) {
     const auto offset = 2 * i;
     const auto i1 = indices[offset    ];
     const auto i2 = indices[offset + 1];
@@ -27,7 +27,7 @@ void l0_of_pos(
 }
 
 __attribute__((always_inline))
-void accumulate_spring_energy(
+void accumulate_muscle_energy(
   float &energy,
   const float* pos,
   int i1, int i2,
