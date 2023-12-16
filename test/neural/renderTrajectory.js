@@ -1,6 +1,7 @@
 const algovivo = require("algovivo");
 const { cleandir, getNumFilesWithExtension } = require("../utils");
 const fs = require("fs");
+const path = require("path");
 const { Window, runWebServer } = require("./utils");
 
 async function render(args = {}) {
@@ -21,9 +22,9 @@ async function render(args = {}) {
     });
     await window.launch();
 
-    const initData = JSON.parse(fs.readFileSync(`${rootDirname}/mesh.json`));
-    const trajectoryDataDirname = `${rootDirname}/trajectory`;
-    const initStateData = JSON.parse(fs.readFileSync(`${trajectoryDataDirname}/0.json`));
+    const initData = JSON.parse(fs.readFileSync(path.join(rootDirname, "mesh.json")));
+    const trajectoryDataDirname = path.join(rootDirname, "trajectory");
+    const initStateData = JSON.parse(fs.readFileSync(path.join(trajectoryDataDirname, "0.json")));
 
     await window.evaluate(
       async (data) => {
@@ -70,25 +71,27 @@ async function render(args = {}) {
     const n = await getNumFilesWithExtension(trajectoryDataDirname, ".json");
     for (let i = 0; i < n; i++) {
       console.log(`${i + 1} / ${n}`);
-      const stepData = JSON.parse(fs.readFileSync(`${trajectoryDataDirname}/${i}.json`));
+      const stepFilename = path.join(trajectoryDataDirname, `${i}.json`);
+      const stepData = JSON.parse(fs.readFileSync(stepFilename));
       await window.evaluate(async (data) => {
-        system.pos0.set(data.x);
+        system.pos.set(data.pos);
         system.a.set(data.a);
         viewport.render();
-      }, { x: stepData.pos0, a: stepData.a0 });
-      await window.screenshot({ path: `${framesDirname}/${i}.png` });
+      }, { pos: stepData.pos0, a: stepData.a0 });
+      const frameFilename = path.join(framesDirname, `${i}.png`);
+      await window.screenshot({ path: frameFilename });
     }
 
     await window.close();
   }
 
   await runWebServer({
-    staticDirname: `${__dirname}/public`,
+    staticDirname: path.join(__dirname, "public"),
     onReady: main
   });
 }
 
 render({
-  dataDirname: `${__dirname}/data`,
-  framesDirname: `${__dirname}/frames.out`
+  dataDirname: path.join(__dirname, "data"),
+  framesDirname: path.join(__dirname, "frames.out")
 });
