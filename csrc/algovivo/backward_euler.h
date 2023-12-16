@@ -6,7 +6,7 @@
 #include "friction.h"
 #include "collision.h"
 #include "gravity.h"
-#include "framenorm.h"
+#include "frame_projection.h"
 #include "enzyme.h"
 
 namespace algovivo {

@@ -11,7 +11,7 @@ test("dot2d", async () => {
   expect(r).toBe(11);
 });
 
-test("framenorm_projection", async () => {
+test("frame_projection", async () => {
   const ten = await mmgrten.engine({
     wasmInstance: await loadWasm()
   });
@@ -29,7 +29,7 @@ test("framenorm_projection", async () => {
   const centerId = 0;
   const forwardId = 1;
   
-  ten.wasmInstance.exports.framenorm_projection(
+  ten.wasmInstance.exports.frame_projection(
     numVertices,
     x.ptr,
     centerId,
@@ -67,7 +67,7 @@ test("make_policy_input", async () => {
 
   const policyInput = ten.zeros([spaceDim * numVertices * 2]);
 
-  ten.wasmInstance.exports.cat_xv(
+  ten.wasmInstance.exports.cat_pos_vel(
     numVertices,
     x.ptr,
     v.ptr,

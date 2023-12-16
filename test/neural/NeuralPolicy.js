@@ -13,10 +13,10 @@ class NeuralPolicy {
 
     const numVertices = system.numVertices;
     const numMuscles = system.numMuscles;
-    const spaceDim = 2;
+    const spaceDim = system.spaceDim;
 
-    this.projectedX = ten.zeros([numVertices, spaceDim]);
-    this.projectedV = ten.zeros([numVertices, spaceDim]);
+    this.projectedPos = ten.zeros([numVertices, spaceDim]);
+    this.projectedVel = ten.zeros([numVertices, spaceDim]);
     const inputSize = numVertices * spaceDim * 2;
     const outputSize = numMuscles;
     this.input = ten.zeros([inputSize]);
@@ -42,8 +42,8 @@ class NeuralPolicy {
       system.vel.ptr,
       this.centerVertexId,
       this.forwardVertexId,
-      this.projectedX.ptr,
-      this.projectedV.ptr,
+      this.projectedPos.ptr,
+      this.projectedVel.ptr,
       this.input.ptr
     );
 
