@@ -73,10 +73,10 @@ async function render(args = {}) {
       console.log(`${i + 1} / ${n}`);
       const stepData = JSON.parse(fs.readFileSync(path.join(trajectoryDataDirname, `${i}.json`)));
       await window.evaluate(async (data) => {
-        system.pos0.set(data.x);
+        system.pos.set(data.pos);
         system.a.set(data.a);
         viewport.render();
-      }, { x: stepData.pos0, a: stepData.a0 });
+      }, { pos: stepData.pos0, a: stepData.a0 });
       await window.screenshot({ path: path.join(framesDirname, `${i}.png`) });
     }
 
