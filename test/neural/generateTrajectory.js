@@ -4,7 +4,7 @@ const path = require("path");
 const NeuralPolicy = require("./NeuralPolicy");
 const utils = require("../utils");
 
-const dataDirname = `${__dirname}/data`;
+const dataDirname = path.join(__dirname, "data");
 
 async function loadMeshData() {
   const meshFilename = path.join(dataDirname, "mesh.json");

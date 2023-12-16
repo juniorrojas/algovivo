@@ -2,18 +2,21 @@ const algovivo = require("../../algovivo");
 const utils = require("../utils");
 const fsp = require("fs/promises");
 const fs = require("fs");
+const path = require("path");
 const NeuralPolicy = require("./NeuralPolicy");
 
 expect.extend({ toBeCloseToArray: utils.toBeCloseToArray });
 
-const dataDirname = `${__dirname}/data`;
+const dataDirname = path.join(__dirname, "data");
 
 async function loadMeshData() {
-  return JSON.parse(await fsp.readFile(`${dataDirname}/mesh.json`));
+  const meshFilename = path.join(dataDirname, "mesh.json");
+  return JSON.parse(await fsp.readFile(meshFilename));
 }
 
 async function loadPolicyData() {
-  return JSON.parse(await fsp.readFile(`${dataDirname}/policy.json`));
+  const policyFilename = path.join(dataDirname, "policy.json");
+  return JSON.parse(await fsp.readFile(policyFilename));
 }
 
 test("neural policy", async () => {
@@ -39,7 +42,7 @@ test("neural policy", async () => {
   });
   policy.loadData(policyData);
 
-  const trajectoryDataDirname = `${dataDirname}/trajectory`;
+  const trajectoryDataDirname = path.join(dataDirname, "trajectory");
 
   let expectedNumReservedBytes = null;
   const mgr = system.memoryManager;
@@ -47,7 +50,8 @@ test("neural policy", async () => {
   const n = await utils.getNumFilesWithExtension(trajectoryDataDirname, ".json");
   expect(n).toBe(100);
   for (let i = 0; i < n; i++) {
-    const data = JSON.parse(fs.readFileSync(`${trajectoryDataDirname}/${i}.json`));
+    const filename = path.join(trajectoryDataDirname, `${i}.json`);
+    const data = JSON.parse(fs.readFileSync(filename));
 
     system.pos0.set(data.x0);
     system.vel0.set(data.v0);
