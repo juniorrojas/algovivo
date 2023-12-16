@@ -5,8 +5,8 @@ namespace algovivo {
 
 static float backward_euler_loss(
   int num_vertices,
-  const float* x,
-  const float* x0, const float* v0,
+  const float* pos,
+  const float* pos0, const float* vel0,
   
   float h,
   const float* r,
@@ -29,9 +29,9 @@ static float backward_euler_loss(
   float potential_energy = 0.0;
 
   for (int i = 0; i < num_vertices; i++) {
-    vec2_get(p, x, i);
-    vec2_get(v, v0, i);
-    vec2_get(p0, x0, i);
+    vec2_get(p, pos, i);
+    vec2_get(v, vel0, i);
+    vec2_get(p0, pos0, i);
     accumulate_inertial_energy(
       inertial_energy,
       px, py,
@@ -49,7 +49,7 @@ static float backward_euler_loss(
 
     accumulate_spring_energy(
       potential_energy,
-      x,
+      pos,
       i1, i2,
       a[i], l0[i]
     );
@@ -69,7 +69,7 @@ static float backward_euler_loss(
 
     accumulate_triangle_energy(
       potential_energy,
-      x,
+      pos,
       i1, i2, i3,
       rsi00, rsi01,
       rsi10, rsi11
@@ -79,11 +79,11 @@ static float backward_euler_loss(
   for (int i = 0; i < num_vertices; i++) {
     const auto offset = space_dim * i;
     
-    const auto px = x[offset    ];
-    const auto py = x[offset + 1];
+    const auto px = pos[offset    ];
+    const auto py = pos[offset + 1];
 
-    const auto p0x = x0[offset    ];
-    const auto p0y = x0[offset + 1];
+    const auto p0x = pos0[offset    ];
+    const auto p0y = pos0[offset + 1];
 
     accumulate_gravity_energy(
       potential_energy,
@@ -109,9 +109,9 @@ static float backward_euler_loss(
 
 static void backward_euler_loss_grad(
   int num_vertices,
-  float* x, float* x_grad,
-  float* x0,
-  float* v0, float h,
+  float* pos, float* pos_grad,
+  float* pos0,
+  float* vel0, float h,
   float* r,
 
   int num_springs,
@@ -129,9 +129,9 @@ static void backward_euler_loss_grad(
   __enzyme_autodiff(
     backward_euler_loss,
     enzyme_const, num_vertices,
-    enzyme_dup, x, x_grad,
-    enzyme_const, x0,
-    enzyme_const, v0,
+    enzyme_dup, pos, pos_grad,
+    enzyme_const, pos0,
+    enzyme_const, vel0,
     enzyme_const, h,
     enzyme_const, r,
 
@@ -154,8 +154,8 @@ struct System {
   float h;
 
   float vertex_mass;
-  float* x0;
-  float* v0;
+  float* pos0;
+  float* vel0;
   float* r;
 
   int num_springs;
@@ -170,10 +170,10 @@ struct System {
 
   int fixed_vertex_id;
 
-  float forward(float* x) {
+  float forward(float* pos) {
     return backward_euler_loss(
-      num_vertices, x,
-      x0, v0, h, r,
+      num_vertices, pos,
+      pos0, vel0, h, r,
       num_springs, springs,
       num_triangles,
       triangles,
@@ -183,10 +183,10 @@ struct System {
     );
   }
 
-  void backward(float* x, float* x_grad) {
+  void backward(float* pos, float* pos_grad) {
     backward_euler_loss_grad(
-      num_vertices, x,
-      x_grad, x0, v0, h, r,
+      num_vertices, pos,
+      pos_grad, pos0, vel0, h, r,
       num_springs, springs,
       num_triangles, triangles, rsi,
       a, l0,
@@ -198,9 +198,9 @@ struct System {
 extern "C"
 void backward_euler_update(
   int num_vertices,
-  float* x1, float* x_grad, float* x_tmp,
-  float* x0,
-  float* v0, float* v1,
+  float* pos1, float* pos_grad, float* pos_tmp,
+  float* pos0,
+  float* vel0, float* vel1,
   float h,
   float* r,
 
@@ -223,8 +223,8 @@ void backward_euler_update(
 
   system.num_vertices = num_vertices;
   system.vertex_mass = vertex_mass;
-  system.x0 = x0;
-  system.v0 = v0;
+  system.pos0 = pos0;
+  system.vel0 = vel0;
   system.r = r;
 
   system.num_springs = num_springs;
@@ -240,8 +240,8 @@ void backward_euler_update(
 
   algovivo::backward_euler_update(
     system,
-    x1, v1,
-    x_grad, x_tmp
+    pos1, vel1,
+    pos_grad, pos_tmp
   );
 }
 
