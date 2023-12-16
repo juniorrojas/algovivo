@@ -11,8 +11,8 @@ static float backward_euler_loss(
   float h,
   const float* r,
 
-  int num_springs,
-  const int* springs,
+  int num_muscles,
+  const int* muscles,
 
   int num_triangles,
   const int* triangles,
@@ -42,12 +42,12 @@ static float backward_euler_loss(
     );
   }
 
-  for (int i = 0; i < num_springs; i++) {
+  for (int i = 0; i < num_muscles; i++) {
     const auto offset = i * 2;
-    const auto i1 = springs[offset    ];
-    const auto i2 = springs[offset + 1];
+    const auto i1 = muscles[offset    ];
+    const auto i2 = muscles[offset + 1];
 
-    accumulate_spring_energy(
+    accumulate_muscle_energy(
       potential_energy,
       pos,
       i1, i2,
@@ -114,8 +114,8 @@ static void backward_euler_loss_grad(
   float* vel0, float h,
   float* r,
 
-  int num_springs,
-  int* springs,
+  int num_muscles,
+  int* muscles,
 
   int num_triangles,
   int* triangles,
@@ -135,8 +135,8 @@ static void backward_euler_loss_grad(
     enzyme_const, h,
     enzyme_const, r,
 
-    enzyme_const, num_springs,
-    enzyme_const, springs,
+    enzyme_const, num_muscles,
+    enzyme_const, muscles,
 
     enzyme_const, num_triangles,
     enzyme_const, triangles,
@@ -158,8 +158,8 @@ struct System {
   float* vel0;
   float* r;
 
-  int num_springs;
-  int* springs;
+  int num_muscles;
+  int* muscles;
 
   int num_triangles;
   int* triangles;
@@ -174,7 +174,7 @@ struct System {
     return backward_euler_loss(
       num_vertices, pos,
       pos0, vel0, h, r,
-      num_springs, springs,
+      num_muscles, muscles,
       num_triangles,
       triangles,
       rsi,
@@ -187,7 +187,7 @@ struct System {
     backward_euler_loss_grad(
       num_vertices, pos,
       pos_grad, pos0, vel0, h, r,
-      num_springs, springs,
+      num_muscles, muscles,
       num_triangles, triangles, rsi,
       a, l0,
       vertex_mass
@@ -204,8 +204,8 @@ void backward_euler_update(
   float h,
   float* r,
 
-  int num_springs,
-  int* springs,
+  int num_muscles,
+  int* muscles,
 
   int num_triangles,
   int* triangles,
@@ -227,8 +227,8 @@ void backward_euler_update(
   system.vel0 = vel0;
   system.r = r;
 
-  system.num_springs = num_springs;
-  system.springs = springs;
+  system.num_muscles = num_muscles;
+  system.muscles = muscles;
   system.a = a;
   system.l0 = l0;
 
