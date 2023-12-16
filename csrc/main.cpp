@@ -154,8 +154,8 @@ struct System {
   float h;
 
   float vertex_mass;
-  float* x0;
-  float* v0;
+  float* pos0;
+  float* vel0;
   float* r;
 
   int num_springs;
@@ -173,7 +173,7 @@ struct System {
   float forward(float* x) {
     return backward_euler_loss(
       num_vertices, x,
-      x0, v0, h, r,
+      pos0, vel0, h, r,
       num_springs, springs,
       num_triangles,
       triangles,
@@ -183,10 +183,10 @@ struct System {
     );
   }
 
-  void backward(float* x, float* x_grad) {
+  void backward(float* pos, float* pos_grad) {
     backward_euler_loss_grad(
-      num_vertices, x,
-      x_grad, x0, v0, h, r,
+      num_vertices, pos,
+      pos_grad, pos0, vel0, h, r,
       num_springs, springs,
       num_triangles, triangles, rsi,
       a, l0,
@@ -223,8 +223,8 @@ void backward_euler_update(
 
   system.num_vertices = num_vertices;
   system.vertex_mass = vertex_mass;
-  system.x0 = x0;
-  system.v0 = v0;
+  system.pos0 = x0;
+  system.vel0 = v0;
   system.r = r;
 
   system.num_springs = num_springs;

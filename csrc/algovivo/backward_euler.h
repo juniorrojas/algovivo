@@ -12,15 +12,15 @@
 namespace algovivo {
 
 template <typename T>
-void backward_euler_update_x(
+void backward_euler_update_pos(
   T system,
   float* x,
   float* x_grad, float* x_tmp
 ) {
   const auto space_dim = 2;
   const auto num_vertices = system.num_vertices;
-  const auto x0 = system.x0;
-  const auto v = system.v0;
+  const auto x0 = system.pos0;
+  const auto v = system.vel0;
   const auto fixed_vertex_id = system.fixed_vertex_id;
   const auto h = system.h;
 
@@ -73,43 +73,43 @@ void backward_euler_update_x(
 }
 
 extern "C"
-void backward_euler_update_v(
+void backward_euler_update_vel(
   float num_vertices,
-  float* x0, float* v0,
-  float* x1, float* v1,
+  float* pos0, float* vel0,
+  float* pos1, float* vel1,
   float h
 ) {
   const auto space_dim = 2;
-  // v = (x1 - x0) / h
+  // vel1 = (pos1 - pos0) / h
   addmuls_(
     num_vertices * space_dim,
-    x1, x0,
+    pos1, pos0,
     -1.0,
-    v1
+    vel1
   );
   scale_(
     num_vertices * space_dim,
-    v1, 1 / h
+    vel1, 1 / h
   );
 }
 
 template <typename T>
 void backward_euler_update(
   T system,
-  float* x1,
-  float* v1,
-  float* x_grad, float* x_tmp
+  float* pos1,
+  float* vel1,
+  float* pos_grad, float* pos_tmp
 ) {
-  backward_euler_update_x(
+  backward_euler_update_pos(
     system,
-    x1,
-    x_grad, x_tmp
+    pos1,
+    pos_grad, pos_tmp
   );
-  backward_euler_update_v(
+  backward_euler_update_vel(
     system.num_vertices,
-    system.x0,
-    system.v0,
-    x1, v1,
+    system.pos0,
+    system.vel0,
+    pos1, vel1,
     system.h
   );
 }
