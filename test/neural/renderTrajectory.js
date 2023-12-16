@@ -1,6 +1,7 @@
 const algovivo = require("algovivo");
 const { cleandir, getNumFilesWithExtension } = require("../utils");
 const fs = require("fs");
+const path = require("path");
 const { Window, runWebServer } = require("./utils");
 
 async function render(args = {}) {
@@ -21,9 +22,9 @@ async function render(args = {}) {
     });
     await window.launch();
 
-    const initData = JSON.parse(fs.readFileSync(`${rootDirname}/mesh.json`));
-    const trajectoryDataDirname = `${rootDirname}/trajectory`;
-    const initStateData = JSON.parse(fs.readFileSync(`${trajectoryDataDirname}/0.json`));
+    const initData = JSON.parse(fs.readFileSync(path.join(rootDirname, "mesh.json")));
+    const trajectoryDataDirname = path.join(rootDirname, "trajectory");
+    const initStateData = JSON.parse(fs.readFileSync(path.join(trajectoryDataDirname, "0.json")));
 
     await window.evaluate(
       async (data) => {
