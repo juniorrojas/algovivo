@@ -109,9 +109,9 @@ static float backward_euler_loss(
 
 static void backward_euler_loss_grad(
   int num_vertices,
-  float* x, float* x_grad,
-  float* x0,
-  float* v0, float h,
+  float* pos, float* pos_grad,
+  float* pos0,
+  float* vel0, float h,
   float* r,
 
   int num_springs,
@@ -129,9 +129,9 @@ static void backward_euler_loss_grad(
   __enzyme_autodiff(
     backward_euler_loss,
     enzyme_const, num_vertices,
-    enzyme_dup, x, x_grad,
-    enzyme_const, x0,
-    enzyme_const, v0,
+    enzyme_dup, pos, pos_grad,
+    enzyme_const, pos0,
+    enzyme_const, vel0,
     enzyme_const, h,
     enzyme_const, r,
 
@@ -170,9 +170,9 @@ struct System {
 
   int fixed_vertex_id;
 
-  float forward(float* x) {
+  float forward(float* pos) {
     return backward_euler_loss(
-      num_vertices, x,
+      num_vertices, pos,
       pos0, vel0, h, r,
       num_springs, springs,
       num_triangles,
