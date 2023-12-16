@@ -1,5 +1,5 @@
 #pragma once
 
-#include "springs.h"
+#include "muscles.h"
 #include "triangles.h"
 #include "backward_euler.h"
