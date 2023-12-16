@@ -72,7 +72,7 @@ async function render(args = {}) {
       console.log(`${i + 1} / ${n}`);
       const stepData = JSON.parse(fs.readFileSync(`${trajectoryDataDirname}/${i}.json`));
       await window.evaluate(async (data) => {
-        system.x0.set(data.x);
+        system.pos0.set(data.x);
         system.a.set(data.a);
         viewport.render();
       }, { x: stepData.x0, a: stepData.a0 });

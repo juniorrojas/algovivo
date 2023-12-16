@@ -453,7 +453,7 @@ class SystemViewport {
     if (system.numVertices == 0) {
       mesh.x = [];
     } else {
-      const x = system.x0.toArray();
+      const x = system.pos.toArray();
       mesh.x = x;
     }
   }
@@ -475,7 +475,7 @@ class SystemViewport {
   hitTestVertex(p, hitTestRadius = 0.31) {
     const numVertices = this.system.numVertices;
     if (numVertices == 0) return null;
-    const xF32 = this.system.x0.slot.f32();
+    const xF32 = this.system.pos.slot.f32();
     let closestVertex = null;
     let closestQuadrance = Infinity;
     const hitTestRadius2 = hitTestRadius * hitTestRadius;
@@ -494,7 +494,7 @@ class SystemViewport {
 
   setVertexPos(i, p) {
     const system = this.system;
-    const xF32 = system.x0.slot.f32();
+    const xF32 = system.pos.slot.f32();
     const offset = i * 2;
     xF32[offset] = p[0];
     xF32[offset + 1] = p[1];

@@ -25,16 +25,16 @@ class System {
   }
 
   get pos() {
-    return this.x0;
+    return this.pos0;
   }
 
   get vel() {
-    return this.v0;
+    return this.vel0;
   }
 
   get numVertices() {
-    if (this.x0 == null) return 0;
-    return this.x0.shape.get(0);
+    if (this.pos0 == null) return 0;
+    return this.pos0.shape.get(0);
   }
 
   get numTriangles() {
@@ -47,29 +47,29 @@ class System {
     return this.muscles.u32().length / 2;
   }
 
-  setX(x) {
+  setVertices(pos) {
     const ten = this.ten;
     
     const spaceDim = this.spaceDim;
 
-    if (x == null) throw new Error("pos required");
-    const numVertices = x.length;
+    if (pos == null) throw new Error("pos required");
+    const numVertices = pos.length;
 
-    const x0 = ten.tensor(x);
-    if (this.x0 != null) this.x0.dispose();
-    this.x0 = x0;
+    const pos0 = ten.tensor(pos);
+    if (this.pos0 != null) this.pos0.dispose();
+    this.pos0 = pos0;
 
-    const x1 = ten.zeros([numVertices, spaceDim]);
-    if (this.x1 != null) this.x1.dispose();
-    this.x1 = x1;
+    const pos1 = ten.zeros([numVertices, spaceDim]);
+    if (this.pos1 != null) this.pos1.dispose();
+    this.pos1 = pos1;
 
-    const v0 = ten.zeros([numVertices, spaceDim]);
-    if (this.v0 != null) this.v0.dispose()
-    this.v0 = v0;
+    const vel0 = ten.zeros([numVertices, spaceDim]);
+    if (this.vel0 != null) this.vel0.dispose();
+    this.vel0 = vel0;
 
-    const v1 = ten.zeros([numVertices, spaceDim]);
-    if (this.v1 != null) this.v1.dispose();
-    this.v1 = v1;
+    const vel1 = ten.zeros([numVertices, spaceDim]);
+    if (this.vel1 != null) this.vel1.dispose();
+    this.vel1 = vel1;
 
     this.updateTmpBuffers();
   }
@@ -90,10 +90,10 @@ class System {
     this.muscles = muscles;
 
     const musclesU32 = muscles.u32();
-    indices.forEach((s, i) => {
+    indices.forEach((m, i) => {
       const offset = i * 2;
-      musclesU32[offset    ] = s[0];
-      musclesU32[offset + 1] = s[1];
+      musclesU32[offset    ] = m[0];
+      musclesU32[offset + 1] = m[1];
     });
 
     if (this.l0 != null) this.l0.dispose();
@@ -106,7 +106,7 @@ class System {
       if (args.l0 == null) {
         this.wasmInstance.exports.l0_of_pos(
           this.numVertices,
-          this.x0.ptr,
+          this.pos0.ptr,
           numMuscles,
           this.muscles.ptr,
           this.l0.ptr
@@ -168,7 +168,7 @@ class System {
     if (args.rsi == null) {
       this.wasmInstance.exports.rsi_of_pos(
         this.numVertices,
-        this.x0.ptr,
+        this.pos0.ptr,
         numTriangles,
         this.triangles.ptr,
         this.rsi.ptr
@@ -178,8 +178,8 @@ class System {
     }
   }
 
-  set(data) {
-    this.setX(data.pos);
+  set(args) {
+    this.setVertices(args.pos);
     
     // const r = ten.zeros([numVertices]);
     // if (this.r != null) this.r.dispose();
@@ -187,32 +187,32 @@ class System {
     this.r = null;
 
     this.setMuscles({
-      indices: data.muscles ?? [],
-      l0: data.musclesL0
+      indices: args.muscles ?? [],
+      l0: args.musclesL0
     });
 
     this.setTriangles({
-      indices: data.triangles ?? [],
-      rsi: data.trianglesRsi
+      indices: args.triangles ?? [],
+      rsi: args.trianglesRsi
     });
   }
 
   updateTmpBuffers() {
-    if (this.x0 == null) {
-      throw new Error("x0 required");
+    if (this.pos0 == null) {
+      throw new Error("pos0 required");
     }
     const numVertices = this.numVertices;
     const spaceDim = this.spaceDim;
     const ten = this.ten;
     
     // TODO only allocate new memory if necessary
-    const xGrad = ten.zeros([numVertices, spaceDim]);
-    if (this.xGrad != null) this.xGrad.dispose();
-    this.xGrad = xGrad;
+    const posGrad = ten.zeros([numVertices, spaceDim]);
+    if (this.posGrad != null) this.posGrad.dispose();
+    this.posGrad = posGrad;
 
-    const xTmp = ten.zeros([numVertices, spaceDim]);
-    if (this.xTmp != null) this.xTmp.dispose();
-    this.xTmp = xTmp;
+    const posTmp = ten.zeros([numVertices, spaceDim]);
+    if (this.posTmp != null) this.posTmp.dispose();
+    this.posTmp = posTmp;
   }
 
   step() {
@@ -226,14 +226,14 @@ class System {
     this.wasmInstance.exports.backward_euler_update(
       numVertices,
       
-      numVertices == 0 ? 0 : this.x1.ptr,
-      numVertices == 0 ? 0 : this.xGrad.ptr,
-      numVertices == 0 ? 0 : this.xTmp.ptr,
+      numVertices == 0 ? 0 : this.pos1.ptr,
+      numVertices == 0 ? 0 : this.posGrad.ptr,
+      numVertices == 0 ? 0 : this.posTmp.ptr,
 
-      numVertices == 0 ? 0 : this.x0.ptr,
+      numVertices == 0 ? 0 : this.pos0.ptr,
 
-      numVertices == 0 ? 0 : this.v0.ptr,
-      numVertices == 0 ? 0 : this.v1.ptr,
+      numVertices == 0 ? 0 : this.vel0.ptr,
+      numVertices == 0 ? 0 : this.vel1.ptr,
       
       this.h,
 
@@ -256,35 +256,35 @@ class System {
     );
     
     if (numVertices != 0) {
-      this.x0.slot.f32().set(this.x1.slot.f32());
-      this.v0.slot.f32().set(this.v1.slot.f32());
+      this.pos0.slot.f32().set(this.pos1.slot.f32());
+      this.vel0.slot.f32().set(this.vel1.slot.f32());
     }
   }
 
   dispose() {
-    if (this.x0 != null) {
-      this.x0.dispose();
-      this.x0 = null;
+    if (this.pos0 != null) {
+      this.pos0.dispose();
+      this.pos0 = null;
     }
-    if (this.x1 != null) {
-      this.x1.dispose();
-      this.x1 = null;
+    if (this.pos1 != null) {
+      this.pos1.dispose();
+      this.pos1 = null;
     }
-    if (this.xGrad != null) {
-      this.xGrad.dispose();
-      this.xGrad = null;
+    if (this.posGrad != null) {
+      this.posGrad.dispose();
+      this.posGrad = null;
     }
-    if (this.xTmp != null) {
-      this.xTmp.dispose();
-      this.xTmp = null;
+    if (this.posTmp != null) {
+      this.posTmp.dispose();
+      this.posTmp = null;
     }
-    if (this.v0 != null) {
-      this.v0.dispose();
-      this.v0 = null;
+    if (this.vel0 != null) {
+      this.vel0.dispose();
+      this.vel0 = null;
     }
-    if (this.v1 != null) {
-      this.v1.dispose();
-      this.v1 = null;
+    if (this.vel1 != null) {
+      this.vel1.dispose();
+      this.vel1 = null;
     }
 
     if (this.triangles != null) {
