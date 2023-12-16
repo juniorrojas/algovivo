@@ -198,9 +198,9 @@ struct System {
 extern "C"
 void backward_euler_update(
   int num_vertices,
-  float* x1, float* x_grad, float* x_tmp,
-  float* x0,
-  float* v0, float* v1,
+  float* pos1, float* pos_grad, float* pos_tmp,
+  float* pos0,
+  float* vel0, float* vel1,
   float h,
   float* r,
 
@@ -223,8 +223,8 @@ void backward_euler_update(
 
   system.num_vertices = num_vertices;
   system.vertex_mass = vertex_mass;
-  system.pos0 = x0;
-  system.vel0 = v0;
+  system.pos0 = pos0;
+  system.vel0 = vel0;
   system.r = r;
 
   system.num_springs = num_springs;
@@ -240,8 +240,8 @@ void backward_euler_update(
 
   algovivo::backward_euler_update(
     system,
-    x1, v1,
-    x_grad, x_tmp
+    pos1, vel1,
+    pos_grad, pos_tmp
   );
 }
 
