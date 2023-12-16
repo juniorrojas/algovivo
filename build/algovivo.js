@@ -1307,8 +1307,8 @@
 	  }
 
 	  get numMuscles() {
-	    if (this.springs == null) return 0;
-	    return this.springs.u32().length / 2;
+	    if (this.muscles == null) return 0;
+	    return this.muscles.u32().length / 2;
 	  }
 
 	  setX(x) {
@@ -1349,15 +1349,15 @@
 	    const mgr = this.memoryManager;
 	    const ten = this.ten;
 
-	    const springs = mgr.malloc32(numMuscles * 2);
-	    if (this.springs != null) this.springs.free();
-	    this.springs = springs;
+	    const muscles = mgr.malloc32(numMuscles * 2);
+	    if (this.muscles != null) this.muscles.free();
+	    this.muscles = muscles;
 
-	    const springsU32 = springs.u32();
+	    const musclesU32 = muscles.u32();
 	    indices.forEach((s, i) => {
 	      const offset = i * 2;
-	      springsU32[offset    ] = s[0];
-	      springsU32[offset + 1] = s[1];
+	      musclesU32[offset    ] = s[0];
+	      musclesU32[offset + 1] = s[1];
 	    });
 
 	    if (this.l0 != null) this.l0.dispose();
@@ -1372,7 +1372,7 @@
 	          this.numVertices,
 	          this.x0.ptr,
 	          numMuscles,
-	          this.springs.ptr,
+	          this.muscles.ptr,
 	          this.l0.ptr
 	        );
 	      } else {
@@ -1505,7 +1505,7 @@
 	      0,
 
 	      numMuscles,
-	      numMuscles == 0 ? 0 : this.springs.ptr,
+	      numMuscles == 0 ? 0 : this.muscles.ptr,
 
 	      numTriangles,
 	      numTriangles == 0 ? 0 : this.triangles.ptr,
@@ -1560,9 +1560,9 @@
 	      this.rsi = null;
 	    }
 
-	    if (this.springs != null) {
-	      this.springs.free();
-	      this.springs = null;
+	    if (this.muscles != null) {
+	      this.muscles.free();
+	      this.muscles = null;
 	    }
 	    if (this.l0 != null) {
 	      this.l0.dispose();
@@ -3060,9 +3060,9 @@
 	      const camera = args.camera;
 	      const scale = camera.inferScale();
 
-	      const lineIdToSpringId = args.mesh.getCustomAttribute("lineIdToSpringId");
-	      const springId = lineIdToSpringId[args.id];
-	      if (springId == null) {
+	      const lineIdToMuscleId = args.mesh.getCustomAttribute("lineIdToMuscleId");
+	      const muscleId = lineIdToMuscleId[args.id];
+	      if (muscleId == null) {
 	        const borderWidth = 0.029;
 	        ctx.beginPath();
 	        ctx.lineJoin = "round";
@@ -3100,7 +3100,7 @@
 	          throw new Error(`muscle intensity attribute must be an array with values for each fiber, found ${typeof muscleIntensity}`);
 	        }
 	        
-	        const t = muscleIntensity[springId];
+	        const t = muscleIntensity[muscleId];
 	        
 	        const cr0 = color0[0];
 	        const cr1 = color1[0];
@@ -3182,21 +3182,21 @@
 	        }
 	      }
 
-	      const springsArr = [];
-	      if (this.system.springs != null) {
-	        const springsU32 = this.system.springs.u32();
+	      const musclesArr = [];
+	      if (this.system.muscles != null) {
+	        const musclesU32 = this.system.muscles.u32();
 	        for (let i = 0; i < this.system.numMuscles; i++) {
 	          const offset = i * 2;
-	          springsArr.push([
-	            springsU32[offset    ],
-	            springsU32[offset + 1]
+	          musclesArr.push([
+	            musclesU32[offset    ],
+	            musclesU32[offset + 1]
 	          ]);
 	        }
 	      }
 
 	      this._updateMesh({
 	        triangles: trianglesArr,
-	        springs: springsArr
+	        muscles: musclesArr
 	      });
 
 	      this.needsMeshUpdate = false;
@@ -3232,28 +3232,28 @@
 	    mesh.triangles = meshData.triangles;
 	    mesh.lines = edgesFromTriangles(meshData.triangles);
 
-	    const springsHashToId = new Map();
-	    if (this.system.springs != null) {
-	      const springsU32 = this.system.springs.u32();
+	    const muscleHashToId = new Map();
+	    if (this.system.muscles != null) {
+	      const musclesU32 = this.system.muscles.u32();
 	      for (let i = 0; i < this.system.numMuscles; i++) {
 	        const offset = i * 2;
 	        const s = [
-	          springsU32[offset    ],
-	          springsU32[offset + 1]
+	          musclesU32[offset    ],
+	          musclesU32[offset + 1]
 	        ];
-	        springsHashToId.set(
+	        muscleHashToId.set(
 	          hashSimplex(s),
 	          i
 	        );
 	      }
 	    }
 	    
-	    const lineIdToSpringId = [];
-	    mesh.setCustomAttribute("lineIdToSpringId", lineIdToSpringId);
+	    const lineIdToMuscleId = [];
+	    mesh.setCustomAttribute("lineIdToMuscleId", lineIdToMuscleId);
 	    mesh.lines.forEach(line => {
 	      const h = hashSimplex(line);
-	      const springId = springsHashToId.get(h);
-	      lineIdToSpringId.push(springId);
+	      const muscleId = muscleHashToId.get(h);
+	      lineIdToMuscleId.push(muscleId);
 	    });
 	    
 	    let sortedVertexIds = this.sortedVertexIds;
