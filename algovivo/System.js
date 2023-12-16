@@ -178,8 +178,8 @@ class System {
     }
   }
 
-  set(data) {
-    this.setX(data.pos);
+  set(args) {
+    this.setVertices(args.pos);
     
     // const r = ten.zeros([numVertices]);
     // if (this.r != null) this.r.dispose();
@@ -187,13 +187,13 @@ class System {
     this.r = null;
 
     this.setMuscles({
-      indices: data.muscles ?? [],
-      l0: data.musclesL0
+      indices: args.muscles ?? [],
+      l0: args.musclesL0
     });
 
     this.setTriangles({
-      indices: data.triangles ?? [],
-      rsi: data.trianglesRsi
+      indices: args.triangles ?? [],
+      rsi: args.trianglesRsi
     });
   }
 

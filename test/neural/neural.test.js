@@ -49,8 +49,8 @@ test("neural policy", async () => {
   for (let i = 0; i < n; i++) {
     const data = JSON.parse(fs.readFileSync(`${trajectoryDataDirname}/${i}.json`));
 
-    system.x0.set(data.x0);
-    system.v0.set(data.v0);
+    system.pos0.set(data.x0);
+    system.vel0.set(data.v0);
     system.a.set(data.a0);
 
     const policyTrace = {};
@@ -64,8 +64,8 @@ test("neural policy", async () => {
     
     expect(policyTrace.policyInput).toBeCloseToArray(data.policy_input);
     expect(policyTrace.policyOutput).toBeCloseToArray(data.policy_output);
-    expect(system.x0.toArray()).toBeCloseToArray(data.x1);
-    expect(system.v0.toArray()).toBeCloseToArray(data.v1);
+    expect(system.pos0.toArray()).toBeCloseToArray(data.x1);
+    expect(system.vel0.toArray()).toBeCloseToArray(data.v1);
     expect(system.a.toArray()).toBeCloseToArray(data.a1);
   }
 });

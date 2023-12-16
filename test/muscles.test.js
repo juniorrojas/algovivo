@@ -68,7 +68,7 @@ test("set muscles", async () => {
 test("update l0, keep a", async () => {
   const wasmInstance = await utils.loadWasm();
   const system = new algovivo.System({ wasmInstance });
-  system.setX([
+  system.setVertices([
     [0.5, 0.5],
     [1.5, 0.5]
   ]);
