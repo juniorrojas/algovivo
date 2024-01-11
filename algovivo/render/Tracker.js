@@ -4,7 +4,7 @@ class Tracker {
     this.currentCenterX = null;
     this.active = true;
     this.visibleWorldWidth = args.visibleWorldWidth ?? 3.8;
-    this.targetCenterY = 1;
+    this.targetCenterY = args.targetCenterY ?? 1;
   }
 
   step(args = {}) {
