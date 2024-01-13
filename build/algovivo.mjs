@@ -1577,6 +1577,7 @@ class Tracker$1 {
     this.currentCenterX = null;
     this.active = true;
     this.visibleWorldWidth = args.visibleWorldWidth ?? 3.8;
+    this.targetCenterY = args.targetCenterY ?? 1;
   }
 
   step(args = {}) {
@@ -1599,7 +1600,7 @@ class Tracker$1 {
       this.currentCenterX += (this.targetCenterX - this.currentCenterX) * 0.5;
     }
 
-    const center = [this.currentCenterX, 1];
+    const center = [this.currentCenterX, this.targetCenterY];
     camera.center({
       worldCenter: center,
       worldWidth: this.visibleWorldWidth,
