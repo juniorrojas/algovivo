@@ -19,11 +19,16 @@ class Camera {
   center(args = {}) {
     let viewportWidth = args.viewportWidth;
     let viewportHeight = args.viewportHeight;
-    if (args.renderer != null) {
+
+    const renderer = args.renderer;
+    if ((viewportWidth == null || viewportHeight == null) && renderer == null) {
+      throw new Error("renderer required");
+    }
+    if (renderer != null) {
       // if present, args.renderer overwrites
       // viewportWidth and viewportHeight
-      viewportWidth = args.renderer.width;
-      viewportHeight = args.renderer.height;
+      viewportWidth = renderer.width;
+      viewportHeight = renderer.height;
     }
 
     if (viewportWidth == null) {
