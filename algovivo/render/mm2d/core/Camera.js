@@ -16,8 +16,8 @@ class Camera {
     return this.transform.inferScale();
   }
 
-  center(args) {
-    let scale = args.zoom ? args.zoom : 1;
+  center(args = {}) {
+    let scale = args.zoom ?? 1;
     
     let viewportWidth = args.viewportWidth;
     let viewportHeight = args.viewportHeight;
