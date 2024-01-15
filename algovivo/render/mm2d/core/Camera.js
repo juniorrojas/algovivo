@@ -28,6 +28,13 @@ class Camera {
       viewportHeight = args.renderer.height;
     }
 
+    if (viewportWidth == null) {
+      throw new Error("viewportWidth required");
+    }
+    if (viewportHeight == null) {
+      throw new Error("viewportHeight required");
+    }
+
     if (args.worldWidth != null) {
       if (viewportWidth == null) {
         throw new Error("viewportWidth required");
