@@ -16,9 +16,7 @@ class Camera {
     return this.transform.inferScale();
   }
 
-  center(args = {}) {
-    let scale = args.zoom ?? 1;
-    
+  center(args = {}) {    
     let viewportWidth = args.viewportWidth;
     let viewportHeight = args.viewportHeight;
     if (args.renderer != null) {
@@ -35,10 +33,8 @@ class Camera {
       throw new Error("viewportHeight required");
     }
 
+    let scale = args.zoom ?? 1;
     if (args.worldWidth != null) {
-      if (viewportWidth == null) {
-        throw new Error("viewportWidth required");
-      }
       scale = viewportWidth / args.worldWidth;
     }
     
