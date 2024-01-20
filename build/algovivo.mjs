@@ -1908,22 +1908,30 @@ class Camera {
     return this.transform.inferScale();
   }
 
-  center(args) {
-    let scale = args.zoom ? args.zoom : 1;
-    
+  center(args = {}) {
     let viewportWidth = args.viewportWidth;
     let viewportHeight = args.viewportHeight;
-    if (args.renderer != null) {
+
+    const renderer = args.renderer;
+    if ((viewportWidth == null || viewportHeight == null) && renderer == null) {
+      throw new Error("renderer required");
+    }
+    if (renderer != null) {
       // if present, args.renderer overwrites
       // viewportWidth and viewportHeight
-      viewportWidth = args.renderer.width;
-      viewportHeight = args.renderer.height;
+      viewportWidth = renderer.width;
+      viewportHeight = renderer.height;
     }
 
+    if (viewportWidth == null) {
+      throw new Error("viewportWidth required");
+    }
+    if (viewportHeight == null) {
+      throw new Error("viewportHeight required");
+    }
+
+    let scale = args.zoom ?? 1;
     if (args.worldWidth != null) {
-      if (viewportWidth == null) {
-        throw new Error("viewportWidth required");
-      }
       scale = viewportWidth / args.worldWidth;
     }
     
