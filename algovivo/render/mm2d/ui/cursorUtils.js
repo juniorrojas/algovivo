@@ -30,9 +30,9 @@ function computeDomCursor(event, domElement) {
   const topLeft = new DOMPointReadOnly(rect.left, rect.top);
   const transformedTopLeft = topLeft.matrixTransform(matrixInverse);
 
-  const left = transformedClientPos.x - transformedTopLeft.x;
-  const top = transformedClientPos.y - transformedTopLeft.y;
-  const cursor = [left, top];
+  const x = transformedClientPos.x - transformedTopLeft.x;
+  const y = transformedClientPos.y - transformedTopLeft.y;
+  const cursor = [x, y];
   return cursor;
 }
 
