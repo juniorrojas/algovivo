@@ -1584,6 +1584,7 @@
 	    this.active = true;
 	    this.visibleWorldWidth = args.visibleWorldWidth ?? 3.8;
 	    this.targetCenterY = args.targetCenterY ?? 1;
+	    this.offsetX = args.offsetX ?? 0;
 	  }
 
 	  step(args = {}) {
@@ -1596,7 +1597,7 @@
 	    const grid = args.grid;
 
 	    const meshCenter = mesh.computeCenter();
-	    const meshCenterX = meshCenter[0];
+	    const meshCenterX = meshCenter[0] + this.offsetX;
 
 	    if (!isNaN(meshCenterX)) this.targetCenterX = meshCenterX;
 
