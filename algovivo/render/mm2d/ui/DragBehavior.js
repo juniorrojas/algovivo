@@ -47,16 +47,16 @@ class DragBehavior {
       const domCursor = cursorUtils.computeDomCursor(event, domElement);
       this.domCursorDown(domCursor, event);
     }
-    domElement.addEventListener("mousedown", onDomCursorDown, {passive: false});
-    domElement.addEventListener("touchstart", onDomCursorDown, {passive: false});
+    domElement.addEventListener("mousedown", onDomCursorDown, { passive: false });
+    domElement.addEventListener("touchstart", onDomCursorDown, { passive: false });
     
     const onDomCursorMove = (event) => {
       const domCursor = cursorUtils.computeDomCursor(event, domElement);
       this.domCursorMove(domCursor, event);
     }
     if (domElementForMoveEvents == null) domElementForMoveEvents = domElement;
-    domElementForMoveEvents.addEventListener("mousemove", onDomCursorMove, {passive: false});
-    domElementForMoveEvents.addEventListener("touchmove", onDomCursorMove, {passive: false});
+    domElementForMoveEvents.addEventListener("mousemove", onDomCursorMove, { passive: false });
+    domElementForMoveEvents.addEventListener("touchmove", onDomCursorMove, { passive: false });
 
     const onDomCursorUp = (event) => {
       const domCursor = cursorUtils.computeDomCursor(event, domElement);
