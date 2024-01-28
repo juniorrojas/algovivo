@@ -17,9 +17,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install llvm-${LLVM_VERSION_LINUX} clang-${LLVM_VERSION_LINUX} lld-${LLVM_VERSION_LINUX} ninja-build build-essential cmake
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Checkout Enzyme
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: EnzymeAD/Enzyme
           path: ./Enzyme
@@ -36,7 +36,7 @@ jobs:
           export ENZYME=./Enzyme/enzyme/build/Enzyme/LLVMEnzyme-${LLVM_VERSION_LINUX}.so
           ./build.sh
       - name: Upload WASM
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: algovivo.linux.wasm
           path: build/algovivo.wasm
@@ -46,8 +46,8 @@ jobs:
       - name: Install system dependencies
         run: |
           brew install llvm@${LLVM_VERSION_MACOS} ninja
-      - uses: actions/checkout@v3
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           repository: EnzymeAD/Enzyme
           path: ./Enzyme
@@ -66,7 +66,7 @@ jobs:
           export ENZYME=./Enzyme/enzyme/build_/Enzyme/LLVMEnzyme-${LLVM_VERSION_MACOS}.dylib
           ./build.sh
       - name: Upload WASM
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: algovivo.macos.wasm
           path: build/algovivo.wasm
