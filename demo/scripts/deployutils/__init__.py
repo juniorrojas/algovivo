@@ -55,36 +55,33 @@ def git_clone(remote_url, remote, deploy_path, deploy_branch):
     cleandir(deploy_path)
     print(yellow(f"Cloning git repo {remote_url}"), file=sys.stderr)
 
-    os.chdir(deploy_path)
-    e = subprocess.call(["git", "init"])
+    e = subprocess.call(["git", "-C", deploy_path, "init"])
     if e != 0:
         raise RuntimeError("git init failed")
-    e = subprocess.call(["git", "remote", "add", remote, remote_url])
+    e = subprocess.call(["git", "-C", deploy_path, "remote", "add", remote, remote_url])
     if e != 0:
         raise RuntimeError("git remote add failed")
-    e = subprocess.call(["git", "pull", remote, deploy_branch])
+    e = subprocess.call(["git", "-C", deploy_path, "pull", remote, deploy_branch])
     if e != 0:
         # we assume git pull failed because the branch doesn't exist,
         # this is the case the first time you try to deploy
-        e = subprocess.call(["git", "checkout", "--orphan", deploy_branch])
+        e = subprocess.call(["git", "-C", deploy_path, "checkout", "-b", deploy_branch])
         if e != 0:
             raise RuntimeError("git checkout failed")
     else:
-        e = subprocess.call(["git", "checkout", deploy_branch])
+        e = subprocess.call(["git", "-C", deploy_path, "checkout", deploy_branch])
         if e != 0:
             raise RuntimeError("git checkout failed")
         
 def git_push_deploy(deploy_path, remote, deploy_branch):
-    os.chdir(deploy_path)
-
-    e = subprocess.call(["git", "add", "."])
+    e = subprocess.call(["git", "-C", deploy_path, "add", "."])
     if e != 0:
         raise RuntimeError("git add failed")
-    e = subprocess.call(["git", "commit", "-m", "Deploy"])
+    e = subprocess.call(["git", "-C", deploy_path, "commit", "-m", "Deploy"])
     if e != 0:
         # assume there is nothing new to commit
         return
-    e = subprocess.call(["git", "push", remote, deploy_branch])
+    e = subprocess.call(["git", "-C", deploy_path, "push", remote, deploy_branch])
     if e != 0:
         raise RuntimeError("git push failed")
     
@@ -93,10 +90,11 @@ def clean_deploy_dir(deploy_path):
     for filename in os.listdir(deploy_path):
         if filename == ".git":
             continue
-        if os.path.isdir(filename):
-            shutil.rmtree(filename)
+        full_filename = deploy_path.joinpath(filename)
+        if os.path.isdir(full_filename):
+            shutil.rmtree(full_filename)
         else:
-            os.remove(filename)
+            os.remove(full_filename)
     
 def run(remote_url, deploy_path, deploy_branch, push=False, populate_deploy_path=None):
     assert populate_deploy_path is not None
