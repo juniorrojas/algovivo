@@ -22,7 +22,7 @@ jobs:
           export ENZYME=/Enzyme/enzyme/build/Enzyme/LLVMEnzyme-11.so
           ./build.sh
       - name: Upload WASM
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: algovivo.wasm
           path: build/algovivo.wasm
@@ -33,9 +33,9 @@ jobs:
       OUTPUT_DIRNAME: trajectory.out
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Download WASM build
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: algovivo.wasm
           path: build/
@@ -53,9 +53,9 @@ jobs:
     needs: build-wasm
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Download WASM build
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: algovivo.wasm
           path: build/
@@ -72,7 +72,7 @@ jobs:
         run: |
           ffmpeg -framerate 30 -i test/neural/frames.out/%d.png -pix_fmt yuv420p video.out.mp4 -y
       - name: Upload trajectory video
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: video
           path: video.out.mp4
