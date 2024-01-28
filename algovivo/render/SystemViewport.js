@@ -314,7 +314,10 @@ class SystemViewport {
           this.freeVertex();
         }
       });
-      if (!headless) dragBehavior.linkToDom(renderer.domElement);
+      if (!headless) {
+        const domElementForMoveEvents = args.domElementForMoveEvents ?? null;
+        dragBehavior.linkToDom(renderer.domElement, domElementForMoveEvents);
+      }
     }
     
     this.tracker = new Tracker();
