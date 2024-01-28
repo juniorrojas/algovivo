@@ -17,9 +17,9 @@ jobs:
           sudo apt-get update
           sudo apt-get install llvm-${LLVM_VERSION_LINUX} clang-${LLVM_VERSION_LINUX} lld-${LLVM_VERSION_LINUX} ninja-build build-essential cmake
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Checkout Enzyme
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: EnzymeAD/Enzyme
           path: ./Enzyme
