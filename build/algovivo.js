@@ -2408,7 +2408,7 @@
 	    if (this.onDomCursorUp != null) this.onDomCursorUp(domCursor, event);
 	  }
 
-	  linkToDom(domElement) {
+	  linkToDom(domElement, domElementForMoveEvents = null) {
 	    if (this.domElement != null) {
 	      throw new Error("already linked to DOM");
 	    }
@@ -2418,15 +2418,16 @@
 	      const domCursor = cursorUtils.computeDomCursor(event, domElement);
 	      this.domCursorDown(domCursor, event);
 	    };
-	    domElement.addEventListener("mousedown", onDomCursorDown, {passive: false});
-	    domElement.addEventListener("touchstart", onDomCursorDown, {passive: false});
+	    domElement.addEventListener("mousedown", onDomCursorDown, { passive: false });
+	    domElement.addEventListener("touchstart", onDomCursorDown, { passive: false });
 	    
 	    const onDomCursorMove = (event) => {
 	      const domCursor = cursorUtils.computeDomCursor(event, domElement);
 	      this.domCursorMove(domCursor, event);
 	    };
-	    domElement.addEventListener("mousemove", onDomCursorMove, {passive: false});
-	    domElement.addEventListener("touchmove", onDomCursorMove, {passive: false});
+	    if (domElementForMoveEvents == null) domElementForMoveEvents = domElement;
+	    domElementForMoveEvents.addEventListener("mousemove", onDomCursorMove, { passive: false });
+	    domElementForMoveEvents.addEventListener("touchmove", onDomCursorMove, { passive: false });
 
 	    const onDomCursorUp = (event) => {
 	      const domCursor = cursorUtils.computeDomCursor(event, domElement);
@@ -3184,7 +3185,10 @@
 	          this.freeVertex();
 	        }
 	      });
-	      if (!headless) dragBehavior.linkToDom(renderer.domElement);
+	      if (!headless) {
+	        const domElementForMoveEvents = args.domElementForMoveEvents ?? null;
+	        dragBehavior.linkToDom(renderer.domElement, domElementForMoveEvents);
+	      }
 	    }
 	    
 	    this.tracker = new Tracker();
