@@ -3,9 +3,9 @@
 #include "arr.h"
 #include "vec2.h"
 #include "inertia.h"
-#include "energy/friction.h"
-#include "energy/collision.h"
-#include "energy/gravity.h"
+#include "potential/friction.h"
+#include "potential/collision.h"
+#include "potential/gravity.h"
 #include "frame_projection.h"
 #include "enzyme.h"
 

@@ -1,11 +1,9 @@
 #pragma once
 
-// energy functions
-#include "energy/muscles.h"
-#include "energy/triangles.h"
-#include "energy/gravity.h"
-#include "energy/collision.h"
-#include "energy/friction.h"
+#include "potential/muscles.h"
+#include "potential/triangles.h"
+#include "potential/gravity.h"
+#include "potential/collision.h"
+#include "potential/friction.h"
 
-// numerical integration
-#include "backward_euler.h"
+#include "dynamics/backward_euler.h"
