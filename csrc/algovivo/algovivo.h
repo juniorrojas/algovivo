@@ -1,5 +1,7 @@
 #pragma once
 
+#include "enzyme.h"
+
 #include "potential/muscles.h"
 #include "potential/triangles.h"
 #include "potential/gravity.h"
