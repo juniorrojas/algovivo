@@ -9,3 +9,5 @@
 #include "potential/friction.h"
 
 #include "dynamics/backward_euler.h"
+
+#include "frame_projection.h"
