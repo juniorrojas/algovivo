@@ -24,10 +24,16 @@ void accumulate_triangle_energy(
   const auto sm01 = acx;
   const auto sm11 = acy;
 
-  const auto F00 = sm00 * rsi00 + sm01 * rsi10;
-  const auto F01 = sm00 * rsi01 + sm01 * rsi11;
-  const auto F10 = sm10 * rsi00 + sm11 * rsi10;
-  const auto F11 = sm10 * rsi01 + sm11 * rsi11;
+  mat2x2_mm(
+    F00, F01,
+    F10, F11,
+    
+    sm00, sm01,
+    sm10, sm11,
+    
+    rsi00, rsi01,
+    rsi10, rsi11
+  );
 
   float I1 = F00 * F00 + F01 * F01 + F10 * F10 + F11 * F11;
   float J = F00 * F11 - F01 * F10;
