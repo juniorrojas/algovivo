@@ -2,6 +2,8 @@
 
 #define mat2x2_det(m) ((m##00) * (m##11) - (m##01) * (m##10))
 
+#define mat2x2_pow2_sum(m) ((m##00) * (m##00) + (m##01) * (m##01) + (m##10) * (m##10) + (m##11) * (m##11))
+
 #define mat2x2_inv(inv, m) \
   const auto (m##_det) = mat2x2_det(m); \
   const auto (inv##00) =  (m##11) / (m##_det); \
