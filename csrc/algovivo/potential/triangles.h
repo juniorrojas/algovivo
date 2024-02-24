@@ -31,7 +31,7 @@ void accumulate_triangle_energy(
   );
 
   const auto I1 = F00 * F00 + F01 * F01 + F10 * F10 + F11 * F11;
-  const auto J = F00 * F11 - F01 * F10;
+  const auto J = mat2x2_det(F);
 
   const float mu = 500;
   const float lambda = 50;
