@@ -19,17 +19,12 @@ void accumulate_triangle_energy(
   vec2_sub(ab, b, a);
   vec2_sub(ac, c, a);
 
-  const auto sm00 = abx;
-  const auto sm10 = aby;
-  const auto sm01 = acx;
-  const auto sm11 = acy;
-
   mat2x2_mm(
     F00, F01,
     F10, F11,
     
-    sm00, sm01,
-    sm10, sm11,
+    abx, acx,
+    aby, acy,
     
     rsi00, rsi01,
     rsi10, rsi11
