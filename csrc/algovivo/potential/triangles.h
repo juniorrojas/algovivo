@@ -33,11 +33,11 @@ void accumulate_triangle_energy(
   const auto I1 = F00 * F00 + F01 * F01 + F10 * F10 + F11 * F11;
   const auto J = F00 * F11 - F01 * F10;
 
-  float mu = 500;
-  float lambda = 50;
-  float qlogJ = -1.5 + 2 * J - 0.5 * J * J;
-  float psi_mu = 0.5 * mu * (I1 - 2) - mu * qlogJ;
-  float psi_lambda = 0.5 * lambda * qlogJ * qlogJ;
+  const float mu = 500;
+  const float lambda = 50;
+  const float qlogJ = -1.5 + 2 * J - 0.5 * J * J;
+  const float psi_mu = 0.5 * mu * (I1 - 2) - mu * qlogJ;
+  const float psi_lambda = 0.5 * lambda * qlogJ * qlogJ;
   
   energy += psi_mu + psi_lambda;
 }
