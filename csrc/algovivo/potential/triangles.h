@@ -4,42 +4,6 @@
 
 namespace algovivo {
 
-extern "C"
-void rsi_of_pos(
-  int num_vertices,
-  const float* pos,
-  int num_triangles,
-  const int* indices,
-  float* rsi
-) {
-  for (int i = 0; i < num_triangles; i++) {
-    const auto offset = 3 * i;
-    const auto ia = indices[offset    ];
-    const auto ib = indices[offset + 1];
-    const auto ic = indices[offset + 2];
-
-    vec2_get(a, pos, ia);
-    vec2_get(b, pos, ib);
-    vec2_get(c, pos, ic);
-    
-    vec2_sub(ab, b, a);
-    vec2_sub(ac, c, a);
-    
-    const auto rs00 = abx;
-    const auto rs01 = acx;
-    const auto rs10 = aby;
-    const auto rs11 = acy;
-
-    mat2x2_inv(rsi, rs);
-
-    const auto offset_rsi = i * 4;
-    rsi[offset_rsi    ] = rsi00;
-    rsi[offset_rsi + 1] = rsi01;
-    rsi[offset_rsi + 2] = rsi10;
-    rsi[offset_rsi + 3] = rsi11;
-  }
-}
-
 __attribute__((always_inline))
 void accumulate_triangle_energy(
   float &energy,
@@ -75,6 +39,42 @@ void accumulate_triangle_energy(
   float psi_lambda = 0.5 * lambda * qlogJ * qlogJ;
   
   energy += psi_mu + psi_lambda;
+}
+
+extern "C"
+void rsi_of_pos(
+  int num_vertices,
+  const float* pos,
+  int num_triangles,
+  const int* indices,
+  float* rsi
+) {
+  for (int i = 0; i < num_triangles; i++) {
+    const auto offset = 3 * i;
+    const auto ia = indices[offset    ];
+    const auto ib = indices[offset + 1];
+    const auto ic = indices[offset + 2];
+
+    vec2_get(a, pos, ia);
+    vec2_get(b, pos, ib);
+    vec2_get(c, pos, ic);
+    
+    vec2_sub(ab, b, a);
+    vec2_sub(ac, c, a);
+    
+    const auto rs00 = abx;
+    const auto rs01 = acx;
+    const auto rs10 = aby;
+    const auto rs11 = acy;
+
+    mat2x2_inv(rsi, rs);
+
+    const auto offset_rsi = i * 4;
+    rsi[offset_rsi    ] = rsi00;
+    rsi[offset_rsi + 1] = rsi01;
+    rsi[offset_rsi + 2] = rsi10;
+    rsi[offset_rsi + 3] = rsi11;
+  }
 }
 
 }
