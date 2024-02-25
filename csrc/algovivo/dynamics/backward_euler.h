@@ -7,7 +7,25 @@
 #include "../potential/collision.h"
 #include "../potential/gravity.h"
 
-#define optim_loop_exit_condition() { \
+#define optim_init() { \
+  for (int i = 0; i < num_vertices; i++) { \
+    const auto offset = i * space_dim; \
+    pos[offset    ] = pos0[offset    ] + h * vel[offset    ]; \
+    pos[offset + 1] = pos0[offset + 1] + h * vel[offset + 1]; \
+  } \
+}
+
+#define loss_backward() { \
+  zero_(num_vertices * space_dim, pos_grad); \
+  system.backward(pos, pos_grad); \
+  if (fixed_vertex_id > -1) { \
+    const auto offset = fixed_vertex_id * space_dim; \
+    pos_grad[offset    ] = 0.0; \
+    pos_grad[offset + 1] = 0.0; \
+  } \
+}
+
+#define break_if_optim_converged() { \
   float grad_max_q = 0.0; \
   float grad_q_tol = 0.5 * 1e-5; \
   for (int k = 0; k < num_vertices; k++) { \
@@ -52,24 +70,12 @@ void backward_euler_update_pos(
   const auto fixed_vertex_id = system.fixed_vertex_id;
   const auto h = system.h;
 
-  for (int i = 0; i < num_vertices; i++) {
-    const auto offset = i * space_dim;
-    pos[offset    ] = pos0[offset    ] + h * vel[offset    ];
-    pos[offset + 1] = pos0[offset + 1] + h * vel[offset + 1];
-  }
+  optim_init();
 
   const auto max_optim_iters = 100;
   for (int i = 0; i < max_optim_iters; i++) {
-    zero_(num_vertices * space_dim, pos_grad);
-    system.backward(pos, pos_grad);
-
-    if (fixed_vertex_id > -1) {
-      const auto offset = fixed_vertex_id * space_dim;
-      pos_grad[offset    ] = 0.0;
-      pos_grad[offset + 1] = 0.0;
-    }
-    
-    optim_loop_exit_condition();
+    loss_backward();
+    break_if_optim_converged();
     optim_step();
   }
 }
