@@ -20,6 +20,23 @@
   if (grad_max_q < grad_q_tol) break; \
 }
 
+#define optim_step() { \
+  float step_size = 1.0; \
+  const auto max_line_search_iters = 20; \
+  float backtracking_scale = 0.3; \
+  const auto loss0 = system.forward(pos); \
+  for (int i = 0; i < max_line_search_iters; i++) { \
+    addmuls_(num_vertices * space_dim, pos, pos_grad, -step_size, pos_tmp); \
+    const auto loss1 = system.forward(pos_tmp); \
+    if (loss1 < loss0) { \
+      break; \
+    } else { \
+      step_size *= backtracking_scale; \
+    } \
+  } \
+  addmuls_(num_vertices * space_dim, pos, pos_grad, -step_size, pos); \
+}
+
 namespace algovivo {
 
 template <typename T>
@@ -52,25 +69,8 @@ void backward_euler_update_pos(
       pos_grad[offset + 1] = 0.0;
     }
     
-    optim_loop_exit_condition()
-
-    float step_size = 1.0;
-    const auto max_line_search_iters = 20;
-    float backtracking_scale = 0.3;
-
-    const auto loss0 = system.forward(pos);
-
-    for (int i = 0; i < max_line_search_iters; i++) {
-      addmuls_(num_vertices * space_dim, pos, pos_grad, -step_size, pos_tmp);
-      const auto loss1 = system.forward(pos_tmp);
-      if (loss1 < loss0) {
-        break;
-      } else {
-        step_size *= backtracking_scale;
-      }
-    }
-    
-    addmuls_(num_vertices * space_dim, pos, pos_grad, -step_size, pos);
+    optim_loop_exit_condition();
+    optim_step();
   }
 }
 
