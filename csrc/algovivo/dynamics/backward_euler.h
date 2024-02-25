@@ -7,6 +7,19 @@
 #include "../potential/collision.h"
 #include "../potential/gravity.h"
 
+#define optim_loop_exit_condition() { \
+  float grad_max_q = 0.0; \
+  float grad_q_tol = 0.5 * 1e-5; \
+  for (int k = 0; k < num_vertices; k++) { \
+    int offset = k * space_dim; \
+    float px = pos_grad[offset    ]; \
+    float py = pos_grad[offset + 1]; \
+    float q = px * px + py * py; \
+    if (q > grad_max_q) grad_max_q = q; \
+  } \
+  if (grad_max_q < grad_q_tol) break; \
+}
+
 namespace algovivo {
 
 template <typename T>
@@ -39,16 +52,7 @@ void backward_euler_update_pos(
       pos_grad[offset + 1] = 0.0;
     }
     
-    float grad_max_q = 0.0;
-    float grad_q_tol = 0.5 * 1e-5;
-    for (int k = 0; k < num_vertices; k++) {
-      int offset = k * space_dim;
-      float px = pos_grad[offset    ];
-      float py = pos_grad[offset + 1];
-      float q = px * px + py * py;
-      if (q > grad_max_q) grad_max_q = q;
-    }
-    if (grad_max_q < grad_q_tol) break;
+    optim_loop_exit_condition()
 
     float step_size = 1.0;
     const auto max_line_search_iters = 20;
