@@ -41,7 +41,7 @@ void backward_euler_update_vel(
 ) {
   const auto space_dim = 2;
   // vel1 = (pos1 - pos0) / h
-  addmuls_(
+  add_scaled(
     num_vertices * space_dim,
     pos1, pos0,
     -1.0,

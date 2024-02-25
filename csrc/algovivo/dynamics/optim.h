@@ -37,7 +37,7 @@
   float backtracking_scale = 0.3; \
   const auto loss0 = system.forward(pos); \
   for (int i = 0; i < max_line_search_iters; i++) { \
-    addmuls_(num_vertices * space_dim, pos, pos_grad, -step_size, pos_tmp); \
+    add_scaled(num_vertices * space_dim, pos, pos_grad, -step_size, pos_tmp); \
     const auto loss1 = system.forward(pos_tmp); \
     if (loss1 < loss0) { \
       break; \
@@ -45,5 +45,5 @@
       step_size *= backtracking_scale; \
     } \
   } \
-  addmuls_(num_vertices * space_dim, pos, pos_grad, -step_size, pos); \
+  add_scaled(num_vertices * space_dim, pos, pos_grad, -step_size, pos); \
 }
