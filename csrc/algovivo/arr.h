@@ -10,9 +10,9 @@ void copy_(int n, const float* src, float* dst) {
   for (int i = 0; i < n; i++) dst[i] = src[i];
 }
 
-// dst = a + b * c
-void addmuls_(int n, const float* a, const float* b, const float c, float* dst) {
-  for (int i = 0; i < n; i++) dst[i] = a[i] + b[i] * c;
+// d = a + b * c
+void add_scaled(int n, const float* a, const float* b, const float c, float* d) {
+  for (int i = 0; i < n; i++) d[i] = a[i] + b[i] * c;
 }
 
 void scale_(int n, float* a, float c) {
