@@ -464,6 +464,7 @@
 	var MemoryManager_1 = MemoryManager;
 
 	var mmgr$1 = {
+	  linked: linked$1,
 	  MemoryManager: MemoryManager_1,
 	  FreeSlot: requireFreeSlot(),
 	  ReservedSlot: requireReservedSlot()
