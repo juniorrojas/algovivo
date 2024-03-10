@@ -3266,6 +3266,7 @@
 
 	    mesh.triangles = meshData.triangles;
 	    mesh.lines = edgesFromTriangles(meshData.triangles);
+	    Array.prototype.push.apply(mesh.lines, meshData.muscles);
 
 	    const muscleHashToId = new Map();
 	    if (this.system.muscles != null) {
