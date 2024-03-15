@@ -237,7 +237,6 @@ class System {
       
       this.h,
 
-      // this.r.ptr,
       0,
 
       numMuscles,
@@ -249,6 +248,7 @@ class System {
 
       numMuscles == 0 ? 0 : this.a.ptr,
       numMuscles == 0 ? 0 : this.l0.ptr,
+      90.0,
       
       fixedVertexId,
 

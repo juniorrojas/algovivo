@@ -20,7 +20,6 @@ void accumulate_muscle_energy(
   const float l = __builtin_sqrt(q + 1e-6);
   const auto al0 = a * l0;
   const auto dl = (l - al0) / al0;
-  // const auto k = 90.0;
   energy += 0.5 * k * dl * dl;
 }
 

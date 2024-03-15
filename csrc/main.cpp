@@ -218,6 +218,7 @@ void backward_euler_update(
 
   float* a,
   float* l0,
+  float k,
 
   int fixed_vertex_id,
   float vertex_mass
@@ -236,7 +237,7 @@ void backward_euler_update(
   system.muscles = muscles;
   system.a = a;
   system.l0 = l0;
-  system.k = 90.0f;
+  system.k = k;
 
   system.num_triangles = num_triangles;
   system.triangles = triangles;
