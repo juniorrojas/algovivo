@@ -10,7 +10,8 @@ void accumulate_triangle_energy(
   const float* pos,
   int ia, int ib, int ic,
   float rsi00, float rsi01,
-  float rsi10, float rsi11
+  float rsi10, float rsi11,
+  float w, float mu, float lambda
 ) {
   vec2_get(a, pos, ia);
   vec2_get(b, pos, ib);
@@ -32,10 +33,6 @@ void accumulate_triangle_energy(
 
   const auto I1 = mat2x2_pow2_sum(F);
   const auto J = mat2x2_det(F);
-
-  const float w = 1;
-  const float mu = 500;
-  const float lambda = 50;
   const float qlogJ = -1.5 + 2 * J - 0.5 * J * J;
   const float psi_mu = 0.5 * mu * (I1 - 2) - mu * qlogJ;
   const float psi_lambda = 0.5 * lambda * qlogJ * qlogJ;

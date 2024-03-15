@@ -73,7 +73,8 @@ static float backward_euler_loss(
       pos,
       i1, i2, i3,
       rsi00, rsi01,
-      rsi10, rsi11
+      rsi10, rsi11,
+      1, 500, 50
     );
   }
 
