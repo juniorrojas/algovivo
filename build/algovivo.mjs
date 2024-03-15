@@ -1276,9 +1276,8 @@ class System$1 {
     this.memoryManager = memoryManager;
     this.fixedVertexId = -1;
     this.vertexMass = args.vertexMass ?? 6.0714287757873535;
-
-    const h = 0.033;
-    this.h = h;
+    this.k = 90.0;
+    this.h = 0.033;
 
     this.spaceDim = 2;
   }
@@ -1343,6 +1342,8 @@ class System$1 {
 
     const mgr = this.memoryManager;
     const ten = this.ten;
+
+    if (args.k != null) this.k = args.k;
 
     const muscles = mgr.malloc32(numMuscles * 2);
     if (this.muscles != null) this.muscles.free();
@@ -1439,15 +1440,11 @@ class System$1 {
 
   set(args) {
     this.setVertices(args.pos);
-    
-    // const r = ten.zeros([numVertices]);
-    // if (this.r != null) this.r.dispose();
-    // this.r = r;
-    this.r = null;
 
     this.setMuscles({
       indices: args.muscles ?? [],
-      l0: args.musclesL0
+      l0: args.musclesL0,
+      k: args.musclesK
     });
 
     this.setTriangles({
@@ -1496,7 +1493,6 @@ class System$1 {
       
       this.h,
 
-      // this.r.ptr,
       0,
 
       numMuscles,
@@ -1508,6 +1504,7 @@ class System$1 {
 
       numMuscles == 0 ? 0 : this.a.ptr,
       numMuscles == 0 ? 0 : this.l0.ptr,
+      this.k,
       
       fixedVertexId,
 
