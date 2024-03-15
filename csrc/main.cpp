@@ -20,6 +20,7 @@ static float backward_euler_loss(
 
   const float* a,
   const float* l0,
+  float k,
 
   float vertex_mass
 ) {
@@ -51,7 +52,7 @@ static float backward_euler_loss(
       potential_energy,
       pos,
       i1, i2,
-      a[i], l0[i]
+      a[i], l0[i], k
     );
   }
 
@@ -72,7 +73,8 @@ static float backward_euler_loss(
       pos,
       i1, i2, i3,
       rsi00, rsi01,
-      rsi10, rsi11
+      rsi10, rsi11,
+      1, 500, 50
     );
   }
 
@@ -123,6 +125,7 @@ static void backward_euler_loss_grad(
 
   float* a,
   float* l0,
+  float k,
 
   float vertex_mass
 ) {
@@ -144,6 +147,8 @@ static void backward_euler_loss_grad(
 
     enzyme_const, a,
     enzyme_const, l0,
+    enzyme_const, k,
+
     enzyme_const, vertex_mass
   );
 }
@@ -167,6 +172,7 @@ struct System {
 
   float* a;
   float* l0;
+  float k;
 
   int fixed_vertex_id;
 
@@ -178,7 +184,7 @@ struct System {
       num_triangles,
       triangles,
       rsi,
-      a, l0,
+      a, l0, k,
       vertex_mass
     );
   }
@@ -189,7 +195,7 @@ struct System {
       pos_grad, pos0, vel0, h, r,
       num_muscles, muscles,
       num_triangles, triangles, rsi,
-      a, l0,
+      a, l0, k,
       vertex_mass
     );
   }
@@ -213,6 +219,7 @@ void backward_euler_update(
 
   float* a,
   float* l0,
+  float k,
 
   int fixed_vertex_id,
   float vertex_mass
@@ -231,6 +238,7 @@ void backward_euler_update(
   system.muscles = muscles;
   system.a = a;
   system.l0 = l0;
+  system.k = k;
 
   system.num_triangles = num_triangles;
   system.triangles = triangles;
