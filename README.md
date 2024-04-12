@@ -10,9 +10,9 @@ A JavaScript + WebAssembly implementation of an energy-based formulation for sof
   <img src="media/locomotion.gif" width="250px">
 </a>
 
-Instead of implementing simulations using explicit position update rules and manually derived force functions, we can implement simulations using [gradient-based optimization on differentiable energy functions](https://medium.com/@juniorrojas/physics-based-simulation-via-backpropagation-on-energy-functions-6d3b0e93f5fb) and compute forces using automatic differentiation.
+Instead of implementing simulations using explicit position update rules and manually derived force functions, we can implement simulations using [gradient-based optimization on differentiable energy functions](https://medium.com/@juniorrojas/physics-based-simulation-via-backpropagation-on-energy-functions-6d3b0e93f5fb) and compute forces and other derivatives using automatic differentiation.
 
-For example, AD can be used for [energy minimization](https://github.com/juniorrojas/hookean-springs-pytorch) and [numerical integration](https://github.com/juniorrojas/springs-integration-pytorch) for mass-spring systems. This repository contains energy functions for Neo-Hookean triangles, controllable muscles, gravity, terrain collision and friction. The energy functions are implemented in C++, compiled to LLVM IR, differentiated with [Enzyme](https://github.com/EnzymeAD/Enzyme), compiled to WASM, and wrapped as a JavaScript library.
+Automatic differentiation can be used for [energy minimization](https://github.com/juniorrojas/hookean-springs-pytorch) and [numerical integration](https://github.com/juniorrojas/springs-integration-pytorch). This repository contains energy functions for Neo-Hookean triangles, controllable muscles, gravity, terrain collision and friction. The energy functions are implemented in C++, compiled to LLVM IR, differentiated with [Enzyme](https://github.com/EnzymeAD/Enzyme), compiled to WASM, and wrapped as a JavaScript library.
 
 ## quick start
 
