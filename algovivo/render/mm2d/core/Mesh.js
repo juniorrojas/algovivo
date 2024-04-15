@@ -19,6 +19,9 @@ class Mesh {
     this.customAttributes = {};
   }
 
+  get pos() { return this.x; }
+  set pos(x) { this.x = x; }
+
   numVertices() {
     return this.x.length;
   }
