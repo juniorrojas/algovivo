@@ -55,7 +55,7 @@ class Floor {
     }
     const scene = this.scene = args.scene;
     const mesh = this.mesh = scene.addMesh();
-    mesh.x = [
+    mesh.pos = [
       [-10, 0],
       [10, 0]
     ];
