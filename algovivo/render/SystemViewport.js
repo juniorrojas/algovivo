@@ -340,8 +340,8 @@ class SystemViewport {
   _updateMesh(meshData) {
     const mesh = this.mesh;
 
-    if (meshData.x != null) {
-      mesh.x = meshData.x;
+    if (meshData.pos != null) {
+      mesh.pos = meshData.pos;
     }
 
     mesh.triangles = meshData.triangles;
