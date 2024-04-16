@@ -407,10 +407,10 @@ class SystemViewport {
     const system = this.system;
 
     if (system.numVertices == 0) {
-      mesh.x = [];
+      mesh.pos = [];
     } else {
-      const x = system.pos.toArray();
-      mesh.x = x;
+      const pos = system.pos.toArray();
+      mesh.pos = pos;
     }
   }
 
