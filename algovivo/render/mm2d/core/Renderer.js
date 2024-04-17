@@ -50,7 +50,7 @@ class Renderer {
   renderPoint(renderer, mesh, camera, id, customArgs) {
     const ctx = this.ctx;
     let xi;
-    if (mesh instanceof Mesh) xi = mesh.x[id];
+    if (mesh instanceof Mesh) xi = mesh.pos[id];
     else {
       throw new Error("invalid mesh");
     }
@@ -71,8 +71,8 @@ class Renderer {
   renderLine(renderer, mesh, camera, id, customArgs) {
     const ctx = this.ctx;
     const line = mesh.lines[id];
-    const a = camera.transform.apply(mesh.x[line[0]]);
-    const b = camera.transform.apply(mesh.x[line[1]]);
+    const a = camera.transform.apply(mesh.pos[line[0]]);
+    const b = camera.transform.apply(mesh.pos[line[1]]);
     
     ctx.save();
     mesh.lineShader.renderLine({
@@ -97,15 +97,15 @@ class Renderer {
     const ic = triangle[2];
 
     let _a, _b, _c;
-    if (mesh.x instanceof Float32Array) {
+    if (mesh.pos instanceof Float32Array) {
       const spaceDim = 2;
-      _a = [mesh.x[ia * spaceDim], mesh.x[ia * spaceDim + 1]];
-      _b = [mesh.x[ib * spaceDim], mesh.x[ib * spaceDim + 1]];
-      _c = [mesh.x[ic * spaceDim], mesh.x[ic * spaceDim + 1]];
+      _a = [mesh.pos[ia * spaceDim], mesh.pos[ia * spaceDim + 1]];
+      _b = [mesh.pos[ib * spaceDim], mesh.pos[ib * spaceDim + 1]];
+      _c = [mesh.pos[ic * spaceDim], mesh.pos[ic * spaceDim + 1]];
     } else {
-      _a = mesh.x[ia];
-      _b = mesh.x[ib];
-      _c = mesh.x[ic];
+      _a = mesh.pos[ia];
+      _b = mesh.pos[ib];
+      _c = mesh.pos[ic];
     }
 
     const a = camera.transform.apply(_a);
@@ -139,7 +139,7 @@ class Renderer {
         this.renderLine(renderer, mesh, camera, i, customArgs);
       }
       
-      for (let i = 0; i < mesh.x.length; i++) {
+      for (let i = 0; i < mesh.pos.length; i++) {
         this.renderPoint(renderer, mesh, camera, i, customArgs);
       }
     } else {
