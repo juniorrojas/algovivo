@@ -4,7 +4,7 @@ class Background {
       throw new Error("scene required");
     }
     const mesh = this.mesh = args.scene.addMesh();
-    mesh.x = [[0, 0]];
+    mesh.pos = [[0, 0]];
     
     const color1 = (args.color1 == null) ? "#fcfcfc" : args.color1;
     const color2 = (args.color2 == null) ? "#d7d8d8" : args.color2;
