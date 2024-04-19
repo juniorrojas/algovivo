@@ -2,6 +2,13 @@ const mm2d = require("./mm2d");
 const Tracker = require("./Tracker");
 const Floor = require("./Floor");
 
+function sortDepths(depths) {
+  const indexedDepths = depths.map((depth, index) => ({ depth, index }));
+  indexedDepths.sort((a, b) => b.number - a.number);
+  const sortedIds = indexedDepths.map((a) => a.index);
+  return sortedIds;
+}
+
 function hashSimplex(vids) {
   vids.sort();
   return vids.join("_");
@@ -69,7 +76,11 @@ class SystemViewport {
       throw new Error("system required");
     }
     this.system = args.system;
-    this.sortedVertexIds = args.sortedVertexIds;
+    let sortedVertexIds = args.sortedVertexIds;
+    if (args.vertexDepths != null) {
+      sortedVertexIds = sortDepths(args.vertexDepths);
+    }
+    this.sortedVertexIds = sortedVertexIds;
 
     const headless = args.headless ?? false;
 
