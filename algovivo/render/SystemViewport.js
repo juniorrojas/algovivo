@@ -4,7 +4,7 @@ const Floor = require("./Floor");
 
 function sortDepths(depths) {
   const indexedDepths = depths.map((depth, index) => ({ depth, index }));
-  indexedDepths.sort((a, b) => b.number - a.number);
+  indexedDepths.sort((a, b) => b.depth - a.depth);
   const sortedIds = indexedDepths.map((a) => a.index);
   return sortedIds;
 }
