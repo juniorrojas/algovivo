@@ -141,6 +141,7 @@ class System {
   }
 
   setTriangles(args = {}) {
+    // TODO indices must be optional if rsi is provided and matches the number of triangles
     if (args.indices == null) {
       throw new Error("indices required");
     }
