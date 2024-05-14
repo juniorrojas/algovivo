@@ -2,13 +2,6 @@ const mm2d = require("./mm2d");
 const Tracker = require("./Tracker");
 const Floor = require("./Floor");
 
-function sortDepths(depths) {
-  const indexedDepths = depths.map((depth, index) => ({ depth, index }));
-  indexedDepths.sort((a, b) => b.depth - a.depth);
-  const sortedIds = indexedDepths.map((a) => a.index);
-  return sortedIds;
-}
-
 function hashSimplex(vids) {
   vids.sort();
   return vids.join("_");
@@ -286,8 +279,13 @@ class SystemViewport {
     this.tracker = new Tracker();
   }
 
-  setSortedVertexIdsFromVertexDepths(vertexDepths) {
-    const sortedVertexIds = sortDepths(vertexDepths);
+  setSortedVertexIdsFromVertexDepths(depths) {
+    if (depths.length != this.system.numVertices) {
+      throw new Error(`invalid size for depths, found ${depths.length}, expected ${this.system.numVertices}`);
+    }
+    const indexedDepths = depths.map((depth, index) => ({ depth, index }));
+    indexedDepths.sort((a, b) => b.depth - a.depth);
+    const sortedVertexIds = indexedDepths.map((a) => a.index);
     this.sortedVertexIds = sortedVertexIds;
   }
 
