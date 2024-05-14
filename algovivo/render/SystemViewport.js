@@ -76,11 +76,11 @@ class SystemViewport {
       throw new Error("system required");
     }
     this.system = args.system;
-    let sortedVertexIds = args.sortedVertexIds;
-    if (args.vertexDepths != null) {
-      sortedVertexIds = sortDepths(args.vertexDepths);
-    }
+    const sortedVertexIds = args.sortedVertexIds;
     this.sortedVertexIds = sortedVertexIds;
+    if (args.vertexDepths != null) {
+      this.setSortedVertexIdsFromVertexDepths(args.vertexDepths);
+    }
 
     const headless = args.headless ?? false;
 
@@ -284,6 +284,11 @@ class SystemViewport {
     }
     
     this.tracker = new Tracker();
+  }
+
+  setSortedVertexIdsFromVertexDepths(vertexDepths) {
+    const sortedVertexIds = sortDepths(vertexDepths);
+    this.sortedVertexIds = sortedVertexIds;
   }
 
   setSize(args = {}) {
