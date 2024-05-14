@@ -447,13 +447,13 @@ class SystemViewport {
   hitTestVertex(p, hitTestRadius = 0.31) {
     const numVertices = this.system.numVertices;
     if (numVertices == 0) return null;
-    const xF32 = this.system.pos.slot.f32();
+    const pF32 = this.system.pos.slot.f32();
     let closestVertex = null;
     let closestQuadrance = Infinity;
     const hitTestRadius2 = hitTestRadius * hitTestRadius;
     for (let i = 0; i < numVertices; i++) {
       const offset = i * 2;
-      const xi = [xF32[offset], xF32[offset + 1]];
+      const xi = [pF32[offset], pF32[offset + 1]];
       const d = mm2d.math.Vec2.sub(xi, p);
       const q = mm2d.math.Vec2.quadrance(d);
       if (q < hitTestRadius2 && q < closestQuadrance) {
@@ -466,10 +466,10 @@ class SystemViewport {
 
   setVertexPos(i, p) {
     const system = this.system;
-    const xF32 = system.pos.slot.f32();
+    const pF32 = system.pos.slot.f32();
     const offset = i * 2;
-    xF32[offset] = p[0];
-    xF32[offset + 1] = p[1];
+    pF32[offset] = p[0];
+    pF32[offset + 1] = p[1];
   }
 
   setVertexVel(i, p) {
