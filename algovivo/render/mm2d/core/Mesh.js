@@ -19,8 +19,11 @@ class Mesh {
     this.customAttributes = {};
   }
 
+  get pos() { return this.x; }
+  set pos(x) { this.x = x; }
+
   numVertices() {
-    return this.x.length;
+    return this.pos.length;
   }
 
   numTriangles() {
@@ -44,9 +47,9 @@ class Mesh {
     let maxX = null;
     let minY = null;
     let maxY = null;
-    this.x.forEach((xi) => {
-      const x = xi[0];
-      const y = xi[1];
+    this.pos.forEach((pi) => {
+      const x = pi[0];
+      const y = pi[1];
       if (minX == null || x < minX) minX = x;
       if (maxX == null || x > maxX) maxX = x;
       if (minY == null || y < minY) minY = y;
@@ -62,9 +65,9 @@ class Mesh {
 
   computeCenter() {
     let center = [0, 0];
-    const numVertices = this.x.length;
+    const numVertices = this.pos.length;
     for (let i = 0; i < numVertices; i++) {
-      const xi = this.x[i];
+      const xi = this.pos[i];
       math.Vec2.add_(center, xi);
     }
     math.Vec2.mulScalar_(center, 1 / numVertices);

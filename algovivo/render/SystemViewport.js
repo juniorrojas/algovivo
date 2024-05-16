@@ -1,5 +1,6 @@
-const Tracker = require("./Tracker");
 const mm2d = require("./mm2d");
+const Tracker = require("./Tracker");
+const Floor = require("./Floor");
 
 function hashSimplex(vids) {
   vids.sort();
@@ -48,55 +49,6 @@ function makePointShaderFunction(args = {}) {
   }
 }
 
-class Floor {
-  constructor(args = {}) {
-    if (args.scene == null) {
-      throw new Error("scene required");
-    }
-    const scene = this.scene = args.scene;
-    const mesh = this.mesh = scene.addMesh();
-    mesh.x = [
-      [-10, 0],
-      [10, 0]
-    ];
-    mesh.lines = [
-      [0, 1]
-    ];
-
-    mesh.lineShader.renderLine = Floor.makeFloorLineShaderFunction({
-      width: args.width,
-      color: args.color
-    });
-
-    mesh.pointShader.renderPoint = () => {};
-
-    mesh.setCustomAttribute("translation", [0, 0]);
-  }
-
-  static makeFloorLineShaderFunction(args = {}) {
-    const width = args.width ?? 0.055;
-    const color = args.color ?? "black";
-    return (args) => {
-      const ctx = args.ctx;
-      const a = args.a;
-      const b = args.b;
-      const camera = args.camera;
-      const mesh = args.mesh;
-      const scale = camera.inferScale();
-
-      const _translation = mesh.getCustomAttribute("translation");
-      const translation = [scale * _translation[0], scale * _translation[1]];
-
-      ctx.strokeStyle = color;
-      ctx.lineWidth = scale * width;
-      ctx.beginPath();
-      ctx.moveTo(a[0] + translation[0], a[1] + translation[1]);
-      ctx.lineTo(b[0] + translation[0], b[1] + translation[1]);
-      ctx.stroke();
-    }
-  }
-}
-
 function hexToRgb(hex) {
   if (hex.length != 7) {
     throw new Error(`invalid hex string ${hex}`);
@@ -117,7 +69,11 @@ class SystemViewport {
       throw new Error("system required");
     }
     this.system = args.system;
-    this.sortedVertexIds = args.sortedVertexIds;
+    const sortedVertexIds = args.sortedVertexIds;
+    this.sortedVertexIds = sortedVertexIds;
+    if (args.vertexDepths != null) {
+      this.setSortedVertexIdsFromVertexDepths(args.vertexDepths);
+    }
 
     const headless = args.headless ?? false;
 
@@ -323,6 +279,16 @@ class SystemViewport {
     this.tracker = new Tracker();
   }
 
+  setSortedVertexIdsFromVertexDepths(depths) {
+    if (depths.length != this.system.numVertices) {
+      throw new Error(`invalid size for depths, found ${depths.length}, expected ${this.system.numVertices}`);
+    }
+    const indexedDepths = depths.map((depth, index) => ({ depth, index }));
+    indexedDepths.sort((a, b) => b.depth - a.depth);
+    const sortedVertexIds = indexedDepths.map((a) => a.index);
+    this.sortedVertexIds = sortedVertexIds;
+  }
+
   setSize(args = {}) {
     this.renderer.setSize({
       width: args.width,
@@ -388,8 +354,8 @@ class SystemViewport {
   _updateMesh(meshData) {
     const mesh = this.mesh;
 
-    if (meshData.x != null) {
-      mesh.x = meshData.x;
+    if (meshData.pos != null) {
+      mesh.pos = meshData.pos;
     }
 
     mesh.triangles = meshData.triangles;
@@ -455,10 +421,10 @@ class SystemViewport {
     const system = this.system;
 
     if (system.numVertices == 0) {
-      mesh.x = [];
+      mesh.pos = [];
     } else {
-      const x = system.pos.toArray();
-      mesh.x = x;
+      const pos = system.pos.toArray();
+      mesh.pos = pos;
     }
   }
 
@@ -479,13 +445,13 @@ class SystemViewport {
   hitTestVertex(p, hitTestRadius = 0.31) {
     const numVertices = this.system.numVertices;
     if (numVertices == 0) return null;
-    const xF32 = this.system.pos.slot.f32();
+    const pF32 = this.system.pos.slot.f32();
     let closestVertex = null;
     let closestQuadrance = Infinity;
     const hitTestRadius2 = hitTestRadius * hitTestRadius;
     for (let i = 0; i < numVertices; i++) {
       const offset = i * 2;
-      const xi = [xF32[offset], xF32[offset + 1]];
+      const xi = [pF32[offset], pF32[offset + 1]];
       const d = mm2d.math.Vec2.sub(xi, p);
       const q = mm2d.math.Vec2.quadrance(d);
       if (q < hitTestRadius2 && q < closestQuadrance) {
@@ -498,10 +464,10 @@ class SystemViewport {
 
   setVertexPos(i, p) {
     const system = this.system;
-    const xF32 = system.pos.slot.f32();
+    const pF32 = system.pos.slot.f32();
     const offset = i * 2;
-    xF32[offset] = p[0];
-    xF32[offset + 1] = p[1];
+    pF32[offset] = p[0];
+    pF32[offset + 1] = p[1];
   }
 
   setVertexVel(i, p) {

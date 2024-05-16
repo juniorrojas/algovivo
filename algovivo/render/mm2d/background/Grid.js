@@ -103,7 +103,7 @@ class Grid {
       x0, y0,
       primaryLineWidth, secondaryLineWidth
     });
-    mesh.x = x;
+    mesh.pos = x;
     mesh.lines = lineIndices;
     mesh.setCustomAttribute("lineWidths", lineWidths);
   }
