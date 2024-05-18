@@ -1575,84 +1575,6 @@
 
 	var System_1 = System$1;
 
-	class Tracker$1 {
-	  constructor(args = {}) {
-	    this.targetCenterX = null;
-	    this.currentCenterX = null;
-	    this.active = true;
-	    this.visibleWorldWidth = args.visibleWorldWidth ?? 3.8;
-	    this.targetCenterY = args.targetCenterY ?? 1;
-	    this.offsetX = args.offsetX ?? 0;
-	  }
-
-	  step(args = {}) {
-	    if (!this.active) return;
-	    
-	    const renderer = args.renderer;
-	    const camera = args.camera;
-	    const mesh = args.mesh;
-	    const floor = args.floor;
-	    const grid = args.grid;
-
-	    const meshCenter = mesh.computeCenter();
-	    const meshCenterX = meshCenter[0] + this.offsetX;
-
-	    if (!isNaN(meshCenterX)) this.targetCenterX = meshCenterX;
-
-	    if (this.currentCenterX == null) {
-	      this.currentCenterX = this.targetCenterX;
-	    } else {
-	      this.currentCenterX += (this.targetCenterX - this.currentCenterX) * 0.5;
-	    }
-
-	    const center = [this.currentCenterX, this.targetCenterY];
-	    camera.center({
-	      worldCenter: center,
-	      worldWidth: this.visibleWorldWidth,
-	      viewportWidth: renderer.width,
-	      viewportHeight: renderer.height,
-	    });
-
-	    const topRight = camera.domToWorldSpace([renderer.width, 0]);
-	    const bottomLeft = camera.domToWorldSpace([0, renderer.height]);
-
-	    const marginCells = 1;
-	    
-	    const [_x0, _y0] = bottomLeft;
-	    const x0 = Math.floor(_x0) - marginCells;
-	    let y0 = Math.floor(_y0);
-	    if (y0 < 0) {
-	      y0 = 0;
-	    }
-	    const [_x1, _y1] = topRight;
-	    const x1 = _x1;
-	    const y1 = _y1;
-
-	    const width = x1 - x0;
-	    const height = y1 - y0;
-	    const rows = Math.ceil(height) + marginCells;
-	    const cols = Math.ceil(width) + marginCells;
-
-	    grid.set({
-	      x0: x0,
-	      y0: y0,
-	      rows: rows,
-	      cols: cols,
-
-	      innerCells: grid.innerCells,
-	      primaryLineWidth: grid.primaryLineWidth,
-	      secondaryLineWidth: grid.secondaryLineWidth
-	    });
-
-	    floor.mesh.x = [
-	      [x0, 0],
-	      [x1, 0]
-	    ];
-	  }
-	}
-
-	var Tracker_1 = Tracker$1;
-
 	function clone(a) {
 	  return [a[0], a[1]];
 	}
@@ -2053,8 +1975,11 @@
 	    this.customAttributes = {};
 	  }
 
+	  get pos() { return this.x; }
+	  set pos(x) { this.x = x; }
+
 	  numVertices() {
-	    return this.x.length;
+	    return this.pos.length;
 	  }
 
 	  numTriangles() {
@@ -2078,9 +2003,9 @@
 	    let maxX = null;
 	    let minY = null;
 	    let maxY = null;
-	    this.x.forEach((xi) => {
-	      const x = xi[0];
-	      const y = xi[1];
+	    this.pos.forEach((pi) => {
+	      const x = pi[0];
+	      const y = pi[1];
 	      if (minX == null || x < minX) minX = x;
 	      if (maxX == null || x > maxX) maxX = x;
 	      if (minY == null || y < minY) minY = y;
@@ -2096,9 +2021,9 @@
 
 	  computeCenter() {
 	    let center = [0, 0];
-	    const numVertices = this.x.length;
+	    const numVertices = this.pos.length;
 	    for (let i = 0; i < numVertices; i++) {
-	      const xi = this.x[i];
+	      const xi = this.pos[i];
 	      math.Vec2.add_(center, xi);
 	    }
 	    math.Vec2.mulScalar_(center, 1 / numVertices);
@@ -2160,7 +2085,7 @@
 	  renderPoint(renderer, mesh, camera, id, customArgs) {
 	    const ctx = this.ctx;
 	    let xi;
-	    if (mesh instanceof Mesh$1) xi = mesh.x[id];
+	    if (mesh instanceof Mesh$1) xi = mesh.pos[id];
 	    else {
 	      throw new Error("invalid mesh");
 	    }
@@ -2181,8 +2106,8 @@
 	  renderLine(renderer, mesh, camera, id, customArgs) {
 	    const ctx = this.ctx;
 	    const line = mesh.lines[id];
-	    const a = camera.transform.apply(mesh.x[line[0]]);
-	    const b = camera.transform.apply(mesh.x[line[1]]);
+	    const a = camera.transform.apply(mesh.pos[line[0]]);
+	    const b = camera.transform.apply(mesh.pos[line[1]]);
 	    
 	    ctx.save();
 	    mesh.lineShader.renderLine({
@@ -2207,15 +2132,15 @@
 	    const ic = triangle[2];
 
 	    let _a, _b, _c;
-	    if (mesh.x instanceof Float32Array) {
+	    if (mesh.pos instanceof Float32Array) {
 	      const spaceDim = 2;
-	      _a = [mesh.x[ia * spaceDim], mesh.x[ia * spaceDim + 1]];
-	      _b = [mesh.x[ib * spaceDim], mesh.x[ib * spaceDim + 1]];
-	      _c = [mesh.x[ic * spaceDim], mesh.x[ic * spaceDim + 1]];
+	      _a = [mesh.pos[ia * spaceDim], mesh.pos[ia * spaceDim + 1]];
+	      _b = [mesh.pos[ib * spaceDim], mesh.pos[ib * spaceDim + 1]];
+	      _c = [mesh.pos[ic * spaceDim], mesh.pos[ic * spaceDim + 1]];
 	    } else {
-	      _a = mesh.x[ia];
-	      _b = mesh.x[ib];
-	      _c = mesh.x[ic];
+	      _a = mesh.pos[ia];
+	      _b = mesh.pos[ib];
+	      _c = mesh.pos[ic];
 	    }
 
 	    const a = camera.transform.apply(_a);
@@ -2249,7 +2174,7 @@
 	        this.renderLine(renderer, mesh, camera, i, customArgs);
 	      }
 	      
-	      for (let i = 0; i < mesh.x.length; i++) {
+	      for (let i = 0; i < mesh.pos.length; i++) {
 	        this.renderPoint(renderer, mesh, camera, i, customArgs);
 	      }
 	    } else {
@@ -2549,7 +2474,7 @@
 	      x0, y0,
 	      primaryLineWidth, secondaryLineWidth
 	    });
-	    mesh.x = x;
+	    mesh.pos = x;
 	    mesh.lines = lineIndices;
 	    mesh.setCustomAttribute("lineWidths", lineWidths);
 	  }
@@ -2592,7 +2517,7 @@
 	      throw new Error("scene required");
 	    }
 	    const mesh = this.mesh = args.scene.addMesh();
-	    mesh.x = [[0, 0]];
+	    mesh.pos = [[0, 0]];
 	    
 	    const color1 = (args.color1 == null) ? "#fcfcfc" : args.color1;
 	    const color2 = (args.color2 == null) ? "#d7d8d8" : args.color2;
@@ -2867,8 +2792,138 @@
 	  Scene: core.Scene
 	};
 
-	const Tracker = Tracker_1;
+	class Tracker$1 {
+	  constructor(args = {}) {
+	    this.targetCenterX = null;
+	    this.currentCenterX = null;
+	    this.active = true;
+	    this.visibleWorldWidth = args.visibleWorldWidth ?? 3.8;
+	    this.targetCenterY = args.targetCenterY ?? 1;
+	    this.offsetX = args.offsetX ?? 0;
+	  }
+
+	  step(args = {}) {
+	    if (!this.active) return;
+	    
+	    const renderer = args.renderer;
+	    const camera = args.camera;
+	    const mesh = args.mesh;
+	    const floor = args.floor;
+	    const grid = args.grid;
+
+	    const meshCenter = mesh.computeCenter();
+	    const meshCenterX = meshCenter[0] + this.offsetX;
+
+	    if (!isNaN(meshCenterX)) this.targetCenterX = meshCenterX;
+
+	    if (this.currentCenterX == null) {
+	      this.currentCenterX = this.targetCenterX;
+	    } else {
+	      this.currentCenterX += (this.targetCenterX - this.currentCenterX) * 0.5;
+	    }
+
+	    const center = [this.currentCenterX, this.targetCenterY];
+	    camera.center({
+	      worldCenter: center,
+	      worldWidth: this.visibleWorldWidth,
+	      viewportWidth: renderer.width,
+	      viewportHeight: renderer.height,
+	    });
+
+	    const topRight = camera.domToWorldSpace([renderer.width, 0]);
+	    const bottomLeft = camera.domToWorldSpace([0, renderer.height]);
+
+	    const marginCells = 1;
+	    
+	    const [_x0, _y0] = bottomLeft;
+	    const x0 = Math.floor(_x0) - marginCells;
+	    let y0 = Math.floor(_y0);
+	    if (y0 < 0) {
+	      y0 = 0;
+	    }
+	    const [_x1, _y1] = topRight;
+	    const x1 = _x1;
+	    const y1 = _y1;
+
+	    const width = x1 - x0;
+	    const height = y1 - y0;
+	    const rows = Math.ceil(height) + marginCells;
+	    const cols = Math.ceil(width) + marginCells;
+
+	    grid.set({
+	      x0: x0,
+	      y0: y0,
+	      rows: rows,
+	      cols: cols,
+
+	      innerCells: grid.innerCells,
+	      primaryLineWidth: grid.primaryLineWidth,
+	      secondaryLineWidth: grid.secondaryLineWidth
+	    });
+
+	    floor.mesh.x = [
+	      [x0, 0],
+	      [x1, 0]
+	    ];
+	  }
+	}
+
+	var Tracker_1 = Tracker$1;
+
+	class Floor$1 {
+	  constructor(args = {}) {
+	    if (args.scene == null) {
+	      throw new Error("scene required");
+	    }
+	    const scene = this.scene = args.scene;
+	    const mesh = this.mesh = scene.addMesh();
+	    mesh.pos = [
+	      [-10, 0],
+	      [10, 0]
+	    ];
+	    mesh.lines = [
+	      [0, 1]
+	    ];
+
+	    mesh.lineShader.renderLine = Floor$1.makeFloorLineShaderFunction({
+	      width: args.width,
+	      color: args.color
+	    });
+
+	    mesh.pointShader.renderPoint = () => {};
+
+	    mesh.setCustomAttribute("translation", [0, 0]);
+	  }
+
+	  static makeFloorLineShaderFunction(args = {}) {
+	    const width = args.width ?? 0.055;
+	    const color = args.color ?? "black";
+	    return (args) => {
+	      const ctx = args.ctx;
+	      const a = args.a;
+	      const b = args.b;
+	      const camera = args.camera;
+	      const mesh = args.mesh;
+	      const scale = camera.inferScale();
+
+	      const _translation = mesh.getCustomAttribute("translation");
+	      const translation = [scale * _translation[0], scale * _translation[1]];
+
+	      ctx.strokeStyle = color;
+	      ctx.lineWidth = scale * width;
+	      ctx.beginPath();
+	      ctx.moveTo(a[0] + translation[0], a[1] + translation[1]);
+	      ctx.lineTo(b[0] + translation[0], b[1] + translation[1]);
+	      ctx.stroke();
+	    }
+	  }
+	}
+
+	var Floor_1 = Floor$1;
+
 	const mm2d$1 = mm2d$2;
+	const Tracker = Tracker_1;
+	const Floor = Floor_1;
 
 	function hashSimplex(vids) {
 	  vids.sort();
@@ -2917,55 +2972,6 @@
 	  }
 	}
 
-	class Floor {
-	  constructor(args = {}) {
-	    if (args.scene == null) {
-	      throw new Error("scene required");
-	    }
-	    const scene = this.scene = args.scene;
-	    const mesh = this.mesh = scene.addMesh();
-	    mesh.x = [
-	      [-10, 0],
-	      [10, 0]
-	    ];
-	    mesh.lines = [
-	      [0, 1]
-	    ];
-
-	    mesh.lineShader.renderLine = Floor.makeFloorLineShaderFunction({
-	      width: args.width,
-	      color: args.color
-	    });
-
-	    mesh.pointShader.renderPoint = () => {};
-
-	    mesh.setCustomAttribute("translation", [0, 0]);
-	  }
-
-	  static makeFloorLineShaderFunction(args = {}) {
-	    const width = args.width ?? 0.055;
-	    const color = args.color ?? "black";
-	    return (args) => {
-	      const ctx = args.ctx;
-	      const a = args.a;
-	      const b = args.b;
-	      const camera = args.camera;
-	      const mesh = args.mesh;
-	      const scale = camera.inferScale();
-
-	      const _translation = mesh.getCustomAttribute("translation");
-	      const translation = [scale * _translation[0], scale * _translation[1]];
-
-	      ctx.strokeStyle = color;
-	      ctx.lineWidth = scale * width;
-	      ctx.beginPath();
-	      ctx.moveTo(a[0] + translation[0], a[1] + translation[1]);
-	      ctx.lineTo(b[0] + translation[0], b[1] + translation[1]);
-	      ctx.stroke();
-	    }
-	  }
-	}
-
 	function hexToRgb(hex) {
 	  if (hex.length != 7) {
 	    throw new Error(`invalid hex string ${hex}`);
@@ -2986,7 +2992,11 @@
 	      throw new Error("system required");
 	    }
 	    this.system = args.system;
-	    this.sortedVertexIds = args.sortedVertexIds;
+	    const sortedVertexIds = args.sortedVertexIds;
+	    this.sortedVertexIds = sortedVertexIds;
+	    if (args.vertexDepths != null) {
+	      this.setSortedVertexIdsFromVertexDepths(args.vertexDepths);
+	    }
 
 	    const headless = args.headless ?? false;
 
@@ -3192,6 +3202,16 @@
 	    this.tracker = new Tracker();
 	  }
 
+	  setSortedVertexIdsFromVertexDepths(depths) {
+	    if (depths.length != this.system.numVertices) {
+	      throw new Error(`invalid size for depths, found ${depths.length}, expected ${this.system.numVertices}`);
+	    }
+	    const indexedDepths = depths.map((depth, index) => ({ depth, index }));
+	    indexedDepths.sort((a, b) => b.depth - a.depth);
+	    const sortedVertexIds = indexedDepths.map((a) => a.index);
+	    this.sortedVertexIds = sortedVertexIds;
+	  }
+
 	  setSize(args = {}) {
 	    this.renderer.setSize({
 	      width: args.width,
@@ -3257,8 +3277,8 @@
 	  _updateMesh(meshData) {
 	    const mesh = this.mesh;
 
-	    if (meshData.x != null) {
-	      mesh.x = meshData.x;
+	    if (meshData.pos != null) {
+	      mesh.pos = meshData.pos;
 	    }
 
 	    mesh.triangles = meshData.triangles;
@@ -3324,10 +3344,10 @@
 	    const system = this.system;
 
 	    if (system.numVertices == 0) {
-	      mesh.x = [];
+	      mesh.pos = [];
 	    } else {
-	      const x = system.pos.toArray();
-	      mesh.x = x;
+	      const pos = system.pos.toArray();
+	      mesh.pos = pos;
 	    }
 	  }
 
@@ -3348,13 +3368,13 @@
 	  hitTestVertex(p, hitTestRadius = 0.31) {
 	    const numVertices = this.system.numVertices;
 	    if (numVertices == 0) return null;
-	    const xF32 = this.system.pos.slot.f32();
+	    const pF32 = this.system.pos.slot.f32();
 	    let closestVertex = null;
 	    let closestQuadrance = Infinity;
 	    const hitTestRadius2 = hitTestRadius * hitTestRadius;
 	    for (let i = 0; i < numVertices; i++) {
 	      const offset = i * 2;
-	      const xi = [xF32[offset], xF32[offset + 1]];
+	      const xi = [pF32[offset], pF32[offset + 1]];
 	      const d = mm2d$1.math.Vec2.sub(xi, p);
 	      const q = mm2d$1.math.Vec2.quadrance(d);
 	      if (q < hitTestRadius2 && q < closestQuadrance) {
@@ -3367,10 +3387,10 @@
 
 	  setVertexPos(i, p) {
 	    const system = this.system;
-	    const xF32 = system.pos.slot.f32();
+	    const pF32 = system.pos.slot.f32();
 	    const offset = i * 2;
-	    xF32[offset] = p[0];
-	    xF32[offset + 1] = p[1];
+	    pF32[offset] = p[0];
+	    pF32[offset + 1] = p[1];
 	  }
 
 	  setVertexVel(i, p) {
