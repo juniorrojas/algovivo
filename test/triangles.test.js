@@ -76,6 +76,15 @@ test("set rsi", async () => {
     [[15, 16],
      [17, 18]]
   ]);
+
+  expect(() => {
+    system.setTriangles({
+      rsi: [
+        [[11, 12],
+         [13, 14]]
+      ]
+    });
+  }).toThrow();
 });
 
 test("set triangles", async () => {
