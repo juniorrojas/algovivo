@@ -143,17 +143,17 @@ class System {
   setTriangles(args = {}) {
     const indices = args.indices;
     const rsi = args.rsi;
-    const numTriangles = rsi ? rsi.length : indices.length;
+    const numTriangles = indices ? indices.length : this.triangles.u32().length / 3;
 
     if (indices == null && (!rsi || rsi.length !== numTriangles)) {
-      throw new Error("indices required");
+      throw new Error("rsi is not consistent with the number of indices");
     }
 
     const mgr = this.memoryManager;
     const ten = this.ten;
     
-    const triangles = mgr.malloc32(numTriangles * 3);
-    if (this.triangles != null) this.triangles.free();
+    const triangles = indices ? mgr.malloc32(numTriangles * 3) : this.triangles;
+    if (indices && this.triangles != null) this.triangles.free();
     this.triangles = triangles;
 
     if (indices != null) {
