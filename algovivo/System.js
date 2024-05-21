@@ -141,12 +141,13 @@ class System {
   }
 
   setTriangles(args = {}) {
-    // TODO indices must be optional if rsi is provided and matches the number of triangles
-    if (args.indices == null) {
+    const indices = args.indices;
+    const rsi = args.rsi;
+    const numTriangles = rsi ? rsi.length : indices.length;
+
+    if (indices == null && (!rsi || rsi.length !== numTriangles)) {
       throw new Error("indices required");
     }
-    const indices = args.indices;
-    const numTriangles = indices.length;
 
     const mgr = this.memoryManager;
     const ten = this.ten;
@@ -155,19 +156,21 @@ class System {
     if (this.triangles != null) this.triangles.free();
     this.triangles = triangles;
 
-    const trianglesU32 = triangles.u32();
-    indices.forEach((t, i) => {
-      const offset = i * 3;
-      trianglesU32[offset    ] = t[0];
-      trianglesU32[offset + 1] = t[1];
-      trianglesU32[offset + 2] = t[2];
-    });
+    if (indices) {
+      const trianglesU32 = triangles.u32();
+      indices.forEach((t, i) => {
+        const offset = i * 3;
+        trianglesU32[offset    ] = t[0];
+        trianglesU32[offset + 1] = t[1];
+        trianglesU32[offset + 2] = t[2];
+      });
+    }
 
-    const rsi = ten.zeros([numTriangles, 2, 2]);
+    const rsiTensor = ten.zeros([numTriangles, 2, 2]);
     if (this.rsi != null) this.rsi.dispose();
-    this.rsi = rsi;
+    this.rsi = rsiTensor;
     
-    if (args.rsi == null) {
+    if (rsi == null) {
       this.wasmInstance.exports.rsi_of_pos(
         this.numVertices,
         this.pos0.ptr,
@@ -176,7 +179,7 @@ class System {
         this.rsi.ptr
       );
     } else {
-      this.rsi.set(args.rsi);
+      this.rsi.set(rsi);
     }
   }
 
