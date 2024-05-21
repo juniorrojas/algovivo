@@ -61,6 +61,30 @@ test("set rsi", async () => {
      [7, 8]],
   ];
   expect(system.rsi.toArray()).toBeCloseToArray(expectedRsi);
+
+  system.setTriangles({
+    rsi: [
+      [[11, 12],
+       [13, 14]],
+      [[15, 16],
+       [17, 18]]
+    ]
+  });
+  expect(system.rsi.toArray()).toBeCloseToArray([
+    [[11, 12],
+     [13, 14]],
+    [[15, 16],
+     [17, 18]]
+  ]);
+
+  expect(() => {
+    system.setTriangles({
+      rsi: [
+        [[11, 12],
+         [13, 14]]
+      ]
+    });
+  }).toThrow();
 });
 
 test("set triangles", async () => {

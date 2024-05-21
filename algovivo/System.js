@@ -141,32 +141,35 @@ class System {
   }
 
   setTriangles(args = {}) {
-    if (args.indices == null) {
-      throw new Error("indices required");
-    }
     const indices = args.indices;
-    const numTriangles = indices.length;
+    const rsi = args.rsi;
+    const numTriangles = indices ? indices.length : this.numTriangles;
+
+    if (indices == null && (!rsi || rsi.length !== numTriangles)) {
+      throw new Error("rsi is not consistent with the number of indices");
+    }
 
     const mgr = this.memoryManager;
     const ten = this.ten;
     
-    const triangles = mgr.malloc32(numTriangles * 3);
-    if (this.triangles != null) this.triangles.free();
+    const triangles = indices ? mgr.malloc32(numTriangles * 3) : this.triangles;
+    if (indices && this.triangles != null) this.triangles.free();
     this.triangles = triangles;
 
-    const trianglesU32 = triangles.u32();
-    indices.forEach((t, i) => {
-      const offset = i * 3;
-      trianglesU32[offset    ] = t[0];
-      trianglesU32[offset + 1] = t[1];
-      trianglesU32[offset + 2] = t[2];
-    });
-
-    const rsi = ten.zeros([numTriangles, 2, 2]);
-    if (this.rsi != null) this.rsi.dispose();
-    this.rsi = rsi;
+    if (indices != null) {
+      const trianglesU32 = triangles.u32();
+      indices.forEach((t, i) => {
+        const offset = i * 3;
+        trianglesU32[offset    ] = t[0];
+        trianglesU32[offset + 1] = t[1];
+        trianglesU32[offset + 2] = t[2];
+      });
+    }
     
-    if (args.rsi == null) {
+    if (this.rsi != null) this.rsi.dispose();
+    this.rsi = ten.zeros([numTriangles, 2, 2]);
+    
+    if (rsi == null) {
       this.wasmInstance.exports.rsi_of_pos(
         this.numVertices,
         this.pos0.ptr,
@@ -175,7 +178,7 @@ class System {
         this.rsi.ptr
       );
     } else {
-      this.rsi.set(args.rsi);
+      this.rsi.set(rsi);
     }
   }
 
