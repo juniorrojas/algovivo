@@ -143,7 +143,7 @@ class System {
   setTriangles(args = {}) {
     const indices = args.indices;
     const rsi = args.rsi;
-    const numTriangles = indices ? indices.length : this.triangles.u32().length / 3;
+    const numTriangles = indices ? indices.length : this.numTriangles;
 
     if (indices == null && (!rsi || rsi.length !== numTriangles)) {
       throw new Error("rsi is not consistent with the number of indices");
