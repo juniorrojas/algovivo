@@ -156,7 +156,7 @@ class System {
     if (this.triangles != null) this.triangles.free();
     this.triangles = triangles;
 
-    if (indices) {
+    if (indices != null) {
       const trianglesU32 = triangles.u32();
       indices.forEach((t, i) => {
         const offset = i * 3;
