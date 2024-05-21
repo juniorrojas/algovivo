@@ -165,10 +165,9 @@ class System {
         trianglesU32[offset + 2] = t[2];
       });
     }
-
-    const rsiTensor = ten.zeros([numTriangles, 2, 2]);
+    
     if (this.rsi != null) this.rsi.dispose();
-    this.rsi = rsiTensor;
+    this.rsi = ten.zeros([numTriangles, 2, 2]);
     
     if (rsi == null) {
       this.wasmInstance.exports.rsi_of_pos(
