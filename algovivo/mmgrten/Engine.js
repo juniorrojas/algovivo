@@ -7,6 +7,11 @@ const nn = require("./nn");
 
 class Engine {
   constructor(args = {}) {
+    if (args.wasmInstance != null) this.init(args);
+    this.env = {};
+  }
+
+  init(args = {}) {
     if (args.wasmInstance == null) {
       throw new Error("wasmInstance required");
     }
