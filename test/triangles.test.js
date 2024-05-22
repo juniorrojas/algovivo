@@ -4,8 +4,8 @@ const utils = require("./utils");
 expect.extend({ toBeCloseToArray: utils.toBeCloseToArray });
 
 test("set pos and triangles", async () => {
-  const wasmInstance = await utils.loadWasm();
-  const system = new algovivo.System({ wasmInstance });
+  const ten = await utils.loadTen();
+  const system = new algovivo.System({ ten });
   system.set({
     pos: [
       [0, 0],

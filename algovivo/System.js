@@ -2,6 +2,7 @@ const mmgrten = require("./mmgrten");
 
 class System {
   constructor(args = {}) {
+    // TODO accept args.ten
     if (args.wasmInstance == null) {
       throw new Error("wasmInstance required");
     }
