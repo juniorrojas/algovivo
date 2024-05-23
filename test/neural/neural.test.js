@@ -50,7 +50,7 @@ test("neural policy", async () => {
   const n = await utils.getNumFilesWithExtension(trajectoryDataDirname, ".json");
   expect(n).toBe(100);
   for (let i = 0; i < n; i++) {
-    const data = dataUtils.loadTrajectoryStep(i);
+    const data = await dataUtils.loadTrajectoryStep(i);
 
     system.pos0.set(data.pos0);
     system.vel0.set(data.vel0);
