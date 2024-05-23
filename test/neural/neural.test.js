@@ -1,7 +1,7 @@
 const algovivo = require("../../algovivo");
 const utils = require("../utils");
+const dataUtils = require("./dataUtils");
 const fsp = require("fs/promises");
-const fs = require("fs");
 const path = require("path");
 const NeuralPolicy = require("./NeuralPolicy");
 
@@ -50,8 +50,7 @@ test("neural policy", async () => {
   const n = await utils.getNumFilesWithExtension(trajectoryDataDirname, ".json");
   expect(n).toBe(100);
   for (let i = 0; i < n; i++) {
-    const filename = path.join(trajectoryDataDirname, `${i}.json`);
-    const data = JSON.parse(fs.readFileSync(filename));
+    const data = dataUtils.loadTrajectoryStep(i);
 
     system.pos0.set(data.pos0);
     system.vel0.set(data.vel0);
