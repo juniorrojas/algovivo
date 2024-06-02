@@ -2,13 +2,22 @@ const mmgrten = require("./mmgrten");
 
 class System {
   constructor(args = {}) {
-    if (args.wasmInstance == null) {
-      throw new Error("wasmInstance required");
+    let ten;
+    if (args.ten == null) {
+      const wasmInstance = args.wasmInstance;
+      if (wasmInstance == null) {
+        throw new Error("wasmInstance required");
+      }
+      this.wasmInstance = wasmInstance;
+      ten = new mmgrten.Engine({
+        wasmInstance: args.wasmInstance
+      });
+      this.ten = ten;
+    } else {
+      ten = args.ten;
+      this.wasmInstance = ten.wasmInstance;
+      this.ten = ten;
     }
-    const ten = new mmgrten.Engine({
-      wasmInstance: args.wasmInstance
-    });
-    this.ten = ten;
 
     const wasmInstance = ten.wasmInstance;
     const memoryManager = ten.mgr;

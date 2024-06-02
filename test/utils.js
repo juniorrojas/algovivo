@@ -1,6 +1,7 @@
 const fsp = require("fs/promises");
 const fs = require("fs");
 const path = require("path");
+const algovivo = require("algovivo");
 
 function toBeCloseToArray(a, b) {
   if ((typeof a == "number") && (typeof b == "number")) {
@@ -45,6 +46,15 @@ async function loadWasm() {
   return wasmInstance;
 }
 
+async function loadTen() {
+  const ten = new algovivo.mmgrten.Engine();
+  const wasmInstance = await loadWasm({
+    env: ten.env
+  });
+  ten.init({ wasmInstance });
+  return ten;
+}
+
 function fileExists(filename) {
   return new Promise((resolve, reject) => {
     fs.access(filename, fs.constants.F_OK, (err) => {
@@ -77,6 +87,7 @@ function getNumFilesWithExtension(dirname, ext = ".json") {
 
 module.exports = {
   loadWasm,
+  loadTen,
   toBeCloseToArray,
   cleandir,
   getNumFilesWithExtension
