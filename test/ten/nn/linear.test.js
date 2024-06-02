@@ -1,10 +1,7 @@
-const { mmgrten } = require("algovivo");
 const utils = require("../../utils");
 
 test("linear", async () => {
-  const ten = await mmgrten.engine({
-    wasmInstance: await utils.loadWasm()
-  });
+  const ten = await utils.loadTen();
   const mgr = ten.mgr;
 
   const bytes0 = ten.mgr.numReservedBytes();
