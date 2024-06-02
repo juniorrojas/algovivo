@@ -4,8 +4,8 @@ const utils = require("./utils");
 expect.extend({ toBeCloseToArray: utils.toBeCloseToArray });
 
 test("set pos and muscles", async () => {
-  const wasmInstance = await utils.loadWasm();
-  const system = new algovivo.System({ wasmInstance });
+  const ten = await utils.loadTen();
+  const system = new algovivo.System({ ten });
   system.set({
     pos: [
       [0, 0],
@@ -26,8 +26,8 @@ test("set pos and muscles", async () => {
 });
 
 test("set muscles", async () => {
-  const wasmInstance = await utils.loadWasm();
-  const system = new algovivo.System({ wasmInstance });
+  const ten = await utils.loadTen();
+  const system = new algovivo.System({ ten });
   system.set({
     pos: [
       [0, 0],
@@ -66,8 +66,8 @@ test("set muscles", async () => {
 });
 
 test("update l0, keep a", async () => {
-  const wasmInstance = await utils.loadWasm();
-  const system = new algovivo.System({ wasmInstance });
+  const ten = await utils.loadTen();
+  const system = new algovivo.System({ ten });
   system.setVertices([
     [0.5, 0.5],
     [1.5, 0.5]
