@@ -4,9 +4,7 @@ const utils = require("../utils");
 expect.extend({ toBeCloseToArray: utils.toBeCloseToArray });
 
 test("clamp min max", async () => {
-  const ten = await mmgrten.engine({
-    wasmInstance: await utils.loadWasm()
-  });
+  const ten = await utils.loadTen();
 
   const a = ten.tensor([
     [1, -3, 0.9],
@@ -21,9 +19,7 @@ test("clamp min max", async () => {
 });
 
 test("clamp min", async () => {
-  const ten = await mmgrten.engine({
-    wasmInstance: await utils.loadWasm()
-  });
+  const ten = await utils.loadTen();
 
   const a = ten.tensor([
     [1, -3, 0.9],
@@ -37,9 +33,7 @@ test("clamp min", async () => {
 });
 
 test("clamp max", async () => {
-  const ten = await mmgrten.engine({
-    wasmInstance: await utils.loadWasm()
-  });
+  const ten = await utils.loadTen();
 
   const a = ten.tensor([
     [1, -3, 0.9],

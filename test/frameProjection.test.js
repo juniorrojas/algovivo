@@ -1,6 +1,6 @@
 const algovivo = require("algovivo");
 const mmgrten = algovivo.mmgrten;
-const { loadWasm } = require("./utils");
+const { loadWasm, loadTen } = require("./utils");
 
 test("dot2d", async () => {
   const wasmInstance = await loadWasm();
@@ -12,9 +12,7 @@ test("dot2d", async () => {
 });
 
 test("frame_projection", async () => {
-  const ten = await mmgrten.engine({
-    wasmInstance: await loadWasm()
-  });
+  const ten = await loadTen();
 
   const numVertices = 2;
   const spaceDim = 2;

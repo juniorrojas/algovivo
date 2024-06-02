@@ -1,10 +1,7 @@
-const { mmgrten } = require("algovivo");
 const utils = require("../utils");
 
 test("get/set", async () => {
-  const ten = await mmgrten.engine({
-    wasmInstance: await utils.loadWasm()
-  });
+  const ten = await utils.loadTen();
   const a = ten.intTuple([1, 4, 8]);
   expect(a.get(0)).toBe(1);
   expect(a.get(1)).toBe(4);
@@ -16,9 +13,7 @@ test("get/set", async () => {
 });
 
 test("flatten idx", async () => {
-  const ten = await mmgrten.engine({
-    wasmInstance: await utils.loadWasm()
-  });
+  const ten = await utils.loadTen();
   const order = 1;
   const idx = ten.intTuple([1]);
   const stride = ten.intTuple([1]);
