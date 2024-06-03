@@ -47,6 +47,7 @@ jobs:
           npm ci
           npm run build
       - name: Test demo
+        run: |
           cd demo
           npm test
       - name: Upload demo screenshot
