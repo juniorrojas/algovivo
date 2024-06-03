@@ -77,7 +77,7 @@ async function main() {
 
   const btnBrain = new BrainButton();
   btnBrain.domElement.style.marginTop = "8px";
-  btnBrain.domElement.style.marginBottom = "8px";
+  btnBrain.domElement.style.marginBottom = "16px";
   btnBrain.domElement.addEventListener("click", () => {
     togglePolicy();
   });

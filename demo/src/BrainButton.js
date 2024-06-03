@@ -5,10 +5,9 @@ export default class BrainButton {
     div.style.userSelect = "none";
     div.style.webkitTapHighlightColor = "transparent";
     div.style.padding = "12px";
+    div.style.boxSizing = "content-box";
     div.style.cursor = "pointer";
     div.style.borderRadius = "50%";
-    div.style.width = "78px";
-    div.style.height = "78px";
     div.style.minHeight = div.style.height;
     div.style.margin = "4px";
     div.style.display = "flex";
@@ -19,13 +18,22 @@ export default class BrainButton {
     div.style.overflow = "hidden";
 
     this.initSvg();
+    this.setSize(40);
     this.setInactiveStyle();
+  }
+
+  setSize(size) {
+    const div = this.domElement;
+    div.style.width = `${size}px`;
+    div.style.height = `${size}px`;
+    div.style.minHeight = `${size}px`;
   }
 
   initSvg() {
     const color = "white";
 
     const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    this.svg = svg;
     svg.style.width = "100%";
     svg.setAttribute("width", "198");
     svg.setAttribute("height", "217");
