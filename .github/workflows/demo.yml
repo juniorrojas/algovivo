@@ -37,13 +37,17 @@ jobs:
         with:
           name: algovivo.wasm
           path: build/
-      - name: Test demo
+      - name: Build lib
         run: |
           npm ci
           npm run build
+      - name: Build demo
+        run: |
           cd demo
           npm ci
           npm run build
+      - name: Test demo
+          cd demo
           npm test
       - name: Upload demo screenshot
         uses: actions/upload-artifact@v4
