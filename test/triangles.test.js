@@ -33,8 +33,8 @@ test("set pos and triangles", async () => {
 });
 
 test("set rsi", async () => {
-  const wasmInstance = await utils.loadWasm();
-  const system = new algovivo.System({ wasmInstance });
+  const ten = await utils.loadTen();
+  const system = new algovivo.System({ ten });
   system.set({
     pos: [
       [0, 0],
@@ -88,8 +88,8 @@ test("set rsi", async () => {
 });
 
 test("set triangles", async () => {
-  const wasmInstance = await utils.loadWasm();
-  const system = new algovivo.System({ wasmInstance });
+  const ten = await utils.loadTen();
+  const system = new algovivo.System({ ten });
   system.set({
     pos: [
       [0, 0],

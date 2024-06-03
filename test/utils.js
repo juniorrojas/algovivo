@@ -3,9 +3,9 @@ const fs = require("fs");
 const path = require("path");
 const algovivo = require("algovivo");
 
-function toBeCloseToArray(a, b) {
+function toBeCloseToArray(a, b, tolerance = 1e-3) {
   if ((typeof a == "number") && (typeof b == "number")) {
-    if (Math.abs(a - b) <= 1e-3) {
+    if (Math.abs(a - b) <= tolerance) {
       return {
         pass: true,
       };
@@ -31,7 +31,7 @@ function toBeCloseToArray(a, b) {
   }
 
   for (let i = 0; i < a.length; i++) {
-    const r = toBeCloseToArray(a[i], b[i]);
+    const r = toBeCloseToArray(a[i], b[i], tolerance);
     if (!r.pass) return r;
   }
 

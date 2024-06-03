@@ -4,9 +4,7 @@ const utils = require("../utils");
 expect.extend({ toBeCloseToArray: utils.toBeCloseToArray });
 
 test("tensor", async () => {
-  const ten = await mmgrten.engine({
-    wasmInstance: await utils.loadWasm()
-  });
+  const ten = await utils.loadTen();
   const a = ten.tensor([1, 2, 3]);
   expect(a.shape.toArray()).toEqual([3]);
   expect(a.stride.toArray()).toEqual([1]);
@@ -26,9 +24,7 @@ test("tensor", async () => {
 });
 
 test("empty + zero", async () => {
-  const ten = await mmgrten.engine({
-    wasmInstance: await utils.loadWasm()
-  });
+  const ten = await utils.loadTen();
   
   const a = ten.empty([3, 1, 2]);
   expect(a.shape.toArray()).toEqual([3, 1, 2]);
@@ -42,9 +38,7 @@ test("empty + zero", async () => {
 });
 
 test("constructors", async () => {
-  const ten = await mmgrten.engine({
-    wasmInstance: await utils.loadWasm()
-  });
+  const ten = await utils.loadTen();
 
   const a = ten.zeros([3, 1, 2]);
   expect(a.toArray()).toBeCloseToArray([
@@ -62,9 +56,7 @@ test("constructors", async () => {
 });
 
 test("matrix set", async () => {
-  const ten = await mmgrten.engine({
-    wasmInstance: await utils.loadWasm()
-  });
+  const ten = await utils.loadTen();
 
   const a = ten.zeros([2, 3]);
   a.set([1, 2], 10);
@@ -76,9 +68,7 @@ test("matrix set", async () => {
 });
 
 test("set tensor with leading zero dim", async () => {
-  const ten = await mmgrten.engine({
-    wasmInstance: await utils.loadWasm()
-  });
+  const ten = await utils.loadTen();
 
   const a = ten.zeros([0, 2, 3]);
   expect(a.shape.toArray()).toEqual([0, 2, 3]);

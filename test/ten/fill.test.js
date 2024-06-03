@@ -2,9 +2,7 @@ const { mmgrten } = require("algovivo");
 const utils = require("../utils");
 
 test("fill", async () => {
-  const ten = await mmgrten.engine({
-    wasmInstance: await utils.loadWasm()
-  });
+  const ten = await utils.loadTen();
 
   const a = ten.zeros([2, 3]);
 

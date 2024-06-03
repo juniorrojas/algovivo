@@ -1,10 +1,7 @@
-const { mmgrten } = require("algovivo");
 const utils = require("../../utils");
 
 test("sequential", async () => {
-  const ten = await mmgrten.engine({
-    wasmInstance: await utils.loadWasm()
-  });
+  const ten = await utils.loadTen();
   const nn = ten.nn;
   const mgr = ten.mgr;
 
