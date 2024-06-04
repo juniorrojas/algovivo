@@ -34,9 +34,23 @@ jobs:
         with:
           name: algovivo.wasm
           path: build/algovivo.wasm
+  build-js:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Build lib
+        run: |
+          npm ci
+          npm run build
+      - name: Upload lib build
+        uses: actions/upload-artifact@v4
+        with:
+          name: build
+          path: ./build
   test-demo:
     runs-on: ubuntu-latest
-    needs: build-wasm
+    needs: [build-wasm, build-js]
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -45,10 +59,11 @@ jobs:
         with:
           name: algovivo.wasm
           path: build/
-      - name: Build lib
-        run: |
-          npm ci
-          npm run build
+      - name: Download JS build
+        uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: ./build
       - name: Build demo
         run: |
           cd demo
@@ -63,14 +78,9 @@ jobs:
         with:
           name: screenshot
           path: ./demo/test/screenshot.out.png
-      - name: Upload lib build
-        uses: actions/upload-artifact@v4
-        with:
-          name: build
-          path: ./build
   deploy-demo:
     runs-on: ubuntu-latest
-    needs: test-demo
+    needs: [build-wasm, build-js]
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -79,24 +89,16 @@ jobs:
         with:
           name: algovivo.wasm
           path: build/
-      - name: Build lib
-        run: |
-          npm ci
-          npm run build
+      - name: Download JS build
+        uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: ./build
       - name: Build demo
         run: |
           cd demo
           npm ci
           npm run build
-      - name: Deploy
-        run: |
-          cd demo
-          ./scripts/deploy
-      - name: Upload deploy dir
-        uses: actions/upload-artifact@v4
-        with:
-          name: deploy
-          path: ./demo/deploy.out
       - name: Clone deploy branch
         uses: actions/checkout@v4
         with:
@@ -113,7 +115,6 @@ jobs:
         if: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
           cd ${{ env.DEPLOY_DIRNAME }}
-          ls -l
           git add .
           git commit -m "Deploy"
           git push origin ${{ env.DEPLOY_BRANCH }}
