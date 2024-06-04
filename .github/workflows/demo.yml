@@ -59,16 +59,11 @@ jobs:
         with:
           name: algovivo.wasm
           path: build/
-      - run: |
-          ls -l build
-          rm -rf build
       - name: Download JS build
         uses: actions/download-artifact@v4
         with:
           name: build
           path: ./build
-      - run: |
-          ls -l build
       - name: Build demo
         run: |
           cd demo
