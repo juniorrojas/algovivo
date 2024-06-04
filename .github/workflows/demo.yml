@@ -113,7 +113,6 @@ jobs:
         if: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
           cd ${{ env.DEPLOY_DIRNAME }}
-          ls -l
           git add .
           git commit -m "Deploy"
           git push origin ${{ env.DEPLOY_BRANCH }}
