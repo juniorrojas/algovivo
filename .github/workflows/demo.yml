@@ -69,27 +69,24 @@ jobs:
           cd demo
           npm ci
           npm run build
+      - name: Upload demo build
+        uses: actions/upload-artifact@v4
+        with:
+          name: demo-build
+          path: ./demo/public
   test-demo:
     runs-on: ubuntu-latest
-    needs: [build-wasm, build-js]
+    needs: [build-demo]
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-      - name: Download WASM build
+      - run: ls -l ./demo/public
+      - name: Download demo build
         uses: actions/download-artifact@v4
         with:
-          name: algovivo.wasm
-          path: build/
-      - name: Download JS build
-        uses: actions/download-artifact@v4
-        with:
-          name: build
-          path: ./build
-      - name: Build demo
-        run: |
-          cd demo
-          npm ci
-          npm run build
+          name: demo-build
+          path: ./demo/public
+      - run: ls -l ./demo/public
       - name: Test demo
         run: |
           cd demo
@@ -99,6 +96,41 @@ jobs:
         with:
           name: screenshot
           path: ./demo/test/screenshot.out.png
+  deploy-demo:
+    runs-on: ubuntu-latest
+    needs: [build-demo]
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Download demo build
+        uses: actions/download-artifact@v4
+        with:
+          name: demo-build
+          path: ./demo/public
+      - name: Clone deploy branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.DEPLOY_BRANCH }}
+          path: ${{ env.DEPLOY_DIRNAME }}
+      - name: Config git
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+      - name: Deploy to local directory
+        run: |
+          ./demo/scripts/deploy-local --deploy-dirname ${{ env.DEPLOY_DIRNAME }}
+      - name: Upload deployment
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployment
+          path: ${{ env.DEPLOY_DIRNAME }}
+      - name: Push deployment
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        run: |
+          cd ${{ env.DEPLOY_DIRNAME }}
+          git add .
+          git commit -m "Deploy"
+          git push origin ${{ env.DEPLOY_BRANCH }}
   deploy-demo:
     runs-on: ubuntu-latest
     needs: [build-wasm, build-js]
