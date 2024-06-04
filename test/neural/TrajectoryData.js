@@ -1,6 +1,18 @@
-const fs = require("fs").promises;
+const fs = require("fs")
+const fsp = require("fs").promises;
 const path = require("path");
-const utils = require("../utils");
+
+function getNumFilesWithExtension(dirname, ext = ".json") {
+  return new Promise((resolve, reject) => {
+    fs.readdir(dirname, (err, files) => {
+      if (err) {
+        throw new Error(`Error reading directory ${err}`);
+      }
+      const filenames = files.filter(file => path.extname(file).toLowerCase() === ext);
+      resolve(filenames.length);
+    });
+  });
+}
 
 class TrajectoryData {
   constructor(dirname) {
@@ -8,12 +20,12 @@ class TrajectoryData {
   }
 
   async numSteps() {
-    return await utils.getNumFilesWithExtension(this.dirname, ".json");
+    return await getNumFilesWithExtension(this.dirname, ".json");
   }
 
   async loadStep(step) {
     const filename = path.join(this.dirname, `${step}.json`);
-    const data = JSON.parse(await fs.readFile(filename));
+    const data = JSON.parse(await fsp.readFile(filename));
     return data;
   }
 }
