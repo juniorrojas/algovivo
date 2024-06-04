@@ -7,7 +7,7 @@ class ViewportVertices {
 
   getVertexPos(i) {
     const pF32 = this.system.pos.slot.f32();
-    const offset = i * 2;
+    const offset = i * this.system.spaceDim;
     return [pF32[offset], pF32[offset + 1]];
   }
 
