@@ -1,9 +1,14 @@
 const fs = require("fs").promises;
 const path = require("path");
+const utils = require("../utils");
 
 class TrajectoryData {
   constructor(dirname) {
     this.dirname = dirname;
+  }
+
+  async numSteps() {
+    return await utils.getNumFilesWithExtension(this.dirname, ".json");
   }
 
   async loadStep(step) {
