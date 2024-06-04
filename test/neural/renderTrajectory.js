@@ -1,8 +1,9 @@
 const algovivo = require("algovivo");
-const { cleandir, getNumFilesWithExtension } = require("../utils");
+const { cleandir } = require("../utils");
 const fs = require("fs");
 const path = require("path");
 const { Window, runWebServer } = require("./utils");
+const TrajectoryData = require("./TrajectoryData");
 
 async function render(args = {}) {
   const rootDirname = args.dataDirname;
@@ -68,11 +69,11 @@ async function render(args = {}) {
       }
     );
     
-    const n = await getNumFilesWithExtension(trajectoryDataDirname, ".json");
+    const trajectoryData = new TrajectoryData(trajectoryDataDirname);
+    const n = await trajectoryData.numSteps();
     for (let i = 0; i < n; i++) {
       console.log(`${i + 1} / ${n}`);
-      const stepFilename = path.join(trajectoryDataDirname, `${i}.json`);
-      const stepData = JSON.parse(fs.readFileSync(stepFilename));
+      const stepData = await trajectoryData.loadStep(i);
       await window.evaluate(async (data) => {
         system.pos.set(data.pos);
         system.a.set(data.a);
