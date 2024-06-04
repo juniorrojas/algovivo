@@ -1,0 +1,56 @@
+#!/usr/bin/env python3
+from pathlib import Path
+import os
+this_filepath = Path(os.path.abspath(__file__))
+this_dirpath = this_filepath.parent
+import sys
+sys.path.insert(0, str(this_dirpath))
+import shutil
+import argparse
+from datetime import datetime
+from glob import glob
+
+def clean_deploy_dir(deploy_path):
+    # remove all existing files in deploy_path (from last deployment), except .git
+    for filename in os.listdir(deploy_path):
+        if filename == ".git":
+            continue
+        full_filename = deploy_path.joinpath(filename)
+        if os.path.isdir(full_filename):
+            shutil.rmtree(full_filename)
+        else:
+            os.remove(full_filename)
+
+def populate_deploy_path(deploy_path):
+    public_path = this_dirpath.parent.joinpath("public")
+
+    for filename in (
+        [str(public_path.joinpath(".gitignore"))] +
+        glob(str(public_path.joinpath("*.html"))) +
+        glob(str(public_path.joinpath("*.js"))) +
+        glob(str(public_path.joinpath("*.wasm")))
+    ):
+        shutil.copy(
+            filename,
+            deploy_path.joinpath(os.path.basename(filename))
+        )
+    
+    with open(deploy_path.joinpath("deploy_info.txt"), "w") as f:
+        f.write(str(datetime.now().timestamp()))
+
+    for dirname in ["data"]:
+        shutil.copytree(
+            public_path.joinpath(dirname),
+            deploy_path.joinpath(dirname)
+        )
+
+if __name__ == "__main__":
+    arg_parser = argparse.ArgumentParser()
+    arg_parser.add_argument("--deploy-dirname", type=str, default=str(this_dirpath.parent.joinpath("deploy.out")))
+    args = arg_parser.parse_args()
+
+    os.makedirs(args.deploy_dirname, exist_ok=True)
+    deploy_path = Path(args.deploy_dirname)
+    clean_deploy_dir(deploy_path)
+    populate_deploy_path(deploy_path)
+    print(args.deploy_dirname)
