@@ -88,15 +88,6 @@ jobs:
           cd demo
           npm ci
           npm run build
-      - name: Deploy
-        run: |
-          cd demo
-          ./scripts/deploy
-      - name: Upload deploy dir
-        uses: actions/upload-artifact@v4
-        with:
-          name: deploy
-          path: ./demo/deploy.out
       - name: Clone deploy branch
         uses: actions/checkout@v4
         with:
