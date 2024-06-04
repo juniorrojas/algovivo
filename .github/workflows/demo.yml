@@ -90,6 +90,7 @@ jobs:
       - name: Test demo
         run: |
           cd demo
+          npm ci
           npm test
       - name: Upload demo screenshot
         uses: actions/upload-artifact@v4
@@ -102,11 +103,13 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
+      - run: ls -l ./demo/public
       - name: Download demo build
         uses: actions/download-artifact@v4
         with:
           name: demo-build
           path: ./demo/public
+      - run: ls -l ./demo/public
       - name: Clone deploy branch
         uses: actions/checkout@v4
         with:
