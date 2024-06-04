@@ -115,10 +115,6 @@ jobs:
         with:
           ref: ${{ env.DEPLOY_BRANCH }}
           path: ${{ env.DEPLOY_DIRNAME }}
-      - name: Config git
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
       - name: Deploy to local directory
         run: |
           ./demo/scripts/deploy-local --deploy-dirname ${{ env.DEPLOY_DIRNAME }}
@@ -131,6 +127,8 @@ jobs:
         if: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
           cd ${{ env.DEPLOY_DIRNAME }}
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add .
           git commit -m "Deploy"
           git push origin ${{ env.DEPLOY_BRANCH }}
