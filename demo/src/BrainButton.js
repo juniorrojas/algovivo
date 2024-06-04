@@ -16,6 +16,7 @@ export default class BrainButton {
     div.style.boxShadow = "0 0 8px rgba(0, 0, 0, 0.2)";
     div.style.padding = "20px";
     div.style.overflow = "hidden";
+    div.style.border = "1px solid #aaa"
 
     this.initSvg();
     this.setSize(40);
