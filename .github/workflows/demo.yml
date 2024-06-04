@@ -13,6 +13,7 @@ env:
   DEPLOY_DIRNAME: gh-pages-repo
   DEPLOY_BRANCH: gh-pages
   DEMO_BUILD_DIRNAME: ./demo/public
+  DEPLOY_LOCAL_SCRIPT: ./demo/scripts/deploy-local
 
 permissions:
   contents: write
@@ -132,7 +133,7 @@ jobs:
           path: ${{ env.DEPLOY_DIRNAME }}
       - name: Deploy to local directory
         run: |
-          ./demo/scripts/deploy-local --deploy-dirname ${{ env.DEPLOY_DIRNAME }}
+          ${{ env.DEPLOY_LOCAL_SCRIPT }} --deploy-dirname ${{ env.DEPLOY_DIRNAME }}
       - name: Upload deployment
         uses: actions/upload-artifact@v4
         with:
