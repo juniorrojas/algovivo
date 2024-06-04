@@ -1,9 +1,9 @@
 const algovivo = require("../../algovivo");
 const utils = require("../utils");
 const fsp = require("fs/promises");
-const fs = require("fs");
 const path = require("path");
 const NeuralPolicy = require("./NeuralPolicy");
+const TrajectoryData = require("./TrajectoryData");
 
 expect.extend({ toBeCloseToArray: utils.toBeCloseToArray });
 
@@ -43,15 +43,15 @@ test("neural policy", async () => {
   policy.loadData(policyData);
 
   const trajectoryDataDirname = path.join(dataDirname, "trajectory");
+  const trajectoryData = new TrajectoryData(trajectoryDataDirname);
 
   let expectedNumReservedBytes = null;
   const mgr = system.memoryManager;
 
-  const n = await utils.getNumFilesWithExtension(trajectoryDataDirname, ".json");
+  const n = await trajectoryData.numSteps();
   expect(n).toBe(100);
   for (let i = 0; i < n; i++) {
-    const filename = path.join(trajectoryDataDirname, `${i}.json`);
-    const data = JSON.parse(fs.readFileSync(filename));
+    const data = await trajectoryData.loadStep(i);
 
     system.pos0.set(data.pos0);
     system.vel0.set(data.vel0);

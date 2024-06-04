@@ -1,6 +1,5 @@
 const fsp = require("fs/promises");
 const fs = require("fs");
-const path = require("path");
 const algovivo = require("algovivo");
 
 function toBeCloseToArray(a, b, tolerance = 1e-3) {
@@ -73,22 +72,9 @@ async function cleandir(dirname) {
   }
 }
 
-function getNumFilesWithExtension(dirname, ext = ".json") {
-  return new Promise((resolve, reject) => {
-    fs.readdir(dirname, (err, files) => {
-      if (err) {
-        throw new Error(`Error reading directory ${err}`);
-      }
-      const filenames = files.filter(file => path.extname(file).toLowerCase() === ext);
-      resolve(filenames.length);
-    });
-  });
-}
-
 module.exports = {
   loadWasm,
   loadTen,
   toBeCloseToArray,
-  cleandir,
-  getNumFilesWithExtension
+  cleandir
 };
