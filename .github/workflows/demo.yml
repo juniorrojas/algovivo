@@ -48,6 +48,27 @@ jobs:
         with:
           name: build
           path: ./build
+  build-demo:
+    runs-on: ubuntu-latest
+    needs: [build-wasm, build-js]
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - name: Download WASM build
+        uses: actions/download-artifact@v4
+        with:
+          name: algovivo.wasm
+          path: build/
+      - name: Download JS build
+        uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: ./build
+      - name: Build demo
+        run: |
+          cd demo
+          npm ci
+          npm run build
   test-demo:
     runs-on: ubuntu-latest
     needs: [build-wasm, build-js]
