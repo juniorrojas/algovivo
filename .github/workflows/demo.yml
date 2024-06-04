@@ -1,4 +1,4 @@
-name: test
+name: demo
 
 on:
   push:
@@ -26,7 +26,7 @@ jobs:
         with:
           name: algovivo.wasm
           path: build/algovivo.wasm
-  test-js:
+  test-demo:
     runs-on: ubuntu-latest
     needs: build-wasm
     steps:
@@ -37,10 +37,24 @@ jobs:
         with:
           name: algovivo.wasm
           path: build/
-      - name: Build
-        run: npm ci
-      - name: Test
-        run: npm test
+      - name: Build lib
+        run: |
+          npm ci
+          npm run build
+      - name: Build demo
+        run: |
+          cd demo
+          npm ci
+          npm run build
+      - name: Test demo
+        run: |
+          cd demo
+          npm test
+      - name: Upload demo screenshot
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshot
+          path: ./demo/test/screenshot.out.png
       - name: Upload lib build
         uses: actions/upload-artifact@v4
         with:
