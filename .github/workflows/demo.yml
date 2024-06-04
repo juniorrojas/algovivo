@@ -81,7 +81,6 @@ jobs:
   deploy-demo:
     runs-on: ubuntu-latest
     needs: [build-wasm, build-js]
-    if: ${{ github.event_name == 'workflow_dispatch' }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
@@ -112,7 +111,13 @@ jobs:
       - name: Deploy to local directory
         run: |
           ./demo/scripts/deploy-local --deploy-dirname ${{ env.DEPLOY_DIRNAME }}
+      - name: Upload deployment
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployment
+          path: ${{ env.DEPLOY_DIRNAME }}
       - name: Push deployment
+        if: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
           cd ${{ env.DEPLOY_DIRNAME }}
           git add .
