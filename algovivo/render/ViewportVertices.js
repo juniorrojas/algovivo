@@ -32,6 +32,14 @@ class ViewportVertices {
     }
     return closestVertexId;
   }
+
+  setVertexPos(i, p) {
+    const system = this.system;
+    const pF32 = system.pos.slot.f32();
+    const offset = i * 2;
+    pF32[offset] = p[0];
+    pF32[offset + 1] = p[1];
+  }
 }
 
 module.exports = ViewportVertices;
