@@ -12,6 +12,8 @@ on:
 env:
   DEPLOY_DIRNAME: gh-pages-repo
   DEPLOY_BRANCH: gh-pages
+  DEMO_BUILD_DIRNAME: ./demo/public
+  DEPLOY_LOCAL_SCRIPT: ./demo/scripts/deploy-local
 
 permissions:
   contents: write
@@ -73,20 +75,20 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: demo-build
-          path: ./demo/public
+          path: ${{ env.DEMO_BUILD_DIRNAME }}
   test-demo:
     runs-on: ubuntu-latest
     needs: [build-demo]
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-      - run: ls -l ./demo/public
+      - run: ls -l ${{ env.DEMO_BUILD_DIRNAME }}
       - name: Download demo build
         uses: actions/download-artifact@v4
         with:
           name: demo-build
-          path: ./demo/public
-      - run: ls -l ./demo/public
+          path: ${{ env.DEMO_BUILD_DIRNAME }}
+      - run: ls -l ${{ env.DEMO_BUILD_DIRNAME }}
       - name: Test demo
         run: |
           cd demo
@@ -97,19 +99,33 @@ jobs:
         with:
           name: screenshot
           path: ./demo/test/screenshot.out.png
-  deploy-demo:
+  init-deploy-branch:
     runs-on: ubuntu-latest
-    needs: [build-demo]
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-      - run: ls -l ./demo/public
+      - name: Create and push branch if does not exist
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git ls-remote --exit-code --heads origin ${{ env.DEPLOY_BRANCH }} || echo "Branch does not exist"
+          git checkout --orphan ${{ env.DEPLOY_BRANCH }} || echo "Branch already exists"
+          git rm -rf . || echo "Failed to remove files"
+          git commit --allow-empty -m "First commit" || echo "Failed to commit"
+          git push origin ${{ env.DEPLOY_BRANCH }} || echo "Failed to push branch"
+  deploy-demo:
+    runs-on: ubuntu-latest
+    needs: [init-deploy-branch, build-demo]
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+      - run: ls -l ${{ env.DEMO_BUILD_DIRNAME }}
       - name: Download demo build
         uses: actions/download-artifact@v4
         with:
           name: demo-build
-          path: ./demo/public
-      - run: ls -l ./demo/public
+          path: ${{ env.DEMO_BUILD_DIRNAME }}
+      - run: ls -l ${{ env.DEMO_BUILD_DIRNAME }}
       - name: Clone deploy branch
         uses: actions/checkout@v4
         with:
@@ -117,7 +133,7 @@ jobs:
           path: ${{ env.DEPLOY_DIRNAME }}
       - name: Deploy to local directory
         run: |
-          ./demo/scripts/deploy-local --deploy-dirname ${{ env.DEPLOY_DIRNAME }}
+          ${{ env.DEPLOY_LOCAL_SCRIPT }} --deploy-dirname ${{ env.DEPLOY_DIRNAME }}
       - name: Upload deployment
         uses: actions/upload-artifact@v4
         with:
