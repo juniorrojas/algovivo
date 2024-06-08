@@ -64,8 +64,12 @@ class Mesh {
   }
 
   computeCenter() {
-    let center = [0, 0];
     const numVertices = this.pos.length;
+    if (numVertices == 0) {
+      throw new Error("no vertices to compute center");
+    }
+
+    let center = [0, 0];
     for (let i = 0; i < numVertices; i++) {
       const xi = this.pos[i];
       math.Vec2.add_(center, xi);
