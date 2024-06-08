@@ -24,32 +24,6 @@ function edgesFromTriangles(triangles) {
   return Array.from(edges.values());
 }
 
-function makePointShaderFunction(args = {}) {
-  const radius = args.radius ?? 0.028;
-  const borderColor = args.borderColor ?? "black";
-  const fillColor = args.fillColor ?? "white";
-  const borderWidth = args.borderWidth ?? 0.023;
-
-  return (args) => {
-    const ctx = args.ctx;
-    const p = args.p;
-    const camera = args.camera;
-    const scale = camera.inferScale();
-    
-    const radius1 = (radius + borderWidth) * scale;
-    ctx.fillStyle = borderColor;
-    ctx.beginPath();
-    ctx.arc(p[0], p[1], radius1, 0, 2 * Math.PI);
-    ctx.fill();
-
-    const radius2 = radius * scale;
-    ctx.fillStyle = fillColor;
-    ctx.beginPath();
-    ctx.arc(p[0], p[1], radius2, 0, 2 * Math.PI);
-    ctx.fill();
-  }
-}
-
 function hexToRgb(hex) {
   if (hex.length != 7) {
     throw new Error(`invalid hex string ${hex}`);
@@ -153,7 +127,7 @@ class SystemViewport {
     const mesh = scene.addMesh();
     this.mesh = mesh;
     
-    mesh.pointShader.renderPoint = makePointShaderFunction({
+    mesh.pointShader.renderPoint = this.vertices.makePointShaderFunction({
       borderColor: borderColor,
       fillColor: fillColor
     });
