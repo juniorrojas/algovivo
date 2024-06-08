@@ -1,6 +1,7 @@
 const mm2d = require("./mm2d");
 const Tracker = require("./Tracker");
 const Floor = require("./Floor");
+const ViewportVertices = require("./ViewportVertices");
 
 function hashSimplex(vids) {
   vids.sort();
@@ -76,6 +77,8 @@ class SystemViewport {
     }
 
     const headless = args.headless ?? false;
+
+    this.vertices = new ViewportVertices({ system: this.system });
 
     const renderer = new mm2d.Renderer({ headless });
     this.renderer = renderer;
@@ -443,31 +446,11 @@ class SystemViewport {
   }
 
   hitTestVertex(p, hitTestRadius = 0.31) {
-    const numVertices = this.system.numVertices;
-    if (numVertices == 0) return null;
-    const pF32 = this.system.pos.slot.f32();
-    let closestVertex = null;
-    let closestQuadrance = Infinity;
-    const hitTestRadius2 = hitTestRadius * hitTestRadius;
-    for (let i = 0; i < numVertices; i++) {
-      const offset = i * 2;
-      const xi = [pF32[offset], pF32[offset + 1]];
-      const d = mm2d.math.Vec2.sub(xi, p);
-      const q = mm2d.math.Vec2.quadrance(d);
-      if (q < hitTestRadius2 && q < closestQuadrance) {
-        closestVertex = i;
-        closestQuadrance = q;
-      }
-    }
-    return closestVertex;
+    return this.vertices.hitTest(p, hitTestRadius);
   }
 
   setVertexPos(i, p) {
-    const system = this.system;
-    const pF32 = system.pos.slot.f32();
-    const offset = i * 2;
-    pF32[offset] = p[0];
-    pF32[offset + 1] = p[1];
+    this.vertices.setVertexPos(i, p);
   }
 
   setVertexVel(i, p) {
