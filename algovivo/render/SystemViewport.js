@@ -275,14 +275,10 @@ class SystemViewport {
 
   render() {
     if (this.needsMeshUpdate == null || this.needsMeshUpdate) {
-      const trianglesArr = this.system.getTrianglesArr();
-      const musclesArr = this.system.getMusclesArr();
-
       this._updateMesh({
-        triangles: trianglesArr,
-        muscles: musclesArr
+        triangles: this.system.getTrianglesArray(),
+        muscles: this.system.getMusclesArray()
       });
-
       this.needsMeshUpdate = false;
     }
 

@@ -201,7 +201,7 @@ class System {
     }
   }
 
-  getMusclesArr() {
+  getMusclesArray() {
     if (this.muscles == null) return [];
     
     const numMuscles = this.numMuscles;
@@ -217,7 +217,7 @@ class System {
     return muscles;
   }
 
-  getTrianglesArr() {
+  getTrianglesArray() {
     if (this.triangles == null) return [];
     
     const numTriangles = this.numTriangles;
