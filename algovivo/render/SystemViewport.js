@@ -318,20 +318,12 @@ class SystemViewport {
     Array.prototype.push.apply(mesh.lines, meshData.muscles);
 
     const muscleHashToId = new Map();
-    if (this.system.muscles != null) {
-      const musclesU32 = this.system.muscles.u32();
-      for (let i = 0; i < this.system.numMuscles; i++) {
-        const offset = i * 2;
-        const s = [
-          musclesU32[offset    ],
-          musclesU32[offset + 1]
-        ];
-        muscleHashToId.set(
-          hashSimplex(s),
-          i
-        );
-      }
-    }
+    meshData.muscles.forEach((m, i) => {
+      muscleHashToId.set(
+        hashSimplex(m),
+        i
+      );
+    });
     
     const lineIdToMuscleId = [];
     mesh.setCustomAttribute("lineIdToMuscleId", lineIdToMuscleId);
@@ -386,14 +378,25 @@ class SystemViewport {
   _updateMuscleIntensityFromSystem() {
     const mesh = this.mesh;
     const system = this.system;
-    const muscleIntensity = [];
     const numMuscles = system.numMuscles;
+
+    if (!Number.isInteger(numMuscles) || numMuscles < 0) {
+      throw new Error(`invalid number of muscles ${numMuscles}`);
+    }
+
+    let muscleIntensity = [];
+    
     if (numMuscles > 0) {
-      const aF32 = system.a.slot.f32();
-      for (let i = 0; i < numMuscles; i++) {
-        muscleIntensity.push(aF32[i]);
+      if (system.a) {
+        const aF32 = system.a.slot.f32();
+        for (let i = 0; i < numMuscles; i++) {
+          muscleIntensity.push(aF32[i]);
+        }
+      } else {
+        muscleIntensity = new Array(numMuscles).fill(1);
       }
     }
+    
     mesh.setCustomAttribute("muscleIntensity", muscleIntensity);
   }
 
