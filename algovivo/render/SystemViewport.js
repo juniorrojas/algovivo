@@ -276,18 +276,7 @@ class SystemViewport {
   render() {
     if (this.needsMeshUpdate == null || this.needsMeshUpdate) {
       const trianglesArr = this.system.getTrianglesArr();
-
-      const musclesArr = [];
-      if (this.system.muscles != null) {
-        const musclesU32 = this.system.muscles.u32();
-        for (let i = 0; i < this.system.numMuscles; i++) {
-          const offset = i * 2;
-          musclesArr.push([
-            musclesU32[offset    ],
-            musclesU32[offset + 1]
-          ]);
-        }
-      }
+      const musclesArr = this.system.getMusclesArr();
 
       this._updateMesh({
         triangles: trianglesArr,

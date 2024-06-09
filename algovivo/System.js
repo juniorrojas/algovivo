@@ -201,6 +201,22 @@ class System {
     }
   }
 
+  getMusclesArr() {
+    if (this.muscles == null) return [];
+    
+    const numMuscles = this.numMuscles;
+    const musclesU32 = this.muscles.u32();
+    const muscles = [];
+    for (let i = 0; i < numMuscles; i++) {
+      const offset = i * 2;
+      muscles.push([
+        musclesU32[offset    ],
+        musclesU32[offset + 1]
+      ]);
+    }
+    return muscles;
+  }
+
   getTrianglesArr() {
     if (this.triangles == null) return [];
     
