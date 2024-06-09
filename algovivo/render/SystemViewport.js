@@ -378,13 +378,14 @@ class SystemViewport {
   _updateMuscleIntensityFromSystem() {
     const mesh = this.mesh;
     const system = this.system;
-    let muscleIntensity = [];
     const numMuscles = system.numMuscles;
 
     if (!Number.isInteger(numMuscles) || numMuscles < 0) {
       throw new Error(`invalid number of muscles ${numMuscles}`);
     }
 
+    let muscleIntensity = [];
+    
     if (numMuscles > 0) {
       if (system.a) {
         const aF32 = system.a.slot.f32();
