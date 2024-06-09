@@ -1,3 +1,4 @@
 module.exports = {
-  SystemViewport: require("./SystemViewport")
+  SystemViewport: require("./SystemViewport"),
+  ViewportVertices: require("./ViewportVertices")
 };
