@@ -179,13 +179,23 @@ class System {
     this.rsi = ten.zeros([numTriangles, 2, 2]);
     
     if (rsi == null) {
+      let pos = this.pos0;
+      let tmpPos = false;
+      if (args.pos != null) {
+        if (!Array.isArray(args.pos)) throw new Error("pos must be an array");
+        pos = ten.tensor(args.pos);
+        tmpPos = true;
+      }
+
       this.wasmInstance.exports.rsi_of_pos(
         this.numVertices,
-        this.pos0.ptr,
+        pos.ptr,
         numTriangles,
         this.triangles.ptr,
         this.rsi.ptr
       );
+
+      if (tmpPos) pos.dispose();
     } else {
       this.rsi.set(rsi);
     }

@@ -108,3 +108,51 @@ test("set triangles", async () => {
   });
   expect(system.numTriangles).toBe(2);
 });
+
+test("set triangles with pos", async () => {
+  const ten = await utils.loadTen();
+  const system = new algovivo.System({ ten });
+  system.set({
+    pos: [
+      [0, 0],
+      [1, 0],
+      [1, 1],
+      [0, 1]
+    ]
+  });
+  expect(system.numTriangles).toBe(0);
+
+  system.setTriangles({
+    indices: [
+      [0, 1, 2],
+      [0, 2, 3]
+    ]
+  });
+  expect(system.numTriangles).toBe(2);
+
+  system.setTriangles({
+    pos: [
+      [0, 0],
+      [2, 0],
+      [1, 1],
+      [-0.3, 0.8]
+    ],
+    indices: [
+      [0, 1, 2],
+      [0, 2, 3]
+    ]
+  });
+
+  expect(system.numTriangles).toBe(2);
+  const expectedRsi = [
+    [
+      [0.5, -0.5],
+      [0, 1]
+    ],
+    [
+      [0.7272727489471436, 0.27272728085517883],
+      [-0.9090909361839294, 0.90909093618392940]
+    ]
+  ];
+  expect(system.rsi.toArray()).toBeCloseToArray(expectedRsi);
+});
