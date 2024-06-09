@@ -179,6 +179,7 @@ class System {
     this.rsi = ten.zeros([numTriangles, 2, 2]);
     
     if (rsi == null) {
+      // TODO use args.pos if available
       this.wasmInstance.exports.rsi_of_pos(
         this.numVertices,
         this.pos0.ptr,
