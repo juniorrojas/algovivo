@@ -378,18 +378,24 @@ class SystemViewport {
   _updateMuscleIntensityFromSystem() {
     const mesh = this.mesh;
     const system = this.system;
-    const muscleIntensity = [];
+    let muscleIntensity = [];
     const numMuscles = system.numMuscles;
+
     if (!Number.isInteger(numMuscles) || numMuscles < 0) {
       throw new Error(`invalid number of muscles ${numMuscles}`);
     }
 
     if (numMuscles > 0) {
-      const aF32 = system.a.slot.f32();
-      for (let i = 0; i < numMuscles; i++) {
-        muscleIntensity.push(aF32[i]);
+      if (system.a) {
+        const aF32 = system.a.slot.f32();
+        for (let i = 0; i < numMuscles; i++) {
+          muscleIntensity.push(aF32[i]);
+        }
+      } else {
+        muscleIntensity = new Array(numMuscles).fill(1);
       }
     }
+    
     mesh.setCustomAttribute("muscleIntensity", muscleIntensity);
   }
 
