@@ -370,12 +370,12 @@ class SystemViewport {
     let sortedVertexIds = this.sortedVertexIds;
     if (sortedVertexIds == null) {
       sortedVertexIds = [];
-      for (let i = 0; i < this.system.numVertices; i++) {
+      for (let i = 0; i < numVertices; i++) {
         sortedVertexIds.push(i);
       }
     }
-    if (sortedVertexIds.length != this.system.numVertices) {
-      throw new Error(`invalid size for sortedVertexIds, found ${sortedVertexIds.length}, expected ${this.system.numVertices}`);
+    if (sortedVertexIds.length != numVertices) {
+      throw new Error(`invalid size for sortedVertexIds, found ${sortedVertexIds.length}, expected ${numVertices}`);
     }
 
     mesh.sortedElements = mm2d.sorted.makeSortedElements({
