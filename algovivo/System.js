@@ -201,6 +201,23 @@ class System {
     }
   }
 
+  getTrianglesArr() {
+    if (this.triangles == null) return [];
+    
+    const numTriangles = this.numTriangles;
+    const trianglesU32 = this.triangles.u32();
+    const triangles = [];
+    for (let i = 0; i < numTriangles; i++) {
+      const offset = i * 3;
+      triangles.push([
+        trianglesU32[offset    ],
+        trianglesU32[offset + 1],
+        trianglesU32[offset + 2]
+      ]);
+    }
+    return triangles;
+  }
+
   set(args) {
     this.setVertices(args.pos);
 
