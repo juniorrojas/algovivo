@@ -107,13 +107,28 @@ test("set triangles", async () => {
     ]
   });
   expect(system.numTriangles).toBe(2);
+});
 
-  system.setVertices([
-    [0, 0],
-    [1, 0],
-    [1, 1],
-    [0, 1]
-  ]);
+test("set triangles with pos", async () => {
+  const ten = await utils.loadTen();
+  const system = new algovivo.System({ ten });
+  system.set({
+    pos: [
+      [0, 0],
+      [1, 0],
+      [1, 1],
+      [0, 1]
+    ]
+  });
+  expect(system.numTriangles).toBe(0);
+
+  system.setTriangles({
+    indices: [
+      [0, 1, 2],
+      [0, 2, 3]
+    ]
+  });
+  expect(system.numTriangles).toBe(2);
 
   system.setTriangles({
     pos: [
