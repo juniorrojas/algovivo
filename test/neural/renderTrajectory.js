@@ -23,9 +23,12 @@ async function render(args = {}) {
     });
     await window.launch();
 
-    const initData = JSON.parse(fs.readFileSync(path.join(rootDirname, "mesh.json")));
+    const meshFilename = path.join(rootDirname, "mesh.json");
+    const meshData = JSON.parse(await fs.promises.readFile(meshFilename, "utf8"));
     const trajectoryDataDirname = path.join(rootDirname, "trajectory");
-    const initStateData = JSON.parse(fs.readFileSync(path.join(trajectoryDataDirname, "0.json")));
+
+    const trajectoryData = new TrajectoryData(trajectoryDataDirname);
+    const step0 = await trajectoryData.loadStep(0);
 
     await window.evaluate(
       async (data) => {
@@ -63,13 +66,12 @@ async function render(args = {}) {
       },
       {
         width, height,
-        pos: initStateData.pos0,
-        triangles: initData.triangles,
-        muscles: initData.muscles
+        pos: step0.pos0,
+        triangles: meshData.triangles,
+        muscles: meshData.muscles
       }
     );
     
-    const trajectoryData = new TrajectoryData(trajectoryDataDirname);
     const n = await trajectoryData.numSteps();
     for (let i = 0; i < n; i++) {
       console.log(`${i + 1} / ${n}`);
