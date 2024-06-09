@@ -330,6 +330,10 @@ class SystemViewport {
 
   _updateMesh(meshData) {
     const mesh = this.mesh;
+    const numVertices = this.system.numVertices;
+    if (!Number.isInteger(numVertices) || numVertices <= 0) {
+      throw new Error(`invalid number of vertices ${numVertices}`);
+    }
 
     if (meshData.pos != null) {
       mesh.pos = meshData.pos;
