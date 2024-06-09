@@ -37,7 +37,7 @@ jobs:
         with:
           name: algovivo.wasm
           path: build/
-      - name: Build
+      - name: Install dependencies
         run: npm ci
       - name: Test
         run: npm test
