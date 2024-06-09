@@ -7,5 +7,6 @@ module.exports = {
   System: System,
   mmgrten: mmgrten,
   SystemViewport: render.SystemViewport,
-  mm2d: mm2d
+  mm2d: mm2d,
+  render: render
 };

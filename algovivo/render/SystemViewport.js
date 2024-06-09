@@ -24,32 +24,6 @@ function edgesFromTriangles(triangles) {
   return Array.from(edges.values());
 }
 
-function makePointShaderFunction(args = {}) {
-  const radius = args.radius ?? 0.028;
-  const borderColor = args.borderColor ?? "black";
-  const fillColor = args.fillColor ?? "white";
-  const borderWidth = args.borderWidth ?? 0.023;
-
-  return (args) => {
-    const ctx = args.ctx;
-    const p = args.p;
-    const camera = args.camera;
-    const scale = camera.inferScale();
-    
-    const radius1 = (radius + borderWidth) * scale;
-    ctx.fillStyle = borderColor;
-    ctx.beginPath();
-    ctx.arc(p[0], p[1], radius1, 0, 2 * Math.PI);
-    ctx.fill();
-
-    const radius2 = radius * scale;
-    ctx.fillStyle = fillColor;
-    ctx.beginPath();
-    ctx.arc(p[0], p[1], radius2, 0, 2 * Math.PI);
-    ctx.fill();
-  }
-}
-
 function hexToRgb(hex) {
   if (hex.length != 7) {
     throw new Error(`invalid hex string ${hex}`);
@@ -153,7 +127,7 @@ class SystemViewport {
     const mesh = scene.addMesh();
     this.mesh = mesh;
     
-    mesh.pointShader.renderPoint = makePointShaderFunction({
+    mesh.pointShader.renderPoint = this.vertices.makePointShaderFunction({
       borderColor: borderColor,
       fillColor: fillColor
     });
@@ -356,6 +330,10 @@ class SystemViewport {
 
   _updateMesh(meshData) {
     const mesh = this.mesh;
+    const numVertices = this.system.numVertices;
+    if (!Number.isInteger(numVertices) || numVertices <= 0) {
+      throw new Error(`invalid number of vertices ${numVertices}`);
+    }
 
     if (meshData.pos != null) {
       mesh.pos = meshData.pos;
@@ -392,12 +370,12 @@ class SystemViewport {
     let sortedVertexIds = this.sortedVertexIds;
     if (sortedVertexIds == null) {
       sortedVertexIds = [];
-      for (let i = 0; i < this.system.numVertices; i++) {
+      for (let i = 0; i < numVertices; i++) {
         sortedVertexIds.push(i);
       }
     }
-    if (sortedVertexIds.length != this.system.numVertices) {
-      throw new Error(`invalid size for sortedVertexIds, found ${sortedVertexIds.length}, expected ${this.system.numVertices}`);
+    if (sortedVertexIds.length != numVertices) {
+      throw new Error(`invalid size for sortedVertexIds, found ${sortedVertexIds.length}, expected ${numVertices}`);
     }
 
     mesh.sortedElements = mm2d.sorted.makeSortedElements({
@@ -454,11 +432,7 @@ class SystemViewport {
   }
 
   setVertexVel(i, p) {
-    const system = this.system;
-    const vF32 = system.vel.slot.f32();
-    const offset = i * 2;
-    vF32[offset] = p[0];
-    vF32[offset + 1] = p[1];
+    this.vertices.setVertexVel(i, p);
   }
 
   fixVertex(vertexId) {

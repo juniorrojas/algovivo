@@ -5,6 +5,32 @@ class ViewportVertices {
     this.system = args.system;
   }
 
+  makePointShaderFunction(args = {}) {
+    const radius = args.radius ?? 0.028;
+    const borderColor = args.borderColor ?? "black";
+    const fillColor = args.fillColor ?? "white";
+    const borderWidth = args.borderWidth ?? 0.023;
+  
+    return (args) => {
+      const ctx = args.ctx;
+      const p = args.p;
+      const camera = args.camera;
+      const scale = camera.inferScale();
+      
+      const radius1 = (radius + borderWidth) * scale;
+      ctx.fillStyle = borderColor;
+      ctx.beginPath();
+      ctx.arc(p[0], p[1], radius1, 0, 2 * Math.PI);
+      ctx.fill();
+  
+      const radius2 = radius * scale;
+      ctx.fillStyle = fillColor;
+      ctx.beginPath();
+      ctx.arc(p[0], p[1], radius2, 0, 2 * Math.PI);
+      ctx.fill();
+    }
+  }
+
   getVertexPos(i) {
     const pF32 = this.system.pos.slot.f32();
     const offset = i * this.system.spaceDim;
@@ -39,6 +65,14 @@ class ViewportVertices {
     const offset = i * 2;
     pF32[offset] = p[0];
     pF32[offset + 1] = p[1];
+  }
+
+  setVertexVel(i, v) {
+    const system = this.system;
+    const vF32 = system.vel.slot.f32();
+    const offset = i * 2;
+    vF32[offset] = v[0];
+    vF32[offset + 1] = v[1];
   }
 }
 
