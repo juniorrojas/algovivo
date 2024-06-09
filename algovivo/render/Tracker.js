@@ -17,7 +17,8 @@ class Tracker {
     const floor = args.floor;
     const grid = args.grid;
 
-    const meshCenter = mesh.computeCenter();
+    let meshCenter = [0, 0];
+    if (mesh.pos.length > 0) meshCenter = mesh.computeCenter();
     const meshCenterX = meshCenter[0] + this.offsetX;
 
     if (!isNaN(meshCenterX)) this.targetCenterX = meshCenterX;
