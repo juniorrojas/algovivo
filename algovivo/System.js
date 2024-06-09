@@ -201,6 +201,39 @@ class System {
     }
   }
 
+  getMusclesArray() {
+    if (this.muscles == null) return [];
+    
+    const numMuscles = this.numMuscles;
+    const musclesU32 = this.muscles.u32();
+    const muscles = [];
+    for (let i = 0; i < numMuscles; i++) {
+      const offset = i * 2;
+      muscles.push([
+        musclesU32[offset    ],
+        musclesU32[offset + 1]
+      ]);
+    }
+    return muscles;
+  }
+
+  getTrianglesArray() {
+    if (this.triangles == null) return [];
+    
+    const numTriangles = this.numTriangles;
+    const trianglesU32 = this.triangles.u32();
+    const triangles = [];
+    for (let i = 0; i < numTriangles; i++) {
+      const offset = i * 3;
+      triangles.push([
+        trianglesU32[offset    ],
+        trianglesU32[offset + 1],
+        trianglesU32[offset + 2]
+      ]);
+    }
+    return triangles;
+  }
+
   set(args) {
     this.setVertices(args.pos);
 

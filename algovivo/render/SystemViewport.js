@@ -275,36 +275,10 @@ class SystemViewport {
 
   render() {
     if (this.needsMeshUpdate == null || this.needsMeshUpdate) {
-      const trianglesArr = [];
-      if (this.system.triangles != null) {
-        const trianglesU32 = this.system.triangles.u32();
-        for (let i = 0; i < this.system.numTriangles; i++) {
-          const offset = i * 3;
-          trianglesArr.push([
-            trianglesU32[offset    ],
-            trianglesU32[offset + 1],
-            trianglesU32[offset + 2]
-          ]);
-        }
-      }
-
-      const musclesArr = [];
-      if (this.system.muscles != null) {
-        const musclesU32 = this.system.muscles.u32();
-        for (let i = 0; i < this.system.numMuscles; i++) {
-          const offset = i * 2;
-          musclesArr.push([
-            musclesU32[offset    ],
-            musclesU32[offset + 1]
-          ]);
-        }
-      }
-
       this._updateMesh({
-        triangles: trianglesArr,
-        muscles: musclesArr
+        triangles: this.system.getTrianglesArray(),
+        muscles: this.system.getMusclesArray()
       });
-
       this.needsMeshUpdate = false;
     }
 
