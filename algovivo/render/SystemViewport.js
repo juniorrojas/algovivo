@@ -318,20 +318,12 @@ class SystemViewport {
     Array.prototype.push.apply(mesh.lines, meshData.muscles);
 
     const muscleHashToId = new Map();
-    if (this.system.muscles != null) {
-      const musclesU32 = this.system.muscles.u32();
-      for (let i = 0; i < this.system.numMuscles; i++) {
-        const offset = i * 2;
-        const s = [
-          musclesU32[offset    ],
-          musclesU32[offset + 1]
-        ];
-        muscleHashToId.set(
-          hashSimplex(s),
-          i
-        );
-      }
-    }
+    meshData.muscles.forEach((m, i) => {
+      muscleHashToId.set(
+        hashSimplex(m),
+        i
+      );
+    });
     
     const lineIdToMuscleId = [];
     mesh.setCustomAttribute("lineIdToMuscleId", lineIdToMuscleId);
