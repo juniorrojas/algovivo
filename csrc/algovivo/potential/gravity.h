@@ -6,9 +6,10 @@ __attribute__((always_inline))
 void accumulate_gravity_energy(
   float &energy,
   float py,
-  float m
+  float m,
+  float g
 ) {
-  energy += py * m * 9.8;
+  energy += py * m * g;
 }
 
 }

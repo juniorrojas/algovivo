@@ -21,7 +21,9 @@ static float backward_euler_loss(
   const float* l0,
   float k,
 
-  float vertex_mass
+  float vertex_mass,
+
+  float g
 ) {
   const auto space_dim = 2;
 
@@ -89,7 +91,8 @@ static float backward_euler_loss(
     accumulate_gravity_energy(
       potential_energy,
       py,
-      vertex_mass
+      vertex_mass,
+      g
     );
 
     accumulate_collision_energy(
@@ -126,7 +129,8 @@ static void backward_euler_loss_grad(
   float* l0,
   float k,
 
-  float vertex_mass
+  float vertex_mass,
+  float g
 ) {
   __enzyme_autodiff(
     backward_euler_loss,
@@ -148,7 +152,8 @@ static void backward_euler_loss_grad(
     enzyme_const, l0,
     enzyme_const, k,
 
-    enzyme_const, vertex_mass
+    enzyme_const, vertex_mass,
+    enzyme_const, g
   );
 }
 
@@ -173,6 +178,8 @@ struct System {
   float* l0;
   float k;
 
+  float g;
+
   int fixed_vertex_id;
 
   float forward(float* pos) {
@@ -184,7 +191,8 @@ struct System {
       triangles,
       rsi,
       a, l0, k,
-      vertex_mass
+      vertex_mass,
+      g
     );
   }
 
@@ -195,7 +203,8 @@ struct System {
       num_muscles, muscles,
       num_triangles, triangles, rsi,
       a, l0, k,
-      vertex_mass
+      vertex_mass,
+      g
     );
   }
 };
@@ -221,7 +230,8 @@ void backward_euler_update(
   float k,
 
   int fixed_vertex_id,
-  float vertex_mass
+  float vertex_mass,
+  float g
 ) {
   algovivo::System system;
 
@@ -232,6 +242,7 @@ void backward_euler_update(
   system.pos0 = pos0;
   system.vel0 = vel0;
   system.r = r;
+  system.g = g;
 
   system.num_muscles = num_muscles;
   system.muscles = muscles;

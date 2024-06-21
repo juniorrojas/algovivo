@@ -41,6 +41,11 @@ jobs:
           path: build/
       - name: Generate trajectory frames
         run: node test/neural/generateTrajectory.js
+      - name: Upload trajectory output
+        uses: actions/upload-artifact@v4
+        with:
+          name: trajectory-output
+          path: ${{ env.OUTPUT_DIRNAME }}
       - name: Check trajectory output
         run: |
           test -d ${{ env.OUTPUT_DIRNAME }} || (echo "Directory does not exist" && exit 1)
