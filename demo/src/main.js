@@ -49,12 +49,6 @@ async function main() {
     [loadMeshData, loadPolicyData].map(f => f())
   );
 
-  const viewport = new SystemViewport({
-    system: system,
-    sortedVertexIds: meshData.sorted_vertex_ids
-  });
-  divContent.appendChild(viewport.domElement);
-
   system.set({
     pos: meshData.pos,
     muscles: meshData.muscles,
@@ -62,6 +56,13 @@ async function main() {
     triangles: meshData.triangles,
     trianglesRsi: meshData.rsi
   });
+
+  const viewport = new SystemViewport({
+    system: system,
+    sortedVertexIds: meshData.sorted_vertex_ids,
+    vertexDepths: meshData.depth
+  });
+  divContent.appendChild(viewport.domElement);
 
   const policy = new NeuralPolicy({
     system: system,
