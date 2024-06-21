@@ -28,6 +28,7 @@ class System {
     this.vertexMass = args.vertexMass ?? 6.0714287757873535;
     this.k = 90.0;
     this.h = 0.033;
+    this.g = 9.8;
 
     this.spaceDim = 2;
   }
@@ -304,7 +305,9 @@ class System {
       
       fixedVertexId,
 
-      vertexMass
+      vertexMass,
+
+      this.g
     );
     
     if (numVertices != 0) {
