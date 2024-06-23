@@ -88,6 +88,11 @@ jobs:
         with:
           name: demo-build
           path: ${{ env.DEMO_BUILD_DIRNAME }}
+      - name: Download WASM build
+        uses: actions/download-artifact@v4
+        with:
+          name: algovivo.wasm
+          path: build/
       - run: ls -l ${{ env.DEMO_BUILD_DIRNAME }}
       - name: Test demo
         run: |
