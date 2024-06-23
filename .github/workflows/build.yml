@@ -8,8 +8,8 @@ permissions:
   pull-requests: write
 
 env:
-  BUILD_DIRNAME: build
   BRANCH_NAME: build
+  BUILD_DIRNAME: build
 
 jobs:
   build:
