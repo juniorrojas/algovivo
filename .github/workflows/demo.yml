@@ -83,6 +83,11 @@ jobs:
       - name: Clone repo
         uses: actions/checkout@v4
       - run: ls -l ${{ env.DEMO_BUILD_DIRNAME }}
+      - name: Download WASM build
+        uses: actions/download-artifact@v4
+        with:
+          name: algovivo.wasm
+          path: build/
       - name: Download demo build
         uses: actions/download-artifact@v4
         with:
@@ -120,6 +125,11 @@ jobs:
       - name: Clone repo
         uses: actions/checkout@v4
       - run: ls -l ${{ env.DEMO_BUILD_DIRNAME }}
+      - name: Download WASM build
+        uses: actions/download-artifact@v4
+        with:
+          name: algovivo.wasm
+          path: build/
       - name: Download demo build
         uses: actions/download-artifact@v4
         with:
