@@ -25,7 +25,6 @@ jobs:
         run: |
           git add ${{ env.BUILD_DIRNAME }}
           git diff --exit-code --staged -- ${{ env.BUILD_DIRNAME }} && echo "DIFF_DETECTED=false" >> $GITHUB_ENV || echo "DIFF_DETECTED=true" >> $GITHUB_ENV
-          echo ${{ env.DIFF_DETECTED }} >> $GITHUB_STEP_SUMMARY
       - name: Clone repo
         uses: actions/checkout@v4
         with:
