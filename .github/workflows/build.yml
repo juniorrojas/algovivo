@@ -17,10 +17,15 @@ jobs:
     steps:
       - name: Clone repo
         uses: actions/checkout@v4
-      - name: Build
+      - name: Build JS
         run: |
           npm ci
           npm run build
+      - name: Build WASM
+        run: |
+          export LLVM_BIN_DIR=/usr/lib/llvm-11/bin
+          export ENZYME=/Enzyme/enzyme/build/Enzyme/LLVMEnzyme-11.so
+          ./build.sh
       - name: Diff
         run: |
           git add ${{ env.BUILD_DIRNAME }}
