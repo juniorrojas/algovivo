@@ -8,7 +8,7 @@ permissions:
   pull-requests: write
 
 env:
-  BRANCH_NAME: build
+  BUILD_BRANCH: build
   BUILD_DIRNAME: build
 
 jobs:
@@ -49,5 +49,5 @@ jobs:
           COMMIT_SHA1=$(git rev-parse --short HEAD)
           git checkout $COMMIT_SHA
           git cherry-pick $COMMIT_SHA1
-          git checkout -b ${{ env.BRANCH_NAME }}
-          git push origin ${{ env.BRANCH_NAME }} -f
+          git checkout -b ${{ env.BUILD_BRANCH }}
+          git push origin ${{ env.BUILD_BRANCH }} -f
