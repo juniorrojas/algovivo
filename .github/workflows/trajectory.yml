@@ -1,4 +1,4 @@
-name: render-trajectory
+name: trajectory
 
 on:
   push:
