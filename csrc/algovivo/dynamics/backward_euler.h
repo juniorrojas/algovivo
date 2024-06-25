@@ -1,11 +1,6 @@
 #pragma once
 
 #include "../arr.h"
-#include "../vec2.h"
-#include "inertia.h"
-#include "../potential/friction.h"
-#include "../potential/collision.h"
-#include "../potential/gravity.h"
 #include "optim.h"
 
 namespace algovivo {

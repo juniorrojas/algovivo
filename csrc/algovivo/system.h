@@ -1,5 +1,11 @@
 #pragma once
 
+#include "vec2.h"
+#include "dynamics/inertia.h"
+#include "potential/friction.h"
+#include "potential/collision.h"
+#include "potential/gravity.h"
+
 namespace algovivo {
 
 static float backward_euler_loss(
