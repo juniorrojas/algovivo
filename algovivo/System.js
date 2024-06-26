@@ -1,4 +1,5 @@
 const mmgrten = require("./mmgrten");
+const Triangles = require("./Triangles");
 
 class System {
   constructor(args = {}) {
@@ -31,6 +32,24 @@ class System {
     this.g = 9.8;
 
     this.spaceDim = 2;
+
+    this._triangles = new Triangles({ ten: this.ten });
+  }
+
+  get triangles() {
+    return this._triangles.triangles;
+  }
+
+  set triangles(value) {
+    this._triangles.triangles = value;
+  }
+
+  get rsi() {
+    return this._triangles.rsi;
+  }
+
+  set rsi(value) {
+    this._triangles.rsi = value;
   }
 
   get pos() {
@@ -47,8 +66,7 @@ class System {
   }
 
   get numTriangles() {
-    if (this.triangles == null) return 0;
-    return this.triangles.u32().length / 3;
+    return this._triangles.numTriangles;
   }
 
   get numMuscles() {
@@ -151,55 +169,7 @@ class System {
   }
 
   setTriangles(args = {}) {
-    const indices = args.indices;
-    const rsi = args.rsi;
-    const numTriangles = indices ? indices.length : this.numTriangles;
-
-    if (indices == null && (!rsi || rsi.length !== numTriangles)) {
-      throw new Error("rsi is not consistent with the number of indices");
-    }
-
-    const mgr = this.memoryManager;
-    const ten = this.ten;
-    
-    const triangles = indices ? mgr.malloc32(numTriangles * 3) : this.triangles;
-    if (indices && this.triangles != null) this.triangles.free();
-    this.triangles = triangles;
-
-    if (indices != null) {
-      const trianglesU32 = triangles.u32();
-      indices.forEach((t, i) => {
-        const offset = i * 3;
-        trianglesU32[offset    ] = t[0];
-        trianglesU32[offset + 1] = t[1];
-        trianglesU32[offset + 2] = t[2];
-      });
-    }
-    
-    if (this.rsi != null) this.rsi.dispose();
-    this.rsi = ten.zeros([numTriangles, 2, 2]);
-    
-    if (rsi == null) {
-      let pos = this.pos0;
-      let tmpPos = false;
-      if (args.pos != null) {
-        if (!Array.isArray(args.pos)) throw new Error("pos must be an array");
-        pos = ten.tensor(args.pos);
-        tmpPos = true;
-      }
-
-      this.wasmInstance.exports.rsi_of_pos(
-        this.numVertices,
-        pos.ptr,
-        numTriangles,
-        this.triangles.ptr,
-        this.rsi.ptr
-      );
-
-      if (tmpPos) pos.dispose();
-    } else {
-      this.rsi.set(rsi);
-    }
+    this._triangles.set({ ...args, pos: args.pos ?? this.pos0 });
   }
 
   getMusclesArray() {
