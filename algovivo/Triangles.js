@@ -3,6 +3,9 @@ class Triangles {
     const ten = args.ten;
     if (ten == null) throw new Error("ten required");
     this.ten = ten;
+
+    this.triangles = null;
+    this.rsi = null;
   }
 
   get wasmInstance() {
