@@ -1,5 +1,6 @@
 const mmgrten = require("./mmgrten");
 const Triangles = require("./Triangles");
+const Muscles = require("./Muscles");
 
 class System {
   constructor(args = {}) {
@@ -33,6 +34,7 @@ class System {
 
     this.spaceDim = 2;
 
+    this._muscles = new Muscles({ ten: this.ten });
     this._triangles = new Triangles({ ten: this.ten });
   }
 
