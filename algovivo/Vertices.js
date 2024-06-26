@@ -3,6 +3,8 @@ class Vertices {
     const ten = args.ten;
     if (ten == null) throw new Error("ten required");
     this.ten = ten;
+
+    this.vertexMass = args.vertexMass ?? 6.0714287757873535;
   }
 
   get wasmInstance() {
