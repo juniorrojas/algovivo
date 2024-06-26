@@ -89,6 +89,21 @@ class Muscles {
       }
     }
   }
+
+  dispose() {
+    if (this.muscles != null) {
+      this.muscles.free();
+      this.muscles = null;
+    }
+    if (this.l0 != null) {
+      this.l0.dispose();
+      this.l0 = null;
+    }
+    if (this.a != null) {
+      this.a.dispose();
+      this.a = null;
+    }
+  }
 }
 
 module.exports = Muscles;
