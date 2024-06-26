@@ -10,22 +10,15 @@ class System {
       if (wasmInstance == null) {
         throw new Error("wasmInstance required");
       }
-      this.wasmInstance = wasmInstance;
       ten = new mmgrten.Engine({
         wasmInstance: args.wasmInstance
       });
       this.ten = ten;
     } else {
       ten = args.ten;
-      this.wasmInstance = ten.wasmInstance;
       this.ten = ten;
     }
-
-    const wasmInstance = ten.wasmInstance;
-    const memoryManager = ten.mgr;
-
-    this.wasmInstance = wasmInstance;
-    this.memoryManager = memoryManager;
+    
     this.fixedVertexId = -1;
     this.vertexMass = args.vertexMass ?? 6.0714287757873535;
     this.h = 0.033;
@@ -35,6 +28,14 @@ class System {
 
     this._muscles = new Muscles({ ten: this.ten });
     this._triangles = new Triangles({ ten: this.ten });
+  }
+
+  get wasmInstance() {
+    return this.ten.wasmInstance;
+  }
+
+  get memoryManager() {
+    return this.ten.mgr;
   }
 
   get triangles() {
