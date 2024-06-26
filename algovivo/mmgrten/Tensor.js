@@ -32,7 +32,6 @@ class Tensor {
       throw new Error("memory slot required to create tensor");
     }
     this.slot = args.slot;
-    this.ptr = this.slot.ptr;
 
     const stride = args.stride;
     if (stride != null) {
@@ -44,6 +43,10 @@ class Tensor {
     } else {
       this.setDefaultStride();
     }
+  }
+
+  get ptr() {
+    return this.slot.ptr;
   }
 
   get wasmInstance() {
@@ -220,7 +223,9 @@ class Tensor {
   }
 
   dispose() {
+    if (this.slot == null) throw new Error("tensor already disposed");
     this.slot.free();
+    this.slot = null;
     this.shape.dispose();
     this.stride.dispose();
   }
