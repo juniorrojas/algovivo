@@ -28,7 +28,6 @@ class System {
     this.memoryManager = memoryManager;
     this.fixedVertexId = -1;
     this.vertexMass = args.vertexMass ?? 6.0714287757873535;
-    this.k = 90.0;
     this.h = 0.033;
     this.g = 9.8;
 
@@ -52,6 +51,14 @@ class System {
 
   set rsi(value) {
     this._triangles.rsi = value;
+  }
+
+  get k() {
+    return this._muscles.k;
+  }
+
+  set k(value) {
+    this._muscles.k = value;
   }
 
   get pos() {
