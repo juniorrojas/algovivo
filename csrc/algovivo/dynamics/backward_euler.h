@@ -30,7 +30,7 @@ void backward_euler_update_pos(
 extern "C"
 void backward_euler_update_vel(
   float num_vertices,
-  float* pos0, float* vel0,
+  const float* pos0, const float* vel0,
   float* pos1, float* vel1,
   float h
 ) {
