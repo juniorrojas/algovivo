@@ -1,6 +1,7 @@
 const mmgrten = require("./mmgrten");
-const Triangles = require("./Triangles");
+const Vertices = require("./Vertices");
 const Muscles = require("./Muscles");
+const Triangles = require("./Triangles");
 
 class System {
   constructor(args = {}) {
@@ -20,12 +21,12 @@ class System {
     }
     
     this.fixedVertexId = -1;
-    this.vertexMass = args.vertexMass ?? 6.0714287757873535;
     this.h = 0.033;
     this.g = 9.8;
 
     this.spaceDim = 2;
 
+    this._vertices = new Vertices({ ten: this.ten, vertexMass: args.vertexMass });
     this._muscles = new Muscles({ ten: this.ten });
     this._triangles = new Triangles({ ten: this.ten });
   }
@@ -36,6 +37,10 @@ class System {
 
   get memoryManager() {
     return this.ten.mgr;
+  }
+
+  get vertexMass() {
+    return this._vertices.vertexMass;
   }
 
   get triangles() {
