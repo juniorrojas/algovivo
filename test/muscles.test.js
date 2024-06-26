@@ -103,3 +103,30 @@ test("update l0, keep a", async () => {
   });
   expect(system.a.toArray()).toBeCloseToArray([1]);
 });
+
+test("add and remove muscles", async () => {
+  const ten = await utils.loadTen();
+  const system = new algovivo.System({ ten });
+  system.setVertices([
+    [0, 0],
+    [2, 0]
+  ]);
+  
+  expect(system.numMuscles).toBe(0);
+  system.setMuscles({
+    indices: [
+      [0, 1]
+    ]
+  });
+  expect(system.numMuscles).toBe(1);
+  system.setMuscles({
+    indices: []
+  });
+  expect(system.numMuscles).toBe(0);
+  system.setMuscles({
+    indices: [
+      [0, 1]
+    ]
+  });
+  expect(system.numMuscles).toBe(1);
+});

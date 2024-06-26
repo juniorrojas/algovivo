@@ -72,7 +72,10 @@ class Muscles {
       if (keepA) {
         throw new Error(`keepA can only be true when the number of muscles is the same (${numMuscles} != ${numMuscles0})`);
       }
-      if (this.a != null) this.a.dispose();
+      if (this.a != null) {
+        this.a.dispose();
+        this.a = null;
+      }
       if (numMuscles != 0) {
         const a = ten.zeros([numMuscles]);
         this.a = a;
