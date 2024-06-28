@@ -5,6 +5,15 @@ const path = require("path");
 const { Window, runWebServer } = require("./utils");
 const TrajectoryData = require("./TrajectoryData");
 
+async function cleandir(dirname) {
+  if (!await fileExists(dirname)) {
+    await fsp.mkdir(dirname);
+  } else {
+    fs.rmSync(dirname, { recursive: true });
+    await fsp.mkdir(dirname);
+  }
+}
+
 async function render(args = {}) {
   const rootDirname = args.dataDirname;
   const framesDirname = args.framesDirname;
