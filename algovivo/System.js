@@ -218,9 +218,16 @@ class System {
 
     this.wasmInstance.exports.backward_euler_update(
       numVertices,
+      
+      numVertices == 0 ? 0 : this.pos1.ptr,
+      numVertices == 0 ? 0 : this.posGrad.ptr,
+      numVertices == 0 ? 0 : this.posTmp.ptr,
 
       numVertices == 0 ? 0 : this.pos0.ptr,
+
       numVertices == 0 ? 0 : this.vel0.ptr,
+      numVertices == 0 ? 0 : this.vel1.ptr,
+      
       this.h,
 
       0,
@@ -235,17 +242,12 @@ class System {
       numMuscles == 0 ? 0 : this.a.ptr,
       numMuscles == 0 ? 0 : this.l0.ptr,
       this.k,
+      
+      fixedVertexId,
 
       vertexMass,
 
-      this.g,
-
-      fixedVertexId,
-
-      numVertices == 0 ? 0 : this.pos1.ptr,
-      numVertices == 0 ? 0 : this.posGrad.ptr,
-      numVertices == 0 ? 0 : this.posTmp.ptr,
-      numVertices == 0 ? 0 : this.vel1.ptr,
+      this.g
     );
     
     if (numVertices != 0) {
