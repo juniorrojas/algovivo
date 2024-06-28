@@ -9,22 +9,27 @@ def indent(s):
 
 backward_euler_loss_args = Args()
 
+backward_euler_loss_args.add_arg("float", "g")
+backward_euler_loss_args.add_arg("float", "h")
+
+# vertices
 backward_euler_loss_args.add_arg("int", "num_vertices")
 backward_euler_loss_args.add_arg("float*", "pos", differentiable=True)
 backward_euler_loss_args.add_arg("float*", "pos0")
 backward_euler_loss_args.add_arg("float*", "vel0")
-backward_euler_loss_args.add_arg("float", "h")
-backward_euler_loss_args.add_arg("float*", "r")
+backward_euler_loss_args.add_arg("float", "vertex_mass")
+
+# muscles
 backward_euler_loss_args.add_arg("int", "num_muscles")
 backward_euler_loss_args.add_arg("int*", "muscles")
+backward_euler_loss_args.add_arg("float", "k")
+backward_euler_loss_args.add_arg("float*", "a")
+backward_euler_loss_args.add_arg("float*", "l0")
+
+# triangles
 backward_euler_loss_args.add_arg("int", "num_triangles")
 backward_euler_loss_args.add_arg("int*", "triangles")
 backward_euler_loss_args.add_arg("float*", "rsi")
-backward_euler_loss_args.add_arg("float*", "a")
-backward_euler_loss_args.add_arg("float*", "l0")
-backward_euler_loss_args.add_arg("float", "k")
-backward_euler_loss_args.add_arg("float", "vertex_mass")
-backward_euler_loss_args.add_arg("float", "g")
 
 backward_euler_loss_grad_args = backward_euler_loss_args.with_tangent_args()
 
