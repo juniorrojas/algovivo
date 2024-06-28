@@ -215,7 +215,10 @@ for (int i = 0; i < num_vertices; i++) {
 
 backward_euler_loss_body += "return 0.5 * inertial_energy + h * h * potential_energy;"
 
-backward_euler_loss_body = "\n".join("  " + line for line in backward_euler_loss_body.split("\n"))
+def indent(s):
+    return "\n".join("  " + line for line in s.split("\n"))
+
+backward_euler_loss_body = indent(backward_euler_loss_body)
 
 enzyme_args_call = backward_euler_loss_args.codegen_enzyme_call()
 backward_euler_loss_grad_body = f"""__enzyme_autodiff(
