@@ -147,9 +147,9 @@ backward_euler_loss_body = indent(backward_euler_loss_body)
 
 enzyme_args_call = backward_euler_loss_args.codegen_enzyme_call()
 backward_euler_loss_grad_body = f"""__enzyme_autodiff(
-    backward_euler_loss,
-    {enzyme_args_call}
-  );"""
+  backward_euler_loss,
+{indent(enzyme_args_call)}
+);"""
 
 with open(this_dirpath.joinpath("system.template.h")) as f:
     template = f.read()
@@ -159,10 +159,10 @@ with open(this_dirpath.joinpath("system.template.h")) as f:
         .replace("// {{backward_euler_loss_args_call}}", backward_euler_loss_args.codegen_call())
         .replace("// {{backward_euler_loss_grad_args}}", backward_euler_loss_grad_args.codegen_fun_signature())
         .replace("// {{backward_euler_loss_grad_args_call}}", backward_euler_loss_grad_args.codegen_call())
-        .replace("// {{backward_euler_loss_grad_body}}", backward_euler_loss_grad_body)
-        .replace("// {{system_attrs}}", system_attrs.codegen_struct_attrs())
-        .replace("// {{update_args}}", update_args.codegen_fun_signature())
-        .replace("// {{system_set}}", system_attrs.codegen_struct_set("system"))
+        .replace("// {{backward_euler_loss_grad_body}}", indent(backward_euler_loss_grad_body))
+        .replace("// {{system_attrs}}", indent(system_attrs.codegen_struct_attrs()))
+        .replace("// {{backward_euler_update_args}}", indent(update_args.codegen_fun_signature()))
+        .replace("// {{system_set}}", indent(system_attrs.codegen_struct_set("system")))
     )
 
 with open(this_dirpath.parent.parent.joinpath("csrc", "algovivo", "system.h"), "w") as f:

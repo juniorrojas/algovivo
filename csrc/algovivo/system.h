@@ -98,42 +98,42 @@ static void backward_euler_loss_grad(
   __enzyme_autodiff(
     backward_euler_loss,
     enzyme_const, num_vertices,
-enzyme_dup, pos, pos_grad,
-enzyme_const, pos0,
-enzyme_const, vel0,
-enzyme_const, h,
-enzyme_const, r,
-enzyme_const, num_muscles,
-enzyme_const, muscles,
-enzyme_const, num_triangles,
-enzyme_const, triangles,
-enzyme_const, rsi,
-enzyme_const, a,
-enzyme_const, l0,
-enzyme_const, k,
-enzyme_const, vertex_mass,
-enzyme_const, g
+    enzyme_dup, pos, pos_grad,
+    enzyme_const, pos0,
+    enzyme_const, vel0,
+    enzyme_const, h,
+    enzyme_const, r,
+    enzyme_const, num_muscles,
+    enzyme_const, muscles,
+    enzyme_const, num_triangles,
+    enzyme_const, triangles,
+    enzyme_const, rsi,
+    enzyme_const, a,
+    enzyme_const, l0,
+    enzyme_const, k,
+    enzyme_const, vertex_mass,
+    enzyme_const, g
   );
 }
 
 struct System {
   int num_vertices;
-const float* pos0;
-const float* vel0;
-float h;
-const float* r;
-int num_muscles;
-const int* muscles;
-int num_triangles;
-const int* triangles;
-const float* rsi;
-const float* a;
-const float* l0;
-float k;
-float vertex_mass;
-float g;
-int fixed_vertex_id;
-
+  const float* pos0;
+  const float* vel0;
+  float h;
+  const float* r;
+  int num_muscles;
+  const int* muscles;
+  int num_triangles;
+  const int* triangles;
+  const float* rsi;
+  const float* a;
+  const float* l0;
+  float k;
+  float vertex_mass;
+  float g;
+  int fixed_vertex_id;
+  
 
   float forward(float* pos) {
     return backward_euler_loss(
@@ -155,22 +155,22 @@ void backward_euler_update(
   algovivo::System system;
 
   system.num_vertices = num_vertices;
-system.pos0 = pos0;
-system.vel0 = vel0;
-system.h = h;
-system.r = r;
-system.num_muscles = num_muscles;
-system.muscles = muscles;
-system.num_triangles = num_triangles;
-system.triangles = triangles;
-system.rsi = rsi;
-system.a = a;
-system.l0 = l0;
-system.k = k;
-system.vertex_mass = vertex_mass;
-system.g = g;
-system.fixed_vertex_id = fixed_vertex_id;
-
+  system.pos0 = pos0;
+  system.vel0 = vel0;
+  system.h = h;
+  system.r = r;
+  system.num_muscles = num_muscles;
+  system.muscles = muscles;
+  system.num_triangles = num_triangles;
+  system.triangles = triangles;
+  system.rsi = rsi;
+  system.a = a;
+  system.l0 = l0;
+  system.k = k;
+  system.vertex_mass = vertex_mass;
+  system.g = g;
+  system.fixed_vertex_id = fixed_vertex_id;
+  
 
   algovivo::backward_euler_update(
     system,
