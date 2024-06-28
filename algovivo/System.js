@@ -188,28 +188,23 @@ class System {
     const vertexMass = this.vertexMass;
 
     this.wasmInstance.exports.backward_euler_update(
-      numVertices,
-
-      numVertices == 0 ? 0 : this.pos0.ptr,
-      numVertices == 0 ? 0 : this.vel0.ptr,
+      this.g,
       this.h,
 
-      0,
+      numVertices,
+      numVertices == 0 ? 0 : this.pos0.ptr,
+      numVertices == 0 ? 0 : this.vel0.ptr,
+      vertexMass,
 
       numMuscles,
       numMuscles == 0 ? 0 : this.muscles.ptr,
+      this.k,
+      numMuscles == 0 ? 0 : this.a.ptr,
+      numMuscles == 0 ? 0 : this.l0.ptr,
 
       numTriangles,
       numTriangles == 0 ? 0 : this.triangles.ptr,
       numTriangles == 0 ? 0 : this.rsi.ptr,
-
-      numMuscles == 0 ? 0 : this.a.ptr,
-      numMuscles == 0 ? 0 : this.l0.ptr,
-      this.k,
-
-      vertexMass,
-
-      this.g,
 
       fixedVertexId,
 
