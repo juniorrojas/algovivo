@@ -123,8 +123,8 @@ backward_euler_loss_body_args = backward_euler_loss_args.codegen_fun_signature()
 
 backward_euler_loss_body = """const auto space_dim = 2;
 
-  float inertial_energy = 0.0;
-  float potential_energy = 0.0;"""
+float inertial_energy = 0.0;
+float potential_energy = 0.0;"""
 
 # inertia
 backward_euler_loss_body += """
@@ -214,6 +214,8 @@ for (int i = 0; i < num_vertices; i++) {
 """
 
 backward_euler_loss_body += "return 0.5 * inertial_energy + h * h * potential_energy;"
+
+backward_euler_loss_body = "\n".join("  " + line for line in backward_euler_loss_body.split("\n"))
 
 enzyme_args_call = backward_euler_loss_args.codegen_enzyme_call()
 backward_euler_loss_grad_body = f"""__enzyme_autodiff(
