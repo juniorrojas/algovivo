@@ -8,6 +8,7 @@ def indent(s):
     return "\n".join("  " + line for line in s.split("\n"))
 
 backward_euler_loss_args = Args()
+
 backward_euler_loss_args.add_arg("int", "num_vertices")
 backward_euler_loss_args.add_arg("float*", "pos", differentiable=True)
 backward_euler_loss_args.add_arg("float*", "pos0")
@@ -165,5 +166,6 @@ with open(this_dirpath.joinpath("system.template.h")) as f:
         .replace("// {{system_set}}", indent(system_attrs.codegen_struct_set("system")))
     )
 
-with open(this_dirpath.parent.parent.joinpath("csrc", "algovivo", "system.h"), "w") as f:
+output_filepath = this_dirpath.parent.parent.joinpath("csrc", "algovivo", "system.h")
+with open(output_filepath, "w") as f:
     f.write(src)
