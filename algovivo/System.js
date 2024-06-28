@@ -282,6 +282,7 @@ class System {
       this.vel1 = null;
     }
 
+    // TODO this._triangles.dispose();
     if (this.triangles != null) {
       this.triangles.free();
       this.triangles = null;
