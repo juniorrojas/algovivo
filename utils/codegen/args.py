@@ -50,8 +50,7 @@ class Args:
     
     def codegen_struct_attrs(self):
         s = ""
-        num_args = len(self.args)
-        for i, arg in enumerate(self.args):
+        for arg in enumerate(self.args):
             t, name = arg.t, arg.name
             if t[-1] == "*" and not arg.mut:
                 s += "const "
