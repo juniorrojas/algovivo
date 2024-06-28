@@ -11,17 +11,17 @@ namespace algovivo {
 static float backward_euler_loss(
   // {{backward_euler_loss_args}}
 ) {
-  // {{backward_euler_loss_body}}
+// {{backward_euler_loss_body}}
 }
 
 static void backward_euler_loss_grad(
   // {{backward_euler_loss_grad_args}}
 ) {
-  // {{backward_euler_loss_grad_body}}
+// {{backward_euler_loss_grad_body}}
 }
 
 struct System {
-  // {{system_attrs}}
+// {{system_attrs}}
 
   float forward(float* pos) {
     return backward_euler_loss(
@@ -38,11 +38,11 @@ struct System {
 
 extern "C"
 void backward_euler_update(
-  // {{update_args}}
+// {{backward_euler_update_args}}
 ) {
   algovivo::System system;
 
-  // {{system_set}}
+// {{system_set}}
 
   algovivo::backward_euler_update(
     system,
