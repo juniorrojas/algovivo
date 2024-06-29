@@ -279,17 +279,9 @@ class System {
       this.vel1.dispose();
       this.vel1 = null;
     }
-
-    if (this.triangles != null) {
-      this.triangles.free();
-      this.triangles = null;
-    }
-    if (this.rsi != null) {
-      this.rsi.dispose();
-      this.rsi = null;
-    }
-
+    
     this._muscles.dispose();
+    this._triangles.dispose();
   }
 }
 

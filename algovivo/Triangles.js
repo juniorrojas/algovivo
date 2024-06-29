@@ -76,6 +76,17 @@ class Triangles {
       this.rsi.set(rsi);
     }
   }
+
+  dispose() {
+    if (this.triangles != null) {
+      this.triangles.free();
+      this.triangles = null;
+    }
+    if (this.rsi != null) {
+      this.rsi.dispose();
+      this.rsi = null;
+    }
+  }
 }
 
 module.exports = Triangles;
