@@ -8,7 +8,8 @@ permissions:
   pull-requests: write
 
 env:
-  BUILD_BRANCH: build
+  SRC_BRANCH: main
+  BUILD_BRANCH: build-test
   BUILD_DIRNAME: build
 
 jobs:
@@ -48,10 +49,10 @@ jobs:
         run: |
           git add ${{ env.BUILD_DIRNAME }}
           git diff --exit-code --staged -- ${{ env.BUILD_DIRNAME }} && echo "DIFF_DETECTED=false" >> $GITHUB_ENV || echo "DIFF_DETECTED=true" >> $GITHUB_ENV
-      - name: Clone repo
+      - name: Clone src repo
         uses: actions/checkout@v4
         with:
-          ref: main
+          ref: ${{ env.SRC_BRANCH }}
           path: ./main.repo
         if: env.DIFF_DETECTED == 'true'
       - name: Push changes
