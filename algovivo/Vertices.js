@@ -69,6 +69,33 @@ class Vertices {
 
     this.updateTmpBuffers();
   }
+
+  dispose() {
+    if (this.pos0 != null) {
+      this.pos0.dispose();
+      this.pos0 = null;
+    }
+    if (this.pos1 != null) {
+      this.pos1.dispose();
+      this.pos1 = null;
+    }
+    if (this.posGrad != null) {
+      this.posGrad.dispose();
+      this.posGrad = null;
+    }
+    if (this.posTmp != null) {
+      this.posTmp.dispose();
+      this.posTmp = null;
+    }
+    if (this.vel0 != null) {
+      this.vel0.dispose();
+      this.vel0 = null;
+    }
+    if (this.vel1 != null) {
+      this.vel1.dispose();
+      this.vel1 = null;
+    }
+  }
 }
 
 module.exports = Vertices;

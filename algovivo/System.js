@@ -67,12 +67,16 @@ class System {
     this._muscles.k = value;
   }
 
-  get pos() {
+  get pos0() {
     return this._vertices.pos;
   }
 
-  get pos0() {
-    return this._vertices.pos;
+  get vel0() {
+    return this._vertices.vel0;
+  }
+
+  get pos() {
+    return this.pos0;
   }
 
   get vel() {
@@ -222,31 +226,7 @@ class System {
   }
 
   dispose() {
-    if (this.pos0 != null) {
-      this.pos0.dispose();
-      this.pos0 = null;
-    }
-    if (this.pos1 != null) {
-      this.pos1.dispose();
-      this.pos1 = null;
-    }
-    if (this.posGrad != null) {
-      this.posGrad.dispose();
-      this.posGrad = null;
-    }
-    if (this.posTmp != null) {
-      this.posTmp.dispose();
-      this.posTmp = null;
-    }
-    if (this.vel0 != null) {
-      this.vel0.dispose();
-      this.vel0 = null;
-    }
-    if (this.vel1 != null) {
-      this.vel1.dispose();
-      this.vel1 = null;
-    }
-    
+    this._vertices.dispose();
     this._muscles.dispose();
     this._triangles.dispose();
   }
