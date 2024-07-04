@@ -8,6 +8,33 @@ class Vertices {
     this.vertexMass = args.vertexMass ?? 6.0714287757873535;
   }
 
+  get pos() {
+    return this.pos0;
+  }
+
+  get numVertices() {
+    if (this.pos0 == null) return 0;
+    return this.pos0.shape.get(0);
+  }
+
+  updateTmpBuffers() {
+    if (this.pos0 == null) {
+      throw new Error("pos0 required");
+    }
+    const numVertices = this.numVertices;
+    const spaceDim = this.spaceDim;
+    const ten = this.ten;
+    
+    // TODO only allocate new memory if necessary
+    const posGrad = ten.zeros([numVertices, spaceDim]);
+    if (this.posGrad != null) this.posGrad.dispose();
+    this.posGrad = posGrad;
+
+    const posTmp = ten.zeros([numVertices, spaceDim]);
+    if (this.posTmp != null) this.posTmp.dispose();
+    this.posTmp = posTmp;
+  }
+
   get wasmInstance() {
     return this.ten.wasmInstance;
   }

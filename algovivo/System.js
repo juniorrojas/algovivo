@@ -68,7 +68,11 @@ class System {
   }
 
   get pos() {
-    return this.pos0;
+    return this._vertices.pos;
+  }
+
+  get pos0() {
+    return this._vertices.pos;
   }
 
   get vel() {
@@ -76,8 +80,7 @@ class System {
   }
 
   get numVertices() {
-    if (this.pos0 == null) return 0;
-    return this.pos0.shape.get(0);
+    return this._vertices.numVertices;
   }
 
   get numTriangles() {
@@ -170,24 +173,6 @@ class System {
       indices: args.triangles ?? [],
       rsi: args.trianglesRsi
     });
-  }
-
-  updateTmpBuffers() {
-    if (this.pos0 == null) {
-      throw new Error("pos0 required");
-    }
-    const numVertices = this.numVertices;
-    const spaceDim = this.spaceDim;
-    const ten = this.ten;
-    
-    // TODO only allocate new memory if necessary
-    const posGrad = ten.zeros([numVertices, spaceDim]);
-    if (this.posGrad != null) this.posGrad.dispose();
-    this.posGrad = posGrad;
-
-    const posTmp = ten.zeros([numVertices, spaceDim]);
-    if (this.posTmp != null) this.posTmp.dispose();
-    this.posTmp = posTmp;
   }
 
   step() {
