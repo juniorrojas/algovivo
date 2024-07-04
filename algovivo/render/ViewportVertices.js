@@ -3,6 +3,7 @@ const mm2d = require("./mm2d");
 class ViewportVertices {
   constructor(args = {}) {
     this.system = args.system;
+    this.renderVertexIds = args.renderVertexIds ?? false;
   }
 
   makePointShaderFunction(args = {}) {
@@ -16,6 +17,8 @@ class ViewportVertices {
       const p = args.p;
       const camera = args.camera;
       const scale = camera.inferScale();
+
+      // TODO render vertex ids if this.renderVertexIds is true
       
       const radius1 = (radius + borderWidth) * scale;
       ctx.fillStyle = borderColor;
