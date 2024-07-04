@@ -6,6 +6,14 @@ class Vertices {
 
     this.spaceDim = 2;
     this.vertexMass = args.vertexMass ?? 6.0714287757873535;
+
+    this.pos0 = null;
+    this.pos1 = null;
+    this.vel0 = null;
+    this.vel1 = null;
+
+    this.posGrad = null;
+    this.posTmp = null;
   }
 
   get pos() {
