@@ -42,7 +42,7 @@ test("step with fixed vertex", async () => {
       [5, 6]
     ]
   });
-  system.fixedVertexId = 0;
+  system.vertices.fixedVertexId = 0;
   system.step();
   const p = system.pos.toArray();
   expect(p[0][0]).toEqual(1);
