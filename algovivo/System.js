@@ -1,6 +1,7 @@
 const mmgrten = require("./mmgrten");
-const Triangles = require("./Triangles");
+const Vertices = require("./Vertices");
 const Muscles = require("./Muscles");
+const Triangles = require("./Triangles");
 
 class System {
   constructor(args = {}) {
@@ -20,12 +21,12 @@ class System {
     }
     
     this.fixedVertexId = -1;
-    this.vertexMass = args.vertexMass ?? 6.0714287757873535;
     this.h = 0.033;
     this.g = 9.8;
 
     this.spaceDim = 2;
 
+    this._vertices = new Vertices({ ten: this.ten, vertexMass: args.vertexMass });
     this._muscles = new Muscles({ ten: this.ten });
     this._triangles = new Triangles({ ten: this.ten });
   }
@@ -36,6 +37,10 @@ class System {
 
   get memoryManager() {
     return this.ten.mgr;
+  }
+
+  get vertexMass() {
+    return this._vertices.vertexMass;
   }
 
   get triangles() {
@@ -62,6 +67,14 @@ class System {
     this._muscles.k = value;
   }
 
+  get pos0() {
+    return this._vertices.pos;
+  }
+
+  get vel0() {
+    return this._vertices.vel0;
+  }
+
   get pos() {
     return this.pos0;
   }
@@ -71,8 +84,7 @@ class System {
   }
 
   get numVertices() {
-    if (this.pos0 == null) return 0;
-    return this.pos0.shape.get(0);
+    return this._vertices.numVertices;
   }
 
   get numTriangles() {
@@ -108,30 +120,7 @@ class System {
   }
 
   setVertices(pos) {
-    const ten = this.ten;
-    
-    const spaceDim = this.spaceDim;
-
-    if (pos == null) throw new Error("pos required");
-    const numVertices = pos.length;
-
-    const pos0 = ten.tensor(pos);
-    if (this.pos0 != null) this.pos0.dispose();
-    this.pos0 = pos0;
-
-    const pos1 = ten.zeros([numVertices, spaceDim]);
-    if (this.pos1 != null) this.pos1.dispose();
-    this.pos1 = pos1;
-
-    const vel0 = ten.zeros([numVertices, spaceDim]);
-    if (this.vel0 != null) this.vel0.dispose();
-    this.vel0 = vel0;
-
-    const vel1 = ten.zeros([numVertices, spaceDim]);
-    if (this.vel1 != null) this.vel1.dispose();
-    this.vel1 = vel1;
-
-    this.updateTmpBuffers();
+    this._vertices.set(pos);
   }
 
   setMuscles(args = {}) {
@@ -190,24 +179,6 @@ class System {
     });
   }
 
-  updateTmpBuffers() {
-    if (this.pos0 == null) {
-      throw new Error("pos0 required");
-    }
-    const numVertices = this.numVertices;
-    const spaceDim = this.spaceDim;
-    const ten = this.ten;
-    
-    // TODO only allocate new memory if necessary
-    const posGrad = ten.zeros([numVertices, spaceDim]);
-    if (this.posGrad != null) this.posGrad.dispose();
-    this.posGrad = posGrad;
-
-    const posTmp = ten.zeros([numVertices, spaceDim]);
-    if (this.posTmp != null) this.posTmp.dispose();
-    this.posTmp = posTmp;
-  }
-
   step() {
     const numVertices = this.numVertices;
     const numMuscles = this.numMuscles;
@@ -242,44 +213,20 @@ class System {
 
       fixedVertexId,
 
-      numVertices == 0 ? 0 : this.pos1.ptr,
-      numVertices == 0 ? 0 : this.posGrad.ptr,
-      numVertices == 0 ? 0 : this.posTmp.ptr,
-      numVertices == 0 ? 0 : this.vel1.ptr,
+      numVertices == 0 ? 0 : this._vertices.pos1.ptr,
+      numVertices == 0 ? 0 : this._vertices.posGrad.ptr,
+      numVertices == 0 ? 0 : this._vertices.posTmp.ptr,
+      numVertices == 0 ? 0 : this._vertices.vel1.ptr,
     );
     
     if (numVertices != 0) {
-      this.pos0.slot.f32().set(this.pos1.slot.f32());
-      this.vel0.slot.f32().set(this.vel1.slot.f32());
+      this._vertices.pos0.slot.f32().set(this._vertices.pos1.slot.f32());
+      this._vertices.vel0.slot.f32().set(this._vertices.vel1.slot.f32());
     }
   }
 
   dispose() {
-    if (this.pos0 != null) {
-      this.pos0.dispose();
-      this.pos0 = null;
-    }
-    if (this.pos1 != null) {
-      this.pos1.dispose();
-      this.pos1 = null;
-    }
-    if (this.posGrad != null) {
-      this.posGrad.dispose();
-      this.posGrad = null;
-    }
-    if (this.posTmp != null) {
-      this.posTmp.dispose();
-      this.posTmp = null;
-    }
-    if (this.vel0 != null) {
-      this.vel0.dispose();
-      this.vel0 = null;
-    }
-    if (this.vel1 != null) {
-      this.vel1.dispose();
-      this.vel1 = null;
-    }
-    
+    this._vertices.dispose();
     this._muscles.dispose();
     this._triangles.dispose();
   }
