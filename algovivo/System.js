@@ -213,15 +213,15 @@ class System {
 
       fixedVertexId,
 
-      numVertices == 0 ? 0 : this.pos1.ptr,
-      numVertices == 0 ? 0 : this.posGrad.ptr,
-      numVertices == 0 ? 0 : this.posTmp.ptr,
-      numVertices == 0 ? 0 : this.vel1.ptr,
+      numVertices == 0 ? 0 : this._vertices.pos1.ptr,
+      numVertices == 0 ? 0 : this._vertices.posGrad.ptr,
+      numVertices == 0 ? 0 : this._vertices.posTmp.ptr,
+      numVertices == 0 ? 0 : this._vertices.vel1.ptr,
     );
     
     if (numVertices != 0) {
-      this.pos0.slot.f32().set(this.pos1.slot.f32());
-      this.vel0.slot.f32().set(this.vel1.slot.f32());
+      this._vertices.pos0.slot.f32().set(this._vertices.pos1.slot.f32());
+      this._vertices.vel0.slot.f32().set(this._vertices.vel1.slot.f32());
     }
   }
 
