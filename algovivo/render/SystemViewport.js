@@ -233,7 +233,7 @@ class SystemViewport {
             this.fixVertex(vertexId);
             dragBehavior.beginDrag();
             this.setVertexPos(
-              system.fixedVertexId,
+              system.vertices.fixedVertexId,
               [worldCursor[0], Math.max(0, worldCursor[1])]
             );
           }
@@ -242,7 +242,7 @@ class SystemViewport {
           const system = this.system;
           const worldCursor = camera.domToWorldSpace(domCursor);
           this.setVertexPos(
-            system.fixedVertexId,
+            system.vertices.fixedVertexId,
             [worldCursor[0], Math.max(0, worldCursor[1])]
           );
         },
@@ -421,12 +421,12 @@ class SystemViewport {
     if (vertexId == null) {
       vertexId = -1;
     }
-    system.fixedVertexId = vertexId;
+    system.vertices.fixedVertexId = vertexId;
   }
 
   freeVertex() {
     const system = this.system;
-    system.fixedVertexId = -1;
+    system.vertices.fixedVertexId = -1;
   }
 }
 

@@ -14,6 +14,8 @@ class Vertices {
 
     this.posGrad = null;
     this.posTmp = null;
+
+    this.fixedVertexId = -1;
   }
 
   get pos() {
