@@ -3,6 +3,7 @@ const mm2d = require("./mm2d");
 class ViewportVertices {
   constructor(args = {}) {
     this.system = args.system;
+    this.renderVertexIds = args.renderVertexIds ?? false;
   }
 
   makePointShaderFunction(args = {}) {
@@ -28,6 +29,20 @@ class ViewportVertices {
       ctx.beginPath();
       ctx.arc(p[0], p[1], radius2, 0, 2 * Math.PI);
       ctx.fill();
+
+      if (this.renderVertexIds) {
+        ctx.beginPath();
+        ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
+        ctx.arc(p[0], p[1], 0.3 * scale, 0, 2 * Math.PI);
+        ctx.fill();
+        
+        const fontSize = Math.floor(0.4 * scale);
+        ctx.font = `${fontSize}px monospace`;
+        ctx.fillStyle = "black";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(args.id, p[0], p[1]);
+      }
     }
   }
 

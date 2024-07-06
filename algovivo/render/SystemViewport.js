@@ -52,7 +52,10 @@ class SystemViewport {
 
     const headless = args.headless ?? false;
 
-    this.vertices = new ViewportVertices({ system: this.system });
+    this.vertices = new ViewportVertices({
+      system: this.system,
+      renderVertexIds: args.renderVertexIds ?? false
+    });
 
     const renderer = new mm2d.Renderer({ headless });
     this.renderer = renderer;
