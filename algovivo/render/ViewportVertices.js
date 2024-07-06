@@ -37,7 +37,6 @@ class ViewportVertices {
         ctx.fill();
         
         const fontSize = Math.floor(0.4 * scale);
-        console.log(fontSize);
         ctx.font = `${fontSize}px monospace`;
         ctx.fillStyle = "black";
         ctx.textAlign = "center";
