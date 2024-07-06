@@ -17,8 +17,6 @@ class ViewportVertices {
       const p = args.p;
       const camera = args.camera;
       const scale = camera.inferScale();
-
-      // TODO render vertex ids if this.renderVertexIds is true
       
       const radius1 = (radius + borderWidth) * scale;
       ctx.fillStyle = borderColor;
@@ -31,6 +29,13 @@ class ViewportVertices {
       ctx.beginPath();
       ctx.arc(p[0], p[1], radius2, 0, 2 * Math.PI);
       ctx.fill();
+
+      if (this.renderVertexIds) {
+        ctx.font = "25px monospace";
+        ctx.fillStyle = "black";
+        ctx.textAlign = "center";
+        ctx.fillText(args.id, p[0], p[1]);
+      }
     }
   }
 
