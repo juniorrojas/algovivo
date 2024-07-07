@@ -9,6 +9,7 @@ permissions:
 
 env:
   SRC_BRANCH: main
+  SRC_BRANCH_REPO_DIRNAME: src.repo
   BUILD_BRANCH: build-test
   BUILD_DIRNAME: build
 
@@ -53,12 +54,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ env.SRC_BRANCH }}
-          path: ./main.repo
+          path: ${{ env.SRC_BRANCH_REPO_DIRNAME }}
         if: env.DIFF_DETECTED == 'true'
       - name: Push changes
         if: env.DIFF_DETECTED == 'true'
         run: |
-          cd main.repo
+          cd ${{ env.SRC_BRANCH_REPO_DIRNAME }}
           COMMIT_SHA=$(git rev-parse --short HEAD)
           git config --global user.name "GitHub Actions"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
