@@ -10,8 +10,8 @@ permissions:
 env:
   SRC_BRANCH: main
   SRC_BRANCH_REPO_DIRNAME: src.repo
-  BUILD_BRANCH: build-test
   BUILD_DIRNAME: build
+  BUILD_BRANCH: build-test
 
 jobs:
   build-wasm:
