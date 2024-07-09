@@ -54,7 +54,7 @@ jobs:
           git add build
           echo "git commit..."
           git commit -m "Update build"
-          git push origin ${{ env.BUILD_BRANCH }}
+          git push origin ${{ env.BUILD_BRANCH }} -f
   
   # build:
   #   runs-on: ubuntu-latest
