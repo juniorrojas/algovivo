@@ -41,7 +41,13 @@ jobs:
         with:
           ref: ${{ env.BUILD_BRANCH }}
           path: ${{ env.BUILD_BRANCH_REPO_DIRNAME }}
-      - run: ls -l
+      - run: |
+          ls -l
+          cp -r ${{ env.SRC_BRANCH_REPO_DIRNAME }}/build ${{ env.BUILD_BRANCH_REPO_DIRNAME }}
+          cd ${{ env.BUILD_BRANCH_REPO_DIRNAME }}
+          git add .
+          git commit -m "Update build"
+          git push origin ${{ env.BUILD_BRANCH }}
   
   # build:
   #   runs-on: ubuntu-latest
