@@ -9,9 +9,8 @@ permissions:
 
 env:
   SRC_BRANCH: main
-  SRC_BRANCH_REPO_DIRNAME: src.repo
   BUILD_DIRNAME: build
-  BUILD_BRANCH: build-test
+  BUILD_BRANCH: build
   BUILD_BRANCH_REPO_DIRNAME: build.repo
 
 jobs:
@@ -87,69 +86,5 @@ jobs:
           echo "git add..."
           git add build
           echo "git commit..."
-          git commit --allow-empty -m "Update build"
+          git commit -m "Update build"
           git push origin ${{ env.BUILD_BRANCH }}
-      # - name: Clone build branch
-      #   uses: actions/checkout@v4
-      #   with:
-      #     ref: ${{ env.BUILD_BRANCH }}
-      #     path: ${{ env.BUILD_BRANCH_REPO_DIRNAME }}
-      # - run: |
-      #     cp -r ${{ env.SRC_BRANCH_REPO_DIRNAME }}/build ${{ env.BUILD_BRANCH_REPO_DIRNAME }}
-      #     cd ${{ env.BUILD_BRANCH_REPO_DIRNAME }}
-      #     ls -la
-      #     ls -la ${{ env.BUILD_DIRNAME }}
-      #     git config --global user.name "GitHub Actions"
-      #     git config --global user.email "github-actions[bot]@users.noreply.github.com"
-      #     echo "git status..."
-      #     git status
-      #     echo "git add..."
-      #     git add build
-      #     echo "git commit..."
-      #     git commit --allow-empty -m "Update build"
-      #     git push origin ${{ env.BUILD_BRANCH }}
-  
-  # build:
-  #   runs-on: ubuntu-latest
-  #   needs: build-wasm
-  #   steps:
-  #     - name: Clone repo
-  #       uses: actions/checkout@v4
-  #     - name: Build JS
-  #       run: |
-  #         npm ci
-  #         npm run build
-  #     - name: Download WASM build
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: algovivo.wasm
-  #         path: build/
-  #     - name: Diff
-  #       run: |
-  #         git add ${{ env.BUILD_DIRNAME }}
-  #         git diff --exit-code --staged -- ${{ env.BUILD_DIRNAME }} && echo "DIFF_DETECTED=false" >> $GITHUB_ENV || echo "DIFF_DETECTED=true" >> $GITHUB_ENV
-  #     - name: Clone src repo
-  #       uses: actions/checkout@v4
-  #       with:
-  #         ref: ${{ env.SRC_BRANCH }}
-  #         path: ${{ env.SRC_BRANCH_REPO_DIRNAME }}
-  #       if: env.DIFF_DETECTED == 'true'
-  #     - name: Push changes
-  #       if: env.DIFF_DETECTED == 'true'
-  #       run: |
-  #         cd ${{ env.SRC_BRANCH_REPO_DIRNAME }}
-  #         COMMIT_SHA=$(git rev-parse --short HEAD)
-  #         git config --global user.name "GitHub Actions"
-  #         git config --global user.email "github-actions[bot]@users.noreply.github.com"
-  #         find . -mindepth 1 \
-  #           \( -name .git -prune \) \
-  #           -o \( -not -name .gitignore \
-  #           -not -name "${{ env.BUILD_DIRNAME }}" -exec rm -rf {} + \)
-  #         cp -r ../${{ env.BUILD_DIRNAME }} .
-  #         git add .
-  #         git commit -m "Update build from $COMMIT_SHA"
-  #         COMMIT_SHA1=$(git rev-parse --short HEAD)
-  #         git checkout $COMMIT_SHA
-  #         git cherry-pick $COMMIT_SHA1
-  #         git checkout -b ${{ env.BUILD_BRANCH }}
-  #         git push origin ${{ env.BUILD_BRANCH }} -f
