@@ -64,7 +64,31 @@ jobs:
         with:
           name: build
           path: ./build
+      - name: Configure git
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
       - run: ls -l build
+      - name: Clone build branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.BUILD_BRANCH }}
+          path: ${{ env.BUILD_BRANCH_REPO_DIRNAME }}
+      - run: |
+          rm -rf ${{ env.BUILD_BRANCH_REPO_DIRNAME }}/${{ env.BUILD_DIRNAME }}
+          cp -r build ${{ env.BUILD_BRANCH_REPO_DIRNAME }}
+          cd ${{ env.BUILD_BRANCH_REPO_DIRNAME }}
+          ls -la
+          ls -la ${{ env.BUILD_DIRNAME }}
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          echo "git status..."
+          git status
+          echo "git add..."
+          git add build
+          echo "git commit..."
+          git commit --allow-empty -m "Update build"
+          git push origin ${{ env.BUILD_BRANCH }}
       # - name: Clone build branch
       #   uses: actions/checkout@v4
       #   with:
