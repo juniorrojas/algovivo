@@ -1,14 +1,19 @@
 import commonjs from "@rollup/plugin-commonjs";
 import resolve from "@rollup/plugin-node-resolve";
 import terser from "@rollup/plugin-terser";
+import { execSync } from "child_process";
 
 function header() {
   return {
     renderChunk(code) {
+      const commitSha = execSync("git rev-parse HEAD").toString().trim();
+      const buildInfo = `Built from commit ${commitSha}`;
       return `/**
  * algovivo
  * (c) 2023 Junior Rojas
  * License: MIT
+ * 
+ * ${buildInfo}
  */
 ${code}`;
     }

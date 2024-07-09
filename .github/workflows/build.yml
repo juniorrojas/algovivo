@@ -9,8 +9,8 @@ permissions:
 
 env:
   SRC_BRANCH: main
-  BUILD_DIRNAME: build
   BUILD_BRANCH: build
+  BUILD_DIRNAME: build
   BUILD_BRANCH_REPO_DIRNAME: build.repo
 
 jobs:
@@ -47,21 +47,21 @@ jobs:
       - name: Upload lib build
         uses: actions/upload-artifact@v4
         with:
-          name: build
+          name: build-js
           path: ./build
   push-build:
     runs-on: ubuntu-latest
     needs: [build-wasm, build-js]
     steps:
-      - name: Download WASM
+      - name: Download WASM build
         uses: actions/download-artifact@v4
         with:
           name: algovivo.wasm
-          path: build/
+          path: ${{ env.BUILD_DIRNAME }}/
       - name: Download JS build
         uses: actions/download-artifact@v4
         with:
-          name: build
+          name: build-js
           path: ./build
       - name: Configure git
         run: |
@@ -73,7 +73,8 @@ jobs:
         with:
           ref: ${{ env.BUILD_BRANCH }}
           path: ${{ env.BUILD_BRANCH_REPO_DIRNAME }}
-      - run: |
+      - name: Push to build branch
+        run: |
           rm -rf ${{ env.BUILD_BRANCH_REPO_DIRNAME }}/${{ env.BUILD_DIRNAME }}
           cp -r build ${{ env.BUILD_BRANCH_REPO_DIRNAME }}
           cd ${{ env.BUILD_BRANCH_REPO_DIRNAME }}
@@ -81,10 +82,6 @@ jobs:
           ls -la ${{ env.BUILD_DIRNAME }}
           git config --global user.name "GitHub Actions"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          echo "git status..."
-          git status
-          echo "git add..."
           git add build
-          echo "git commit..."
           git commit -m "Update build"
           git push origin ${{ env.BUILD_BRANCH }}
