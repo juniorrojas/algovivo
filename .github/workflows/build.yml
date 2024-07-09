@@ -8,8 +8,8 @@ permissions:
   pull-requests: write
 
 env:
-  SRC_BRANCH: build-workflow3
-  BUILD_BRANCH: build-test
+  SRC_BRANCH: main
+  BUILD_BRANCH: build
   BUILD_DIRNAME: build
   BUILD_BRANCH_REPO_DIRNAME: build.repo
 
