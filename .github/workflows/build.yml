@@ -57,7 +57,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: algovivo.wasm
-          path: build/
+          path: ${{ env.BUILD_DIRNAME }}/
       - name: Download JS build
         uses: actions/download-artifact@v4
         with:
