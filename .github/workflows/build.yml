@@ -9,8 +9,8 @@ permissions:
 
 env:
   SRC_BRANCH: main
+  BUILD_BRANCH: build-test
   BUILD_DIRNAME: build
-  BUILD_BRANCH: build
   BUILD_BRANCH_REPO_DIRNAME: build.repo
 
 jobs:
@@ -47,13 +47,13 @@ jobs:
       - name: Upload lib build
         uses: actions/upload-artifact@v4
         with:
-          name: build
+          name: build-js
           path: ./build
   push-build:
     runs-on: ubuntu-latest
     needs: [build-wasm, build-js]
     steps:
-      - name: Download WASM
+      - name: Download WASM build
         uses: actions/download-artifact@v4
         with:
           name: algovivo.wasm
@@ -61,7 +61,7 @@ jobs:
       - name: Download JS build
         uses: actions/download-artifact@v4
         with:
-          name: build
+          name: build-js
           path: ./build
       - name: Configure git
         run: |
