@@ -73,7 +73,8 @@ jobs:
         with:
           ref: ${{ env.BUILD_BRANCH }}
           path: ${{ env.BUILD_BRANCH_REPO_DIRNAME }}
-      - run: |
+      - name: Push to build branch
+        run: |
           rm -rf ${{ env.BUILD_BRANCH_REPO_DIRNAME }}/${{ env.BUILD_DIRNAME }}
           cp -r build ${{ env.BUILD_BRANCH_REPO_DIRNAME }}
           cd ${{ env.BUILD_BRANCH_REPO_DIRNAME }}
