@@ -44,8 +44,8 @@ jobs:
       - run: |
           cp -r ${{ env.SRC_BRANCH_REPO_DIRNAME }}/build ${{ env.BUILD_BRANCH_REPO_DIRNAME }}
           cd ${{ env.BUILD_BRANCH_REPO_DIRNAME }}
-          ls -l
-          ls -l ${{ env.BUILD_DIRNAME }}
+          ls -la
+          ls -la ${{ env.BUILD_DIRNAME }}
           git config --global user.name "GitHub Actions"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git status
