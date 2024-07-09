@@ -81,10 +81,6 @@ jobs:
           ls -la ${{ env.BUILD_DIRNAME }}
           git config --global user.name "GitHub Actions"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          echo "git status..."
-          git status
-          echo "git add..."
           git add build
-          echo "git commit..."
           git commit -m "Update build"
           git push origin ${{ env.BUILD_BRANCH }}
