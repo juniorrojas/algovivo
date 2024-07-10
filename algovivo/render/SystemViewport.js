@@ -421,12 +421,12 @@ class SystemViewport {
     if (vertexId == null) {
       vertexId = -1;
     }
-    system.vertices.fixedVertexId = vertexId;
+    system.vertices.fixVertex(vertexId);
   }
 
   freeVertex() {
     const system = this.system;
-    system.vertices.fixedVertexId = -1;
+    system.vertices.freeVertex();
   }
 }
 
