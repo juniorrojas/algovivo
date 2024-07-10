@@ -9,7 +9,7 @@
 namespace algovivo {
 
 static float backward_euler_loss(
-  int num_vertices, const float* pos, const float* pos0, const float* vel0, float h, const float* r, int num_muscles, const int* muscles, int num_triangles, const int* triangles, const float* rsi, const float* a, const float* l0, float k, float vertex_mass, float g
+  float g, float h, int num_vertices, const float* pos, const float* pos0, const float* vel0, float vertex_mass, int num_muscles, const int* muscles, float k, const float* a, const float* l0, int num_triangles, const int* triangles, const float* rsi
 ) {
   const auto space_dim = 2;
   
@@ -93,82 +93,79 @@ static float backward_euler_loss(
 }
 
 static void backward_euler_loss_grad(
-  int num_vertices, const float* pos, const float* pos_grad, const float* pos0, const float* vel0, float h, const float* r, int num_muscles, const int* muscles, int num_triangles, const int* triangles, const float* rsi, const float* a, const float* l0, float k, float vertex_mass, float g
+  float g, float h, int num_vertices, const float* pos, const float* pos_grad, const float* pos0, const float* vel0, float vertex_mass, int num_muscles, const int* muscles, float k, const float* a, const float* l0, int num_triangles, const int* triangles, const float* rsi
 ) {
   __enzyme_autodiff(
     backward_euler_loss,
+    enzyme_const, g,
+    enzyme_const, h,
     enzyme_const, num_vertices,
     enzyme_dup, pos, pos_grad,
     enzyme_const, pos0,
     enzyme_const, vel0,
-    enzyme_const, h,
-    enzyme_const, r,
+    enzyme_const, vertex_mass,
     enzyme_const, num_muscles,
     enzyme_const, muscles,
-    enzyme_const, num_triangles,
-    enzyme_const, triangles,
-    enzyme_const, rsi,
+    enzyme_const, k,
     enzyme_const, a,
     enzyme_const, l0,
-    enzyme_const, k,
-    enzyme_const, vertex_mass,
-    enzyme_const, g
+    enzyme_const, num_triangles,
+    enzyme_const, triangles,
+    enzyme_const, rsi
   );
 }
 
 struct System {
+  float g;
+  float h;
   int num_vertices;
   const float* pos0;
   const float* vel0;
-  float h;
-  const float* r;
+  float vertex_mass;
   int num_muscles;
   const int* muscles;
+  float k;
+  const float* a;
+  const float* l0;
   int num_triangles;
   const int* triangles;
   const float* rsi;
-  const float* a;
-  const float* l0;
-  float k;
-  float vertex_mass;
-  float g;
   int fixed_vertex_id;
   
 
   float forward(float* pos) {
     return backward_euler_loss(
-      num_vertices, pos, pos0, vel0, h, r, num_muscles, muscles, num_triangles, triangles, rsi, a, l0, k, vertex_mass, g
+      g, h, num_vertices, pos, pos0, vel0, vertex_mass, num_muscles, muscles, k, a, l0, num_triangles, triangles, rsi
     );
   }
 
   void backward(float* pos, float* pos_grad) {
     backward_euler_loss_grad(
-      num_vertices, pos, pos_grad, pos0, vel0, h, r, num_muscles, muscles, num_triangles, triangles, rsi, a, l0, k, vertex_mass, g
+      g, h, num_vertices, pos, pos_grad, pos0, vel0, vertex_mass, num_muscles, muscles, k, a, l0, num_triangles, triangles, rsi
     );
   }
 };
 
 extern "C"
 void backward_euler_update(
-  int num_vertices, const float* pos0, const float* vel0, float h, const float* r, int num_muscles, const int* muscles, int num_triangles, const int* triangles, const float* rsi, const float* a, const float* l0, float k, float vertex_mass, float g, int fixed_vertex_id, float* pos1, float* pos_grad, float* pos_tmp, float* vel1
+  float g, float h, int num_vertices, const float* pos0, const float* vel0, float vertex_mass, int num_muscles, const int* muscles, float k, const float* a, const float* l0, int num_triangles, const int* triangles, const float* rsi, int fixed_vertex_id, float* pos1, float* pos_grad, float* pos_tmp, float* vel1
 ) {
   algovivo::System system;
 
+  system.g = g;
+  system.h = h;
   system.num_vertices = num_vertices;
   system.pos0 = pos0;
   system.vel0 = vel0;
-  system.h = h;
-  system.r = r;
+  system.vertex_mass = vertex_mass;
   system.num_muscles = num_muscles;
   system.muscles = muscles;
+  system.k = k;
+  system.a = a;
+  system.l0 = l0;
   system.num_triangles = num_triangles;
   system.triangles = triangles;
   system.rsi = rsi;
-  system.a = a;
-  system.l0 = l0;
-  system.k = k;
-  system.vertex_mass = vertex_mass;
-  system.g = g;
   system.fixed_vertex_id = fixed_vertex_id;
   
 
