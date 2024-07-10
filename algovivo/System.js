@@ -195,7 +195,7 @@ class System {
     const numMuscles = this.numMuscles;
     const numTriangles = this.numTriangles;
 
-    const fixedVertexId = this.vertices.fixedVertexId;
+    const fixedVertexId = this.vertices._fixedVertexId;
     const vertexMass = this.vertexMass;
 
     this.wasmInstance.exports.backward_euler_update(
