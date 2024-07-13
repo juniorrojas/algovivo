@@ -4,6 +4,15 @@ const path = require("path");
 const { Window, runWebServer } = require("./utils");
 const TrajectoryData = require("./TrajectoryData");
 
+function fileExists(filename) {
+  return new Promise((resolve, reject) => {
+    fs.access(filename, fs.constants.F_OK, (err) => {
+      if (err) resolve(false);
+      else resolve(true);
+    });
+  });
+}
+
 async function cleandir(dirname) {
   if (!await fileExists(dirname)) {
     await fsp.mkdir(dirname);
