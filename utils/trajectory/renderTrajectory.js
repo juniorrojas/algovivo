@@ -1,5 +1,4 @@
 const algovivo = require("algovivo");
-const { cleandir } = require("../utils");
 const fs = require("fs");
 const path = require("path");
 const { Window, runWebServer } = require("./utils");
