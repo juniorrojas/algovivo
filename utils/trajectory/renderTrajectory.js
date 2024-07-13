@@ -113,6 +113,7 @@ async function render(args = {}) {
 }
 
 render({
-  dataDirname: path.join(__dirname, "data"),
+  // TODO parameterize
+  dataDirname: path.join(__dirname, "..", "..", "test", "neural", "data"),
   framesDirname: path.join(__dirname, "frames.out")
 });
