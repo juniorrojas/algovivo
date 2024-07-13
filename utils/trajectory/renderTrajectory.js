@@ -1,5 +1,6 @@
 const algovivo = require("algovivo");
 const fs = require("fs");
+const fsp = fs.promises;
 const path = require("path");
 const { Window, runWebServer } = require("./utils");
 const TrajectoryData = require("./TrajectoryData");
