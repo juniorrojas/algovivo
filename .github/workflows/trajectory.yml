@@ -68,7 +68,7 @@ jobs:
         run: |
           npm ci
           npm run build
-          node test/neural/renderTrajectory.js
+          node utils/trajectory/renderTrajectory.js
       - name: Install ffmpeg
         run: |
           sudo apt-get update
