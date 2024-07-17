@@ -113,7 +113,13 @@ async function render(args = {}) {
 }
 
 // TODO parameterize
-const inputDirname = path.join(__dirname, "..", "..", "test", "neural", "data");
+// const inputDirname = path.join(__dirname, "..", "..", "test", "neural", "data");
+const inputDirname = process.env.INPUT_DIRNAME;
+if (!inputDirname) {
+  console.error("INPUT_DIRNAME required");
+  process.exit(1);
+}
+
 render({
   dataDirname: inputDirname,
   framesDirname: path.join(__dirname, "frames.out")
