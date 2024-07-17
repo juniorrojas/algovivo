@@ -112,8 +112,9 @@ async function render(args = {}) {
   });
 }
 
+// TODO parameterize
+const inputDirname = path.join(__dirname, "..", "..", "test", "neural", "data");
 render({
-  // TODO parameterize
-  dataDirname: path.join(__dirname, "..", "..", "test", "neural", "data"),
+  dataDirname: inputDirname,
   framesDirname: path.join(__dirname, "frames.out")
 });
