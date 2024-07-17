@@ -3,7 +3,7 @@
  * (c) 2023 Junior Rojas
  * License: MIT
  * 
- * Built from commit 66b61682dea1290a0b10ad452547bbf7154db6ae
+ * Built from commit 246d59dd4bc6caf0b4fb07fe1f5d4f769908f899
  */
 function getDefaultExportFromCjs (x) {
 	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
@@ -1285,6 +1285,20 @@ class Vertices$1 {
 
     this.posGrad = null;
     this.posTmp = null;
+
+    this._fixedVertexId = -1;
+  }
+
+  set fixedVertexId(value) {
+    throw new Error("use fixVertex instead");
+  }
+
+  fixVertex(vertexId) {
+    this._fixedVertexId = vertexId;
+  }
+
+  freeVertex() {
+    this._fixedVertexId = -1;
   }
 
   get pos() {
@@ -1607,7 +1621,6 @@ class System$1 {
       this.ten = ten;
     }
     
-    this.fixedVertexId = -1;
     this.h = 0.033;
     this.g = 9.8;
 
@@ -1616,6 +1629,18 @@ class System$1 {
     this._vertices = new Vertices({ ten: this.ten, vertexMass: args.vertexMass });
     this._muscles = new Muscles({ ten: this.ten });
     this._triangles = new Triangles({ ten: this.ten });
+  }
+
+  get vertices() {
+    return this._vertices;
+  }
+
+  set fixedVertexId(value) {
+    throw new Error("System.fixedVertexId setter is deprecated, use System.vertices.fixedVertexId instead");
+  }
+
+  get fixedVertexId() {
+    throw new Error("System.fixedVertexId getter is deprecated, use System.vertices.fixedVertexId instead");
   }
 
   get wasmInstance() {
@@ -1771,7 +1796,7 @@ class System$1 {
     const numMuscles = this.numMuscles;
     const numTriangles = this.numTriangles;
 
-    const fixedVertexId = this.fixedVertexId;
+    const fixedVertexId = this.vertices._fixedVertexId;
     const vertexMass = this.vertexMass;
 
     this.wasmInstance.exports.backward_euler_update(
@@ -3497,7 +3522,7 @@ class SystemViewport {
             this.fixVertex(vertexId);
             dragBehavior.beginDrag();
             this.setVertexPos(
-              system.fixedVertexId,
+              system.vertices.fixedVertexId,
               [worldCursor[0], Math.max(0, worldCursor[1])]
             );
           }
@@ -3506,7 +3531,7 @@ class SystemViewport {
           const system = this.system;
           const worldCursor = camera.domToWorldSpace(domCursor);
           this.setVertexPos(
-            system.fixedVertexId,
+            system.vertices.fixedVertexId,
             [worldCursor[0], Math.max(0, worldCursor[1])]
           );
         },
@@ -3685,12 +3710,12 @@ class SystemViewport {
     if (vertexId == null) {
       vertexId = -1;
     }
-    system.fixedVertexId = vertexId;
+    system.vertices.fixVertex(vertexId);
   }
 
   freeVertex() {
     const system = this.system;
-    system.fixedVertexId = -1;
+    system.vertices.freeVertex();
   }
 }
 
