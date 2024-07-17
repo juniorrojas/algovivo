@@ -112,8 +112,6 @@ async function render(args = {}) {
   });
 }
 
-// TODO parameterize
-// const inputDirname = path.join(__dirname, "..", "..", "test", "neural", "data");
 const inputDirname = process.env.INPUT_DIRNAME;
 if (!inputDirname) {
   console.error("INPUT_DIRNAME required");
