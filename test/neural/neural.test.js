@@ -3,7 +3,7 @@ const utils = require("../utils");
 const fsp = require("fs/promises");
 const path = require("path");
 const NeuralPolicy = require("./NeuralPolicy");
-const TrajectoryData = require("./TrajectoryData");
+const TrajectoryData = require("../../utils/trajectory/TrajectoryData");
 
 expect.extend({ toBeCloseToArray: utils.toBeCloseToArray });
 

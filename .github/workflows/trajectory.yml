@@ -68,14 +68,14 @@ jobs:
         run: |
           npm ci
           npm run build
-          node test/neural/renderTrajectory.js
+          node utils/trajectory/renderTrajectory.js
       - name: Install ffmpeg
         run: |
           sudo apt-get update
           sudo apt-get install ffmpeg
       - name: Make trajectory video
         run: |
-          ffmpeg -framerate 30 -i test/neural/frames.out/%d.png -pix_fmt yuv420p video.out.mp4 -y
+          ffmpeg -framerate 30 -i utils/trajectory/frames.out/%d.png -pix_fmt yuv420p video.out.mp4 -y
       - name: Upload trajectory video
         uses: actions/upload-artifact@v4
         with:
