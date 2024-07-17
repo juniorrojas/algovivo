@@ -32,3 +32,21 @@ test("step with no vertices", async () => {
   expect(system.numMuscles).toBe(0);
   expect(system.numTriangles).toBe(0);
 });
+
+test("step with fixed vertex", async () => {
+  const ten = await utils.loadTen();
+  const system = new algovivo.System({ ten });
+  system.set({
+    pos: [
+      [1, 3],
+      [5, 6]
+    ]
+  });
+  system.vertices.fixVertex(0);
+  system.step();
+  const p = system.pos.toArray();
+  expect(p[0][0]).toEqual(1);
+  expect(p[0][1]).toEqual(3);
+  expect(p[1][0]).toEqual(5);
+  expect(p[1][1]).toBeLessThan(6);
+});

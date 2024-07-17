@@ -14,6 +14,20 @@ class Vertices {
 
     this.posGrad = null;
     this.posTmp = null;
+
+    this._fixedVertexId = -1;
+  }
+
+  set fixedVertexId(value) {
+    throw new Error("use fixVertex instead");
+  }
+
+  fixVertex(vertexId) {
+    this._fixedVertexId = vertexId;
+  }
+
+  freeVertex() {
+    this._fixedVertexId = -1;
   }
 
   get pos() {
