@@ -75,6 +75,7 @@ class ViewportVertices {
   }
 
   setVertexPos(i, p) {
+    if (i == null) throw new Error("vertex id required");
     const system = this.system;
     const pF32 = system.pos.slot.f32();
     const offset = i * 2;

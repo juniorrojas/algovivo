@@ -22,6 +22,10 @@ class Vertices {
     throw new Error("use fixVertex instead");
   }
 
+  get fixedVertexId() {
+    return this._fixedVertexId;
+  }
+
   fixVertex(vertexId) {
     this._fixedVertexId = vertexId;
   }
