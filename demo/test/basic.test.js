@@ -5,8 +5,8 @@ test("main", async () => {
     const window = new utils.Window({
       headless: true,
       indexUrl: `http://localhost:${port}`,
-      width: 700,
-      height: 700
+      width: 800,
+      height: 1200
     });
     try {
       await window.launch();
