@@ -33,6 +33,7 @@ class Section {
   setStyle1() {
     this.domElement.style.backgroundColor = "black";
     this.domElement.style.color = "rgb(199, 199, 199)";
+    this.domElement.style.boxShadow = "rgba(0, 0, 0, 0.3) 0px 0px 10px";
     this.header.style.color = "white";
     this.header.style.borderBottom = "2px solid white";
   }
