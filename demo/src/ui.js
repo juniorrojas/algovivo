@@ -36,6 +36,7 @@ export function makeHeader() {
   divTitle.appendChild(h1);
   ((style) => {
     style.fontSize = "33px";
+    style.color = "white";
   })(h1.style);
 
   const h2 = document.createElement("h2");
