@@ -19,7 +19,7 @@ export default class Description {
 The concept of energy minimization is useful to understand physical systems as goal-directed systems.
 A deformable object that tends to recover its rest shape can be understood as a system whose goal is to minimize its elastic potential energy.
 More generally, energy can refer to any scalar-valued function that measures compatibility between variables as a means of implicitly capturing their dependencies through energy minimization.
-This more general notion of energy is useful to model inertia, friction, actuation mechanisms and, potentially, many other goal-directed behaviors that may or may not be conventionally considered "just physics".
+This more general notion of energy is useful to model inertia, friction, actuation mechanisms and, potentially, many other goal-directed behaviors that may or may not be conventionally considered &ldquo;just physics&rdquo;.
 </p>`
     );
     s.setStyle1();
