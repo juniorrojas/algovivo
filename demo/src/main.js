@@ -3,6 +3,7 @@ import NeuralPolicy from "./NeuralPolicy.js";
 import BrainButton from "./BrainButton.js";
 import { initStyle, makeGitHubLink, makeHeader } from "./ui.js";
 import SystemViewport from "./SystemViewport.js";
+import Description from "./Description.js";
 
 async function loadWasm() {
   const response = await fetch("algovivo.wasm");
@@ -31,6 +32,7 @@ async function main() {
   divContent.style.display = "flex";
   divContent.style.flexDirection = "column";
   divContent.style.alignItems = "center";
+  divContent.style.width = "100%";
   document.body.appendChild(divContent);
 
   const wasmInstance = await loadWasm();
@@ -83,6 +85,9 @@ async function main() {
     togglePolicy();
   });
   divContent.appendChild(btnBrain.domElement);
+
+  const description = new Description();
+  divContent.appendChild(description.domElement);
 
   viewport.render();
   setInterval(() => {
