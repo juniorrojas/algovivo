@@ -3,7 +3,7 @@
  * (c) 2023 Junior Rojas
  * License: MIT
  * 
- * Built from commit 246d59dd4bc6caf0b4fb07fe1f5d4f769908f899
+ * Built from commit 2cd82fa765743b30045e0c24fe51286323cb41e8
  */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -1297,6 +1297,10 @@
 
 	  set fixedVertexId(value) {
 	    throw new Error("use fixVertex instead");
+	  }
+
+	  get fixedVertexId() {
+	    return this._fixedVertexId;
 	  }
 
 	  fixVertex(vertexId) {
@@ -3275,6 +3279,7 @@
 	  }
 
 	  setVertexPos(i, p) {
+	    if (i == null) throw new Error("vertex id required");
 	    const system = this.system;
 	    const pF32 = system.pos.slot.f32();
 	    const offset = i * 2;
