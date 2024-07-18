@@ -8,6 +8,12 @@ class Section {
     this.domElement.style.paddingRight = "26px";
     this.domElement.style.paddingLeft = "26px";
     this.domElement.style.width = "100%";
+    this.domElement.style.display = "flex";
+    this.domElement.style.justifyContent = "center";
+
+    const divContainer = document.createElement("div");
+    divContainer.style.maxWidth = "600px";
+    this.domElement.appendChild(divContainer);
     
     const h2 = document.createElement("h2");
     this.header = h2;
@@ -20,9 +26,8 @@ class Section {
     const contentElement = document.createElement("div");
     contentElement.innerHTML = content;
 
-    this.domElement.innerHTML = "";
-    this.domElement.appendChild(h2);
-    this.domElement.appendChild(contentElement);
+    divContainer.appendChild(h2);
+    divContainer.appendChild(contentElement);
   }
 
   setStyle1() {

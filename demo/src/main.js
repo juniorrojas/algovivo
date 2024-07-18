@@ -32,6 +32,7 @@ async function main() {
   divContent.style.display = "flex";
   divContent.style.flexDirection = "column";
   divContent.style.alignItems = "center";
+  divContent.style.width = "100%";
   document.body.appendChild(divContent);
 
   const wasmInstance = await loadWasm();
