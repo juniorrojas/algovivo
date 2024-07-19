@@ -7,6 +7,7 @@ export default class Section {
     this.domElement.style.padding = "22px";
     this.domElement.style.paddingRight = "26px";
     this.domElement.style.paddingLeft = "26px";
+    this.domElement.style.paddingBottom = "45px";
     this.domElement.style.width = "100%";
     this.domElement.style.display = "flex";
     this.domElement.style.justifyContent = "center";
