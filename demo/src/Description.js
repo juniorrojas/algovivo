@@ -18,7 +18,7 @@ export default class Description {
 `<p>
 The concept of energy minimization is useful to understand physical systems as goal-directed systems.
 A deformable object that tends to recover its rest shape can be understood as a system whose goal is to minimize its elastic potential energy.
-More generally, energy can refer to any scalar-valued function that measures compatibility between variables as a means of implicitly capturing their dependencies through energy minimization.
+More generally, energy can refer to any implicit function that captures dependencies between variables.
 This more general notion of energy is useful to model inertia, friction, actuation mechanisms and, potentially, many other goal-directed behaviors that may or may not be conventionally considered &ldquo;just physics&rdquo;.
 </p>`
     );
@@ -28,7 +28,7 @@ This more general notion of energy is useful to model inertia, friction, actuati
       "no forces, just energy functions",
 `<p>
 Much like the loss function encapsulates the objective of a neural network in a single scalar value, potential energy functions offer a scalar representation of the objective of a physical system.
-In practice, just as we typically do not compute neural network gradients by hand, we can also avoid computing forces by hand.
+In practice, just as we typically do not compute neural network gradients by hand, we can also avoid computing forces by hand if we use automatic differentiation.
 The force can be straightforwardly derived as the negative gradient of the potential energy.
 For general energy functions that are not plain potential energy functions, the negative gradient cannot be directly interpreted as a force, but it can still be used for gradient-based optimization and is useful for implicit numerical integration methods.
 </p>`);
