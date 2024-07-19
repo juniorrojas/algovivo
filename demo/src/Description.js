@@ -19,7 +19,7 @@ export default class Description {
 Potential energy minimization is one of the <a target="_blank" href="https://youtu.be/c8iFtaltX-s?si=MDUb20nFhumn1Q3n&t=3553">most basic forms of goal-directed behavior</a>.
 A deformable object that tends to recover its rest shape can be understood as a system whose goal is to minimize its elastic potential energy.
 More generally, &ldquo;energy&rdquo; in the context of <a target="_blank" href="https://youtu.be/MiqLoAZFRSE?t=2177">energy-based models</a> refers to any implicit function that captures dependencies between variables.
-This more general notion of energy is consistent with potential energy, but is also useful to model inertia, friction, actuation mechanisms and many other goal-directed behaviors that may not be conventionally considered <a target="_blank" href="https://youtu.be/lIHUWOv4nkE?t=629">&ldquo;just physics&rdquo;</a>.
+This more general notion of energy is consistent with potential energy, but is also useful to model inertia, friction, actuation mechanisms and many other goal-directed behaviors that may or may not be conventionally considered <a target="_blank" href="https://youtu.be/lIHUWOv4nkE?t=629">&ldquo;just physics&rdquo;</a>.
 </p>`
     );
     s.setStyle1();
@@ -36,7 +36,7 @@ For general energy functions that are not plain potential energy functions, the 
     s = this.addSection(
       "six energy functions",
 `<p>
-This implementation defines six energy functions. Some are plain potential energy functions, that is, functions of vertex positions <span class="code">E(pos)</span>. Actuation mechanisms can be modeled with an action-dependent energy function <span class="code">E(pos, a)</span>. Other energy functions may also depend on the previous state, given by vertex positions and velocities <span class="code">(pos0, vel0)</span>.
+This implementation defines six energy functions. Some are plain potential energy functions, that is, functions of vertex positions <span class="code">E(pos)</span>. Actuation mechanisms are modeled with an action-dependent energy function <span class="code">E(pos, a)</span>. Other energy functions may also depend on the previous state, given by vertex positions and velocities <span class="code">(pos0, vel0)</span>.
 </p>
 
 <ul>
