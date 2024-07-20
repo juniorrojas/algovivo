@@ -56,7 +56,7 @@ This implementation defines six energy functions. Some are plain potential energ
 This implementation uses the backward Euler method, which is conventionally presented as an implicit numerical integration method, derived as a numerical solution to a differential equation. However, what we actually implement in practice to solve the resulting non-linear root finding problem in a reliable manner is a gradient-based optimization method to find a local minimum of a function that consists of the sum of the six energy functions mentioned before:
 </p>
 
-<div class="code2" style="white-space: normal">pos1 = argmin((pos) => E(pos, pos0, vel0, a))</div>
+<span class="code2" style="white-space: normal">pos1 = argmin((pos) => E(pos, pos0, vel0, a))</span>
 
 <p>
 The velocity is then updated with a simple update rule:
