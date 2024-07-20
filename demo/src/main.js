@@ -3,7 +3,7 @@ import NeuralPolicy from "./NeuralPolicy.js";
 import BrainButton from "./BrainButton.js";
 import { initStyle, makeGitHubLink } from "./ui.js";
 import SystemViewport from "./SystemViewport.js";
-import Description from "./Description.js";
+import Sections from "./Sections.js";
 import Header from "./Header.js";
 
 async function loadWasm() {
@@ -87,8 +87,8 @@ async function main() {
   });
   divContent.appendChild(btnBrain.domElement);
 
-  const description = new Description();
-  divContent.appendChild(description.domElement);
+  const sections = new Sections();
+  divContent.appendChild(sections.domElement);
 
   viewport.render();
   setInterval(() => {

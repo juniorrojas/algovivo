@@ -1,6 +1,6 @@
 import Section from "./Section";
 
-export default class Description {
+export default class Sections {
   constructor() {
     this.domElement = document.createElement("div");
     this.domElement.style.marginTop = "16px";
