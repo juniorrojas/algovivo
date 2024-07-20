@@ -28,6 +28,7 @@ async function main() {
   initStyle();
   makeGitHubLink();
   const header = new Header();
+  document.body.appendChild(header.domElement);
 
   const divContent = document.createElement("div");
   divContent.style.display = "flex";
