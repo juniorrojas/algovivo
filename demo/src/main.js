@@ -1,9 +1,10 @@
 import algovivo from "../../build/algovivo.min.mjs";
 import NeuralPolicy from "./NeuralPolicy.js";
 import BrainButton from "./BrainButton.js";
-import { initStyle, makeGitHubLink, makeHeader } from "./ui.js";
+import { initStyle, makeGitHubLink } from "./ui.js";
 import SystemViewport from "./SystemViewport.js";
-import Description from "./Description.js";
+import Sections from "./Sections.js";
+import Header from "./Header.js";
 
 async function loadWasm() {
   const response = await fetch("algovivo.wasm");
@@ -26,7 +27,8 @@ async function loadPolicyData() {
 async function main() {
   initStyle();
   makeGitHubLink();
-  makeHeader();
+  const header = new Header();
+  document.body.appendChild(header.domElement);
 
   const divContent = document.createElement("div");
   divContent.style.display = "flex";
@@ -86,8 +88,8 @@ async function main() {
   });
   divContent.appendChild(btnBrain.domElement);
 
-  const description = new Description();
-  divContent.appendChild(description.domElement);
+  const sections = new Sections();
+  divContent.appendChild(sections.domElement);
 
   viewport.render();
   setInterval(() => {
