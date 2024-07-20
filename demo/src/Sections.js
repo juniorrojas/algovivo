@@ -49,6 +49,30 @@ This implementation defines six energy functions. Some are plain potential energ
 </ul>`
     );
     s.setStyle1();
+
+    s = this.addSection(
+      "no differential equations, just energy minimization",
+`<p>
+This implementation uses the backward Euler method, which is conventionally presented as an implicit numerical integration method, derived as a numerical solution to a differential equation. However, what we actually implement in practice to solve the resulting non-linear root finding problem in a reliable manner is a gradient-based optimization method to find a local minimum of a function that consists of the sum of the six energy functions mentioned before:
+</p>
+
+<span class="code2">pos1 = argmin((pos) => E(pos, pos0, vel0, a))</span>
+
+<p>
+The velocity is then updated with a simple update rule:
+</p>
+
+<span class="code2">vel1 = (pos1 - pos0) / dt</span>
+
+<p>
+Many other implicit numerical integration methods share a similar form, where the next state is found by minimizing an energy function.
+While the inertial energy term and velocity update rule may vary depending on the specific method used, energy minimization remains central to explaining state transitions.
+Recall that in this context &ldquo;energy&rdquo; is any <a class="a2" href="https://youtu.be/MiqLoAZFRSE?t=2177">scalar-valued function that measures incompatibility between variables</a>.
+When we say inertial energy, we do not mean kinetic energy.
+When we say energy minimization, we do not mean Hamiltonian minimization.
+It is actually possible to implement <a class="a2" href="https://github.com/juniorrojas/springs-integration-pytorch?tab=readme-ov-file#energy-conservation">Hamiltonian-preserving</a> methods via &ldquo;energy&rdquo; minimization.
+</p>`
+    );
   }
 
   addSection(title, content) {
