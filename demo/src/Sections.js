@@ -53,7 +53,7 @@ This implementation defines six energy functions. Some are plain potential energ
     s = this.addSection(
       "no differential equations, just energy minimization",
 `<p>
-This implementation uses the backward Euler method, which is conventionally presented as an implicit numerical integration method, derived as a numerical solution to a differential equation.
+This implementation uses the backward Euler method, which is conventionally presented as an implicit numerical integration method, derived as a numerical solution to a differential equation (Newtonian mechanics).
 However, what we actually implement in practice to solve the resulting non-linear root finding problem in a reliable manner is a gradient-based optimization method that finds a local minimum of a function that consists of the sum of the six energy functions mentioned before:
 </p>
 
@@ -68,19 +68,24 @@ The velocity is then updated with a simple update rule:
 <p>
 Many other implicit numerical integration methods share a similar form, where the next state is found by minimizing an energy function.
 While the inertial energy term and velocity update rule may vary depending on the specific method used, energy minimization remains central to explaining state transitions.
-Recall that in this context &ldquo;energy&rdquo; is any <a class="a2" href="https://youtu.be/MiqLoAZFRSE?t=2177">scalar-valued function that measures incompatibility between variables</a>.
-When we say inertial energy, we do not mean kinetic energy.
-When we say energy minimization, we do not mean Hamiltonian minimization.
-It is actually possible to implement <a class="a2" href="https://github.com/juniorrojas/springs-integration-pytorch?tab=readme-ov-file#energy-conservation">Hamiltonian-preserving</a> methods via &ldquo;energy&rdquo; minimization.
-</p>
-
-<p>
-When we say energy minimization, we mean something more akin to the least action principle, except that &ldquo;action&rdquo; has a very specific definition in Lagrangian mechanics, and we are not using that definition here.
-We also want to reserve the word &ldquo;action&rdquo; to refer to actuation mechanisms such as muscle control, which are modeled as action-dependent energy functions.
-Confusing terminology, I know.
-Whatever variable or function name you prefer to use in your code, the important thing is to have a <a href="https://github.com/juniorrojas/algovivo" class="a2">working implementation</a> that goes beyond just words and mathematical formulas that may not be computable.
 </p>`
     );
+
+    s = this.addSection(
+      "no Lagrangians or Hamiltonians, just energy",
+      `<p>
+Recall that in this context &ldquo;energy&rdquo; is any <a href="https://youtu.be/MiqLoAZFRSE?t=2177">scalar-valued function that measures incompatibility between variables</a>.
+When we say inertial energy, we do not mean kinetic energy.
+When we say energy minimization, we do not mean Hamiltonian minimization.
+It is actually possible to implement <a href="https://github.com/juniorrojas/springs-integration-pytorch?tab=readme-ov-file#energy-conservation">Hamiltonian-preserving methods</a> by &ldquo;energy&rdquo; minimization.
+Energy-based models can also easily describe dissipative systems.
+<a href="https://www.youtube.com/watch?v=7fRfxiyTKS0">Lagrangians and Hamiltonians cannot really describe dissipative systems</a>.
+When we say energy minimization, we mean something akin to the least action principle, except that &ldquo;action&rdquo; has a very specific definition in Lagrangian mechanics, and we are not using that definition here.
+We also want to reserve the word &ldquo;action&rdquo; to refer to actuation mechanisms such as muscle control, which are modeled as action-dependent energy functions.
+Confusing terminology, I know.
+Whatever variable or function names you prefer to use in your code, the important thing is to have a <a href="https://github.com/juniorrojas/algovivo">working implementation</a> that goes beyond just words and mathematical formulas that may not be computable.
+</p>`);
+    s.setStyle1();
   }
 
   addSection(title, content) {
