@@ -72,6 +72,13 @@ Recall that in this context &ldquo;energy&rdquo; is any <a class="a2" href="http
 When we say inertial energy, we do not mean kinetic energy.
 When we say energy minimization, we do not mean Hamiltonian minimization.
 It is actually possible to implement <a class="a2" href="https://github.com/juniorrojas/springs-integration-pytorch?tab=readme-ov-file#energy-conservation">Hamiltonian-preserving</a> methods via &ldquo;energy&rdquo; minimization.
+</p>
+
+<p>
+When we say energy minimization, we mean something more akin to the least action principle, except that &ldquo;action&rdquo; has a very specific definition in Lagrangian mechanics, and we are not using that definition here.
+We also want to reserve the word &ldquo;action&rdquo; to refer to actuation mechanisms such as muscle control, which are modeled as action-dependent energy functions.
+Confusing terminology, I know.
+Whatever variable or function name you prefer to use in your code, the important thing it to have a <a href="https://github.com/juniorrojas/algovivo" class="a2">working implementation</a> that goes beyond just words and mathematical formulas that may not be computable.
 </p>`
     );
   }
