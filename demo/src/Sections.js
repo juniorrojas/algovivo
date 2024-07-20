@@ -27,10 +27,10 @@ This more general notion of energy is consistent with potential energy, but is a
     s = this.addSection(
       "no forces, just energy functions",
 `<p>
-Much like the loss function encapsulates the objective of a neural network during training in a single scalar value, potential energy functions offer a scalar representation of the objective of a mechanical system in a dissipative process.
+Much like the loss function encapsulates in a single scalar value the objective of a neural network during training, potential energy functions offer a scalar representation of the objective of a mechanical system in a dissipative process.
 In practice, just as we typically do not compute neural network gradients by hand, we can also avoid computing forces by hand if we use automatic differentiation.
-The force can be straightforwardly derived as the negative gradient of the potential energy.
-For general energy functions that are not plain potential energy functions, the negative gradient cannot be directly interpreted as a force, but it can still be used for gradient-based optimization and is useful for implicit numerical integration methods.
+The force is just the negative gradient of the potential energy.
+For more general energy functions, which extend beyond plain potential energy, the negative gradient might not directly represent a force, but it is useful for gradient-based optimization and is especially useful in implicit numerical integration methods.
 </p>`);
 
     s = this.addSection(
