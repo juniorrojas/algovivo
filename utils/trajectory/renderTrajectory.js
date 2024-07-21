@@ -112,8 +112,19 @@ async function render(args = {}) {
   });
 }
 
-render({
-  // TODO parameterize
-  dataDirname: path.join(__dirname, "..", "..", "test", "neural", "data"),
-  framesDirname: path.join(__dirname, "frames.out")
-});
+async function main() {
+  const inputDirname = process.env.INPUT_DIRNAME;
+  if (!inputDirname) {
+    console.error("INPUT_DIRNAME required");
+    process.exit(1);
+  }
+
+  const outputDirname = path.join(__dirname, "frames.out");
+
+  await render({
+    dataDirname: inputDirname,
+    framesDirname: outputDirname
+  });
+}
+
+main();
