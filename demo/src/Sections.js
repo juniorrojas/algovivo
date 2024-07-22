@@ -72,7 +72,7 @@ While the inertial energy term and velocity update rule may vary depending on th
     );
 
     s = this.addSection(
-      "no Lagrangians or Hamiltonians, just energy",
+      "no Lagrangians, no Hamiltonians, just energy",
       `<p>
 Recall that in this context &ldquo;energy&rdquo; is any <a href="https://youtu.be/MiqLoAZFRSE?t=2177">scalar-valued function that measures incompatibility between variables</a>.
 When we say inertial energy, we do not mean kinetic energy.
