@@ -38,7 +38,7 @@ def populate_deploy_path(deploy_path):
     with open(deploy_path.joinpath("deploy_info.txt"), "w") as f:
         f.write(str(datetime.now().timestamp()))
 
-    for dirname in ["data"]:
+    for dirname in ["data", "icons"]:
         shutil.copytree(
             public_path.joinpath(dirname),
             deploy_path.joinpath(dirname)
