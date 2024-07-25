@@ -74,7 +74,7 @@ The velocity is then updated with a simple update rule:
 <p>
 Many other implicit numerical integration methods share a similar form, where the next state is found by minimizing an energy function.
 While the inertial energy term and velocity update rule may vary depending on the specific method used, energy minimization remains central to explaining state transitions.
-Instead of viewing these methods as numerical solutions to differential equations, we can view them as energy-based models that capture Newton's first law of motion in an inertial energy term (each vertex wants to maintain its momentum).
+Instead of viewing these methods as numerical solutions to differential equations, we can view them as energy-based models that capture Newton's first law of motion in an inertial energy term.
 </p>`
     );
 
