@@ -46,7 +46,7 @@ This implementation defines six energy functions. Some are plain potential energ
 </p>
 
 <ul>
-<li>triangles <span class="code">E(pos)</span></li>
+<li><a href="https://github.com/juniorrojas/algovivo/blob/main/csrc/algovivo/potential/triangles.h">triangles</a> <span class="code">E(pos)</span></li>
 <li>muscles <span class="code">E(pos, a)</span></li>
 <li>gravity <span class="code">E(pos)</span></li>
 <li>collision <span class="code">E(pos)</span></li>
