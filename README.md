@@ -2,7 +2,7 @@
 
 [![test](https://github.com/juniorrojas/algovivo/actions/workflows/test.yml/badge.svg)](https://github.com/juniorrojas/algovivo/actions/workflows/test.yml)
 
-A JavaScript + WebAssembly implementation of an energy-based formulation for soft-bodied virtual creatures.
+An energy-based formulation for soft-bodied virtual creatures, implemented in JavaScript + WebAssembly.
 
 ## [live demo](https://juniorrojas.com/algovivo)
 
