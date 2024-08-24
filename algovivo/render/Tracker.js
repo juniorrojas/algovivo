@@ -6,6 +6,7 @@ class Tracker {
     this.visibleWorldWidth = args.visibleWorldWidth ?? 3.8;
     this.targetCenterY = args.targetCenterY ?? 1;
     this.offsetX = args.offsetX ?? 0;
+    this.fullGrid = false;
   }
 
   step(args = {}) {
@@ -45,8 +46,10 @@ class Tracker {
     const [_x0, _y0] = bottomLeft;
     const x0 = Math.floor(_x0) - marginCells;
     let y0 = Math.floor(_y0);
-    if (y0 < 0) {
-      y0 = 0;
+    if (!this.fullGrid) {
+      if (y0 < 0) {
+        y0 = 0;
+      }
     }
     const [_x1, _y1] = topRight;
     const x1 = _x1;
