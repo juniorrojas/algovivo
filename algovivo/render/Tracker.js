@@ -41,7 +41,7 @@ class Tracker {
     const topRight = camera.domToWorldSpace([renderer.width, 0]);
     const bottomLeft = camera.domToWorldSpace([0, renderer.height]);
 
-    const marginCells = 1
+    const marginCells = 1;
     
     const [_x0, _y0] = bottomLeft;
     const x0 = Math.floor(_x0) - marginCells;
