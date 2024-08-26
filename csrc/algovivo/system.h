@@ -9,7 +9,7 @@
 namespace algovivo {
 
 static float backward_euler_loss(
-  float g, float h, int num_vertices, const float* pos, const float* pos0, const float* vel0, float vertex_mass, int num_muscles, const int* muscles, float k, const float* a, const float* l0, int num_triangles, const int* triangles, const float* rsi
+  float g, float h, int num_vertices, const float* pos, const float* pos0, const float* vel0, float vertex_mass, int num_muscles, const int* muscles, float k, const float* a, const float* l0, int num_triangles, const int* triangles, const float* rsi, float mu, float lambda
 ) {
   const auto space_dim = 2;
   
@@ -58,7 +58,8 @@ static float backward_euler_loss(
       i1, i2, i3,
       rsi00, rsi01,
       rsi10, rsi11,
-      1, 500, 50
+      1,
+      mu, lambda
     );
   }
   for (int i = 0; i < num_vertices; i++) {
@@ -93,7 +94,7 @@ static float backward_euler_loss(
 }
 
 static void backward_euler_loss_grad(
-  float g, float h, int num_vertices, const float* pos, const float* pos_grad, const float* pos0, const float* vel0, float vertex_mass, int num_muscles, const int* muscles, float k, const float* a, const float* l0, int num_triangles, const int* triangles, const float* rsi
+  float g, float h, int num_vertices, const float* pos, const float* pos_grad, const float* pos0, const float* vel0, float vertex_mass, int num_muscles, const int* muscles, float k, const float* a, const float* l0, int num_triangles, const int* triangles, const float* rsi, float mu, float lambda
 ) {
   __enzyme_autodiff(
     backward_euler_loss,
@@ -111,7 +112,9 @@ static void backward_euler_loss_grad(
     enzyme_const, l0,
     enzyme_const, num_triangles,
     enzyme_const, triangles,
-    enzyme_const, rsi
+    enzyme_const, rsi,
+    enzyme_const, mu,
+    enzyme_const, lambda
   );
 }
 
@@ -130,25 +133,27 @@ struct System {
   int num_triangles;
   const int* triangles;
   const float* rsi;
+  float mu;
+  float lambda;
   int fixed_vertex_id;
   
 
   float forward(float* pos) {
     return backward_euler_loss(
-      g, h, num_vertices, pos, pos0, vel0, vertex_mass, num_muscles, muscles, k, a, l0, num_triangles, triangles, rsi
+      g, h, num_vertices, pos, pos0, vel0, vertex_mass, num_muscles, muscles, k, a, l0, num_triangles, triangles, rsi, mu, lambda
     );
   }
 
   void backward(float* pos, float* pos_grad) {
     backward_euler_loss_grad(
-      g, h, num_vertices, pos, pos_grad, pos0, vel0, vertex_mass, num_muscles, muscles, k, a, l0, num_triangles, triangles, rsi
+      g, h, num_vertices, pos, pos_grad, pos0, vel0, vertex_mass, num_muscles, muscles, k, a, l0, num_triangles, triangles, rsi, mu, lambda
     );
   }
 };
 
 extern "C"
 void backward_euler_update(
-  float g, float h, int num_vertices, const float* pos0, const float* vel0, float vertex_mass, int num_muscles, const int* muscles, float k, const float* a, const float* l0, int num_triangles, const int* triangles, const float* rsi, int fixed_vertex_id, float* pos1, float* pos_grad, float* pos_tmp, float* vel1
+  float g, float h, int num_vertices, const float* pos0, const float* vel0, float vertex_mass, int num_muscles, const int* muscles, float k, const float* a, const float* l0, int num_triangles, const int* triangles, const float* rsi, float mu, float lambda, int fixed_vertex_id, float* pos1, float* pos_grad, float* pos_tmp, float* vel1
 ) {
   algovivo::System system;
 
@@ -166,6 +171,8 @@ void backward_euler_update(
   system.num_triangles = num_triangles;
   system.triangles = triangles;
   system.rsi = rsi;
+  system.mu = mu;
+  system.lambda = lambda;
   system.fixed_vertex_id = fixed_vertex_id;
   
 

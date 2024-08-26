@@ -30,6 +30,8 @@ backward_euler_loss_args.add_arg("float*", "l0")
 backward_euler_loss_args.add_arg("int", "num_triangles")
 backward_euler_loss_args.add_arg("int*", "triangles")
 backward_euler_loss_args.add_arg("float*", "rsi")
+backward_euler_loss_args.add_arg("float", "mu")
+backward_euler_loss_args.add_arg("float", "lambda")
 
 backward_euler_loss_grad_args = backward_euler_loss_args.with_tangent_args()
 
@@ -111,7 +113,8 @@ for (int i = 0; i < num_triangles; i++) {
     i1, i2, i3,
     rsi00, rsi01,
     rsi10, rsi11,
-    1, 500, 50
+    1,
+    mu, lambda
   );
 }"""
 
