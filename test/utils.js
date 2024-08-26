@@ -39,9 +39,9 @@ function toBeCloseToArray(a, b, tolerance = 1e-3) {
   };
 }
 
-async function loadWasm() {
+async function loadWasm(args = {}) {
   const wasm = await WebAssembly.compile(await fsp.readFile(__dirname + "/../build/algovivo.wasm"));
-  const wasmInstance = await WebAssembly.instantiate(wasm);
+  const wasmInstance = await WebAssembly.instantiate(wasm, args);
   return wasmInstance;
 }
 
