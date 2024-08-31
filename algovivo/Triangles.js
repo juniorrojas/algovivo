@@ -6,6 +6,8 @@ class Triangles {
 
     this.triangles = null;
     this.rsi = null;
+    this.mu = Math.fround(500);
+    this.lambda = Math.fround(50);
   }
 
   get wasmInstance() {

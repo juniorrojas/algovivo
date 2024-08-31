@@ -215,7 +215,9 @@ class System {
 
       numTriangles,
       numTriangles == 0 ? 0 : this.triangles.ptr,
-      numTriangles == 0 ? 0 : this.rsi.ptr,
+      numTriangles == 0 ? 0 : this._triangles.rsi.ptr,
+      this._triangles?.mu,
+      this._triangles?.lambda,
 
       fixedVertexId,
 
