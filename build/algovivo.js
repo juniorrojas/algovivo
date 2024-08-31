@@ -3,7 +3,7 @@
  * (c) 2023 Junior Rojas
  * License: MIT
  * 
- * Built from commit 2cd82fa765743b30045e0c24fe51286323cb41e8
+ * Built from commit 352b6023c48028e9a645b8d407c2ec8cde221c98
  */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -1524,6 +1524,8 @@
 
 	    this.triangles = null;
 	    this.rsi = null;
+	    this.mu = Math.fround(500);
+	    this.lambda = Math.fround(50);
 	  }
 
 	  get wasmInstance() {
@@ -1826,7 +1828,9 @@
 
 	      numTriangles,
 	      numTriangles == 0 ? 0 : this.triangles.ptr,
-	      numTriangles == 0 ? 0 : this.rsi.ptr,
+	      numTriangles == 0 ? 0 : this._triangles.rsi.ptr,
+	      this._triangles?.mu,
+	      this._triangles?.lambda,
 
 	      fixedVertexId,
 
