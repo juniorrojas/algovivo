@@ -33,6 +33,9 @@ backward_euler_loss_args.add_arg("float*", "rsi")
 backward_euler_loss_args.add_arg("float", "mu")
 backward_euler_loss_args.add_arg("float", "lambda")
 
+# frictino
+backward_euler_loss_args.add_arg("float", "k_friction")
+
 backward_euler_loss_grad_args = backward_euler_loss_args.with_tangent_args()
 
 system_attrs = Args()
@@ -145,7 +148,8 @@ for (int i = 0; i < num_vertices; i++) {
     potential_energy,
     px,
     p0x, p0y,
-    h
+    h,
+    k_friction
   );
 }
 """
