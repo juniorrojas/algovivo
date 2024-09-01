@@ -3,7 +3,7 @@
  * (c) 2023 Junior Rojas
  * License: MIT
  * 
- * Built from commit 352b6023c48028e9a645b8d407c2ec8cde221c98
+ * Built from commit f1e177c900ade01edd47af13fb6d465bf8f0b855
  */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -1641,6 +1641,8 @@
 	    this._vertices = new Vertices({ ten: this.ten, vertexMass: args.vertexMass });
 	    this._muscles = new Muscles({ ten: this.ten });
 	    this._triangles = new Triangles({ ten: this.ten });
+
+	    this.friction = { k: Math.fround(300) };
 	  }
 
 	  get vertices() {
@@ -1831,6 +1833,8 @@
 	      numTriangles == 0 ? 0 : this._triangles.rsi.ptr,
 	      this._triangles?.mu,
 	      this._triangles?.lambda,
+
+	      this.friction.k,
 
 	      fixedVertexId,
 
