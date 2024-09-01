@@ -28,6 +28,8 @@ class System {
     this._vertices = new Vertices({ ten: this.ten, vertexMass: args.vertexMass });
     this._muscles = new Muscles({ ten: this.ten });
     this._triangles = new Triangles({ ten: this.ten });
+
+    this.friction = { k: Math.fround(300) }
   }
 
   get vertices() {
@@ -218,6 +220,8 @@ class System {
       numTriangles == 0 ? 0 : this._triangles.rsi.ptr,
       this._triangles?.mu,
       this._triangles?.lambda,
+
+      this.friction.k,
 
       fixedVertexId,
 
