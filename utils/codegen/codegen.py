@@ -33,7 +33,7 @@ backward_euler_loss_args.add_arg("float*", "rsi")
 backward_euler_loss_args.add_arg("float", "mu")
 backward_euler_loss_args.add_arg("float", "lambda")
 
-# frictino
+# friction
 backward_euler_loss_args.add_arg("float", "k_friction")
 
 backward_euler_loss_grad_args = backward_euler_loss_args.with_tangent_args()
