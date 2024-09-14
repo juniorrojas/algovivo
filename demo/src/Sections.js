@@ -102,7 +102,7 @@ Instead of viewing these methods as numerical solutions to differential equation
 Recall that in this context &ldquo;energy&rdquo; is any <a href="https://youtu.be/MiqLoAZFRSE?t=2177">scalar-valued function that measures incompatibility between variables</a>.
 When we say inertial energy, we do not mean kinetic energy.
 When we say energy minimization, we do not mean Hamiltonian minimization.
-It is actually possible to implement <a href="https://github.com/juniorrojas/springs-integration-pytorch?tab=readme-ov-file#energy-conservation">Hamiltonian-preserving methods</a> by &ldquo;energy&rdquo; minimization.
+It is actually possible to implement <a href="https://github.com/juniorrojas/springs-integration-pytorch?tab=readme-ov-file#total-energy-hamiltonian-conservation">Hamiltonian-preserving methods</a> by &ldquo;energy&rdquo; minimization.
 Energy-based models can also easily describe dissipative systems.
 <a href="https://www.youtube.com/watch?v=7fRfxiyTKS0">Lagrangians and Hamiltonians cannot really describe dissipative systems</a>.
 When we say energy minimization, we mean something akin to the least action principle, except that &ldquo;action&rdquo; has a very specific definition in Lagrangian mechanics, and we are not using that definition here.
