@@ -32,11 +32,11 @@ class ViewportVertices {
 
       if (this.renderVertexIds) {
         ctx.beginPath();
-        ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
-        ctx.arc(p[0], p[1], 0.3 * scale, 0, 2 * Math.PI);
+        ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+        ctx.arc(p[0], p[1], 0.1 * scale, 0, 2 * Math.PI);
         ctx.fill();
         
-        const fontSize = Math.floor(0.4 * scale);
+        const fontSize = Math.floor(0.15 * scale);
         ctx.font = `${fontSize}px monospace`;
         ctx.fillStyle = "black";
         ctx.textAlign = "center";
