@@ -3,7 +3,7 @@
  * (c) 2023 Junior Rojas
  * License: MIT
  * 
- * Built from commit f1e177c900ade01edd47af13fb6d465bf8f0b855
+ * Built from commit e144a3a388e5b81e172e964f167f726b1cce9d2d
  */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -3088,6 +3088,7 @@
 	    this.visibleWorldWidth = args.visibleWorldWidth ?? 3.8;
 	    this.targetCenterY = args.targetCenterY ?? 1;
 	    this.offsetX = args.offsetX ?? 0;
+	    this.fullGrid = false;
 	  }
 
 	  step(args = {}) {
@@ -3127,8 +3128,10 @@
 	    const [_x0, _y0] = bottomLeft;
 	    const x0 = Math.floor(_x0) - marginCells;
 	    let y0 = Math.floor(_y0);
-	    if (y0 < 0) {
-	      y0 = 0;
+	    if (!this.fullGrid) {
+	      if (y0 < 0) {
+	        y0 = 0;
+	      }
 	    }
 	    const [_x1, _y1] = topRight;
 	    const x1 = _x1;
@@ -3244,11 +3247,11 @@
 
 	      if (this.renderVertexIds) {
 	        ctx.beginPath();
-	        ctx.fillStyle = "rgba(255, 255, 255, 0.4)";
-	        ctx.arc(p[0], p[1], 0.3 * scale, 0, 2 * Math.PI);
+	        ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+	        ctx.arc(p[0], p[1], 0.1 * scale, 0, 2 * Math.PI);
 	        ctx.fill();
 	        
-	        const fontSize = Math.floor(0.4 * scale);
+	        const fontSize = Math.floor(0.15 * scale);
 	        ctx.font = `${fontSize}px monospace`;
 	        ctx.fillStyle = "black";
 	        ctx.textAlign = "center";
@@ -3306,10 +3309,97 @@
 
 	var ViewportVertices_1 = ViewportVertices$1;
 
+	class ViewportMuscles$1 {
+	  constructor(args = {}) {
+	    this.system = args.system;
+	  }
+
+	  makeLineShaderFunction(args = {}) {
+	    const activeMuscleColor = args.activeMuscleColor ?? [255, 0, 0];
+	    const inactiveMuscleColor = args.inactiveMuscleColor ?? [0, 0, 255];
+	    const borderColor = args.borderColor ?? "black";
+	    
+	    return (args = {}) => {
+	      const ctx = args.ctx;
+	      const a = args.a;
+	      const b = args.b;
+	      const camera = args.camera;
+	      const scale = camera.inferScale();
+
+	      const lineIdToMuscleId = args.mesh.getCustomAttribute("lineIdToMuscleId");
+	      const muscleId = lineIdToMuscleId[args.id];
+	      if (muscleId == null) {
+	        const borderWidth = 0.029;
+	        ctx.beginPath();
+	        ctx.lineJoin = "round";
+	        ctx.lineCap = "round";
+	        ctx.strokeStyle = borderColor;
+	        ctx.lineWidth = borderWidth * scale;
+	        ctx.moveTo(a[0], a[1]);
+	        ctx.lineTo(b[0], b[1]);
+	        ctx.closePath();
+	        ctx.stroke();
+	      } else {
+	        const color0 = activeMuscleColor;
+	        const color1 = inactiveMuscleColor;
+	        
+	        const width = 0.065;
+	        const borderWidth = 0.017;
+	        const lineCap = "butt";
+	        const muscleIntensityAttributeName = "muscleIntensity";
+
+	        ctx.beginPath();
+	        ctx.lineCap = lineCap;
+	        ctx.strokeStyle = borderColor;
+	        ctx.lineWidth = (width + borderWidth * 2) * scale;
+	        ctx.moveTo(a[0], a[1]);
+	        ctx.lineTo(b[0], b[1]);
+	        ctx.stroke();
+
+	        ctx.beginPath();
+
+	        const muscleIntensity = args.mesh.getCustomAttribute(muscleIntensityAttributeName);
+	        if (muscleIntensity == null) {
+	          throw new Error(`muscle intensity attribute (${muscleIntensityAttributeName}) not found, call setCustomAttribute("${muscleIntensityAttributeName}", value) before rendering.`);
+	        }
+	        if (!Array.isArray(muscleIntensity)) {
+	          throw new Error(`muscle intensity attribute must be an array with values for each fiber, found ${typeof muscleIntensity}`);
+	        }
+	        
+	        const t = muscleIntensity[muscleId];
+	        
+	        const cr0 = color0[0];
+	        const cr1 = color1[0];
+
+	        const cg0 = color0[1];
+	        const cg1 = color1[1];
+
+	        const cb0 = color0[2];
+	        const cb1 = color1[2];
+
+	        const cr = (1 - t) * cr0 + t * cr1;
+	        const cg = (1 - t) * cg0 + t * cg1;
+	        const cb = (1 - t) * cb0 + t * cb1;
+
+	        ctx.strokeStyle = `rgb(${cr}, ${cg}, ${cb})`;
+	        ctx.lineCap = lineCap;
+	        ctx.lineWidth = width * scale;
+	        ctx.moveTo(a[0], a[1]);
+	        ctx.lineTo(b[0], b[1]);
+
+	        ctx.stroke();
+	      }
+	    }
+	  }
+	}
+
+	var ViewportMuscles_1 = ViewportMuscles$1;
+
 	const mm2d$1 = mm2d$3;
 	const Tracker = Tracker_1;
 	const Floor = Floor_1;
 	const ViewportVertices = ViewportVertices_1;
+	const ViewportMuscles = ViewportMuscles_1;
 
 	function hashSimplex(vids) {
 	  vids.sort();
@@ -3363,6 +3453,9 @@
 	    this.vertices = new ViewportVertices({
 	      system: this.system,
 	      renderVertexIds: args.renderVertexIds ?? false
+	    });
+	    this.muscles = new ViewportMuscles({
+	      system: this.system
 	    });
 
 	    const renderer = new mm2d$1.Renderer({ headless });
@@ -3457,77 +3550,11 @@
 	      ctx.closePath();
 	      ctx.fill();
 	    };
-	    mesh.lineShader.renderLine = (args = {}) => {
-	      const ctx = args.ctx;
-	      const a = args.a;
-	      const b = args.b;
-	      const camera = args.camera;
-	      const scale = camera.inferScale();
-
-	      const lineIdToMuscleId = args.mesh.getCustomAttribute("lineIdToMuscleId");
-	      const muscleId = lineIdToMuscleId[args.id];
-	      if (muscleId == null) {
-	        const borderWidth = 0.029;
-	        ctx.beginPath();
-	        ctx.lineJoin = "round";
-	        ctx.lineCap = "round";
-	        ctx.strokeStyle = borderColor;
-	        ctx.lineWidth = borderWidth * scale;
-	        ctx.moveTo(a[0], a[1]);
-	        ctx.lineTo(b[0], b[1]);
-	        ctx.closePath();
-	        ctx.stroke();
-	      } else {
-	        const color0 = activeMuscleColor;
-	        const color1 = inactiveMuscleColor;
-	        
-	        const width = 0.065;
-	        const borderWidth = 0.017;
-	        const lineCap = "butt";
-	        const muscleIntensityAttributeName = "muscleIntensity";
-
-	        ctx.beginPath();
-	        ctx.lineCap = lineCap;
-	        ctx.strokeStyle = borderColor;
-	        ctx.lineWidth = (width + borderWidth * 2) * scale;
-	        ctx.moveTo(a[0], a[1]);
-	        ctx.lineTo(b[0], b[1]);
-	        ctx.stroke();
-
-	        ctx.beginPath();
-
-	        const muscleIntensity = mesh.getCustomAttribute(muscleIntensityAttributeName);
-	        if (muscleIntensity == null) {
-	          throw new Error(`muscle intensity attribute (${muscleIntensityAttributeName}) not found, call setCustomAttribute("${muscleIntensityAttributeName}", value) before rendering.`);
-	        }
-	        if (!Array.isArray(muscleIntensity)) {
-	          throw new Error(`muscle intensity attribute must be an array with values for each fiber, found ${typeof muscleIntensity}`);
-	        }
-	        
-	        const t = muscleIntensity[muscleId];
-	        
-	        const cr0 = color0[0];
-	        const cr1 = color1[0];
-
-	        const cg0 = color0[1];
-	        const cg1 = color1[1];
-
-	        const cb0 = color0[2];
-	        const cb1 = color1[2];
-
-	        const cr = (1 - t) * cr0 + t * cr1;
-	        const cg = (1 - t) * cg0 + t * cg1;
-	        const cb = (1 - t) * cb0 + t * cb1;
-
-	        ctx.strokeStyle = `rgb(${cr}, ${cg}, ${cb})`;
-	        ctx.lineCap = lineCap;
-	        ctx.lineWidth = width * scale;
-	        ctx.moveTo(a[0], a[1]);
-	        ctx.lineTo(b[0], b[1]);
-
-	        ctx.stroke();
-	      }
-	    };
+	    mesh.lineShader.renderLine = this.muscles.makeLineShaderFunction({
+	      activeMuscleColor: activeMuscleColor,
+	      inactiveMuscleColor: inactiveMuscleColor,
+	      borderColor: borderColor
+	    });
 
 	    const draggable = args.draggable ?? true;
 	    if (draggable) {
