@@ -21,28 +21,42 @@ def clean_deploy_dir(deploy_path):
         else:
             os.remove(full_filename)
 
-def populate_deploy_path(deploy_path):
-    public_path = this_dirpath.parent.joinpath("public")
+def transfer_dir(src_dirname, dst_dirname):
+    gitignore_filename = os.path.join(src_dirname, ".gitignore")
+    if os.path.exists(gitignore_filename):
+        shutil.copy(
+            gitignore_filename,
+            os.path.join(dst_dirname, ".gitignore")
+        )
 
     for filename in (
-        [str(public_path.joinpath(".gitignore"))] +
-        glob(str(public_path.joinpath("*.html"))) +
-        glob(str(public_path.joinpath("*.js"))) +
-        glob(str(public_path.joinpath("*.wasm")))
+        glob(os.path.join(src_dirname, "*.html")) +
+        glob(os.path.join(src_dirname, "*.css")) +
+        glob(os.path.join(src_dirname, "*.js")) +
+        glob(os.path.join(src_dirname, "*.wasm")) +
+        glob(os.path.join(src_dirname, "*.json")) +
+        glob(os.path.join(src_dirname, "*.svg")) 
     ):
         shutil.copy(
             filename,
-            deploy_path.joinpath(os.path.basename(filename))
+            os.path.join(dst_dirname, os.path.basename(filename))
         )
+
+    for dirname in os.listdir(src_dirname):
+        if os.path.isdir(os.path.join(src_dirname, dirname)):
+            os.makedirs(os.path.join(dst_dirname, dirname), exist_ok=True)
+            transfer_dir(
+                os.path.join(src_dirname, dirname),
+                os.path.join(dst_dirname, dirname)
+            )
+
+
+def populate_deploy_path(deploy_dirname):
+    public_dirname = str(this_dirpath.parent.joinpath("public"))
+    transfer_dir(public_dirname, str(deploy_dirname))
     
     with open(deploy_path.joinpath("deploy_info.txt"), "w") as f:
         f.write(str(datetime.now().timestamp()))
-
-    for dirname in ["data", "icons"]:
-        shutil.copytree(
-            public_path.joinpath(dirname),
-            deploy_path.joinpath(dirname)
-        )
 
 if __name__ == "__main__":
     arg_parser = argparse.ArgumentParser()
