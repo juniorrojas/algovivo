@@ -12,6 +12,7 @@ on:
 env:
   DEPLOY_DIRNAME: gh-pages-repo
   DEPLOY_BRANCH: gh-pages
+  DEMO_SRC_DIRNAME: ./demo
   DEMO_BUILD_DIRNAME: ./demo/public
   DEPLOY_LOCAL_SCRIPT: ./demo/scripts/deploy-local
 
@@ -68,7 +69,7 @@ jobs:
           path: ./build
       - name: Build demo
         run: |
-          cd demo
+          cd ${{ env.DEMO_SRC_DIRNAME }}
           npm ci
           npm run build
       - name: Upload demo build
@@ -96,7 +97,7 @@ jobs:
       - run: ls -l ${{ env.DEMO_BUILD_DIRNAME }}
       - name: Test demo
         run: |
-          cd demo
+          cd ${{ env.DEMO_SRC_DIRNAME }}
           npm ci
           npm test
       - name: Upload demo screenshot
