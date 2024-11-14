@@ -9,6 +9,9 @@ class Args:
     def __init__(self):
         self.args = []
 
+    def __len__(self):
+        return len(self.args)
+
     def add_arg(self, t, name, differentiable=False, mut=False):
         arg = Arg(t, name, differentiable, mut)
         self.args.append(arg)

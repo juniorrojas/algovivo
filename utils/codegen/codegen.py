@@ -2,12 +2,13 @@ from pathlib import Path
 import os
 this_filepath = Path(os.path.realpath(__file__))
 this_dirpath = this_filepath.parent
-from args import Args
+import codegen
 
 def indent(s):
     return "\n".join("  " + line for line in s.split("\n"))
 
-backward_euler_loss_args = Args()
+backward_euler_loss = codegen.Fun("backward_euler_loss")
+backward_euler_loss_args = backward_euler_loss.args
 
 backward_euler_loss_args.add_arg("float", "g")
 backward_euler_loss_args.add_arg("float", "h")
@@ -36,15 +37,16 @@ backward_euler_loss_args.add_arg("float", "lambda")
 # friction
 backward_euler_loss_args.add_arg("float", "k_friction")
 
-backward_euler_loss_grad_args = backward_euler_loss_args.with_tangent_args()
+backward_euler_loss_grad = backward_euler_loss.make_backward_pass()
+backward_euler_loss_grad_args = backward_euler_loss_grad.args
 
-system_attrs = Args()
+system_attrs = codegen.Args()
 for arg in backward_euler_loss_args.args:
     if not arg.differentiable:
         system_attrs.add_arg(arg.t, arg.name)
 system_attrs.add_arg("int", "fixed_vertex_id")
 
-update_args = Args()
+update_args = codegen.Args()
 for arg in system_attrs.args:
     update_args.add_arg(arg.t, arg.name)
 
@@ -159,10 +161,7 @@ backward_euler_loss_body += "return 0.5 * inertial_energy + h * h * potential_en
 backward_euler_loss_body = indent(backward_euler_loss_body)
 
 enzyme_args_call = backward_euler_loss_args.codegen_enzyme_call()
-backward_euler_loss_grad_body = f"""__enzyme_autodiff(
-  backward_euler_loss,
-{indent(enzyme_args_call)}
-);"""
+backward_euler_loss_grad_body = backward_euler_loss_grad.codegen_body()
 
 with open(this_dirpath.joinpath("system.template.h")) as f:
     template = f.read()
@@ -181,3 +180,4 @@ with open(this_dirpath.joinpath("system.template.h")) as f:
 output_filepath = this_dirpath.parent.parent.joinpath("csrc", "algovivo", "system.h")
 with open(output_filepath, "w") as f:
     f.write(src)
+print(f"Saved to {output_filepath}")
