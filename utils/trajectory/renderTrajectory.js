@@ -27,6 +27,14 @@ async function render(args = {}) {
   const rootDirname = args.dataDirname;
   const framesDirname = args.framesDirname;
 
+  let trajectoryDataDirname = args.trajectoryDataDirname;
+  if (args.trajectoryDataDirname == null) trajectoryDataDirname = path.join(rootDirname, "trajectory");
+  else trajectoryDataDirname = args.trajectoryDataDirname;
+
+  let meshFilename = args.meshFilename;
+  if (args.meshFilename == null) path.join(rootDirname, "mesh.json");
+  else meshFilename = args.meshFilename;
+
   await cleandir(framesDirname);
 
   const main = async (port) => {
@@ -41,13 +49,11 @@ async function render(args = {}) {
     });
     await window.launch();
 
-    const meshFilename = path.join(rootDirname, "mesh.json");
     const meshData = JSON.parse(await fs.promises.readFile(meshFilename, "utf8"));
-    const trajectoryDataDirname = path.join(rootDirname, "trajectory");
 
     const trajectoryData = new TrajectoryData(trajectoryDataDirname);
     const step0 = await trajectoryData.loadStep(0);
-
+    
     await window.evaluate(
       async (data) => {
         async function loadWasm() {
@@ -91,6 +97,7 @@ async function render(args = {}) {
     );
     
     const n = await trajectoryData.numSteps();
+    console.log(`found ${n} steps`);
     for (let i = 0; i < n; i++) {
       console.log(`${i + 1} / ${n}`);
       const stepData = await trajectoryData.loadStep(i);
@@ -114,15 +121,20 @@ async function render(args = {}) {
 
 async function main() {
   const inputDirname = process.env.INPUT_DIRNAME;
-  if (!inputDirname) {
-    console.error("INPUT_DIRNAME required");
-    process.exit(1);
-  }
+  // if (!inputDirname) {
+  //   console.error("INPUT_DIRNAME required");
+  //   process.exit(1);
+  // }
+
+  const meshFilename = process.env.MESH_FILENAME;
+  const trajectoryDataDirname = process.env.TRAJECTORY_DATA_DIRNAME;
 
   const outputDirname = path.join(__dirname, "frames.out");
 
   await render({
     dataDirname: inputDirname,
+    meshFilename: meshFilename,
+    trajectoryDataDirname: trajectoryDataDirname,
     framesDirname: outputDirname
   });
 }
