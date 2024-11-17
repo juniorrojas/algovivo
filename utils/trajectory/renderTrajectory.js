@@ -28,12 +28,10 @@ async function render(args = {}) {
   const framesDirname = args.framesDirname;
 
   let trajectoryDataDirname = args.trajectoryDataDirname;
-  if (args.trajectoryDataDirname == null) trajectoryDataDirname = path.join(rootDirname, "trajectory");
-  else trajectoryDataDirname = args.trajectoryDataDirname;
+  if (trajectoryDataDirname == null) trajectoryDataDirname = path.join(rootDirname, "trajectory");
 
   let meshFilename = args.meshFilename;
-  if (args.meshFilename == null) path.join(rootDirname, "mesh.json");
-  else meshFilename = args.meshFilename;
+  if (meshFilename == null) meshFilename = path.join(rootDirname, "mesh.json");
 
   await cleandir(framesDirname);
 
