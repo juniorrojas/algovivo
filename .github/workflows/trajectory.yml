@@ -64,10 +64,12 @@ jobs:
         with:
           name: algovivo.wasm
           path: build/
-      - name: Generate trajectory frames
+      - name: Build
         run: |
           npm ci
           npm run build
+      - name: Generate trajectory frames
+        run: |
           node utils/trajectory/renderTrajectory.js
         env:
           INPUT_DIRNAME: test/neural/data
