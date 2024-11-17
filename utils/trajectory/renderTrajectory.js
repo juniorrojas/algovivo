@@ -127,7 +127,7 @@ async function main() {
   const meshFilename = process.env.MESH_FILENAME;
   const trajectoryDataDirname = process.env.TRAJECTORY_DATA_DIRNAME;
 
-  const outputDirname = path.join(__dirname, "frames.out");
+  const outputDirname = "frames.out";
 
   await render({
     dataDirname: inputDirname,
