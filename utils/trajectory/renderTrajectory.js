@@ -53,7 +53,7 @@ async function render(args = {}) {
     const step0 = await trajectoryData.loadStep(0);
     
     await window.evaluate(
-      async (data) => {
+      async (args) => {
         async function loadWasm() {
           const response = await fetch("algovivo.wasm");
           const wasm = await WebAssembly.instantiateStreaming(response);
@@ -65,17 +65,23 @@ async function render(args = {}) {
           document.body.style.margin = "0";
           document.body.style.padding = "0";
 
+          const meshData = args.meshData;
+
           const system = new algovivo.System({
             wasmInstance: await loadWasm()
           });
           system.set({
-            pos: data.pos,
-            triangles: data.triangles,
-            muscles: data.muscles
+            pos: args.pos,
+            triangles: meshData.triangles,
+            muscles: meshData.muscles
           });
     
-          const viewport = new algovivo.SystemViewport({ system });
-          viewport.setSize({ width: data.width, height: data.height });
+          const viewport = new algovivo.SystemViewport({
+            system,
+            sortedVertexIds: meshData.sorted_vertex_ids,
+            vertexDepths: meshData.depth
+          });
+          viewport.setSize({ width: args.width, height: args.height });
           viewport.domElement.style.border = "0px";
           viewport.domElement.style.boxSizing = "border-box";
           document.body.appendChild(viewport.domElement);
@@ -89,8 +95,7 @@ async function render(args = {}) {
       {
         width, height,
         pos: step0.pos0,
-        triangles: meshData.triangles,
-        muscles: meshData.muscles
+        meshData: meshData
       }
     );
     
