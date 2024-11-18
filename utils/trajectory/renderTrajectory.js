@@ -119,7 +119,16 @@ async function render(args = {}) {
 
 async function main() {
   const meshFilename = process.env.MESH_FILENAME;
+  if (!meshFilename) {
+    console.error("MESH_FILENAME environment variable not set");
+    process.exit(1);
+  }
+  
   const trajectoryDataDirname = process.env.TRAJECTORY_DATA_DIRNAME;
+  if (!trajectoryDataDirname) {
+    console.error("TRAJECTORY_DATA_DIRNAME environment variable not set");
+    process.exit(1);
+  }
 
   const outputDirname = "frames.out";
 
