@@ -24,14 +24,8 @@ async function cleandir(dirname) {
 }
 
 async function render(args = {}) {
-  const rootDirname = args.dataDirname;
-  const framesDirname = args.framesDirname;
-
-  let trajectoryDataDirname = args.trajectoryDataDirname;
-  if (trajectoryDataDirname == null) trajectoryDataDirname = path.join(rootDirname, "trajectory");
-
-  let meshFilename = args.meshFilename;
-  if (meshFilename == null) meshFilename = path.join(rootDirname, "mesh.json");
+  const trajectoryDataDirname = args.trajectoryDataDirname;
+  const meshFilename = args.meshFilename;
 
   await cleandir(framesDirname);
 
@@ -123,19 +117,12 @@ async function render(args = {}) {
 }
 
 async function main() {
-  const inputDirname = process.env.INPUT_DIRNAME;
-  // if (!inputDirname) {
-  //   console.error("INPUT_DIRNAME required");
-  //   process.exit(1);
-  // }
-
   const meshFilename = process.env.MESH_FILENAME;
   const trajectoryDataDirname = process.env.TRAJECTORY_DATA_DIRNAME;
 
   const outputDirname = "frames.out";
 
   await render({
-    dataDirname: inputDirname,
     meshFilename: meshFilename,
     trajectoryDataDirname: trajectoryDataDirname,
     framesDirname: outputDirname
