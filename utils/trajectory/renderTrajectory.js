@@ -26,6 +26,7 @@ async function cleandir(dirname) {
 async function render(args = {}) {
   const trajectoryDataDirname = args.trajectoryDataDirname;
   const meshFilename = args.meshFilename;
+  const framesDirname = args.framesDirname;
 
   await cleandir(framesDirname);
 
