@@ -24,7 +24,8 @@ async function cleandir(dirname) {
 }
 
 async function render(args = {}) {
-  const rootDirname = args.dataDirname;
+  const trajectoryDataDirname = args.trajectoryDataDirname;
+  const meshFilename = args.meshFilename;
   const framesDirname = args.framesDirname;
 
   await cleandir(framesDirname);
@@ -41,15 +42,13 @@ async function render(args = {}) {
     });
     await window.launch();
 
-    const meshFilename = path.join(rootDirname, "mesh.json");
     const meshData = JSON.parse(await fs.promises.readFile(meshFilename, "utf8"));
-    const trajectoryDataDirname = path.join(rootDirname, "trajectory");
 
     const trajectoryData = new TrajectoryData(trajectoryDataDirname);
     const step0 = await trajectoryData.loadStep(0);
-
+    
     await window.evaluate(
-      async (data) => {
+      async (args) => {
         async function loadWasm() {
           const response = await fetch("algovivo.wasm");
           const wasm = await WebAssembly.instantiateStreaming(response);
@@ -61,17 +60,23 @@ async function render(args = {}) {
           document.body.style.margin = "0";
           document.body.style.padding = "0";
 
+          const meshData = args.meshData;
+
           const system = new algovivo.System({
             wasmInstance: await loadWasm()
           });
           system.set({
-            pos: data.pos,
-            triangles: data.triangles,
-            muscles: data.muscles
+            pos: args.pos,
+            triangles: meshData.triangles,
+            muscles: meshData.muscles
           });
     
-          const viewport = new algovivo.SystemViewport({ system });
-          viewport.setSize({ width: data.width, height: data.height });
+          const viewport = new algovivo.SystemViewport({
+            system,
+            sortedVertexIds: meshData.sorted_vertex_ids,
+            vertexDepths: meshData.depth
+          });
+          viewport.setSize({ width: args.width, height: args.height });
           viewport.domElement.style.border = "0px";
           viewport.domElement.style.boxSizing = "border-box";
           document.body.appendChild(viewport.domElement);
@@ -85,12 +90,12 @@ async function render(args = {}) {
       {
         width, height,
         pos: step0.pos0,
-        triangles: meshData.triangles,
-        muscles: meshData.muscles
+        meshData: meshData
       }
     );
     
     const n = await trajectoryData.numSteps();
+    console.log(`found ${n} steps`);
     for (let i = 0; i < n; i++) {
       console.log(`${i + 1} / ${n}`);
       const stepData = await trajectoryData.loadStep(i);
@@ -113,16 +118,14 @@ async function render(args = {}) {
 }
 
 async function main() {
-  const inputDirname = process.env.INPUT_DIRNAME;
-  if (!inputDirname) {
-    console.error("INPUT_DIRNAME required");
-    process.exit(1);
-  }
+  const meshFilename = process.env.MESH_FILENAME;
+  const trajectoryDataDirname = process.env.TRAJECTORY_DATA_DIRNAME;
 
-  const outputDirname = path.join(__dirname, "frames.out");
+  const outputDirname = "frames.out";
 
   await render({
-    dataDirname: inputDirname,
+    meshFilename: meshFilename,
+    trajectoryDataDirname: trajectoryDataDirname,
     framesDirname: outputDirname
   });
 }

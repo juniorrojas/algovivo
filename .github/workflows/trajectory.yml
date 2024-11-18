@@ -64,20 +64,23 @@ jobs:
         with:
           name: algovivo.wasm
           path: build/
-      - name: Generate trajectory frames
+      - name: Build
         run: |
           npm ci
           npm run build
+      - name: Generate trajectory frames
+        run: |
           node utils/trajectory/renderTrajectory.js
         env:
-          INPUT_DIRNAME: test/neural/data
+          MESH_FILENAME: test/neural/data/mesh.json
+          TRAJECTORY_DATA_DIRNAME: test/neural/data/trajectory
       - name: Install ffmpeg
         run: |
           sudo apt-get update
           sudo apt-get install ffmpeg
       - name: Make trajectory video
         run: |
-          ffmpeg -framerate 30 -i utils/trajectory/frames.out/%d.png -pix_fmt yuv420p video.out.mp4 -y
+          ffmpeg -framerate 30 -i frames.out/%d.png -pix_fmt yuv420p video.out.mp4 -y
       - name: Upload trajectory video
         uses: actions/upload-artifact@v4
         with:
