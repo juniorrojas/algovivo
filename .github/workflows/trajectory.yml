@@ -73,7 +73,7 @@ jobs:
           node utils/trajectory/renderTrajectory.js
         env:
           MESH_FILENAME: test/neural/data/mesh.json
-          TRAJECTORY_DATA_DIRNAME: test/neural/data/trajectory
+          STEPS_DIRNAME: test/neural/data/trajectory
       - name: Install ffmpeg
         run: |
           sudo apt-get update
