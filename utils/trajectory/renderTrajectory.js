@@ -24,7 +24,7 @@ async function cleandir(dirname) {
 }
 
 async function render(args = {}) {
-  const trajectoryDataDirname = args.trajectoryDataDirname;
+  const stepsDirname = args.stepsDirname;
   const meshFilename = args.meshFilename;
   const framesDirname = args.framesDirname;
 
@@ -44,7 +44,7 @@ async function render(args = {}) {
 
     const meshData = JSON.parse(await fs.promises.readFile(meshFilename, "utf8"));
 
-    const trajectoryData = new TrajectoryData(trajectoryDataDirname);
+    const trajectoryData = new TrajectoryData(stepsDirname);
     const step0 = await trajectoryData.loadStep(0);
     
     await window.evaluate(
@@ -119,13 +119,22 @@ async function render(args = {}) {
 
 async function main() {
   const meshFilename = process.env.MESH_FILENAME;
-  const trajectoryDataDirname = process.env.TRAJECTORY_DATA_DIRNAME;
+  if (!meshFilename) {
+    console.error("MESH_FILENAME environment variable not set");
+    process.exit(1);
+  }
+  
+  const stepsDirname = process.env.STEPS_DIRNAME;
+  if (!stepsDirname) {
+    console.error("STEPS_DIRNAME environment variable not set");
+    process.exit(1);
+  }
 
   const outputDirname = "frames.out";
 
   await render({
     meshFilename: meshFilename,
-    trajectoryDataDirname: trajectoryDataDirname,
+    stepsDirname: stepsDirname,
     framesDirname: outputDirname
   });
 }
