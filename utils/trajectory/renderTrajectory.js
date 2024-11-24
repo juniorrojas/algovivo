@@ -1,16 +1,16 @@
 const algovivo = require("algovivo");
-const pathutils = require("./pathutils");
 const fs = require("fs");
 const path = require("path");
-const { Window, runWebServer } = require("./utils");
+const { Window, runWebServer } = require("./ppw");
 const TrajectoryData = require("./TrajectoryData");
+const FrameRecorder = require("./FrameRecorder");
 
 async function render(args = {}) {
   const stepsDirname = args.stepsDirname;
   const meshFilename = args.meshFilename;
   const framesDirname = args.framesDirname;
 
-  await pathutils.cleandir(framesDirname);
+  const recorder = new FrameRecorder({ framesDirname });
 
   const main = async (port) => {
     const width = 300;
@@ -86,8 +86,7 @@ async function render(args = {}) {
         system.a.set(data.a);
         viewport.render();
       }, { pos: stepData.pos0, a: stepData.a0 });
-      const frameFilename = path.join(framesDirname, `${i}.png`);
-      await window.screenshot({ path: frameFilename });
+      await recorder.saveFrame(window);
     }
 
     await window.close();
