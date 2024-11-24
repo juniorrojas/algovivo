@@ -5,7 +5,7 @@ const FrameRecorder = require("./FrameRecorder");
 const fs = require("fs");
 const path = require("path");
 
-async function render(args = {}) {
+async function renderTrajectory(args = {}) {
   const stepsDirname = args.stepsDirname;
   const meshFilename = args.meshFilename;
   const framesDirname = args.framesDirname;
@@ -113,7 +113,7 @@ async function main() {
 
   const outputDirname = "frames.out";
 
-  await render({
+  await renderTrajectory({
     meshFilename: meshFilename,
     stepsDirname: stepsDirname,
     framesDirname: outputDirname
