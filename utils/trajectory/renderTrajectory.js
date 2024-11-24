@@ -10,11 +10,11 @@ async function render(args = {}) {
   const meshFilename = args.meshFilename;
   const framesDirname = args.framesDirname;
 
-  const recorder = new FrameRecorder({ framesDirname });
-
-  const main = async (port) => {
+  const onServerReady = async (port) => {
     const width = 300;
     const height = 300;
+    
+    const recorder = new FrameRecorder({ framesDirname });
 
     const window = new Window({
       indexUrl: `http://localhost:${port}`,
@@ -94,7 +94,7 @@ async function render(args = {}) {
 
   await runWebServer({
     staticDirname: path.join(__dirname, "public"),
-    onReady: main
+    onReady: onServerReady
   });
 }
 
