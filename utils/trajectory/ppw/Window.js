@@ -6,6 +6,7 @@ class Window {
     this.height = args.height ?? 400;
     this.headless = args.headless ?? false;
     this.deviceScaleFactor = args.deviceScaleFactor ?? 1;
+    if (args.indexUrl == null) throw new Error("indexUrl required");
     this.indexUrl = args.indexUrl;
   }
 

@@ -1,38 +1,20 @@
 const algovivo = require("algovivo");
-const fs = require("fs");
-const fsp = fs.promises;
-const path = require("path");
-const { Window, runWebServer } = require("./utils");
+const { Window, runWebServer } = require("./ppw");
 const TrajectoryData = require("./TrajectoryData");
+const FrameRecorder = require("./FrameRecorder");
+const fs = require("fs");
+const path = require("path");
 
-function fileExists(filename) {
-  return new Promise((resolve, reject) => {
-    fs.access(filename, fs.constants.F_OK, (err) => {
-      if (err) resolve(false);
-      else resolve(true);
-    });
-  });
-}
-
-async function cleandir(dirname) {
-  if (!await fileExists(dirname)) {
-    await fsp.mkdir(dirname);
-  } else {
-    fs.rmSync(dirname, { recursive: true });
-    await fsp.mkdir(dirname);
-  }
-}
-
-async function render(args = {}) {
+async function renderTrajectory(args = {}) {
   const stepsDirname = args.stepsDirname;
   const meshFilename = args.meshFilename;
   const framesDirname = args.framesDirname;
 
-  await cleandir(framesDirname);
-
-  const main = async (port) => {
+  const onServerReady = async (port) => {
     const width = 300;
     const height = 300;
+
+    const recorder = new FrameRecorder({ framesDirname });
 
     const window = new Window({
       indexUrl: `http://localhost:${port}`,
@@ -104,8 +86,7 @@ async function render(args = {}) {
         system.a.set(data.a);
         viewport.render();
       }, { pos: stepData.pos0, a: stepData.a0 });
-      const frameFilename = path.join(framesDirname, `${i}.png`);
-      await window.screenshot({ path: frameFilename });
+      await recorder.saveFrame(window);
     }
 
     await window.close();
@@ -113,7 +94,7 @@ async function render(args = {}) {
 
   await runWebServer({
     staticDirname: path.join(__dirname, "public"),
-    onReady: main
+    onReady: onServerReady
   });
 }
 
@@ -132,7 +113,7 @@ async function main() {
 
   const outputDirname = "frames.out";
 
-  await render({
+  await renderTrajectory({
     meshFilename: meshFilename,
     stepsDirname: stepsDirname,
     framesDirname: outputDirname
