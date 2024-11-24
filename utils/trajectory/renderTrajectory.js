@@ -1,9 +1,9 @@
 const algovivo = require("algovivo");
-const fs = require("fs");
-const path = require("path");
 const { Window, runWebServer } = require("./ppw");
 const TrajectoryData = require("./TrajectoryData");
 const FrameRecorder = require("./FrameRecorder");
+const fs = require("fs");
+const path = require("path");
 
 async function render(args = {}) {
   const stepsDirname = args.stepsDirname;
@@ -13,7 +13,7 @@ async function render(args = {}) {
   const onServerReady = async (port) => {
     const width = 300;
     const height = 300;
-    
+
     const recorder = new FrameRecorder({ framesDirname });
 
     const window = new Window({
