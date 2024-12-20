@@ -78,7 +78,7 @@ jobs:
           name: demo-build
           path: ${{ env.DEMO_BUILD_DIRNAME }}
   test-demo:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: [build-demo]
     steps:
       - name: Clone repo
