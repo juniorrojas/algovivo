@@ -39,7 +39,7 @@ jobs:
         with:
           name: algovivo.wasm
           path: build/
-      - name: Generate trajectory frames
+      - name: Generate trajectory data
         run: node test/neural/generateTrajectory.js
       - name: Upload trajectory output
         uses: actions/upload-artifact@v4
