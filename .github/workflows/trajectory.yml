@@ -54,7 +54,7 @@ jobs:
   # which already exists in the repo, while generate-trajectory checks that the current version of the code generates the same
   # trajectory that is already stored in the repo.
   render-trajectory:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: build-wasm
     steps:
       - name: Clone repo
