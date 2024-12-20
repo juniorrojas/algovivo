@@ -39,7 +39,7 @@ jobs:
         with:
           name: algovivo.wasm
           path: build/
-      - name: Generate trajectory frames
+      - name: Generate trajectory data
         run: node test/neural/generateTrajectory.js
       - name: Upload trajectory output
         uses: actions/upload-artifact@v4
@@ -54,7 +54,7 @@ jobs:
   # which already exists in the repo, while generate-trajectory checks that the current version of the code generates the same
   # trajectory that is already stored in the repo.
   render-trajectory:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     needs: build-wasm
     steps:
       - name: Clone repo
