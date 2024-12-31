@@ -1,4 +1,3 @@
-const algovivo = require("algovivo");
 const { Window, runWebServer } = require("./ppw");
 const TrajectoryData = require("./TrajectoryData");
 const FrameRecorder = require("./FrameRecorder");
