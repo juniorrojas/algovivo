@@ -25,7 +25,13 @@ export function runWebServer(args = {}) {
     (async () => {
       const port = await getFreePort();
       const app = express();
+
       app.use(express.static(staticDirname));
+
+      if (args.onPreListen != null) {
+        args.onPreListen(app);
+      }
+      
       const server = app.listen(
         port,
         async () => {
@@ -34,9 +40,14 @@ export function runWebServer(args = {}) {
           } catch(e) {
             reject(e);
           } finally {
-            server.close(() => {
+            const daemon = args.daemon ?? false;
+            if (!daemon) {
+              server.close(() => {
+                resolve();
+              });
+            } else {
               resolve();
-            });
+            }
           }
         });
     })();
