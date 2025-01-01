@@ -41,7 +41,7 @@ async function main() {
   await utils.cleandir(outputDirname);
 
   const writePromises = [];
-  const n = 100;
+  const n = process.env.STEPS ? parseInt(process.env.STEPS, 10) : 100;
   for (let i = 0; i < n; i++) {
     console.log(`${i + 1} / ${n}`);
     const itemData = {
