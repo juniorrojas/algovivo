@@ -7,12 +7,12 @@ const utils = require("../utils");
 const dataDirname = path.join(__dirname, "data");
 
 async function loadMeshData() {
-  const meshFilename = path.join(dataDirname, "mesh.json");
+  const meshFilename = process.env.MESH_FILENAME || path.join(dataDirname, "mesh.json");
   return JSON.parse(await fsp.readFile(meshFilename));
 }
 
 async function loadPolicyData() {
-  const policyFilename = path.join(dataDirname, "policy.json");
+  const policyFilename = process.env.POLICY_FILENAME || path.join(dataDirname, "policy.json");
   return JSON.parse(await fsp.readFile(policyFilename));
 }
 
@@ -41,7 +41,7 @@ async function main() {
   await utils.cleandir(outputDirname);
 
   const writePromises = [];
-  const n = 100;
+  const n = process.env.STEPS ? parseInt(process.env.STEPS, 10) : 100;
   for (let i = 0; i < n; i++) {
     console.log(`${i + 1} / ${n}`);
     const itemData = {
