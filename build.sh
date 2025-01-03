@@ -16,8 +16,14 @@ ll_diff_opt_filename="${build_dirname}/${lib_name}.diff.opt.out.ll"
 
 mkdir -p ${build_dirname}
 
+build_wasm=${BUILD_WASM:-1}
+
 echo "compiling C++ to LLVM IR..."
-$clang --target=wasm32 -emit-llvm -c -S ${src_filename} -o ${ll_filename}
+if [ $build_wasm -eq 1 ]; then
+  $clang --target=wasm32 -emit-llvm -c -S ${src_filename} -o ${ll_filename}
+else
+  $clang -emit-llvm -c -S ${src_filename} -o ${ll_filename}
+fi
 
 echo "differentiating LLVM IR..."
 $opt ${ll_filename} -load=$ENZYME -enzyme -S -o ${ll_diff_filename}
@@ -25,13 +31,21 @@ $opt ${ll_filename} -load=$ENZYME -enzyme -S -o ${ll_diff_filename}
 echo "optimizing differentiated LLVM IR..."
 $opt ${ll_diff_filename} -S -o ${ll_diff_opt_filename}
 
-echo "compiling LLVM IR to WASM..."
+if [ $build_wasm -eq 1 ]; then
+    echo "compiling LLVM IR to WASM..."
 
-llc=${LLVM_BIN_DIR}/llc
-ld=${LLVM_BIN_DIR}/wasm-ld
-o_filename="${build_dirname}/${lib_name}.out.o"
-wasm_filename="${build_dirname}/${lib_name}.wasm"
+    llc=${LLVM_BIN_DIR}/llc
+    ld=${LLVM_BIN_DIR}/wasm-ld
+    o_filename="${build_dirname}/${lib_name}.out.o"
+    wasm_filename="${build_dirname}/${lib_name}.wasm"
 
-$llc -march=wasm32 -filetype=obj -o ${o_filename} ${ll_diff_opt_filename}
-$ld --no-entry -allow-undefined --export-all -o ${wasm_filename} ${o_filename}
-echo "saved to ${wasm_filename}"
+    $llc -march=wasm32 -filetype=obj -o ${o_filename} ${ll_diff_opt_filename}
+    $ld --no-entry -allow-undefined --export-all -o ${wasm_filename} ${o_filename}
+    echo "saved to ${wasm_filename}"
+else
+    so_filename="${build_dirname}/lib${lib_name}.so"
+
+    echo "compiling LLVM IR to dynamic library..."
+    $clang -shared -o ${so_filename} ${ll_diff_opt_filename}
+    echo "saved to ${so_filename}"
+fi
