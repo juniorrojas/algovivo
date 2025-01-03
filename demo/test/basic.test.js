@@ -1,8 +1,8 @@
-import utils from "./utils/index.js";
+import ppw from "./ppw/index.js";
 
 test("main", async () => {
   const main = async (port) => {
-    const window = new utils.Window({
+    const window = new ppw.Window({
       headless: true,
       indexUrl: `http://localhost:${port}`,
       width: 800,
@@ -34,7 +34,7 @@ test("main", async () => {
     }
   }
 
-  await utils.runWebServer({
+  await ppw.runWebServer({
     staticDirname: `${__dirname}/../public`,
     onReady: main
   });
