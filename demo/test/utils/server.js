@@ -23,12 +23,7 @@ export function runWebServer(args = {}) {
   }
   return new Promise((resolve, reject) => {
     (async () => {
-      let port;
-      if (args.port == null) {
-        port = await getFreePort();
-      } else {
-        port = args.port;
-      }
+      const port = args.port ?? await getFreePort();
       
       const app = express();
       
