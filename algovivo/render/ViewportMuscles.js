@@ -10,9 +10,9 @@ function renderLine(ctx, scale, a, b, borderWidth, borderColor) {
   ctx.stroke();
 }
 
-function renderMuscle(ctx, scale, a, b, t, width, borderWidth, borderColor, color0, color1, lineCap) {
+function renderMuscle(ctx, scale, a, b, t, width, borderWidth, borderColor, color0, color1) {
   ctx.beginPath();
-  ctx.lineCap = lineCap;
+  ctx.lineCap = "butt";
   ctx.strokeStyle = borderColor;
   ctx.lineWidth = (width + borderWidth * 2) * scale;
   ctx.moveTo(a[0], a[1]);
@@ -35,7 +35,6 @@ function renderMuscle(ctx, scale, a, b, t, width, borderWidth, borderColor, colo
   const cb = (1 - t) * cb0 + t * cb1;
 
   ctx.strokeStyle = `rgb(${cr}, ${cg}, ${cb})`;
-  ctx.lineCap = lineCap;
   ctx.lineWidth = width * scale;
   ctx.moveTo(a[0], a[1]);
   ctx.lineTo(b[0], b[1]);
@@ -71,7 +70,6 @@ class ViewportMuscles {
         
         const width = 0.065;
         const borderWidth = 0.017;
-        const lineCap = "butt";
         const muscleIntensityAttributeName = "muscleIntensity";
 
         const muscleIntensity = args.mesh.getCustomAttribute(muscleIntensityAttributeName);
@@ -83,7 +81,7 @@ class ViewportMuscles {
         }
         
         const t = muscleIntensity[muscleId];
-        renderMuscle(ctx, scale, a, b, t, width, borderWidth, borderColor, color0, color1, lineCap);
+        renderMuscle(ctx, scale, a, b, t, width, borderWidth, borderColor, color0, color1);
       }
     }
   }
