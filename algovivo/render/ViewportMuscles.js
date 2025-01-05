@@ -1,3 +1,15 @@
+function renderLine(ctx, scale, a, b, borderWidth, borderColor) {
+  ctx.beginPath();
+  ctx.lineJoin = "round";
+  ctx.lineCap = "round";
+  ctx.strokeStyle = borderColor;
+  ctx.lineWidth = borderWidth * scale;
+  ctx.moveTo(a[0], a[1]);
+  ctx.lineTo(b[0], b[1]);
+  ctx.closePath();
+  ctx.stroke();
+}
+
 class ViewportMuscles {
   constructor(args = {}) {
     this.system = args.system;
@@ -19,15 +31,7 @@ class ViewportMuscles {
       const muscleId = lineIdToMuscleId[args.id];
       if (muscleId == null) {
         const borderWidth = 0.029;
-        ctx.beginPath();
-        ctx.lineJoin = "round";
-        ctx.lineCap = "round";
-        ctx.strokeStyle = borderColor;
-        ctx.lineWidth = borderWidth * scale;
-        ctx.moveTo(a[0], a[1]);
-        ctx.lineTo(b[0], b[1]);
-        ctx.closePath();
-        ctx.stroke();
+        renderLine(ctx, scale, a, b, borderWidth, borderColor);
       } else {
         const color0 = activeMuscleColor;
         const color1 = inactiveMuscleColor;
