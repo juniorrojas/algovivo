@@ -71,7 +71,7 @@ class Tracker {
       secondaryLineWidth: grid.secondaryLineWidth
     });
 
-    floor.mesh.x = [
+    floor.mesh.pos = [
       [x0, 0],
       [x1, 0]
     ];
