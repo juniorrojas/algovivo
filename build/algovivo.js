@@ -3,7 +3,7 @@
  * (c) 2023 Junior Rojas
  * License: MIT
  * 
- * Built from commit a408f655ca9f79756d6dc685bca2838b6ebdc0e6
+ * Built from commit d0340b512b78508521f7bb1c0dc1c42bfbe1af1b
  */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -3089,6 +3089,7 @@
 	    this.targetCenterY = args.targetCenterY ?? 1;
 	    this.offsetX = args.offsetX ?? 0;
 	    this.fullGrid = false;
+	    this.centeringSpeedFactor = 0.5 ;
 	  }
 
 	  step(args = {}) {
@@ -3109,7 +3110,7 @@
 	    if (this.currentCenterX == null) {
 	      this.currentCenterX = this.targetCenterX;
 	    } else {
-	      this.currentCenterX += (this.targetCenterX - this.currentCenterX) * 0.5;
+	      this.currentCenterX += (this.targetCenterX - this.currentCenterX) * this.centeringSpeedFactor;
 	    }
 
 	    const center = [this.currentCenterX, this.targetCenterY];
@@ -3153,7 +3154,7 @@
 	      secondaryLineWidth: grid.secondaryLineWidth
 	    });
 
-	    floor.mesh.x = [
+	    floor.mesh.pos = [
 	      [x0, 0],
 	      [x1, 0]
 	    ];
@@ -3215,7 +3216,20 @@
 
 	const mm2d$2 = mm2d$3;
 
-	class ViewportVertices$1 {
+	function renderCircle(ctx, scale, p, radius, borderWidth, borderColor, fillColor) {
+	  const radius1 = (radius + borderWidth * 0.5) * scale;
+
+	  ctx.fillStyle = fillColor;
+	  ctx.beginPath();
+	  ctx.arc(p[0], p[1], radius1, 0, 2 * Math.PI);
+	  ctx.fill();
+
+	  ctx.lineWidth = borderWidth * scale;
+	  ctx.strokeStyle = borderColor;
+	  ctx.stroke();
+	}
+
+	class VertexRenderer$1 {
 	  constructor(args = {}) {
 	    this.system = args.system;
 	    this.renderVertexIds = args.renderVertexIds ?? false;
@@ -3233,17 +3247,7 @@
 	      const camera = args.camera;
 	      const scale = camera.inferScale();
 	      
-	      const radius1 = (radius + borderWidth) * scale;
-	      ctx.fillStyle = borderColor;
-	      ctx.beginPath();
-	      ctx.arc(p[0], p[1], radius1, 0, 2 * Math.PI);
-	      ctx.fill();
-	  
-	      const radius2 = radius * scale;
-	      ctx.fillStyle = fillColor;
-	      ctx.beginPath();
-	      ctx.arc(p[0], p[1], radius2, 0, 2 * Math.PI);
-	      ctx.fill();
+	      renderCircle(ctx, scale, p, radius, borderWidth, borderColor, fillColor);
 
 	      if (this.renderVertexIds) {
 	        ctx.beginPath();
@@ -3307,9 +3311,53 @@
 	  }
 	}
 
-	var ViewportVertices_1 = ViewportVertices$1;
+	var VertexRenderer_1 = VertexRenderer$1;
 
-	class ViewportMuscles$1 {
+	function renderLine(ctx, scale, a, b, borderWidth, borderColor) {
+	  ctx.beginPath();
+	  ctx.lineJoin = "round";
+	  ctx.lineCap = "round";
+	  ctx.strokeStyle = borderColor;
+	  ctx.lineWidth = borderWidth * scale;
+	  ctx.moveTo(a[0], a[1]);
+	  ctx.lineTo(b[0], b[1]);
+	  ctx.closePath();
+	  ctx.stroke();
+	}
+
+	function renderMuscle(ctx, scale, a, b, t, width, borderWidth, borderColor, color0, color1) {
+	  ctx.beginPath();
+	  ctx.lineCap = "butt";
+	  ctx.strokeStyle = borderColor;
+	  ctx.lineWidth = (width + borderWidth * 2) * scale;
+	  ctx.moveTo(a[0], a[1]);
+	  ctx.lineTo(b[0], b[1]);
+	  ctx.stroke();
+
+	  ctx.beginPath();
+	  
+	  const cr0 = color0[0];
+	  const cr1 = color1[0];
+
+	  const cg0 = color0[1];
+	  const cg1 = color1[1];
+
+	  const cb0 = color0[2];
+	  const cb1 = color1[2];
+
+	  const cr = (1 - t) * cr0 + t * cr1;
+	  const cg = (1 - t) * cg0 + t * cg1;
+	  const cb = (1 - t) * cb0 + t * cb1;
+
+	  ctx.strokeStyle = `rgb(${cr}, ${cg}, ${cb})`;
+	  ctx.lineWidth = width * scale;
+	  ctx.moveTo(a[0], a[1]);
+	  ctx.lineTo(b[0], b[1]);
+
+	  ctx.stroke();
+	}
+
+	class LineRenderer$1 {
 	  constructor(args = {}) {
 	    this.system = args.system;
 	  }
@@ -3330,33 +3378,14 @@
 	      const muscleId = lineIdToMuscleId[args.id];
 	      if (muscleId == null) {
 	        const borderWidth = 0.029;
-	        ctx.beginPath();
-	        ctx.lineJoin = "round";
-	        ctx.lineCap = "round";
-	        ctx.strokeStyle = borderColor;
-	        ctx.lineWidth = borderWidth * scale;
-	        ctx.moveTo(a[0], a[1]);
-	        ctx.lineTo(b[0], b[1]);
-	        ctx.closePath();
-	        ctx.stroke();
+	        renderLine(ctx, scale, a, b, borderWidth, borderColor);
 	      } else {
 	        const color0 = activeMuscleColor;
 	        const color1 = inactiveMuscleColor;
 	        
 	        const width = 0.065;
 	        const borderWidth = 0.017;
-	        const lineCap = "butt";
 	        const muscleIntensityAttributeName = "muscleIntensity";
-
-	        ctx.beginPath();
-	        ctx.lineCap = lineCap;
-	        ctx.strokeStyle = borderColor;
-	        ctx.lineWidth = (width + borderWidth * 2) * scale;
-	        ctx.moveTo(a[0], a[1]);
-	        ctx.lineTo(b[0], b[1]);
-	        ctx.stroke();
-
-	        ctx.beginPath();
 
 	        const muscleIntensity = args.mesh.getCustomAttribute(muscleIntensityAttributeName);
 	        if (muscleIntensity == null) {
@@ -3367,39 +3396,19 @@
 	        }
 	        
 	        const t = muscleIntensity[muscleId];
-	        
-	        const cr0 = color0[0];
-	        const cr1 = color1[0];
-
-	        const cg0 = color0[1];
-	        const cg1 = color1[1];
-
-	        const cb0 = color0[2];
-	        const cb1 = color1[2];
-
-	        const cr = (1 - t) * cr0 + t * cr1;
-	        const cg = (1 - t) * cg0 + t * cg1;
-	        const cb = (1 - t) * cb0 + t * cb1;
-
-	        ctx.strokeStyle = `rgb(${cr}, ${cg}, ${cb})`;
-	        ctx.lineCap = lineCap;
-	        ctx.lineWidth = width * scale;
-	        ctx.moveTo(a[0], a[1]);
-	        ctx.lineTo(b[0], b[1]);
-
-	        ctx.stroke();
+	        renderMuscle(ctx, scale, a, b, t, width, borderWidth, borderColor, color0, color1);
 	      }
 	    }
 	  }
 	}
 
-	var ViewportMuscles_1 = ViewportMuscles$1;
+	var LineRenderer_1 = LineRenderer$1;
 
 	const mm2d$1 = mm2d$3;
 	const Tracker = Tracker_1;
 	const Floor = Floor_1;
-	const ViewportVertices = ViewportVertices_1;
-	const ViewportMuscles = ViewportMuscles_1;
+	const VertexRenderer = VertexRenderer_1;
+	const LineRenderer = LineRenderer_1;
 
 	function hashSimplex(vids) {
 	  vids.sort();
@@ -3450,11 +3459,11 @@
 
 	    const headless = args.headless ?? false;
 
-	    this.vertices = new ViewportVertices({
+	    this.vertices = new VertexRenderer({
 	      system: this.system,
 	      renderVertexIds: args.renderVertexIds ?? false
 	    });
-	    this.muscles = new ViewportMuscles({
+	    this.lines = new LineRenderer({
 	      system: this.system
 	    });
 
@@ -3550,7 +3559,7 @@
 	      ctx.closePath();
 	      ctx.fill();
 	    };
-	    mesh.lineShader.renderLine = this.muscles.makeLineShaderFunction({
+	    mesh.lineShader.renderLine = this.lines.makeLineShaderFunction({
 	      activeMuscleColor: activeMuscleColor,
 	      inactiveMuscleColor: inactiveMuscleColor,
 	      borderColor: borderColor
@@ -3769,7 +3778,8 @@
 
 	var render$1 = {
 	  SystemViewport: SystemViewport_1,
-	  ViewportVertices: ViewportVertices_1
+	  VertexRenderer: VertexRenderer_1,
+	  Tracker: Tracker_1,
 	};
 
 	const System = System_1;
