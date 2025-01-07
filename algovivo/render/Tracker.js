@@ -7,6 +7,7 @@ class Tracker {
     this.targetCenterY = args.targetCenterY ?? 1;
     this.offsetX = args.offsetX ?? 0;
     this.fullGrid = false;
+    this.centeringSpeedFactor = 0.5 ?? args.centeringSpeedFactor;
   }
 
   step(args = {}) {
@@ -27,7 +28,7 @@ class Tracker {
     if (this.currentCenterX == null) {
       this.currentCenterX = this.targetCenterX;
     } else {
-      this.currentCenterX += (this.targetCenterX - this.currentCenterX) * 0.5;
+      this.currentCenterX += (this.targetCenterX - this.currentCenterX) * this.centeringSpeedFactor;
     }
 
     const center = [this.currentCenterX, this.targetCenterY];
