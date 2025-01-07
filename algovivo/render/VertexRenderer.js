@@ -1,6 +1,19 @@
 const mm2d = require("./mm2d");
 
-class ViewportVertices {
+function renderCircle(ctx, scale, p, radius, borderWidth, borderColor, fillColor) {
+  const radius1 = (radius + borderWidth * 0.5) * scale;
+
+  ctx.fillStyle = fillColor;
+  ctx.beginPath();
+  ctx.arc(p[0], p[1], radius1, 0, 2 * Math.PI);
+  ctx.fill();
+
+  ctx.lineWidth = borderWidth * scale;
+  ctx.strokeStyle = borderColor;
+  ctx.stroke();
+}
+
+class VertexRenderer {
   constructor(args = {}) {
     this.system = args.system;
     this.renderVertexIds = args.renderVertexIds ?? false;
@@ -18,17 +31,7 @@ class ViewportVertices {
       const camera = args.camera;
       const scale = camera.inferScale();
       
-      const radius1 = (radius + borderWidth) * scale;
-      ctx.fillStyle = borderColor;
-      ctx.beginPath();
-      ctx.arc(p[0], p[1], radius1, 0, 2 * Math.PI);
-      ctx.fill();
-  
-      const radius2 = radius * scale;
-      ctx.fillStyle = fillColor;
-      ctx.beginPath();
-      ctx.arc(p[0], p[1], radius2, 0, 2 * Math.PI);
-      ctx.fill();
+      renderCircle(ctx, scale, p, radius, borderWidth, borderColor, fillColor);
 
       if (this.renderVertexIds) {
         ctx.beginPath();
@@ -92,4 +95,4 @@ class ViewportVertices {
   }
 }
 
-module.exports = ViewportVertices;
+module.exports = VertexRenderer;

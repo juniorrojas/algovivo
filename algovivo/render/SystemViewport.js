@@ -1,8 +1,8 @@
 const mm2d = require("./mm2d");
 const Tracker = require("./Tracker");
 const Floor = require("./Floor");
-const ViewportVertices = require("./ViewportVertices");
-const ViewportMuscles = require("./ViewportMuscles");
+const VertexRenderer = require("./VertexRenderer");
+const LineRenderer = require("./LineRenderer");
 
 function hashSimplex(vids) {
   vids.sort();
@@ -53,11 +53,11 @@ class SystemViewport {
 
     const headless = args.headless ?? false;
 
-    this.vertices = new ViewportVertices({
+    this.vertices = new VertexRenderer({
       system: this.system,
       renderVertexIds: args.renderVertexIds ?? false
     });
-    this.muscles = new ViewportMuscles({
+    this.lines = new LineRenderer({
       system: this.system
     });
 
@@ -153,7 +153,7 @@ class SystemViewport {
       ctx.closePath();
       ctx.fill();
     };
-    mesh.lineShader.renderLine = this.muscles.makeLineShaderFunction({
+    mesh.lineShader.renderLine = this.lines.makeLineShaderFunction({
       activeMuscleColor: activeMuscleColor,
       inactiveMuscleColor: inactiveMuscleColor,
       borderColor: borderColor
