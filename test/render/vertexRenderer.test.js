@@ -1,7 +1,7 @@
 const algovivo = require("algovivo");
 
-test("viewport vertices", () => {
+test("vertex renderer", () => {
   const system = { numVertices: 4 };
-  const viewportVertices = new algovivo.render.ViewportVertices({ system });
+  const viewportVertices = new algovivo.render.VertexRenderer({ system });
   expect(viewportVertices.numVertices).toBe(4);
 });
