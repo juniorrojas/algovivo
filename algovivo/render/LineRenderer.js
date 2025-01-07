@@ -42,7 +42,7 @@ function renderMuscle(ctx, scale, a, b, t, width, borderWidth, borderColor, colo
   ctx.stroke();
 }
 
-class ViewportMuscles {
+class LineRenderer {
   constructor(args = {}) {
     this.system = args.system;
   }
@@ -87,4 +87,4 @@ class ViewportMuscles {
   }
 }
 
-module.exports = ViewportMuscles;
+module.exports = LineRenderer;
