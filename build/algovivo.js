@@ -3,7 +3,7 @@
  * (c) 2023 Junior Rojas
  * License: MIT
  * 
- * Built from commit d0340b512b78508521f7bb1c0dc1c42bfbe1af1b
+ * Built from commit 29f489dd09b7a2f63ae19e1482d039476377c3e8
  */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -1275,7 +1275,7 @@
 	  utils: utils$2
 	};
 
-	class Vertices$1 {
+	class Vertices$2 {
 	  constructor(args = {}) {
 	    const ten = args.ten;
 	    if (ten == null) throw new Error("ten required");
@@ -1293,6 +1293,10 @@
 	    this.posTmp = null;
 
 	    this._fixedVertexId = -1;
+	  }
+
+	  getVertexPos(i) {
+	    return [this.pos.get([i, 0]), this.pos.get([i, 1])];
 	  }
 
 	  set fixedVertexId(value) {
@@ -1401,7 +1405,7 @@
 	  }
 	}
 
-	var Vertices_1 = Vertices$1;
+	var Vertices_1 = Vertices$2;
 
 	class Muscles$1 {
 	  constructor(args = {}) {
@@ -1612,7 +1616,7 @@
 	var Triangles_1 = Triangles$1;
 
 	const mmgrten$1 = mmgrten$2;
-	const Vertices = Vertices_1;
+	const Vertices$1 = Vertices_1;
 	const Muscles = Muscles_1;
 	const Triangles = Triangles_1;
 
@@ -1638,7 +1642,7 @@
 
 	    this.spaceDim = 2;
 
-	    this._vertices = new Vertices({ ten: this.ten, vertexMass: args.vertexMass });
+	    this._vertices = new Vertices$1({ ten: this.ten, vertexMass: args.vertexMass });
 	    this._muscles = new Muscles({ ten: this.ten });
 	    this._triangles = new Triangles({ ten: this.ten });
 
@@ -3783,12 +3787,15 @@
 	};
 
 	const System = System_1;
+	const Vertices = Vertices_1;
+
 	const mmgrten = mmgrten$2;
 	const render = render$1;
 	const mm2d = mm2d$3;
 
 	var algovivo = {
 	  System: System,
+	  Vertices: Vertices,
 	  mmgrten: mmgrten,
 	  SystemViewport: render.SystemViewport,
 	  mm2d: mm2d,
