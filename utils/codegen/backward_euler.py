@@ -1,41 +1,16 @@
 import codegen
 
-class DegreeOfFreedom:
-    def __init__(self, pos, pos0, vel0, pos_tmp, pos_grad):
-        self.pos = pos
-        self.pos0 = pos0
-        self.vel0 = vel0
-        self.pos_tmp = pos_tmp
-        self.pos_grad = pos_grad
-
 class BackwardEuler:
     def __init__(self):
         self.loss = codegen.Fun("backward_euler_loss")
-
-        self.dof = DegreeOfFreedom("pos", "pos0", "vel0", "pos_tmp", "pos_grad")
-
-        backward_euler_loss_args = self.loss.args
-        backward_euler_loss_args.add_arg("float", "g")
-        backward_euler_loss_args.add_arg("float", "h")
+        
+        self.loss.args.add_arg("float", "g")
+        self.loss.args.add_arg("float", "h")
 
         self.add_vertices_args()
-
-        # muscles
-        backward_euler_loss_args.add_arg("int", "num_muscles")
-        backward_euler_loss_args.add_arg("int*", "muscles")
-        backward_euler_loss_args.add_arg("float", "k")
-        backward_euler_loss_args.add_arg("float*", "a")
-        backward_euler_loss_args.add_arg("float*", "l0")
-
-        # triangles
-        backward_euler_loss_args.add_arg("int", "num_triangles")
-        backward_euler_loss_args.add_arg("int*", "triangles")
-        backward_euler_loss_args.add_arg("float*", "rsi")
-        backward_euler_loss_args.add_arg("float", "mu")
-        backward_euler_loss_args.add_arg("float", "lambda")
-
-        # friction
-        backward_euler_loss_args.add_arg("float", "k_friction")
+        self.add_muscles_args()
+        self.add_triangles_args()
+        self.add_friction_args()
         
         self.loss_body = """const auto space_dim = 2;
 
@@ -142,3 +117,23 @@ for (int i = 0; i < num_vertices; i++) {
         args.add_arg("float*", "pos0")
         args.add_arg("float*", "vel0")
         args.add_arg("float", "vertex_mass")
+
+    def add_muscles_args(self):
+        args = self.loss.args
+        args.add_arg("int", "num_muscles")
+        args.add_arg("int*", "muscles")
+        args.add_arg("float", "k")
+        args.add_arg("float*", "a")
+        args.add_arg("float*", "l0")
+
+    def add_triangles_args(self):
+        args = self.loss.args
+        args.add_arg("int", "num_triangles")
+        args.add_arg("int*", "triangles")
+        args.add_arg("float*", "rsi")
+        args.add_arg("float", "mu")
+        args.add_arg("float", "lambda")
+
+    def add_friction_args(self):
+        args = self.loss.args
+        args.add_arg("float", "k_friction")
