@@ -23,13 +23,13 @@ static void backward_euler_loss_grad(
 struct System {
 // {{system_attrs}}
 
-  float forward(float* pos) {
+  float forward(/* {{system_forward_args}} */) {
     return backward_euler_loss(
       // {{backward_euler_loss_args_call}}
     );
   }
 
-  void backward(float* pos, float* pos_grad) {
+  void backward(/* {{system_backward_args}} */) {
     backward_euler_loss_grad(
       // {{backward_euler_loss_grad_args_call}}
     );

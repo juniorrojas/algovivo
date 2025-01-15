@@ -165,19 +165,48 @@ backward_euler_loss_grad_body = backward_euler_loss_grad.codegen_body()
 
 with open(this_dirpath.joinpath("system.template.h")) as f:
     template = f.read()
-    src = (template
+    
+    src = template
+    
+    src = (src
         .replace("// {{backward_euler_loss_body}}", backward_euler_loss_body)
         .replace("// {{backward_euler_loss_args}}", backward_euler_loss_body_args)
         .replace("// {{backward_euler_loss_args_call}}", backward_euler_loss_args.codegen_call())
         .replace("// {{backward_euler_loss_grad_args}}", backward_euler_loss_grad_args.codegen_fun_signature())
         .replace("// {{backward_euler_loss_grad_args_call}}", backward_euler_loss_grad_args.codegen_call())
         .replace("// {{backward_euler_loss_grad_body}}", indent(backward_euler_loss_grad_body))
+    )
+
+    src = (src
         .replace("// {{system_attrs}}", indent(system_attrs.codegen_struct_attrs()))
         .replace("// {{backward_euler_update_args}}", indent(update_args.codegen_fun_signature()))
         .replace("// {{system_set}}", indent(system_attrs.codegen_struct_set("system")))
+        .replace("/* {{system_forward_args}} */", "float* pos")
+        .replace("/* {{system_backward_args}} */", "float* pos, float* pos_grad")
     )
 
 output_filepath = this_dirpath.parent.parent.joinpath("csrc", "algovivo", "system.h")
+with open(output_filepath, "w") as f:
+    f.write(src)
+print(f"Saved to {output_filepath}")
+
+with open(this_dirpath.joinpath("backward_euler.template.h")) as f:
+    template = f.read()
+
+    src = template.replace(
+        "/* {{backward_euler_update_pos_args}} */",
+        "float* pos, float* pos_grad, float* pos_tmp"
+    )
+    src = src.replace(
+        "/* {{backward_euler_update_vel_args}} */",
+        "float num_vertices, const float* pos0, const float* vel0, float* pos1, float* vel1, float h"
+    )
+    src = src.replace(
+        "/* {{backward_euler_update_args}} */",
+        "float* pos1, float* vel1, float* pos_grad, float* pos_tmp"
+    )
+
+output_filepath = this_dirpath.parent.parent.joinpath("csrc", "algovivo", "dynamics", "backward_euler.h")
 with open(output_filepath, "w") as f:
     f.write(src)
 print(f"Saved to {output_filepath}")
