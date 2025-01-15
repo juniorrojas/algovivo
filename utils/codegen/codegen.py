@@ -190,12 +190,17 @@ with open(output_filepath, "w") as f:
     f.write(src)
 print(f"Saved to {output_filepath}")
 
+backward_euler_update_pos_args = codegen.Args()
+backward_euler_update_pos_args.add_arg("float*", "pos", mut=True)
+backward_euler_update_pos_args.add_arg("float*", "pos_grad", mut=True)
+backward_euler_update_pos_args.add_arg("float*", "pos_tmp", mut=True)
+
 with open(this_dirpath.joinpath("backward_euler.template.h")) as f:
     template = f.read()
 
     src = template.replace(
         "/* {{backward_euler_update_pos_args}} */",
-        "float* pos, float* pos_grad, float* pos_tmp"
+        backward_euler_update_pos_args.codegen_fun_signature()
     )
     src = src.replace(
         "/* {{backward_euler_update_vel_args}} */",
