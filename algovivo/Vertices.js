@@ -18,6 +18,10 @@ class Vertices {
     this._fixedVertexId = -1;
   }
 
+  getVertexPos(i) {
+    return [this.pos.get([i, 0]), this.pos.get([i, 1])];
+  }
+
   set fixedVertexId(value) {
     throw new Error("use fixVertex instead");
   }
