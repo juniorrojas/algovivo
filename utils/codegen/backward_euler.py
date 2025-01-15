@@ -1,8 +1,5 @@
 import codegen
 
-def indent(s):
-    return "\n".join("  " + line for line in s.split("\n"))
-
 class BackwardEuler:
     def __init__(self):
         self.loss = codegen.Fun("backward_euler_loss")
@@ -131,4 +128,4 @@ accumulate_friction_energy(
 
         self.loss_body += "return 0.5 * inertial_energy + h * h * potential_energy;"
 
-        self.loss_body = indent(self.loss_body)
+        self.loss_body = codegen.indent(self.loss_body)

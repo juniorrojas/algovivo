@@ -5,8 +5,7 @@ this_dirpath = this_filepath.parent
 import codegen
 from backward_euler import BackwardEuler
 
-def indent(s):
-    return "\n".join("  " + line for line in s.split("\n"))
+indent = codegen.indent
 
 backward_euler = BackwardEuler()
 
