@@ -11,6 +11,9 @@ class Args:
 
     def __len__(self):
         return len(self.args)
+    
+    def __getitem__(self, i):
+        return self.args[i]
 
     def add_arg(self, t, name, differentiable=False, mut=False):
         arg = Arg(t, name, differentiable, mut)

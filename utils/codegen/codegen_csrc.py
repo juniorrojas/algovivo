@@ -10,13 +10,12 @@ indent = codegen.indent
 backward_euler = BackwardEuler()
 
 backward_euler_loss = backward_euler.loss
-backward_euler_loss_args = backward_euler_loss.args
 
 backward_euler_loss_grad = backward_euler_loss.make_backward_pass()
 backward_euler_loss_grad_args = backward_euler_loss_grad.args
 
 system_attrs = codegen.Args()
-for arg in backward_euler_loss_args.args:
+for arg in backward_euler.loss.args:
     if not arg.differentiable:
         system_attrs.add_arg(arg.t, arg.name)
 system_attrs.add_arg("int", "fixed_vertex_id")
@@ -25,7 +24,7 @@ update_args = codegen.Args()
 for arg in system_attrs.args:
     update_args.add_arg(arg.t, arg.name)
 
-for arg in backward_euler_loss_args.args:
+for arg in backward_euler.loss.args:
     if arg.differentiable:
         update_args.add_arg(arg.t, f"{arg.name}1", mut=True)
         update_args.add_arg(arg.t, f"{arg.name}_grad", mut=True)
@@ -35,7 +34,7 @@ for arg in backward_euler_loss_args.args:
         else:
             update_args.add_arg(arg.t, f"{arg.name}_v1", mut=True)
 
-enzyme_args_call = backward_euler_loss_args.codegen_enzyme_call()
+enzyme_args_call = backward_euler.loss.args.codegen_enzyme_call()
 backward_euler_loss_grad_body = backward_euler_loss_grad.codegen_body()
 
 with open(this_dirpath.joinpath("system.template.h")) as f:
@@ -43,12 +42,10 @@ with open(this_dirpath.joinpath("system.template.h")) as f:
     
     src = template
 
-    backward_euler_loss_body_args = backward_euler_loss_args.codegen_fun_signature()
-    
     src = (src
         .replace("// {{backward_euler_loss_body}}", backward_euler.loss_body)
-        .replace("// {{backward_euler_loss_args}}", backward_euler_loss_body_args)
-        .replace("// {{backward_euler_loss_args_call}}", backward_euler_loss_args.codegen_call())
+        .replace("// {{backward_euler_loss_args}}", backward_euler_loss.args.codegen_fun_signature())
+        .replace("// {{backward_euler_loss_args_call}}", backward_euler.loss.args.codegen_call())
         .replace("// {{backward_euler_loss_grad_args}}", backward_euler_loss_grad_args.codegen_fun_signature())
         .replace("// {{backward_euler_loss_grad_args_call}}", backward_euler_loss_grad_args.codegen_call())
         .replace("// {{backward_euler_loss_grad_body}}", indent(backward_euler_loss_grad_body))
