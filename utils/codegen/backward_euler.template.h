@@ -8,7 +8,7 @@ namespace algovivo {
 template <typename T>
 void backward_euler_update_pos(
   T system,
-  float* pos, float* pos_grad, float* pos_tmp
+  /* {{backward_euler_update_pos_args}} */
 ) {
   const auto space_dim = 2;
   const auto num_vertices = system.num_vertices;
@@ -28,7 +28,7 @@ void backward_euler_update_pos(
 
 extern "C"
 void backward_euler_update_vel(
-  float num_vertices, const float* pos0, const float* vel0, float* pos1, float* vel1, float h
+  /* {{backward_euler_update_vel_args}} */
 ) {
   const auto space_dim = 2;
   // vel1 = (pos1 - pos0) / h
@@ -47,7 +47,7 @@ void backward_euler_update_vel(
 template <typename T>
 void backward_euler_update(
   T system,
-  float* pos1, float* vel1, float* pos_grad, float* pos_tmp
+  /* {{backward_euler_update_args}} */
 ) {
   backward_euler_update_pos(
     system,
