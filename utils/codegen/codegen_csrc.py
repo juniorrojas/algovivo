@@ -3,9 +3,8 @@ import os
 this_filepath = Path(os.path.realpath(__file__))
 this_dirpath = this_filepath.parent
 import codegen
+from codegen import indent
 from backward_euler import BackwardEuler
-
-indent = codegen.indent
 
 backward_euler = BackwardEuler()
 
