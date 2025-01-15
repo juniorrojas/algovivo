@@ -10,7 +10,7 @@ def indent(s):
 
 backward_euler = BackwardEuler()
 
-backward_euler_loss = codegen.Fun("backward_euler_loss")
+backward_euler_loss = backward_euler.loss
 backward_euler_loss_args = backward_euler_loss.args
 
 backward_euler_loss_args.add_arg("float", "g")

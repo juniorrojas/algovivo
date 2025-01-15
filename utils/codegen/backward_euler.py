@@ -5,13 +5,15 @@ def indent(s):
 
 class BackwardEuler:
     def __init__(self):
-        backward_euler_loss_body = """const auto space_dim = 2;
+        self.loss = codegen.Fun("backward_euler_loss")
+        
+        self.loss_body = """const auto space_dim = 2;
 
 float inertial_energy = 0.0;
 float potential_energy = 0.0;"""
 
         # inertia
-        backward_euler_loss_body += """
+        self.loss_body += """
 for (int i = 0; i < num_vertices; i++) {
 vec2_get(p, pos, i);
 vec2_get(v, vel0, i);
@@ -27,7 +29,7 @@ accumulate_inertial_energy(
 }"""
 
         # muscles
-        backward_euler_loss_body += """
+        self.loss_body += """
 for (int i = 0; i < num_muscles; i++) {
 const auto offset = i * 2;
 const auto i1 = muscles[offset    ];
@@ -42,7 +44,7 @@ accumulate_muscle_energy(
 }"""
 
         # triangles
-        backward_euler_loss_body += """
+        self.loss_body += """
 for (int i = 0; i < num_triangles; i++) {
 const auto offset = i * 3;
 const auto i1 = triangles[offset    ];
@@ -67,7 +69,7 @@ accumulate_triangle_energy(
 }"""
 
         # vertices (gravity, collision, friction)
-        backward_euler_loss_body += """
+        self.loss_body += """
 for (int i = 0; i < num_vertices; i++) {
 const auto offset = space_dim * i;
 
@@ -99,8 +101,6 @@ accumulate_friction_energy(
 }
 """
 
-        backward_euler_loss_body += "return 0.5 * inertial_energy + h * h * potential_energy;"
+        self.loss_body += "return 0.5 * inertial_energy + h * h * potential_energy;"
 
-        backward_euler_loss_body = indent(backward_euler_loss_body)
-
-        self.loss_body = backward_euler_loss_body
+        self.loss_body = indent(self.loss_body)
