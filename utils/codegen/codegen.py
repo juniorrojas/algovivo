@@ -13,33 +13,6 @@ backward_euler = BackwardEuler()
 backward_euler_loss = backward_euler.loss
 backward_euler_loss_args = backward_euler_loss.args
 
-backward_euler_loss_args.add_arg("float", "g")
-backward_euler_loss_args.add_arg("float", "h")
-
-# vertices
-backward_euler_loss_args.add_arg("int", "num_vertices")
-backward_euler_loss_args.add_arg("float*", "pos", differentiable=True)
-backward_euler_loss_args.add_arg("float*", "pos0")
-backward_euler_loss_args.add_arg("float*", "vel0")
-backward_euler_loss_args.add_arg("float", "vertex_mass")
-
-# muscles
-backward_euler_loss_args.add_arg("int", "num_muscles")
-backward_euler_loss_args.add_arg("int*", "muscles")
-backward_euler_loss_args.add_arg("float", "k")
-backward_euler_loss_args.add_arg("float*", "a")
-backward_euler_loss_args.add_arg("float*", "l0")
-
-# triangles
-backward_euler_loss_args.add_arg("int", "num_triangles")
-backward_euler_loss_args.add_arg("int*", "triangles")
-backward_euler_loss_args.add_arg("float*", "rsi")
-backward_euler_loss_args.add_arg("float", "mu")
-backward_euler_loss_args.add_arg("float", "lambda")
-
-# friction
-backward_euler_loss_args.add_arg("float", "k_friction")
-
 backward_euler_loss_grad = backward_euler_loss.make_backward_pass()
 backward_euler_loss_grad_args = backward_euler_loss_grad.args
 
