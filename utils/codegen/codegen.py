@@ -35,8 +35,6 @@ for arg in backward_euler_loss_args.args:
         else:
             update_args.add_arg(arg.t, f"{arg.name}_v1", mut=True)
 
-
-
 enzyme_args_call = backward_euler_loss_args.codegen_enzyme_call()
 backward_euler_loss_grad_body = backward_euler_loss_grad.codegen_body()
 

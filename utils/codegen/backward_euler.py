@@ -1,19 +1,24 @@
 import codegen
 
+class DegreeOfFreedom:
+    def __init__(self, pos, pos0, vel0, pos_tmp, pos_grad):
+        self.pos = pos
+        self.pos0 = pos0
+        self.vel0 = vel0
+        self.pos_tmp = pos_tmp
+        self.pos_grad = pos_grad
+
 class BackwardEuler:
     def __init__(self):
         self.loss = codegen.Fun("backward_euler_loss")
+
+        self.dof = DegreeOfFreedom("pos", "pos0", "vel0", "pos_tmp", "pos_grad")
 
         backward_euler_loss_args = self.loss.args
         backward_euler_loss_args.add_arg("float", "g")
         backward_euler_loss_args.add_arg("float", "h")
 
-        # vertices
-        backward_euler_loss_args.add_arg("int", "num_vertices")
-        backward_euler_loss_args.add_arg("float*", "pos", differentiable=True)
-        backward_euler_loss_args.add_arg("float*", "pos0")
-        backward_euler_loss_args.add_arg("float*", "vel0")
-        backward_euler_loss_args.add_arg("float", "vertex_mass")
+        self.add_vertices_args()
 
         # muscles
         backward_euler_loss_args.add_arg("int", "num_muscles")
@@ -129,3 +134,11 @@ for (int i = 0; i < num_vertices; i++) {
         self.loss_body += "return 0.5 * inertial_energy + h * h * potential_energy;"
 
         self.loss_body = codegen.indent(self.loss_body)
+
+    def add_vertices_args(self):
+        args = self.loss.args
+        args.add_arg("int", "num_vertices")
+        args.add_arg("float*", "pos", differentiable=True)
+        args.add_arg("float*", "pos0")
+        args.add_arg("float*", "vel0")
+        args.add_arg("float", "vertex_mass")
