@@ -1,15 +1,34 @@
 #pragma once
 
 #include "../arr.h"
+
+#include "../vec2.h"
+
+#include "../dynamics/inertia.h"
+#include "../potential/friction.h"
+#include "../potential/collision.h"
+#include "../potential/gravity.h"
+
 #include "optim.h"
 
 namespace algovivo {
 
-template <typename T>
+float backward_euler_loss(
+  // {{backward_euler_loss_args}}
+) {
+// {{backward_euler_loss_body}}
+}
+
+static void backward_euler_loss_grad(
+  // {{backward_euler_loss_grad_args}}
+) {
+// {{backward_euler_loss_grad_body}}
+}
+
 void backward_euler_update_pos(
-  T system,
   /* {{backward_euler_update_pos_args}} */
 ) {
+  const auto space_dim = 2; \
   _optim_init();
   const auto max_optim_iters = 100;
   for (int i = 0; i < max_optim_iters; i++) {
@@ -36,31 +55,13 @@ void backward_euler_update_vel(
   );
 }
 
-template <typename T>
+extern "C"
 void backward_euler_update(
-  T system,
   /* {{backward_euler_update_args}} */
 ) {
   const auto space_dim = 2;
-  backward_euler_update_pos(
-    system,
-    system.num_vertices,
-    space_dim,
-    system.pos0,
-    system.vel0,
-    system.h,
-    pos1,
-    pos_grad, pos_tmp,
-    system.fixed_vertex_id
-  );
-  backward_euler_update_vel(
-    system.num_vertices,
-    space_dim,
-    system.pos0,
-    system.vel0,
-    pos1, vel1,
-    system.h
-  );
+  backward_euler_update_pos(/* {{backward_euler_update_pos_args_call}} */);
+  backward_euler_update_vel(/* {{backward_euler_update_vel_args_call}} */);
 }
 
 }

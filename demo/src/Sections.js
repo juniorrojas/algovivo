@@ -47,27 +47,27 @@ This implementation defines six energy functions. Some are plain potential energ
 
 <ul>
 <li>
-  <a href="https://github.com/juniorrojas/algovivo/blob/main/csrc/algovivo/potential/triangles.h">triangles</a>
+  <a href="https://github.com/juniorrojas/algovivo/blob/main/csrc/potential/gravity.h">gravity</a>
   <span class="code">E(pos)</span>
 </li>
 <li>
-  <a href="https://github.com/juniorrojas/algovivo/blob/main/csrc/algovivo/potential/muscles.h">muscles</a>
+  <a href="https://github.com/juniorrojas/algovivo/blob/main/csrc/potential/collision.h">collision</a>
+  <span class="code">E(pos)</span>
+</li>
+<li>
+  <a href="https://github.com/juniorrojas/algovivo/blob/main/csrc/potential/muscles.h">muscles</a>
   <span class="code">E(pos, a)</span>
 </li>
 <li>
-  <a href="https://github.com/juniorrojas/algovivo/blob/main/csrc/algovivo/potential/gravity.h">gravity</a>
+  <a href="https://github.com/juniorrojas/algovivo/blob/main/csrc/potential/triangles.h">triangles</a>
   <span class="code">E(pos)</span>
 </li>
 <li>
-  <a href="https://github.com/juniorrojas/algovivo/blob/main/csrc/algovivo/potential/collision.h">collision</a>
-  <span class="code">E(pos)</span>
-</li>
-<li>
-  <a href="https://github.com/juniorrojas/algovivo/blob/main/csrc/algovivo/potential/friction.h">friction</a>
+  <a href="https://github.com/juniorrojas/algovivo/blob/main/csrc/potential/friction.h">friction</a>
   <span class="code">E(pos, pos0)</span>
 </li>
 <li>
-  <a href="https://github.com/juniorrojas/algovivo/blob/main/csrc/algovivo/dynamics/inertia.h">inertia</a>
+  <a href="https://github.com/juniorrojas/algovivo/blob/main/csrc/dynamics/inertia.h">inertia</a>
   <span class="code">E(pos, pos0, vel0)</span>
 </li>
 </ul>`

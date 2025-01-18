@@ -11,6 +11,8 @@ class BackwardEuler:
         self.add_muscles_args()
         self.add_triangles_args()
         self.add_friction_args()
+
+        self.loss.args.add_arg("float*", "pos", differentiable=True)
         
         self.loss_body = """const auto space_dim = 2;
 
@@ -29,7 +31,6 @@ float potential_energy = 0.0;"""
     def add_vertices_args(self):
         args = self.loss.args
         args.add_arg("int", "num_vertices")
-        args.add_arg("float*", "pos", differentiable=True)
         args.add_arg("float*", "pos0")
         args.add_arg("float*", "vel0")
         args.add_arg("float", "vertex_mass")
