@@ -14,8 +14,9 @@
   system.backward(pos, pos_grad); \
   if (fixed_vertex_id > -1) { \
     const auto offset = fixed_vertex_id * space_dim; \
-    pos_grad[offset    ] = 0.0; \
-    pos_grad[offset + 1] = 0.0; \
+    for (int j = 0; j < space_dim; j++) { \
+      pos_grad[offset + j] = 0.0; \
+    } \
   } \
 }
 
