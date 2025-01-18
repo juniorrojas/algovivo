@@ -11,5 +11,3 @@
 #include "dynamics/backward_euler.h"
 
 #include "frame_projection.h"
-
-// #include "system.h"
