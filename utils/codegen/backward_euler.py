@@ -111,7 +111,35 @@ for (int i = 0; i < num_triangles; i++) {
 }"""
 
     def add_vertex_energy(self):
-        # gravity, collision, friction
+        # gravity
+        self.loss_body += """
+for (int i = 0; i < num_vertices; i++) {
+  const auto offset = space_dim * i;
+
+  const auto px = pos[offset    ];
+  const auto py = pos[offset + 1];
+
+  accumulate_gravity_energy(
+    potential_energy,
+    py,
+    vertex_mass,
+    g
+  );
+}
+"""
+        # collision
+        self.loss_body += """
+for (int i = 0; i < num_vertices; i++) {
+  const auto offset = space_dim * i;
+  const auto py = pos[offset + 1];
+
+  accumulate_collision_energy(
+    potential_energy,
+    py
+  );
+}
+"""
+        # friction
         self.loss_body += """
 for (int i = 0; i < num_vertices; i++) {
   const auto offset = space_dim * i;
@@ -121,18 +149,6 @@ for (int i = 0; i < num_vertices; i++) {
 
   const auto p0x = pos0[offset    ];
   const auto p0y = pos0[offset + 1];
-
-  accumulate_gravity_energy(
-    potential_energy,
-    py,
-    vertex_mass,
-    g
-  );
-
-  accumulate_collision_energy(
-    potential_energy,
-    py
-  );
 
   accumulate_friction_energy(
     potential_energy,
