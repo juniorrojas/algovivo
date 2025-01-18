@@ -27,7 +27,7 @@ class System {
 
     this._vertices = new Vertices({ ten: this.ten, vertexMass: args.vertexMass, spaceDim: this.spaceDim });
     this._muscles = new Muscles({ ten: this.ten });
-    this._triangles = new Triangles({ ten: this.ten });
+    this._triangles = new Triangles({ ten: this.ten, simplexOrder: this.spaceDim + 1 });
 
     this.friction = { k: Math.fround(300) }
   }
