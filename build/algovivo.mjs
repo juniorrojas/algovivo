@@ -3,7 +3,7 @@
  * (c) 2023 Junior Rojas
  * License: MIT
  * 
- * Built from commit 2a4a8345bd50a65301ead480613c6b546be2d0c5
+ * Built from commit 876a7db39ad2917d838a69c2a2ae200216eacd9b
  */
 function getDefaultExportFromCjs (x) {
 	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
@@ -1275,7 +1275,8 @@ class Vertices$2 {
     if (ten == null) throw new Error("ten required");
     this.ten = ten;
 
-    this.spaceDim = 2;
+    this.spaceDim = args.spaceDim ?? 2;
+
     this.vertexMass = args.vertexMass ?? 6.0714287757873535;
 
     this.pos0 = null;
@@ -1290,7 +1291,11 @@ class Vertices$2 {
   }
 
   getVertexPos(i) {
-    return [this.pos.get([i, 0]), this.pos.get([i, 1])];
+    const pos = [];
+    for (let j = 0; j < this.spaceDim; j++) {
+      pos.push(this.pos.get([i, j]));
+    }
+    return pos;
   }
 
   set fixedVertexId(value) {
@@ -1408,7 +1413,7 @@ class Muscles$1 {
     this.ten = ten;
 
     this.muscles = null;
-    this.k = 90;
+    this.k = Math.fround(90);
     this.l0 = null;
     this.a = null;
   }
@@ -1634,9 +1639,9 @@ class System$1 {
     this.h = 0.033;
     this.g = 9.8;
 
-    this.spaceDim = 2;
+    this.spaceDim = args.spaceDim ?? 2;
 
-    this._vertices = new Vertices$1({ ten: this.ten, vertexMass: args.vertexMass });
+    this._vertices = new Vertices$1({ ten: this.ten, vertexMass: args.vertexMass, spaceDim: this.spaceDim });
     this._muscles = new Muscles({ ten: this.ten });
     this._triangles = new Triangles({ ten: this.ten });
 
@@ -1812,6 +1817,7 @@ class System$1 {
     const vertexMass = this.vertexMass;
 
     this.wasmInstance.exports.backward_euler_update(
+      this.spaceDim,
       this.g,
       this.h,
 
