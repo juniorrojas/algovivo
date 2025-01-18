@@ -20,8 +20,8 @@ class Triangles {
   }
 
   get numElements() {
-    if (this.triangles == null) return 0;
-    return this.triangles.u32().length / this.simplexOrder;
+    if (this.indices == null) return 0;
+    return this.indices.u32().length / this.simplexOrder;
   }
 
   get numTriangles() {
