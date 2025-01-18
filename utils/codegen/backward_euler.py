@@ -20,39 +20,7 @@ float potential_energy = 0.0;"""
         self.add_inertia()
         self.add_muscles()
         self.add_triangles()
-
-        # vertices (gravity, collision, friction)
-        self.loss_body += """
-for (int i = 0; i < num_vertices; i++) {
-  const auto offset = space_dim * i;
-
-  const auto px = pos[offset    ];
-  const auto py = pos[offset + 1];
-
-  const auto p0x = pos0[offset    ];
-  const auto p0y = pos0[offset + 1];
-
-  accumulate_gravity_energy(
-    potential_energy,
-    py,
-    vertex_mass,
-    g
-  );
-
-  accumulate_collision_energy(
-    potential_energy,
-    py
-  );
-
-  accumulate_friction_energy(
-    potential_energy,
-    px,
-    p0x, p0y,
-    h,
-    k_friction
-  );
-}
-"""
+        self.add_vertex_energy()
 
         self.loss_body += "return 0.5 * inertial_energy + h * h * potential_energy;"
 
@@ -141,3 +109,37 @@ for (int i = 0; i < num_triangles; i++) {
     mu, lambda
   );
 }"""
+
+    def add_vertex_energy(self):
+        # gravity, collision, friction
+        self.loss_body += """
+for (int i = 0; i < num_vertices; i++) {
+  const auto offset = space_dim * i;
+
+  const auto px = pos[offset    ];
+  const auto py = pos[offset + 1];
+
+  const auto p0x = pos0[offset    ];
+  const auto p0y = pos0[offset + 1];
+
+  accumulate_gravity_energy(
+    potential_energy,
+    py,
+    vertex_mass,
+    g
+  );
+
+  accumulate_collision_energy(
+    potential_energy,
+    py
+  );
+
+  accumulate_friction_energy(
+    potential_energy,
+    px,
+    p0x, p0y,
+    h,
+    k_friction
+  );
+}
+"""
