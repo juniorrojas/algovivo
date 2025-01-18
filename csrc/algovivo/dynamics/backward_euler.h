@@ -10,7 +10,7 @@ void backward_euler_update_pos(
   T system,
   int num_vertices, int space_dim, const float* pos0, const float* vel, float h, float* pos, float* pos_grad, float* pos_tmp, int fixed_vertex_id
 ) {
-  optim_init();
+  _optim_init();
   const auto max_optim_iters = 100;
   for (int i = 0; i < max_optim_iters; i++) {
     loss_backward();

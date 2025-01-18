@@ -10,7 +10,7 @@ void backward_euler_update_pos(
   T system,
   /* {{backward_euler_update_pos_args}} */
 ) {
-  optim_init();
+  _optim_init();
   const auto max_optim_iters = 100;
   for (int i = 0; i < max_optim_iters; i++) {
     loss_backward();
