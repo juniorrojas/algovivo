@@ -12,7 +12,6 @@ void backward_euler_update_pos(
 ) {
   const auto pos0 = system.pos0;
   const auto vel = system.vel0;
-  const auto fixed_vertex_id = system.fixed_vertex_id;
   const auto h = system.h;
 
   optim_init();
@@ -52,7 +51,8 @@ void backward_euler_update(
     system.num_vertices,
     space_dim,
     pos1,
-    pos_grad, pos_tmp
+    pos_grad, pos_tmp,
+    system.fixed_vertex_id
   );
   backward_euler_update_vel(
     system.num_vertices,
