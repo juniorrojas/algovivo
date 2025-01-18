@@ -8,16 +8,9 @@ namespace algovivo {
 template <typename T>
 void backward_euler_update_pos(
   T system,
-  float* pos, float* pos_grad, float* pos_tmp
+  int num_vertices, int space_dim, const float* pos0, const float* vel, float h, float* pos, float* pos_grad, float* pos_tmp, int fixed_vertex_id
 ) {
-  const auto space_dim = 2;
-  const auto num_vertices = system.num_vertices;
-  const auto pos0 = system.pos0;
-  const auto vel = system.vel0;
-  const auto fixed_vertex_id = system.fixed_vertex_id;
-  const auto h = system.h;
-
-  optim_init();
+  _optim_init();
   const auto max_optim_iters = 100;
   for (int i = 0; i < max_optim_iters; i++) {
     loss_backward();
@@ -28,9 +21,8 @@ void backward_euler_update_pos(
 
 extern "C"
 void backward_euler_update_vel(
-  int num_vertices, const float* pos0, const float* vel0, float* pos1, float* vel1, float h
+  int num_vertices, int space_dim, const float* pos0, const float* vel0, float* pos1, float* vel1, float h
 ) {
-  const auto space_dim = 2;
   // vel1 = (pos1 - pos0) / h
   add_scaled(
     num_vertices * space_dim,
@@ -49,13 +41,21 @@ void backward_euler_update(
   T system,
   float* pos1, float* vel1, float* pos_grad, float* pos_tmp
 ) {
+  const auto space_dim = 2;
   backward_euler_update_pos(
     system,
+    system.num_vertices,
+    space_dim,
+    system.pos0,
+    system.vel0,
+    system.h,
     pos1,
-    pos_grad, pos_tmp
+    pos_grad, pos_tmp,
+    system.fixed_vertex_id
   );
   backward_euler_update_vel(
     system.num_vertices,
+    space_dim,
     system.pos0,
     system.vel0,
     pos1, vel1,

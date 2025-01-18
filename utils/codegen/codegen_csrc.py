@@ -8,10 +8,7 @@ from backward_euler import BackwardEuler
 
 backward_euler = BackwardEuler()
 
-backward_euler_loss = backward_euler.loss
-
-backward_euler_loss_grad = backward_euler_loss.make_backward_pass()
-backward_euler_loss_grad_args = backward_euler_loss_grad.args
+backward_euler_loss_grad = backward_euler.loss.make_backward_pass()
 
 system_attrs = codegen.Args()
 for arg in backward_euler.loss.args:
@@ -36,17 +33,17 @@ for arg in backward_euler.loss.args:
 enzyme_args_call = backward_euler.loss.args.codegen_enzyme_call()
 backward_euler_loss_grad_body = backward_euler_loss_grad.codegen_body()
 
-with open(this_dirpath.joinpath("system.template.h")) as f:
+with open(this_dirpath.joinpath("templates", "system.template.h")) as f:
     template = f.read()
     
     src = template
 
     src = (src
         .replace("// {{backward_euler_loss_body}}", backward_euler.loss_body)
-        .replace("// {{backward_euler_loss_args}}", backward_euler_loss.args.codegen_fun_signature())
+        .replace("// {{backward_euler_loss_args}}", backward_euler.loss.args.codegen_fun_signature())
         .replace("// {{backward_euler_loss_args_call}}", backward_euler.loss.args.codegen_call())
-        .replace("// {{backward_euler_loss_grad_args}}", backward_euler_loss_grad_args.codegen_fun_signature())
-        .replace("// {{backward_euler_loss_grad_args_call}}", backward_euler_loss_grad_args.codegen_call())
+        .replace("// {{backward_euler_loss_grad_args}}", backward_euler_loss_grad.args.codegen_fun_signature())
+        .replace("// {{backward_euler_loss_grad_args_call}}", backward_euler_loss_grad.args.codegen_call())
         .replace("// {{backward_euler_loss_grad_body}}", indent(backward_euler_loss_grad_body))
     )
 
@@ -64,11 +61,17 @@ with open(output_filepath, "w") as f:
 print(f"Saved to {output_filepath}")
 
 backward_euler_update_pos_args = codegen.Args()
+backward_euler_update_pos_args.add_arg("int", "num_vertices")
+backward_euler_update_pos_args.add_arg("int", "space_dim")
+backward_euler_update_pos_args.add_arg("float*", "pos0")
+backward_euler_update_pos_args.add_arg("float*", "vel")
+backward_euler_update_pos_args.add_arg("float", "h")
 backward_euler_update_pos_args.add_arg("float*", "pos", mut=True)
 backward_euler_update_pos_args.add_arg("float*", "pos_grad", mut=True)
 backward_euler_update_pos_args.add_arg("float*", "pos_tmp", mut=True)
+backward_euler_update_pos_args.add_arg("int", "fixed_vertex_id")
 
-with open(this_dirpath.joinpath("backward_euler.template.h")) as f:
+with open(this_dirpath.joinpath("templates", "backward_euler.template.h")) as f:
     template = f.read()
 
     src = template.replace(
@@ -77,7 +80,7 @@ with open(this_dirpath.joinpath("backward_euler.template.h")) as f:
     )
     src = src.replace(
         "/* {{backward_euler_update_vel_args}} */",
-        "int num_vertices, const float* pos0, const float* vel0, float* pos1, float* vel1, float h"
+        "int num_vertices, int space_dim, const float* pos0, const float* vel0, float* pos1, float* vel1, float h"
     )
     src = src.replace(
         "/* {{backward_euler_update_args}} */",
