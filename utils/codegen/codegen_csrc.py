@@ -10,15 +10,11 @@ backward_euler = BackwardEuler()
 
 backward_euler_loss_grad = backward_euler.loss.make_backward_pass()
 
-system_attrs = codegen.Args()
+update_args = codegen.Args()
 for arg in backward_euler.loss.args:
     if not arg.differentiable:
-        system_attrs.add_arg(arg.t, arg.name)
-system_attrs.add_arg("int", "fixed_vertex_id")
-
-update_args = codegen.Args()
-for arg in system_attrs.args:
-    update_args.add_arg(arg.t, arg.name)
+        update_args.add_arg(arg.t, arg.name)
+update_args.add_arg("int", "fixed_vertex_id")
 
 for arg in backward_euler.loss.args:
     if arg.differentiable:
