@@ -8,10 +8,7 @@ from backward_euler import BackwardEuler
 
 backward_euler = BackwardEuler()
 
-backward_euler_loss = backward_euler.loss
-
-backward_euler_loss_grad = backward_euler_loss.make_backward_pass()
-backward_euler_loss_grad_args = backward_euler_loss_grad.args
+backward_euler_loss_grad = backward_euler.loss.make_backward_pass()
 
 system_attrs = codegen.Args()
 for arg in backward_euler.loss.args:
@@ -43,10 +40,10 @@ with open(this_dirpath.joinpath("templates", "system.template.h")) as f:
 
     src = (src
         .replace("// {{backward_euler_loss_body}}", backward_euler.loss_body)
-        .replace("// {{backward_euler_loss_args}}", backward_euler_loss.args.codegen_fun_signature())
+        .replace("// {{backward_euler_loss_args}}", backward_euler.loss.args.codegen_fun_signature())
         .replace("// {{backward_euler_loss_args_call}}", backward_euler.loss.args.codegen_call())
-        .replace("// {{backward_euler_loss_grad_args}}", backward_euler_loss_grad_args.codegen_fun_signature())
-        .replace("// {{backward_euler_loss_grad_args_call}}", backward_euler_loss_grad_args.codegen_call())
+        .replace("// {{backward_euler_loss_grad_args}}", backward_euler_loss_grad.args.codegen_fun_signature())
+        .replace("// {{backward_euler_loss_grad_args_call}}", backward_euler_loss_grad.args.codegen_call())
         .replace("// {{backward_euler_loss_grad_body}}", indent(backward_euler_loss_grad_body))
     )
 
