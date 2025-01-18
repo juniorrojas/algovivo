@@ -25,7 +25,6 @@ static void backward_euler_loss_grad(
 // {{backward_euler_loss_grad_body}}
 }
 
-
 void backward_euler_update_pos(
   /* {{backward_euler_update_pos_args}} */
 ) {

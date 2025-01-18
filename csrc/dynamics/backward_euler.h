@@ -125,7 +125,6 @@ static void backward_euler_loss_grad(
   );
 }
 
-
 void backward_euler_update_pos(
   float g, float h, int num_vertices, const float* pos0, const float* vel0, float vertex_mass, int num_muscles, const int* muscles, float k, const float* a, const float* l0, int num_triangles, const int* triangles, const float* rsi, float mu, float lambda, float k_friction, float* pos, float* pos_grad, float* pos_tmp, int fixed_vertex_id
 ) {

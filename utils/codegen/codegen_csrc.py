@@ -54,9 +54,11 @@ for arg in backward_euler.loss.args:
     if not arg.differentiable:
         backward_euler_update_pos_args.add_arg(arg.t, arg.name)
 
-backward_euler_update_pos_args.add_arg("float*", "pos", mut=True)
-backward_euler_update_pos_args.add_arg("float*", "pos_grad", mut=True)
-backward_euler_update_pos_args.add_arg("float*", "pos_tmp", mut=True)
+for arg in backward_euler.loss.args:
+    if arg.differentiable:
+        backward_euler_update_pos_args.add_arg(arg.t, f"{arg.name}", mut=True)
+        backward_euler_update_pos_args.add_arg(arg.t, f"{arg.name}_grad", mut=True)
+        backward_euler_update_pos_args.add_arg(arg.t, f"{arg.name}_tmp", mut=True)
 backward_euler_update_pos_args.add_arg("int", "fixed_vertex_id")
 
 backward_euler_update_vel_args = codegen.Args()
@@ -82,7 +84,7 @@ with open(this_dirpath.joinpath("templates", "backward_euler.template.h")) as f:
         .replace("/* {{backward_euler_update_vel_args}} */", backward_euler_update_vel_args.codegen_fun_signature())
         .replace("/* {{backward_euler_update_vel_args_call}} */", backward_euler_update_vel_args.codegen_call())
     )
-    
+
     src = src.replace(
         "/* {{backward_euler_update_args}} */",
         indent(update_args.codegen_fun_signature())
