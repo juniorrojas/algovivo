@@ -73,16 +73,16 @@ with open(this_dirpath.joinpath("templates", "backward_euler.template.h")) as f:
 
     src = template
 
-    src = (src.replace(
-        "/* {{backward_euler_update_pos_args}} */",
-        backward_euler_update_pos_args.codegen_fun_signature()
-        )
+    src = (src
+        .replace("/* {{backward_euler_update_pos_args}} */", backward_euler_update_pos_args.codegen_fun_signature())
         .replace("/* {{backward_euler_update_pos_args_call}} */", backward_euler_update_pos_args.codegen_call().replace(", pos,", ", pos1,"))
     )
+
     src = (src
         .replace("/* {{backward_euler_update_vel_args}} */", backward_euler_update_vel_args.codegen_fun_signature())
         .replace("/* {{backward_euler_update_vel_args_call}} */", backward_euler_update_vel_args.codegen_call())
     )
+    
     src = src.replace(
         "/* {{backward_euler_update_args}} */",
         indent(update_args.codegen_fun_signature())
