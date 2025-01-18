@@ -3,8 +3,9 @@
 #define optim_init() { \
   for (int i = 0; i < num_vertices; i++) { \
     const auto offset = i * space_dim; \
-    pos[offset    ] = pos0[offset    ] + h * vel[offset    ]; \
-    pos[offset + 1] = pos0[offset + 1] + h * vel[offset + 1]; \
+    for (int j = 0; j < space_dim; j++) { \
+      pos[offset + j] = pos0[offset + j] + h * vel[offset + j]; \
+    } \
   } \
 }
 
