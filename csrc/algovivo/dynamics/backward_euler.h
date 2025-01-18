@@ -46,16 +46,17 @@ void backward_euler_update(
   T system,
   float* pos1, float* vel1, float* pos_grad, float* pos_tmp
 ) {
+  const auto space_dim = 2;
   backward_euler_update_pos(
     system,
     system.num_vertices,
-    2,
+    space_dim,
     pos1,
     pos_grad, pos_tmp
   );
   backward_euler_update_vel(
     system.num_vertices,
-    2,
+    space_dim,
     system.pos0,
     system.vel0,
     pos1, vel1,
