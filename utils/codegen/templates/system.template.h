@@ -44,7 +44,7 @@ void backward_euler_update(
 
 // {{system_set}}
 
-  algovivo::backward_euler_update(
+  algovivo::_backward_euler_update(
     system,
     pos1, vel1,
     pos_grad, pos_tmp
