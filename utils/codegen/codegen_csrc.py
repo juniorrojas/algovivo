@@ -36,7 +36,7 @@ for arg in backward_euler.loss.args:
 enzyme_args_call = backward_euler.loss.args.codegen_enzyme_call()
 backward_euler_loss_grad_body = backward_euler_loss_grad.codegen_body()
 
-with open(this_dirpath.joinpath("system.template.h")) as f:
+with open(this_dirpath.joinpath("templates", "system.template.h")) as f:
     template = f.read()
     
     src = template
@@ -68,7 +68,7 @@ backward_euler_update_pos_args.add_arg("float*", "pos", mut=True)
 backward_euler_update_pos_args.add_arg("float*", "pos_grad", mut=True)
 backward_euler_update_pos_args.add_arg("float*", "pos_tmp", mut=True)
 
-with open(this_dirpath.joinpath("backward_euler.template.h")) as f:
+with open(this_dirpath.joinpath("templates", "backward_euler.template.h")) as f:
     template = f.read()
 
     src = template.replace(
