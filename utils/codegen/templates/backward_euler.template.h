@@ -10,8 +10,6 @@ void backward_euler_update_pos(
   T system,
   /* {{backward_euler_update_pos_args}} */
 ) {
-  const auto space_dim = 2;
-  const auto num_vertices = system.num_vertices;
   const auto pos0 = system.pos0;
   const auto vel = system.vel0;
   const auto fixed_vertex_id = system.fixed_vertex_id;
@@ -50,6 +48,8 @@ void backward_euler_update(
 ) {
   backward_euler_update_pos(
     system,
+    system.num_vertices,
+    2,
     pos1,
     pos_grad, pos_tmp
   );

@@ -8,10 +8,8 @@ namespace algovivo {
 template <typename T>
 void backward_euler_update_pos(
   T system,
-  float* pos, float* pos_grad, float* pos_tmp
+  int num_vertices, int space_dim, float* pos, float* pos_grad, float* pos_tmp
 ) {
-  const auto space_dim = 2;
-  const auto num_vertices = system.num_vertices;
   const auto pos0 = system.pos0;
   const auto vel = system.vel0;
   const auto fixed_vertex_id = system.fixed_vertex_id;
@@ -50,6 +48,8 @@ void backward_euler_update(
 ) {
   backward_euler_update_pos(
     system,
+    system.num_vertices,
+    2,
     pos1,
     pos_grad, pos_tmp
   );

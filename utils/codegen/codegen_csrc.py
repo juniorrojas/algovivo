@@ -61,6 +61,8 @@ with open(output_filepath, "w") as f:
 print(f"Saved to {output_filepath}")
 
 backward_euler_update_pos_args = codegen.Args()
+backward_euler_update_pos_args.add_arg("int", "num_vertices")
+backward_euler_update_pos_args.add_arg("int", "space_dim")
 backward_euler_update_pos_args.add_arg("float*", "pos", mut=True)
 backward_euler_update_pos_args.add_arg("float*", "pos_grad", mut=True)
 backward_euler_update_pos_args.add_arg("float*", "pos_tmp", mut=True)
