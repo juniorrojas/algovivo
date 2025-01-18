@@ -23,9 +23,9 @@ class System {
     this.h = 0.033;
     this.g = 9.8;
 
-    this.spaceDim = 2;
+    this.spaceDim = args.spaceDim ?? 2;
 
-    this._vertices = new Vertices({ ten: this.ten, vertexMass: args.vertexMass });
+    this._vertices = new Vertices({ ten: this.ten, vertexMass: args.vertexMass, spaceDim: this.spaceDim });
     this._muscles = new Muscles({ ten: this.ten });
     this._triangles = new Triangles({ ten: this.ten });
 
@@ -201,6 +201,7 @@ class System {
     const vertexMass = this.vertexMass;
 
     this.wasmInstance.exports.backward_euler_update(
+      this.spaceDim,
       this.g,
       this.h,
 
