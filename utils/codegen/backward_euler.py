@@ -3,7 +3,8 @@ import codegen
 class BackwardEuler:
     def __init__(self):
         self.loss = codegen.Fun("backward_euler_loss")
-        
+
+        self.loss.args.add_arg("int", "space_dim")
         self.loss.args.add_arg("float", "g")
         self.loss.args.add_arg("float", "h")
 
@@ -14,8 +15,7 @@ class BackwardEuler:
 
         self.loss.args.add_arg("float*", "pos", differentiable=True)
         
-        self.loss_body = """const auto space_dim = 2;
-
+        self.loss_body = """
 float inertial_energy = 0.0;
 float potential_energy = 0.0;"""
 
@@ -58,16 +58,15 @@ float potential_energy = 0.0;"""
     def add_inertia(self):
         self.loss_body += """
 for (int i = 0; i < num_vertices; i++) {
-  vec2_get(p, pos, i);
-  vec2_get(v, vel0, i);
-  vec2_get(p0, pos0, i);
   accumulate_inertial_energy(
     inertial_energy,
-    px, py,
-    vx, vy,
-    p0x, p0y,
+    i,
+    pos,
+    vel0,
+    pos0,
     h,
-    vertex_mass
+    vertex_mass,
+    space_dim
   );
 }"""
 
@@ -112,7 +111,35 @@ for (int i = 0; i < num_triangles; i++) {
 }"""
 
     def add_vertex_energy(self):
-        # gravity, collision, friction
+        # gravity
+        self.loss_body += """
+for (int i = 0; i < num_vertices; i++) {
+  const auto offset = space_dim * i;
+
+  const auto px = pos[offset    ];
+  const auto py = pos[offset + 1];
+
+  accumulate_gravity_energy(
+    potential_energy,
+    py,
+    vertex_mass,
+    g
+  );
+}
+"""
+        # collision
+        self.loss_body += """
+for (int i = 0; i < num_vertices; i++) {
+  const auto offset = space_dim * i;
+  const auto py = pos[offset + 1];
+
+  accumulate_collision_energy(
+    potential_energy,
+    py
+  );
+}
+"""
+        # friction
         self.loss_body += """
 for (int i = 0; i < num_vertices; i++) {
   const auto offset = space_dim * i;
@@ -122,18 +149,6 @@ for (int i = 0; i < num_vertices; i++) {
 
   const auto p0x = pos0[offset    ];
   const auto p0y = pos0[offset + 1];
-
-  accumulate_gravity_energy(
-    potential_energy,
-    py,
-    vertex_mass,
-    g
-  );
-
-  accumulate_collision_energy(
-    potential_energy,
-    py
-  );
 
   accumulate_friction_energy(
     potential_energy,

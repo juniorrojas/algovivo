@@ -28,7 +28,6 @@ static void backward_euler_loss_grad(
 void backward_euler_update_pos(
   /* {{backward_euler_update_pos_args}} */
 ) {
-  const auto space_dim = 2; \
   _optim_init();
   const auto max_optim_iters = 100;
   for (int i = 0; i < max_optim_iters; i++) {
@@ -59,7 +58,6 @@ extern "C"
 void backward_euler_update(
   /* {{backward_euler_update_args}} */
 ) {
-  const auto space_dim = 2;
   backward_euler_update_pos(/* {{backward_euler_update_pos_args_call}} */);
   backward_euler_update_vel(/* {{backward_euler_update_vel_args_call}} */);
 }

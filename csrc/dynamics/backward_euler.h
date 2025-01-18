@@ -14,23 +14,21 @@
 namespace algovivo {
 
 float backward_euler_loss(
-  float g, float h, int num_vertices, const float* pos0, const float* vel0, float vertex_mass, int num_muscles, const int* muscles, float k, const float* a, const float* l0, int num_triangles, const int* triangles, const float* rsi, float mu, float lambda, float k_friction, const float* pos
+  int space_dim, float g, float h, int num_vertices, const float* pos0, const float* vel0, float vertex_mass, int num_muscles, const int* muscles, float k, const float* a, const float* l0, int num_triangles, const int* triangles, const float* rsi, float mu, float lambda, float k_friction, const float* pos
 ) {
-  const auto space_dim = 2;
   
   float inertial_energy = 0.0;
   float potential_energy = 0.0;
   for (int i = 0; i < num_vertices; i++) {
-    vec2_get(p, pos, i);
-    vec2_get(v, vel0, i);
-    vec2_get(p0, pos0, i);
     accumulate_inertial_energy(
       inertial_energy,
-      px, py,
-      vx, vy,
-      p0x, p0y,
+      i,
+      pos,
+      vel0,
+      pos0,
       h,
-      vertex_mass
+      vertex_mass,
+      space_dim
     );
   }
   for (int i = 0; i < num_muscles; i++) {
@@ -73,20 +71,32 @@ float backward_euler_loss(
     const auto px = pos[offset    ];
     const auto py = pos[offset + 1];
   
-    const auto p0x = pos0[offset    ];
-    const auto p0y = pos0[offset + 1];
-  
     accumulate_gravity_energy(
       potential_energy,
       py,
       vertex_mass,
       g
     );
+  }
+  
+  for (int i = 0; i < num_vertices; i++) {
+    const auto offset = space_dim * i;
+    const auto py = pos[offset + 1];
   
     accumulate_collision_energy(
       potential_energy,
       py
     );
+  }
+  
+  for (int i = 0; i < num_vertices; i++) {
+    const auto offset = space_dim * i;
+  
+    const auto px = pos[offset    ];
+    const auto py = pos[offset + 1];
+  
+    const auto p0x = pos0[offset    ];
+    const auto p0y = pos0[offset + 1];
   
     accumulate_friction_energy(
       potential_energy,
@@ -100,10 +110,11 @@ float backward_euler_loss(
 }
 
 static void backward_euler_loss_grad(
-  float g, float h, int num_vertices, const float* pos0, const float* vel0, float vertex_mass, int num_muscles, const int* muscles, float k, const float* a, const float* l0, int num_triangles, const int* triangles, const float* rsi, float mu, float lambda, float k_friction, const float* pos, const float* pos_grad
+  int space_dim, float g, float h, int num_vertices, const float* pos0, const float* vel0, float vertex_mass, int num_muscles, const int* muscles, float k, const float* a, const float* l0, int num_triangles, const int* triangles, const float* rsi, float mu, float lambda, float k_friction, const float* pos, const float* pos_grad
 ) {
   __enzyme_autodiff(
     backward_euler_loss,
+    enzyme_const, space_dim,
     enzyme_const, g,
     enzyme_const, h,
     enzyme_const, num_vertices,
@@ -126,9 +137,8 @@ static void backward_euler_loss_grad(
 }
 
 void backward_euler_update_pos(
-  float g, float h, int num_vertices, const float* pos0, const float* vel0, float vertex_mass, int num_muscles, const int* muscles, float k, const float* a, const float* l0, int num_triangles, const int* triangles, const float* rsi, float mu, float lambda, float k_friction, float* pos, float* pos_grad, float* pos_tmp, int fixed_vertex_id
+  int space_dim, float g, float h, int num_vertices, const float* pos0, const float* vel0, float vertex_mass, int num_muscles, const int* muscles, float k, const float* a, const float* l0, int num_triangles, const int* triangles, const float* rsi, float mu, float lambda, float k_friction, float* pos, float* pos_grad, float* pos_tmp, int fixed_vertex_id
 ) {
-  const auto space_dim = 2; \
   _optim_init();
   const auto max_optim_iters = 100;
   for (int i = 0; i < max_optim_iters; i++) {
@@ -157,10 +167,9 @@ void backward_euler_update_vel(
 
 extern "C"
 void backward_euler_update(
-    float g, float h, int num_vertices, const float* pos0, const float* vel0, float vertex_mass, int num_muscles, const int* muscles, float k, const float* a, const float* l0, int num_triangles, const int* triangles, const float* rsi, float mu, float lambda, float k_friction, int fixed_vertex_id, float* pos1, float* pos_grad, float* pos_tmp, float* vel1
+    int space_dim, float g, float h, int num_vertices, const float* pos0, const float* vel0, float vertex_mass, int num_muscles, const int* muscles, float k, const float* a, const float* l0, int num_triangles, const int* triangles, const float* rsi, float mu, float lambda, float k_friction, int fixed_vertex_id, float* pos1, float* pos_grad, float* pos_tmp, float* vel1
 ) {
-  const auto space_dim = 2;
-  backward_euler_update_pos(g, h, num_vertices, pos0, vel0, vertex_mass, num_muscles, muscles, k, a, l0, num_triangles, triangles, rsi, mu, lambda, k_friction, pos1, pos_grad, pos_tmp, fixed_vertex_id);
+  backward_euler_update_pos(space_dim, g, h, num_vertices, pos0, vel0, vertex_mass, num_muscles, muscles, k, a, l0, num_triangles, triangles, rsi, mu, lambda, k_friction, pos1, pos_grad, pos_tmp, fixed_vertex_id);
   backward_euler_update_vel(num_vertices, space_dim, pos0, vel0, pos1, vel1, h);
 }
 

@@ -5,18 +5,25 @@ namespace algovivo {
 __attribute__((always_inline))
 void accumulate_inertial_energy(
   float &energy,
-  float px, float py,
-  float vx, float vy,
-  float p0x, float p0y,
-  float h,
-  float m
+  int i,
+  const float* pos,
+  const float* vel0,
+  const float* pos0,
+  const float h,
+  float m,
+  int space_dim
 ) {
-  const auto yx = p0x + h * vx;
-  const auto yy = p0y + h * vy;
-  const auto dx = px - yx;
-  const auto dy = py - yy;
-  const auto d = (dx * dx + dy * dy) * m;
-  energy += d;
+  float dy2 = 0;
+  for (int j = 0; j < space_dim; j++) {
+    const auto offset = space_dim * i;
+    const auto p0j = pos0[offset + j];
+    const auto v0j = vel0[offset + j];
+    const auto yj = p0j + h * v0j;
+    const auto pj = pos[offset + j];
+    const auto dj = pj - yj;
+    dy2 += dj * dj;
+  }
+  energy += m * dy2;
 }
 
 }

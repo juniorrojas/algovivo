@@ -5,7 +5,7 @@ class Muscles {
     this.ten = ten;
 
     this.muscles = null;
-    this.k = 90;
+    this.k = Math.fround(90);
     this.l0 = null;
     this.a = null;
   }

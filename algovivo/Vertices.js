@@ -4,7 +4,8 @@ class Vertices {
     if (ten == null) throw new Error("ten required");
     this.ten = ten;
 
-    this.spaceDim = 2;
+    this.spaceDim = args.spaceDim ?? 2;
+
     this.vertexMass = args.vertexMass ?? 6.0714287757873535;
 
     this.pos0 = null;
@@ -19,7 +20,11 @@ class Vertices {
   }
 
   getVertexPos(i) {
-    return [this.pos.get([i, 0]), this.pos.get([i, 1])];
+    const pos = [];
+    for (let j = 0; j < this.spaceDim; j++) {
+      pos.push(this.pos.get([i, j]));
+    }
+    return pos;
   }
 
   set fixedVertexId(value) {
