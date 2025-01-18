@@ -31,17 +31,21 @@ void optim_init(
 }
 
 #define break_if_optim_converged() { \
-  float grad_max_q = 0.0; \
-  float grad_q_tol = 0.5 * 1e-5; \
-  for (int k = 0; k < num_vertices; k++) { \
-    int offset = k * space_dim; \
-    float q = 0.0; \
-    for (int j = 0; j < space_dim; j++) { \
-      q += pos_grad[offset + j] * pos_grad[offset + j]; \
-    } \
-    if (q > grad_max_q) grad_max_q = q; \
-  } \
-  if (grad_max_q < grad_q_tol) break; \
+  if (optim_converged(space_dim, num_vertices, pos_grad)) break; \
+}
+
+bool optim_converged(int space_dim, int num_vertices, const float* pos_grad) {
+  float grad_max_q = 0.0;
+  float grad_q_tol = 0.5 * 1e-5;
+  for (int k = 0; k < num_vertices; k++) {
+    int offset = k * space_dim;
+    float q = 0.0;
+    for (int j = 0; j < space_dim; j++) {
+      q += pos_grad[offset + j] * pos_grad[offset + j];
+    }
+    if (q > grad_max_q) grad_max_q = q;
+  }
+  return grad_max_q < grad_q_tol;
 }
 
 #define optim_step() { \
