@@ -4,8 +4,7 @@ class Vertices {
     if (ten == null) throw new Error("ten required");
     this.ten = ten;
 
-    const spaceDim = this.spaceDim = args.spaceDim;
-    if (spaceDim == null) throw new Error("spaceDim required");
+    this.spaceDim = args.spaceDim ?? 2;
 
     this.vertexMass = args.vertexMass ?? 6.0714287757873535;
 
