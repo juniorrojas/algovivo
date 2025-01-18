@@ -15,9 +15,9 @@ test("update vel", async () => {
     [5, 6]
   ]);
   const pos1 = ten.tensor([
-    [1, 10],
-    [3, 4],
-    [5, 6]
+    [2, 10],
+    [5, 3],
+    [1, 16]
   ]);
   const vel1 = ten.zeros([numVertices, spaceDim]);
   const dt = 2;
@@ -29,8 +29,8 @@ test("update vel", async () => {
     dt
   );
   expect(vel1.toArray()).toBeCloseToArray([
-    [0, 4],
-    [0, 0],
-    [0, 0]
+    [0.5, 4],
+    [1, -0.5],
+    [-2, 5]
   ]);
 });
