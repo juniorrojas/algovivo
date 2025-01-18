@@ -28,9 +28,8 @@ void backward_euler_update_pos(
 
 extern "C"
 void backward_euler_update_vel(
-  int num_vertices, const float* pos0, const float* vel0, float* pos1, float* vel1, float h
+  int num_vertices, int space_dim, const float* pos0, const float* vel0, float* pos1, float* vel1, float h
 ) {
-  const auto space_dim = 2;
   // vel1 = (pos1 - pos0) / h
   add_scaled(
     num_vertices * space_dim,
@@ -56,6 +55,7 @@ void backward_euler_update(
   );
   backward_euler_update_vel(
     system.num_vertices,
+    2,
     system.pos0,
     system.vel0,
     pos1, vel1,

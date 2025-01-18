@@ -77,7 +77,7 @@ with open(this_dirpath.joinpath("backward_euler.template.h")) as f:
     )
     src = src.replace(
         "/* {{backward_euler_update_vel_args}} */",
-        "int num_vertices, const float* pos0, const float* vel0, float* pos1, float* vel1, float h"
+        "int num_vertices, int space_dim, const float* pos0, const float* vel0, float* pos1, float* vel1, float h"
     )
     src = src.replace(
         "/* {{backward_euler_update_args}} */",

@@ -30,7 +30,6 @@ extern "C"
 void backward_euler_update_vel(
   /* {{backward_euler_update_vel_args}} */
 ) {
-  const auto space_dim = 2;
   // vel1 = (pos1 - pos0) / h
   add_scaled(
     num_vertices * space_dim,
@@ -56,6 +55,7 @@ void backward_euler_update(
   );
   backward_euler_update_vel(
     system.num_vertices,
+    2,
     system.pos0,
     system.vel0,
     pos1, vel1,
