@@ -82,7 +82,7 @@ async function renderTrajectory(args = {}) {
       const stepData = await trajectoryData.loadStep(i);
       await window.evaluate(async (data) => {
         system.pos.set(data.pos);
-        system.a.set(data.a);
+        if (system.a != null) system.a.set(data.a);
         viewport.render();
       }, { pos: stepData.pos0, a: stepData.a0 });
       await recorder.saveFrame(window);
