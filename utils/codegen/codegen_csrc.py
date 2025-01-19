@@ -34,6 +34,8 @@ for arg in backward_euler.loss.args:
     if not arg.differentiable:
         forward_non_differentiable_args.add_arg(arg.t, arg.name)
 
+csrc_dirpath = this_dirpath.parent.parent.joinpath("csrc")
+
 with open(this_dirpath.joinpath("templates", "optim.template.h")) as f:
     template = f.read()
     
@@ -43,7 +45,7 @@ with open(this_dirpath.joinpath("templates", "optim.template.h")) as f:
         forward_non_differentiable_args.codegen_call()
     )
 
-output_filepath = this_dirpath.parent.parent.joinpath("csrc", "dynamics", "optim.h")
+output_filepath = csrc_dirpath.joinpath("dynamics", "optim.h")
 with open(output_filepath, "w") as f:
     f.write(src)
 print(f"Saved to {output_filepath}")
@@ -99,7 +101,7 @@ with open(this_dirpath.joinpath("templates", "backward_euler.template.h")) as f:
         .replace("// {{backward_euler_loss_grad_body}}", indent(backward_euler_loss_grad_body))
     )
 
-output_filepath = this_dirpath.parent.parent.joinpath("csrc", "dynamics", "backward_euler.h")
+output_filepath = csrc_dirpath.joinpath("dynamics", "backward_euler.h")
 with open(output_filepath, "w") as f:
     f.write(src)
 print(f"Saved to {output_filepath}")
