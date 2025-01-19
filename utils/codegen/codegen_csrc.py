@@ -2,11 +2,10 @@ from pathlib import Path
 import os
 this_filepath = Path(os.path.realpath(__file__))
 this_dirpath = this_filepath.parent
-import codegen
-from codegen import indent
-from backward_euler import BackwardEuler
+import algovivo_codegen as codegen
+from algovivo_codegen import indent
 
-backward_euler = BackwardEuler()
+backward_euler = codegen.BackwardEuler()
 
 backward_euler_loss_grad = backward_euler.loss.make_backward_pass()
 

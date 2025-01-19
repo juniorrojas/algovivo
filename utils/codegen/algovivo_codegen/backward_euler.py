@@ -1,8 +1,8 @@
-import codegen
+from .codegen import Fun, indent
 
 class BackwardEuler:
     def __init__(self):
-        self.loss = codegen.Fun("backward_euler_loss")
+        self.loss = Fun("backward_euler_loss")
 
         self.loss.args.add_arg("int", "space_dim")
         self.loss.args.add_arg("float", "g")
@@ -26,7 +26,7 @@ float potential_energy = 0.0;"""
 
         self.loss_body += "return 0.5 * inertial_energy + h * h * potential_energy;"
 
-        self.loss_body = codegen.indent(self.loss_body)
+        self.loss_body = indent(self.loss_body)
 
     def add_vertices_args(self):
         args = self.loss.args
@@ -86,7 +86,7 @@ for (int i = 0; i < num_muscles; i++) {
 }"""
 
     def add_triangles(self):
-        from neohookean import Neohookean
+        from .neohookean import Neohookean
         neohookean = Neohookean(
             simplex_order=3,
             simplex_name_singular="triangle"
