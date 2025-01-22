@@ -17,35 +17,37 @@ class VertexRenderer {
   constructor(args = {}) {
     this.system = args.system;
     this.renderVertexIds = args.renderVertexIds ?? false;
+    this.radius = args.radius ?? 0.028;
+    this.borderColor = args.borderColor ?? "black";
+    this.fillColor = args.fillColor ?? "white";
+    this.borderWidth = args.borderWidth ?? 0.023;
   }
 
-  makePointShaderFunction(args = {}) {
-    const radius = args.radius ?? 0.028;
-    const borderColor = args.borderColor ?? "black";
-    const fillColor = args.fillColor ?? "white";
-    const borderWidth = args.borderWidth ?? 0.023;
+  renderVertex(args = {}) {
+    const radius = this.radius;
+    const borderColor = this.borderColor;
+    const fillColor = this.fillColor;
+    const borderWidth = this.borderWidth;
   
-    return (args) => {
-      const ctx = args.ctx;
-      const p = args.p;
-      const camera = args.camera;
-      const scale = camera.inferScale();
-      
-      renderCircle(ctx, scale, p, radius, borderWidth, borderColor, fillColor);
+    const ctx = args.ctx;
+    const p = args.p;
+    const camera = args.camera;
+    const scale = camera.inferScale();
+    
+    renderCircle(ctx, scale, p, radius, borderWidth, borderColor, fillColor);
 
-      if (this.renderVertexIds) {
-        ctx.beginPath();
-        ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
-        ctx.arc(p[0], p[1], 0.1 * scale, 0, 2 * Math.PI);
-        ctx.fill();
-        
-        const fontSize = Math.floor(0.15 * scale);
-        ctx.font = `${fontSize}px monospace`;
-        ctx.fillStyle = "black";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText(args.id, p[0], p[1]);
-      }
+    if (this.renderVertexIds) {
+      ctx.beginPath();
+      ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+      ctx.arc(p[0], p[1], 0.1 * scale, 0, 2 * Math.PI);
+      ctx.fill();
+      
+      const fontSize = Math.floor(0.15 * scale);
+      ctx.font = `${fontSize}px monospace`;
+      ctx.fillStyle = "black";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(args.id, p[0], p[1]);
     }
   }
 
