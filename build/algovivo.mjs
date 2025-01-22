@@ -3,7 +3,7 @@
  * (c) 2023 Junior Rojas
  * License: MIT
  * 
- * Built from commit 876a7db39ad2917d838a69c2a2ae200216eacd9b
+ * Built from commit f44391b2027717cfa07d5baf6c72712d3fcb69d7
  */
 function getDefaultExportFromCjs (x) {
 	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
@@ -3237,35 +3237,37 @@ class VertexRenderer$1 {
   constructor(args = {}) {
     this.system = args.system;
     this.renderVertexIds = args.renderVertexIds ?? false;
+    this.radius = args.radius ?? 0.028;
+    this.borderColor = args.borderColor ?? "black";
+    this.fillColor = args.fillColor ?? "white";
+    this.borderWidth = args.borderWidth ?? 0.023;
   }
 
-  makePointShaderFunction(args = {}) {
-    const radius = args.radius ?? 0.028;
-    const borderColor = args.borderColor ?? "black";
-    const fillColor = args.fillColor ?? "white";
-    const borderWidth = args.borderWidth ?? 0.023;
+  renderVertex(args = {}) {
+    const radius = this.radius;
+    const borderColor = this.borderColor;
+    const fillColor = this.fillColor;
+    const borderWidth = this.borderWidth;
   
-    return (args) => {
-      const ctx = args.ctx;
-      const p = args.p;
-      const camera = args.camera;
-      const scale = camera.inferScale();
-      
-      renderCircle(ctx, scale, p, radius, borderWidth, borderColor, fillColor);
+    const ctx = args.ctx;
+    const p = args.p;
+    const camera = args.camera;
+    const scale = camera.inferScale();
+    
+    renderCircle(ctx, scale, p, radius, borderWidth, borderColor, fillColor);
 
-      if (this.renderVertexIds) {
-        ctx.beginPath();
-        ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
-        ctx.arc(p[0], p[1], 0.1 * scale, 0, 2 * Math.PI);
-        ctx.fill();
-        
-        const fontSize = Math.floor(0.15 * scale);
-        ctx.font = `${fontSize}px monospace`;
-        ctx.fillStyle = "black";
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.fillText(args.id, p[0], p[1]);
-      }
+    if (this.renderVertexIds) {
+      ctx.beginPath();
+      ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
+      ctx.arc(p[0], p[1], 0.1 * scale, 0, 2 * Math.PI);
+      ctx.fill();
+      
+      const fontSize = Math.floor(0.15 * scale);
+      ctx.font = `${fontSize}px monospace`;
+      ctx.fillStyle = "black";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(args.id, p[0], p[1]);
     }
   }
 
@@ -3463,9 +3465,16 @@ class SystemViewport {
 
     const headless = args.headless ?? false;
 
+    const borderColor = args.borderColor ?? "black";
+    const floorColor = borderColor;
+    const fillColor = args.fillColor ?? "white";
+    const gridColor = args.gridColor ?? "#acadad";
+
     this.vertices = new VertexRenderer({
       system: this.system,
-      renderVertexIds: args.renderVertexIds ?? false
+      renderVertexIds: args.renderVertexIds ?? false,
+      borderColor: borderColor,
+      fillColor: fillColor
     });
     this.lines = new LineRenderer({
       system: this.system
@@ -3484,11 +3493,6 @@ class SystemViewport {
 
     const camera = new mm2d$1.Camera();
     this.camera = camera;
-
-    const borderColor = args.borderColor ?? "black";
-    const floorColor = borderColor;
-    const fillColor = args.fillColor ?? "white";
-    const gridColor = args.gridColor ?? "#acadad";
     
     let activeMuscleColor = args.activeMuscleColor ?? [255, 0, 0];
     let inactiveMuscleColor = args.inactiveMuscleColor ?? [250, 190, 190];
@@ -3544,10 +3548,7 @@ class SystemViewport {
     const mesh = scene.addMesh();
     this.mesh = mesh;
     
-    mesh.pointShader.renderPoint = this.vertices.makePointShaderFunction({
-      borderColor: borderColor,
-      fillColor: fillColor
-    });
+    mesh.pointShader.renderPoint = (args) => { this.vertices.renderVertex(args); };
 
     mesh.triangleShader.renderTriangle = (args = {}) => {
       const ctx = args.ctx;
