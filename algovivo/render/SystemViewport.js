@@ -53,9 +53,16 @@ class SystemViewport {
 
     const headless = args.headless ?? false;
 
+    const borderColor = args.borderColor ?? "black";
+    const floorColor = borderColor;
+    const fillColor = args.fillColor ?? "white";
+    const gridColor = args.gridColor ?? "#acadad";
+
     this.vertices = new VertexRenderer({
       system: this.system,
-      renderVertexIds: args.renderVertexIds ?? false
+      renderVertexIds: args.renderVertexIds ?? false,
+      borderColor: borderColor,
+      fillColor: fillColor
     });
     this.lines = new LineRenderer({
       system: this.system
@@ -74,11 +81,6 @@ class SystemViewport {
 
     const camera = new mm2d.Camera();
     this.camera = camera;
-
-    const borderColor = args.borderColor ?? "black";
-    const floorColor = borderColor;
-    const fillColor = args.fillColor ?? "white";
-    const gridColor = args.gridColor ?? "#acadad";
     
     let activeMuscleColor = args.activeMuscleColor ?? [255, 0, 0];
     let inactiveMuscleColor = args.inactiveMuscleColor ?? [250, 190, 190];
@@ -134,10 +136,7 @@ class SystemViewport {
     const mesh = scene.addMesh();
     this.mesh = mesh;
     
-    mesh.pointShader.renderPoint = this.vertices.makePointShaderFunction({
-      borderColor: borderColor,
-      fillColor: fillColor
-    });
+    mesh.pointShader.renderPoint = (args) => { this.vertices.renderVertex(args); };
 
     mesh.triangleShader.renderTriangle = (args = {}) => {
       const ctx = args.ctx;
