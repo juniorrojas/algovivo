@@ -4,6 +4,7 @@ class Triangles {
     if (ten == null) throw new Error("ten required");
     this.ten = ten;
 
+    this.simplexOrder = args.simplexOrder ?? 3;
     this.triangles = null;
     this.rsi = null;
     this.mu = Math.fround(500);
@@ -18,9 +19,28 @@ class Triangles {
     return this.ten.mgr;
   }
 
+  get numElements() {
+    if (this.indices == null) return 0;
+    return this.indices.u32().length / this.simplexOrder;
+  }
+
   get numTriangles() {
-    if (this.triangles == null) return 0;
-    return this.triangles.u32().length / 3;
+    return this.numElements;
+  }
+
+  get indices() {
+    return this.triangles;
+  }
+
+  toStepArgs() {
+    const numElements = this.numElements;
+    return [
+      numElements,
+      numElements == 0 ? 0 : this.indices.ptr,
+      numElements == 0 ? 0 : this.rsi.ptr,
+      this.mu,
+      this.lambda
+    ]
   }
 
   set(args = {}) {
@@ -35,22 +55,22 @@ class Triangles {
     const mgr = this.memoryManager;
     const ten = this.ten;
     
-    const triangles = indices ? mgr.malloc32(numTriangles * 3) : this.triangles;
+    const triangles = indices ? mgr.malloc32(numTriangles * this.simplexOrder) : this.triangles;
     if (indices && this.triangles != null) this.triangles.free();
     this.triangles = triangles;
 
     if (indices != null) {
       const trianglesU32 = triangles.u32();
       indices.forEach((t, i) => {
-        const offset = i * 3;
-        trianglesU32[offset    ] = t[0];
-        trianglesU32[offset + 1] = t[1];
-        trianglesU32[offset + 2] = t[2];
+        const offset = i * this.simplexOrder;
+        for (let j = 0; j < this.simplexOrder; j++) {
+          trianglesU32[offset + j] = t[j];
+        }
       });
     }
     
     if (this.rsi != null) this.rsi.dispose();
-    this.rsi = ten.zeros([numTriangles, 2, 2]);
+    this.rsi = ten.zeros([numTriangles, this.simplexOrder - 1, this.simplexOrder - 1]);
     
     if (rsi == null) {
       let pos = null;

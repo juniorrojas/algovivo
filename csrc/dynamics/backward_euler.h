@@ -45,22 +45,25 @@ float backward_euler_loss(
   }
   for (int i = 0; i < num_triangles; i++) {
     const auto offset = i * 3;
-    const auto i1 = triangles[offset    ];
+    const auto i1 = triangles[offset + 0];
     const auto i2 = triangles[offset + 1];
     const auto i3 = triangles[offset + 2];
-  
+    
     const auto rsi_offset = 4 * i;
-    float rsi00 = rsi[rsi_offset    ];
-    float rsi01 = rsi[rsi_offset + 1];
-    float rsi10 = rsi[rsi_offset + 2];
-    float rsi11 = rsi[rsi_offset + 3];
+    const auto rsi00 = rsi[rsi_offset + 0];
+    const auto rsi01 = rsi[rsi_offset + 1];
+    const auto rsi10 = rsi[rsi_offset + 2];
+    const auto rsi11 = rsi[rsi_offset + 3];
+    
   
     accumulate_triangle_energy(
       potential_energy,
       pos,
       i1, i2, i3,
-      rsi00, rsi01,
-      rsi10, rsi11,
+  
+      rsi00, rsi01, 
+      rsi10, rsi11, 
+      
       1,
       mu, lambda
     );

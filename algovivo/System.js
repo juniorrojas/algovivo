@@ -27,7 +27,7 @@ class System {
 
     this._vertices = new Vertices({ ten: this.ten, vertexMass: args.vertexMass, spaceDim: this.spaceDim });
     this._muscles = new Muscles({ ten: this.ten });
-    this._triangles = new Triangles({ ten: this.ten });
+    this._triangles = new Triangles({ ten: this.ten, simplexOrder: this.spaceDim + 1 });
 
     this.friction = { k: Math.fround(300) }
   }
@@ -195,7 +195,6 @@ class System {
   step() {
     const numVertices = this.numVertices;
     const numMuscles = this.numMuscles;
-    const numTriangles = this.numTriangles;
 
     const fixedVertexId = this.vertices._fixedVertexId;
     const vertexMass = this.vertexMass;
@@ -216,11 +215,7 @@ class System {
       numMuscles == 0 ? 0 : this.a.ptr,
       numMuscles == 0 ? 0 : this.l0.ptr,
 
-      numTriangles,
-      numTriangles == 0 ? 0 : this.triangles.ptr,
-      numTriangles == 0 ? 0 : this._triangles.rsi.ptr,
-      this._triangles?.mu,
-      this._triangles?.lambda,
+      ...this._triangles.toStepArgs(),
 
       this.friction.k,
 

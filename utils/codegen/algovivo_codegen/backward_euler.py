@@ -1,8 +1,8 @@
-import codegen
+from .codegen import Fun, indent
 
 class BackwardEuler:
     def __init__(self):
-        self.loss = codegen.Fun("backward_euler_loss")
+        self.loss = Fun("backward_euler_loss")
 
         self.loss.args.add_arg("int", "space_dim")
         self.loss.args.add_arg("float", "g")
@@ -26,7 +26,7 @@ float potential_energy = 0.0;"""
 
         self.loss_body += "return 0.5 * inertial_energy + h * h * potential_energy;"
 
-        self.loss_body = codegen.indent(self.loss_body)
+        self.loss_body = indent(self.loss_body)
 
     def add_vertices_args(self):
         args = self.loss.args
@@ -86,29 +86,12 @@ for (int i = 0; i < num_muscles; i++) {
 }"""
 
     def add_triangles(self):
-        self.loss_body += """
-for (int i = 0; i < num_triangles; i++) {
-  const auto offset = i * 3;
-  const auto i1 = triangles[offset    ];
-  const auto i2 = triangles[offset + 1];
-  const auto i3 = triangles[offset + 2];
-
-  const auto rsi_offset = 4 * i;
-  float rsi00 = rsi[rsi_offset    ];
-  float rsi01 = rsi[rsi_offset + 1];
-  float rsi10 = rsi[rsi_offset + 2];
-  float rsi11 = rsi[rsi_offset + 3];
-
-  accumulate_triangle_energy(
-    potential_energy,
-    pos,
-    i1, i2, i3,
-    rsi00, rsi01,
-    rsi10, rsi11,
-    1,
-    mu, lambda
-  );
-}"""
+        from .neohookean import Neohookean
+        neohookean = Neohookean(
+            simplex_order=3,
+            simplex_name_singular="triangle"
+        )
+        self.loss_body += "\n" + neohookean.codegen_accumulate_simplices_energy()
 
     def add_vertex_energy(self):
         # gravity
