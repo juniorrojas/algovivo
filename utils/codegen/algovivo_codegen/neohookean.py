@@ -45,7 +45,7 @@ class Neohookean:
 
 {indent(indent(args_call_rsi))}
     1,
-    mu, lambda
+    mu[i], lambda[i]
   );
 }}"""
         return src
