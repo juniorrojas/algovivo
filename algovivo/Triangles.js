@@ -116,6 +116,14 @@ class Triangles {
       this.rsi.dispose();
       this.rsi = null;
     }
+    if (this.mu != null) {
+      this.mu.dispose();
+      this.mu = null;
+    }
+    if (this.lambda != null) {
+      this.lambda.dispose();
+      this.lambda = null;
+    }
   }
 }
 
