@@ -48,8 +48,8 @@ float potential_energy = 0.0;"""
         args.add_arg("int", "num_triangles")
         args.add_arg("int*", "triangles")
         args.add_arg("float*", "rsi")
-        args.add_arg("float", "mu")
-        args.add_arg("float", "lambda")
+        args.add_arg("float*", "mu")
+        args.add_arg("float*", "lambda")
 
     def add_friction_args(self):
         args = self.loss.args

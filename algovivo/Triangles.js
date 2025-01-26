@@ -7,8 +7,8 @@ class Triangles {
     this.simplexOrder = args.simplexOrder ?? 3;
     this.triangles = null;
     this.rsi = null;
-    this.mu = Math.fround(500);
-    this.lambda = Math.fround(50);
+    this.mu = null;
+    this.lambda = null;
   }
 
   get wasmInstance() {
@@ -38,9 +38,9 @@ class Triangles {
       numElements,
       numElements == 0 ? 0 : this.indices.ptr,
       numElements == 0 ? 0 : this.rsi.ptr,
-      this.mu,
-      this.lambda
-    ]
+      this.mu.ptr,
+      this.lambda.ptr
+    ];
   }
 
   set(args = {}) {
@@ -97,6 +97,14 @@ class Triangles {
     } else {
       this.rsi.set(rsi);
     }
+    
+    if (this.mu != null) this.mu.dispose();
+    this.mu = ten.zeros([numTriangles]);
+    this.mu.fill_(Math.fround(500));
+
+    if (this.lambda != null) this.lambda.dispose();
+    this.lambda = ten.zeros([numTriangles]);
+    this.lambda.fill_(Math.fround(50));
   }
 
   dispose() {
