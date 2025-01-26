@@ -38,8 +38,8 @@ class Triangles {
       numElements,
       numElements == 0 ? 0 : this.indices.ptr,
       numElements == 0 ? 0 : this.rsi.ptr,
-      this.mu.ptr,
-      this.lambda.ptr
+      numElements == 0 ? 0 : this.mu.ptr,
+      numElements == 0 ? 0 : this.lambda.ptr
     ];
   }
 
