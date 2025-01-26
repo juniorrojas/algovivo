@@ -3,7 +3,7 @@
  * (c) 2023 Junior Rojas
  * License: MIT
  * 
- * Built from commit f44391b2027717cfa07d5baf6c72712d3fcb69d7
+ * Built from commit f9d11d2df5f7539e5d1957136d7e7fd76aaf44d4
  */
 function getDefaultExportFromCjs (x) {
 	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
@@ -1525,10 +1525,11 @@ class Triangles$1 {
     if (ten == null) throw new Error("ten required");
     this.ten = ten;
 
+    this.simplexOrder = args.simplexOrder ?? 3;
     this.triangles = null;
     this.rsi = null;
-    this.mu = Math.fround(500);
-    this.lambda = Math.fround(50);
+    this.mu = null;
+    this.lambda = null;
   }
 
   get wasmInstance() {
@@ -1539,9 +1540,28 @@ class Triangles$1 {
     return this.ten.mgr;
   }
 
+  get numElements() {
+    if (this.indices == null) return 0;
+    return this.indices.u32().length / this.simplexOrder;
+  }
+
   get numTriangles() {
-    if (this.triangles == null) return 0;
-    return this.triangles.u32().length / 3;
+    return this.numElements;
+  }
+
+  get indices() {
+    return this.triangles;
+  }
+
+  toStepArgs() {
+    const numElements = this.numElements;
+    return [
+      numElements,
+      numElements == 0 ? 0 : this.indices.ptr,
+      numElements == 0 ? 0 : this.rsi.ptr,
+      numElements == 0 ? 0 : this.mu.ptr,
+      numElements == 0 ? 0 : this.lambda.ptr
+    ];
   }
 
   set(args = {}) {
@@ -1556,22 +1576,22 @@ class Triangles$1 {
     const mgr = this.memoryManager;
     const ten = this.ten;
     
-    const triangles = indices ? mgr.malloc32(numTriangles * 3) : this.triangles;
+    const triangles = indices ? mgr.malloc32(numTriangles * this.simplexOrder) : this.triangles;
     if (indices && this.triangles != null) this.triangles.free();
     this.triangles = triangles;
 
     if (indices != null) {
       const trianglesU32 = triangles.u32();
       indices.forEach((t, i) => {
-        const offset = i * 3;
-        trianglesU32[offset    ] = t[0];
-        trianglesU32[offset + 1] = t[1];
-        trianglesU32[offset + 2] = t[2];
+        const offset = i * this.simplexOrder;
+        for (let j = 0; j < this.simplexOrder; j++) {
+          trianglesU32[offset + j] = t[j];
+        }
       });
     }
     
     if (this.rsi != null) this.rsi.dispose();
-    this.rsi = ten.zeros([numTriangles, 2, 2]);
+    this.rsi = ten.zeros([numTriangles, this.simplexOrder - 1, this.simplexOrder - 1]);
     
     if (rsi == null) {
       let pos = null;
@@ -1598,6 +1618,14 @@ class Triangles$1 {
     } else {
       this.rsi.set(rsi);
     }
+    
+    if (this.mu != null) this.mu.dispose();
+    this.mu = ten.zeros([numTriangles]);
+    this.mu.fill_(Math.fround(500));
+
+    if (this.lambda != null) this.lambda.dispose();
+    this.lambda = ten.zeros([numTriangles]);
+    this.lambda.fill_(Math.fround(50));
   }
 
   dispose() {
@@ -1608,6 +1636,14 @@ class Triangles$1 {
     if (this.rsi != null) {
       this.rsi.dispose();
       this.rsi = null;
+    }
+    if (this.mu != null) {
+      this.mu.dispose();
+      this.mu = null;
+    }
+    if (this.lambda != null) {
+      this.lambda.dispose();
+      this.lambda = null;
     }
   }
 }
@@ -1643,7 +1679,7 @@ class System$1 {
 
     this._vertices = new Vertices$1({ ten: this.ten, vertexMass: args.vertexMass, spaceDim: this.spaceDim });
     this._muscles = new Muscles({ ten: this.ten });
-    this._triangles = new Triangles({ ten: this.ten });
+    this._triangles = new Triangles({ ten: this.ten, simplexOrder: this.spaceDim + 1 });
 
     this.friction = { k: Math.fround(300) };
   }
@@ -1811,7 +1847,6 @@ class System$1 {
   step() {
     const numVertices = this.numVertices;
     const numMuscles = this.numMuscles;
-    const numTriangles = this.numTriangles;
 
     const fixedVertexId = this.vertices._fixedVertexId;
     const vertexMass = this.vertexMass;
@@ -1832,11 +1867,7 @@ class System$1 {
       numMuscles == 0 ? 0 : this.a.ptr,
       numMuscles == 0 ? 0 : this.l0.ptr,
 
-      numTriangles,
-      numTriangles == 0 ? 0 : this.triangles.ptr,
-      numTriangles == 0 ? 0 : this._triangles.rsi.ptr,
-      this._triangles?.mu,
-      this._triangles?.lambda,
+      ...this._triangles.toStepArgs(),
 
       this.friction.k,
 
