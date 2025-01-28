@@ -26,7 +26,7 @@ class System {
     this.spaceDim = args.spaceDim ?? 2;
 
     this.vertices = new Vertices({ ten: this.ten, vertexMass: args.vertexMass, spaceDim: this.spaceDim });
-    this._muscles = new Muscles({ ten: this.ten });
+    this.muscles = new Muscles({ ten: this.ten });
     this._triangles = new Triangles({ ten: this.ten, simplexOrder: this.spaceDim + 1 });
 
     this.friction = { k: Math.fround(300) }
@@ -69,11 +69,11 @@ class System {
   }
 
   get k() {
-    return this._muscles.k;
+    return this.muscles.k;
   }
 
   set k(value) {
-    this._muscles.k = value;
+    this.muscles.k = value;
   }
 
   get pos0() {
@@ -101,31 +101,23 @@ class System {
   }
 
   get numMuscles() {
-    return this._muscles.numMuscles;
-  }
-
-  get muscles() {
-    return this._muscles.muscles;
-  }
-
-  set muscles(value) {
-    this._muscles.muscles = value;
+    return this.muscles.numMuscles;
   }
 
   get a() {
-    return this._muscles.a;
+    return this.muscles.a;
   }
 
   set a(value) {
-    this._muscles.a = value;
+    this.muscles.a = value;
   }
 
   get l0() {
-    return this._muscles.l0;
+    return this.muscles.l0;
   }
 
   set l0(value) {
-    this._muscles.l0 = value;
+    this.muscles.l0 = value;
   }
 
   setVertices(pos) {
@@ -133,7 +125,7 @@ class System {
   }
 
   setMuscles(args = {}) {
-    this._muscles.set({ ...args, pos: args.pos ?? this.pos0 });
+    this.muscles.set({ ...args, pos: args.pos ?? this.pos0 });
   }
 
   setTriangles(args = {}) {
@@ -205,7 +197,7 @@ class System {
       numVertices == 0 ? 0 : this.vel0.ptr,
       vertexMass,
 
-      ...this._muscles.toStepArgs(),
+      ...this.muscles.toStepArgs(),
 
       ...this._triangles.toStepArgs(),
 
@@ -227,7 +219,7 @@ class System {
 
   dispose() {
     this.vertices.dispose();
-    this._muscles.dispose();
+    this.muscles.dispose();
     this._triangles.dispose();
   }
 }
