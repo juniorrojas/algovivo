@@ -4,7 +4,7 @@ class Muscles {
     if (ten == null) throw new Error("ten required");
     this.ten = ten;
 
-    this.muscles = null;
+    this.indices = null;
     this.k = Math.fround(90);
     this.l0 = null;
     this.a = null;
@@ -19,8 +19,8 @@ class Muscles {
   }
 
   get numMuscles() {
-    if (this.muscles == null) return 0;
-    return this.muscles.u32().length / 2;
+    if (this.indices == null) return 0;
+    return this.indices.u32().length / 2;
   }
 
   set(args = {}) {
@@ -37,8 +37,8 @@ class Muscles {
     if (args.k != null) this.k = args.k;
 
     const muscles = mgr.malloc32(numMuscles * 2);
-    if (this.muscles != null) this.muscles.free();
-    this.muscles = muscles;
+    if (this.indices != null) this.indices.free();
+    this.indices = muscles;
 
     const musclesU32 = muscles.u32();
     indices.forEach((m, i) => {
@@ -59,7 +59,7 @@ class Muscles {
           this.numVertices,
           args.pos.ptr,
           numMuscles,
-          this.muscles.ptr,
+          this.indices.ptr,
           this.l0.ptr
         );
       } else {
@@ -93,10 +93,21 @@ class Muscles {
     }
   }
 
+  toStepArgs() {
+    const numMuscles = this.numMuscles;
+    return [
+      numMuscles,
+      numMuscles == 0 ? 0 : this.indices.ptr,
+      this.k,
+      numMuscles == 0 ? 0 : this.a.ptr,
+      numMuscles == 0 ? 0 : this.l0.ptr
+    ];
+  }
+
   dispose() {
-    if (this.muscles != null) {
-      this.muscles.free();
-      this.muscles = null;
+    if (this.indices != null) {
+      this.indices.free();
+      this.indices = null;
     }
     if (this.l0 != null) {
       this.l0.dispose();
