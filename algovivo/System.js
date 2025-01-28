@@ -89,11 +89,11 @@ class System {
   }
 
   get pos() {
-    return this.pos0;
+    return this.vertices.pos;
   }
 
   get vel() {
-    return this.vel0;
+    return this.vertices.vel;
   }
 
   get numVertices() {

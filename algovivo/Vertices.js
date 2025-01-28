@@ -47,6 +47,10 @@ class Vertices {
     return this.pos0;
   }
 
+  get vel() {
+    return this.vel0;
+  }
+
   get numVertices() {
     if (this.pos0 == null) return 0;
     return this.pos0.shape.get(0);
@@ -105,6 +109,49 @@ class Vertices {
     this.updateTmpBuffers();
   }
 
+  addVertex(args = {}) {
+    const ten = this.ten;
+    const numVertices0 = this.numVertices;
+    const spaceDim = this.spaceDim;
+    
+    const pos0 = ten.empty([numVertices0 + 1, spaceDim]);
+    const vel0 = ten.empty([numVertices0 + 1, spaceDim]);
+    const pos1 = ten.empty([numVertices0 + 1, spaceDim]);
+    const vel1 = ten.empty([numVertices0 + 1, spaceDim]);
+    
+    for (let i = 0; i < numVertices0; i++) {
+      for (let j = 0; j < spaceDim; j++) {
+        pos0.set([i, j], this.pos0.get([i, j]));
+        vel0.set([i, j], this.vel0.get([i, j]));
+        pos1.set([i, j], this.pos1.get([i, j]));
+        vel1.set([i, j], this.vel1.get([i, j]));
+      }
+    }
+
+    const pi = args.pos ?? [0, 0];
+    const vi = args.vel ?? [0, 0];
+    for (let j = 0; j < spaceDim; j++) {
+      pos0.set([numVertices0, j], pi[j]);
+      pos1.set([numVertices0, j], pi[j]);
+      vel0.set([numVertices0, j], vi[j]);
+      vel1.set([numVertices0, j], vi[j]);
+    }
+
+    if (this.pos0 != null) this.pos0.dispose();
+    this.pos0 = pos0;
+
+    if (this.vel0 != null) this.vel0.dispose();
+    this.vel0 = vel0;
+
+    if (this.pos1 != null) this.pos1.dispose();
+    this.pos1 = pos1;
+
+    if (this.vel1 != null) this.vel1.dispose();
+    this.vel1 = vel1;
+
+    this.updateTmpBuffers();
+  }
+
   dispose() {
     if (this.pos0 != null) {
       this.pos0.dispose();
@@ -114,14 +161,6 @@ class Vertices {
       this.pos1.dispose();
       this.pos1 = null;
     }
-    if (this.posGrad != null) {
-      this.posGrad.dispose();
-      this.posGrad = null;
-    }
-    if (this.posTmp != null) {
-      this.posTmp.dispose();
-      this.posTmp = null;
-    }
     if (this.vel0 != null) {
       this.vel0.dispose();
       this.vel0 = null;
@@ -129,6 +168,14 @@ class Vertices {
     if (this.vel1 != null) {
       this.vel1.dispose();
       this.vel1 = null;
+    }
+    if (this.posGrad != null) {
+      this.posGrad.dispose();
+      this.posGrad = null;
+    }
+    if (this.posTmp != null) {
+      this.posTmp.dispose();
+      this.posTmp = null;
     }
   }
 }
