@@ -25,15 +25,11 @@ class System {
 
     this.spaceDim = args.spaceDim ?? 2;
 
-    this._vertices = new Vertices({ ten: this.ten, vertexMass: args.vertexMass, spaceDim: this.spaceDim });
+    this.vertices = new Vertices({ ten: this.ten, vertexMass: args.vertexMass, spaceDim: this.spaceDim });
     this._muscles = new Muscles({ ten: this.ten });
     this._triangles = new Triangles({ ten: this.ten, simplexOrder: this.spaceDim + 1 });
 
     this.friction = { k: Math.fround(300) }
-  }
-
-  get vertices() {
-    return this._vertices;
   }
 
   set fixedVertexId(value) {
@@ -53,7 +49,7 @@ class System {
   }
 
   get vertexMass() {
-    return this._vertices.vertexMass;
+    return this.vertices.vertexMass;
   }
 
   get triangles() {
@@ -81,11 +77,11 @@ class System {
   }
 
   get pos0() {
-    return this._vertices.pos;
+    return this.vertices.pos;
   }
 
   get vel0() {
-    return this._vertices.vel0;
+    return this.vertices.vel0;
   }
 
   get pos() {
@@ -97,7 +93,7 @@ class System {
   }
 
   get numVertices() {
-    return this._vertices.numVertices;
+    return this.vertices.numVertices;
   }
 
   get numTriangles() {
@@ -133,7 +129,7 @@ class System {
   }
 
   setVertices(pos) {
-    this._vertices.set(pos);
+    this.vertices.set(pos);
   }
 
   setMuscles(args = {}) {
@@ -221,20 +217,20 @@ class System {
 
       fixedVertexId,
 
-      numVertices == 0 ? 0 : this._vertices.pos1.ptr,
-      numVertices == 0 ? 0 : this._vertices.posGrad.ptr,
-      numVertices == 0 ? 0 : this._vertices.posTmp.ptr,
-      numVertices == 0 ? 0 : this._vertices.vel1.ptr,
+      numVertices == 0 ? 0 : this.vertices.pos1.ptr,
+      numVertices == 0 ? 0 : this.vertices.posGrad.ptr,
+      numVertices == 0 ? 0 : this.vertices.posTmp.ptr,
+      numVertices == 0 ? 0 : this.vertices.vel1.ptr,
     );
     
     if (numVertices != 0) {
-      this._vertices.pos0.slot.f32().set(this._vertices.pos1.slot.f32());
-      this._vertices.vel0.slot.f32().set(this._vertices.vel1.slot.f32());
+      this.vertices.pos0.slot.f32().set(this.vertices.pos1.slot.f32());
+      this.vertices.vel0.slot.f32().set(this.vertices.vel1.slot.f32());
     }
   }
 
   dispose() {
-    this._vertices.dispose();
+    this.vertices.dispose();
     this._muscles.dispose();
     this._triangles.dispose();
   }
