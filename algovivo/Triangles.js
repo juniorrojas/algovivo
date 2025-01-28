@@ -5,7 +5,7 @@ class Triangles {
     this.ten = ten;
 
     this.simplexOrder = args.simplexOrder ?? 3;
-    this.triangles = null;
+    this.indices = null;
     this.rsi = null;
     this.mu = null;
     this.lambda = null;
@@ -26,10 +26,6 @@ class Triangles {
 
   get numTriangles() {
     return this.numElements;
-  }
-
-  get indices() {
-    return this.triangles;
   }
 
   toStepArgs() {
@@ -55,9 +51,9 @@ class Triangles {
     const mgr = this.memoryManager;
     const ten = this.ten;
     
-    const triangles = indices ? mgr.malloc32(numTriangles * this.simplexOrder) : this.triangles;
-    if (indices && this.triangles != null) this.triangles.free();
-    this.triangles = triangles;
+    const triangles = indices ? mgr.malloc32(numTriangles * this.simplexOrder) : this.indices;
+    if (indices && this.indices != null) this.indices.free();
+    this.indices = triangles;
 
     if (indices != null) {
       const trianglesU32 = triangles.u32();
@@ -89,7 +85,7 @@ class Triangles {
         this.numVertices,
         pos.ptr,
         numTriangles,
-        this.triangles.ptr,
+        this.indices.ptr,
         this.rsi.ptr
       );
 
@@ -108,9 +104,9 @@ class Triangles {
   }
 
   dispose() {
-    if (this.triangles != null) {
-      this.triangles.free();
-      this.triangles = null;
+    if (this.indices != null) {
+      this.indices.free();
+      this.indices = null;
     }
     if (this.rsi != null) {
       this.rsi.dispose();

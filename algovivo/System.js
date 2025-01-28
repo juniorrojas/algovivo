@@ -25,9 +25,18 @@ class System {
 
     this.spaceDim = args.spaceDim ?? 2;
 
-    this.vertices = new Vertices({ ten: this.ten, vertexMass: args.vertexMass, spaceDim: this.spaceDim });
+    this.vertices = new Vertices({
+      ten: this.ten,
+      vertexMass: args.vertexMass,
+      spaceDim: this.spaceDim
+    });
+
     this.muscles = new Muscles({ ten: this.ten });
-    this._triangles = new Triangles({ ten: this.ten, simplexOrder: this.spaceDim + 1 });
+
+    this.triangles = new Triangles({
+      ten: this.ten,
+      simplexOrder: this.spaceDim + 1
+    });
 
     this.friction = { k: Math.fround(300) }
   }
@@ -52,20 +61,12 @@ class System {
     return this.vertices.vertexMass;
   }
 
-  get triangles() {
-    return this._triangles.triangles;
-  }
-
-  set triangles(value) {
-    this._triangles.triangles = value;
-  }
-
   get rsi() {
-    return this._triangles.rsi;
+    return this.triangles.rsi;
   }
 
   set rsi(value) {
-    this._triangles.rsi = value;
+    this.triangles.rsi = value;
   }
 
   get k() {
@@ -97,7 +98,7 @@ class System {
   }
 
   get numTriangles() {
-    return this._triangles.numTriangles;
+    return this.triangles.numTriangles;
   }
 
   get numMuscles() {
@@ -129,14 +130,14 @@ class System {
   }
 
   setTriangles(args = {}) {
-    this._triangles.set({ ...args, pos: args.pos ?? this.pos0 });
+    this.triangles.set({ ...args, pos: args.pos ?? this.pos0 });
   }
 
   getMusclesArray() {
     if (this.muscles == null) return [];
     
     const numMuscles = this.numMuscles;
-    const musclesU32 = this.muscles.u32();
+    const musclesU32 = this.muscles.indices.u32();
     const muscles = [];
     for (let i = 0; i < numMuscles; i++) {
       const offset = i * 2;
@@ -152,7 +153,7 @@ class System {
     if (this.triangles == null) return [];
     
     const numTriangles = this.numTriangles;
-    const trianglesU32 = this.triangles.u32();
+    const trianglesU32 = this.triangles.indices.u32();
     const triangles = [];
     for (let i = 0; i < numTriangles; i++) {
       const offset = i * 3;
@@ -199,7 +200,7 @@ class System {
 
       ...this.muscles.toStepArgs(),
 
-      ...this._triangles.toStepArgs(),
+      ...this.triangles.toStepArgs(),
 
       this.friction.k,
 
@@ -220,7 +221,7 @@ class System {
   dispose() {
     this.vertices.dispose();
     this.muscles.dispose();
-    this._triangles.dispose();
+    this.triangles.dispose();
   }
 }
 
