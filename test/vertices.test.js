@@ -40,3 +40,36 @@ test("set system vertices", async () => {
     [2, 4]
   ]);
 });
+
+test("add vertex", async () => {
+  const ten = await utils.loadTen();
+  const memoryManager = ten.mgr;
+
+  const vertices = new algovivo.Vertices({ ten, spaceDim: 2 });
+  expect(vertices.numVertices).toBe(0);
+
+  expect(memoryManager.numReservedBytes()).toBe(0);
+
+  vertices.addVertex();
+  expect(vertices.numVertices).toBe(1);
+  expect(memoryManager.numReservedBytes()).not.toBe(0);
+  const reservedBytesForOneVertex = memoryManager.numReservedBytes();
+
+  vertices.dispose();
+  vertices.addVertex();
+  expect(vertices.numVertices).toBe(1);
+  expect(memoryManager.numReservedBytes()).toBe(reservedBytesForOneVertex);
+
+  vertices.addVertex();
+  expect(vertices.numVertices).toBe(2);
+  expect(memoryManager.numReservedBytes()).toBeGreaterThan(reservedBytesForOneVertex);
+  const reservedDataBytesForOneVertex = memoryManager.numReservedBytes() - reservedBytesForOneVertex;
+  const reservedMetadataBytesForOneVertex = reservedBytesForOneVertex - reservedDataBytesForOneVertex;
+
+  vertices.addVertex();
+  expect(vertices.numVertices).toBe(3);
+  expect(memoryManager.numReservedBytes()).toBe(reservedMetadataBytesForOneVertex + 3 * reservedDataBytesForOneVertex);
+
+  vertices.dispose();
+  expect(memoryManager.numReservedBytes()).toBe(0);
+});
