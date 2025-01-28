@@ -47,6 +47,10 @@ class Vertices {
     return this.pos0;
   }
 
+  get vel() {
+    return this.vel0;
+  }
+
   get numVertices() {
     if (this.pos0 == null) return 0;
     return this.pos0.shape.get(0);
@@ -105,7 +109,7 @@ class Vertices {
     this.updateTmpBuffers();
   }
 
-  addVertex() {
+  addVertex(args = {}) {
     const ten = this.ten;
     const numVertices0 = this.numVertices;
     const spaceDim = this.spaceDim;
@@ -124,11 +128,13 @@ class Vertices {
       }
     }
 
+    const pi = args.pos ?? [0, 0];
+    const vi = args.vel ?? [0, 0];
     for (let j = 0; j < spaceDim; j++) {
-      pos0.set([numVertices0, j], 0);
-      pos1.set([numVertices0, j], 0);
-      vel0.set([numVertices0, j], 0);
-      vel1.set([numVertices0, j], 0);
+      pos0.set([numVertices0, j], pi[j]);
+      pos1.set([numVertices0, j], pi[j]);
+      vel0.set([numVertices0, j], vi[j]);
+      vel1.set([numVertices0, j], vi[j]);
     }
 
     if (this.pos0 != null) this.pos0.dispose();

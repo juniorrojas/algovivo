@@ -50,14 +50,18 @@ test("add vertex", async () => {
 
   expect(memoryManager.numReservedBytes()).toBe(0);
 
-  vertices.addVertex();
+  vertices.addVertex({ pos: [1, 2], vel: [3, 4]});
   expect(vertices.numVertices).toBe(1);
+  expect(vertices.pos.toArray()).toBeCloseToArray([[1, 2]]);
+  expect(vertices.vel.toArray()).toBeCloseToArray([[3, 4]]);
   expect(memoryManager.numReservedBytes()).not.toBe(0);
   const reservedBytesForOneVertex = memoryManager.numReservedBytes();
 
   vertices.dispose();
   vertices.addVertex();
   expect(vertices.numVertices).toBe(1);
+  expect(vertices.pos.toArray()).toBeCloseToArray([[0, 0]]);
+  expect(vertices.vel.toArray()).toBeCloseToArray([[0, 0]]);
   expect(memoryManager.numReservedBytes()).toBe(reservedBytesForOneVertex);
 
   vertices.addVertex();
