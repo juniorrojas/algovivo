@@ -205,11 +205,7 @@ class System {
       numVertices == 0 ? 0 : this.vel0.ptr,
       vertexMass,
 
-      numMuscles,
-      numMuscles == 0 ? 0 : this.muscles.ptr,
-      this.k,
-      numMuscles == 0 ? 0 : this.a.ptr,
-      numMuscles == 0 ? 0 : this.l0.ptr,
+      ...this._muscles.toStepArgs(),
 
       ...this._triangles.toStepArgs(),
 

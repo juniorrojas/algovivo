@@ -93,6 +93,17 @@ class Muscles {
     }
   }
 
+  toStepArgs() {
+    const numMuscles = this.numMuscles;
+    return [
+      numMuscles,
+      numMuscles == 0 ? 0 : this.muscles.ptr,
+      this.k,
+      numMuscles == 0 ? 0 : this.a.ptr,
+      numMuscles == 0 ? 0 : this.l0.ptr
+    ];
+  }
+
   dispose() {
     if (this.muscles != null) {
       this.muscles.free();
