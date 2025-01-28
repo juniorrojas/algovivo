@@ -3,7 +3,7 @@
  * (c) 2023 Junior Rojas
  * License: MIT
  * 
- * Built from commit 5ebdda8f6d42428ff385d709ff45cb0bacc10ffd
+ * Built from commit abb1ef2e59151ad453a445e2f539582f901a8e13
  */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -1465,7 +1465,7 @@
 	    if (ten == null) throw new Error("ten required");
 	    this.ten = ten;
 
-	    this.muscles = null;
+	    this.indices = null;
 	    this.k = Math.fround(90);
 	    this.l0 = null;
 	    this.a = null;
@@ -1480,8 +1480,8 @@
 	  }
 
 	  get numMuscles() {
-	    if (this.muscles == null) return 0;
-	    return this.muscles.u32().length / 2;
+	    if (this.indices == null) return 0;
+	    return this.indices.u32().length / 2;
 	  }
 
 	  set(args = {}) {
@@ -1498,8 +1498,8 @@
 	    if (args.k != null) this.k = args.k;
 
 	    const muscles = mgr.malloc32(numMuscles * 2);
-	    if (this.muscles != null) this.muscles.free();
-	    this.muscles = muscles;
+	    if (this.indices != null) this.indices.free();
+	    this.indices = muscles;
 
 	    const musclesU32 = muscles.u32();
 	    indices.forEach((m, i) => {
@@ -1520,7 +1520,7 @@
 	          this.numVertices,
 	          args.pos.ptr,
 	          numMuscles,
-	          this.muscles.ptr,
+	          this.indices.ptr,
 	          this.l0.ptr
 	        );
 	      } else {
@@ -1554,10 +1554,21 @@
 	    }
 	  }
 
+	  toStepArgs() {
+	    const numMuscles = this.numMuscles;
+	    return [
+	      numMuscles,
+	      numMuscles == 0 ? 0 : this.indices.ptr,
+	      this.k,
+	      numMuscles == 0 ? 0 : this.a.ptr,
+	      numMuscles == 0 ? 0 : this.l0.ptr
+	    ];
+	  }
+
 	  dispose() {
-	    if (this.muscles != null) {
-	      this.muscles.free();
-	      this.muscles = null;
+	    if (this.indices != null) {
+	      this.indices.free();
+	      this.indices = null;
 	    }
 	    if (this.l0 != null) {
 	      this.l0.dispose();
@@ -1579,7 +1590,7 @@
 	    this.ten = ten;
 
 	    this.simplexOrder = args.simplexOrder ?? 3;
-	    this.triangles = null;
+	    this.indices = null;
 	    this.rsi = null;
 	    this.mu = null;
 	    this.lambda = null;
@@ -1600,10 +1611,6 @@
 
 	  get numTriangles() {
 	    return this.numElements;
-	  }
-
-	  get indices() {
-	    return this.triangles;
 	  }
 
 	  toStepArgs() {
@@ -1629,9 +1636,9 @@
 	    const mgr = this.memoryManager;
 	    const ten = this.ten;
 	    
-	    const triangles = indices ? mgr.malloc32(numTriangles * this.simplexOrder) : this.triangles;
-	    if (indices && this.triangles != null) this.triangles.free();
-	    this.triangles = triangles;
+	    const triangles = indices ? mgr.malloc32(numTriangles * this.simplexOrder) : this.indices;
+	    if (indices && this.indices != null) this.indices.free();
+	    this.indices = triangles;
 
 	    if (indices != null) {
 	      const trianglesU32 = triangles.u32();
@@ -1663,7 +1670,7 @@
 	        this.numVertices,
 	        pos.ptr,
 	        numTriangles,
-	        this.triangles.ptr,
+	        this.indices.ptr,
 	        this.rsi.ptr
 	      );
 
@@ -1682,9 +1689,9 @@
 	  }
 
 	  dispose() {
-	    if (this.triangles != null) {
-	      this.triangles.free();
-	      this.triangles = null;
+	    if (this.indices != null) {
+	      this.indices.free();
+	      this.indices = null;
 	    }
 	    if (this.rsi != null) {
 	      this.rsi.dispose();
@@ -1730,15 +1737,20 @@
 
 	    this.spaceDim = args.spaceDim ?? 2;
 
-	    this._vertices = new Vertices$1({ ten: this.ten, vertexMass: args.vertexMass, spaceDim: this.spaceDim });
-	    this._muscles = new Muscles({ ten: this.ten });
-	    this._triangles = new Triangles({ ten: this.ten, simplexOrder: this.spaceDim + 1 });
+	    this.vertices = new Vertices$1({
+	      ten: this.ten,
+	      vertexMass: args.vertexMass,
+	      spaceDim: this.spaceDim
+	    });
+
+	    this.muscles = new Muscles({ ten: this.ten });
+
+	    this.triangles = new Triangles({
+	      ten: this.ten,
+	      simplexOrder: this.spaceDim + 1
+	    });
 
 	    this.friction = { k: Math.fround(300) };
-	  }
-
-	  get vertices() {
-	    return this._vertices;
 	  }
 
 	  set fixedVertexId(value) {
@@ -1758,39 +1770,31 @@
 	  }
 
 	  get vertexMass() {
-	    return this._vertices.vertexMass;
-	  }
-
-	  get triangles() {
-	    return this._triangles.triangles;
-	  }
-
-	  set triangles(value) {
-	    this._triangles.triangles = value;
+	    return this.vertices.vertexMass;
 	  }
 
 	  get rsi() {
-	    return this._triangles.rsi;
+	    return this.triangles.rsi;
 	  }
 
 	  set rsi(value) {
-	    this._triangles.rsi = value;
+	    this.triangles.rsi = value;
 	  }
 
 	  get k() {
-	    return this._muscles.k;
+	    return this.muscles.k;
 	  }
 
 	  set k(value) {
-	    this._muscles.k = value;
+	    this.muscles.k = value;
 	  }
 
 	  get pos0() {
-	    return this._vertices.pos;
+	    return this.vertices.pos;
 	  }
 
 	  get vel0() {
-	    return this._vertices.vel0;
+	    return this.vertices.vel0;
 	  }
 
 	  get pos() {
@@ -1802,58 +1806,50 @@
 	  }
 
 	  get numVertices() {
-	    return this._vertices.numVertices;
+	    return this.vertices.numVertices;
 	  }
 
 	  get numTriangles() {
-	    return this._triangles.numTriangles;
+	    return this.triangles.numTriangles;
 	  }
 
 	  get numMuscles() {
-	    return this._muscles.numMuscles;
-	  }
-
-	  get muscles() {
-	    return this._muscles.muscles;
-	  }
-
-	  set muscles(value) {
-	    this._muscles.muscles = value;
+	    return this.muscles.numMuscles;
 	  }
 
 	  get a() {
-	    return this._muscles.a;
+	    return this.muscles.a;
 	  }
 
 	  set a(value) {
-	    this._muscles.a = value;
+	    this.muscles.a = value;
 	  }
 
 	  get l0() {
-	    return this._muscles.l0;
+	    return this.muscles.l0;
 	  }
 
 	  set l0(value) {
-	    this._muscles.l0 = value;
+	    this.muscles.l0 = value;
 	  }
 
 	  setVertices(pos) {
-	    this._vertices.set(pos);
+	    this.vertices.set(pos);
 	  }
 
 	  setMuscles(args = {}) {
-	    this._muscles.set({ ...args, pos: args.pos ?? this.pos0 });
+	    this.muscles.set({ ...args, pos: args.pos ?? this.pos0 });
 	  }
 
 	  setTriangles(args = {}) {
-	    this._triangles.set({ ...args, pos: args.pos ?? this.pos0 });
+	    this.triangles.set({ ...args, pos: args.pos ?? this.pos0 });
 	  }
 
 	  getMusclesArray() {
 	    if (this.muscles == null) return [];
 	    
 	    const numMuscles = this.numMuscles;
-	    const musclesU32 = this.muscles.u32();
+	    const musclesU32 = this.muscles.indices.u32();
 	    const muscles = [];
 	    for (let i = 0; i < numMuscles; i++) {
 	      const offset = i * 2;
@@ -1869,7 +1865,7 @@
 	    if (this.triangles == null) return [];
 	    
 	    const numTriangles = this.numTriangles;
-	    const trianglesU32 = this.triangles.u32();
+	    const trianglesU32 = this.triangles.indices.u32();
 	    const triangles = [];
 	    for (let i = 0; i < numTriangles; i++) {
 	      const offset = i * 3;
@@ -1899,7 +1895,7 @@
 
 	  step() {
 	    const numVertices = this.numVertices;
-	    const numMuscles = this.numMuscles;
+	    this.numMuscles;
 
 	    const fixedVertexId = this.vertices._fixedVertexId;
 	    const vertexMass = this.vertexMass;
@@ -1914,34 +1910,30 @@
 	      numVertices == 0 ? 0 : this.vel0.ptr,
 	      vertexMass,
 
-	      numMuscles,
-	      numMuscles == 0 ? 0 : this.muscles.ptr,
-	      this.k,
-	      numMuscles == 0 ? 0 : this.a.ptr,
-	      numMuscles == 0 ? 0 : this.l0.ptr,
+	      ...this.muscles.toStepArgs(),
 
-	      ...this._triangles.toStepArgs(),
+	      ...this.triangles.toStepArgs(),
 
 	      this.friction.k,
 
 	      fixedVertexId,
 
-	      numVertices == 0 ? 0 : this._vertices.pos1.ptr,
-	      numVertices == 0 ? 0 : this._vertices.posGrad.ptr,
-	      numVertices == 0 ? 0 : this._vertices.posTmp.ptr,
-	      numVertices == 0 ? 0 : this._vertices.vel1.ptr,
+	      numVertices == 0 ? 0 : this.vertices.pos1.ptr,
+	      numVertices == 0 ? 0 : this.vertices.posGrad.ptr,
+	      numVertices == 0 ? 0 : this.vertices.posTmp.ptr,
+	      numVertices == 0 ? 0 : this.vertices.vel1.ptr,
 	    );
 	    
 	    if (numVertices != 0) {
-	      this._vertices.pos0.slot.f32().set(this._vertices.pos1.slot.f32());
-	      this._vertices.vel0.slot.f32().set(this._vertices.vel1.slot.f32());
+	      this.vertices.pos0.slot.f32().set(this.vertices.pos1.slot.f32());
+	      this.vertices.vel0.slot.f32().set(this.vertices.vel1.slot.f32());
 	    }
 	  }
 
 	  dispose() {
-	    this._vertices.dispose();
-	    this._muscles.dispose();
-	    this._triangles.dispose();
+	    this.vertices.dispose();
+	    this.muscles.dispose();
+	    this.triangles.dispose();
 	  }
 	}
 
