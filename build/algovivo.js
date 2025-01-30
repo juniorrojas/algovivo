@@ -3,7 +3,7 @@
  * (c) 2023 Junior Rojas
  * License: MIT
  * 
- * Built from commit d3520e81008eaf9fbff569abaa4c97026fcd6256
+ * Built from commit 951e90e1a363c4abad495d058a8e6fdb13243923
  */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -1846,7 +1846,7 @@
 	  }
 
 	  getMusclesArray() {
-	    if (this.muscles == null) return [];
+	    if (this.numMuscles == 0) return [];
 	    
 	    const numMuscles = this.numMuscles;
 	    const musclesU32 = this.muscles.indices.u32();
@@ -1862,7 +1862,7 @@
 	  }
 
 	  getTrianglesArray() {
-	    if (this.triangles == null) return [];
+	    if (this.numTriangles == 0) return [];
 	    
 	    const numTriangles = this.numTriangles;
 	    const trianglesU32 = this.triangles.indices.u32();
