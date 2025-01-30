@@ -134,7 +134,7 @@ class System {
   }
 
   getMusclesArray() {
-    if (this.muscles == null) return [];
+    if (this.numMuscles == 0) return [];
     
     const numMuscles = this.numMuscles;
     const musclesU32 = this.muscles.indices.u32();
@@ -150,7 +150,7 @@ class System {
   }
 
   getTrianglesArray() {
-    if (this.triangles == null) return [];
+    if (this.numTriangles == 0) return [];
     
     const numTriangles = this.numTriangles;
     const trianglesU32 = this.triangles.indices.u32();
