@@ -41,11 +41,16 @@ function norm(a) {
 }
 
 function normalize_(a) {
-  mulScalar_(a, 1 / norm(a));
+  const n = norm(a);
+  if (n !== 0) {
+    mulScalar_(a, 1 / n);
+  }
 }
 
 function normalize(a) {
-  return mulScalar(a, 1 / norm(a));
+  const result = [...a];
+  normalize_(result);
+  return result;
 }
 
 function dot(a, b) {
