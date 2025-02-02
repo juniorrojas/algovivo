@@ -40,8 +40,17 @@ function norm(a) {
   return Math.sqrt(quadrance(a));
 }
 
+function normalize_(a) {
+  const n = norm(a);
+  if (n !== 0) {
+    mulScalar_(a, 1 / n);
+  }
+}
+
 function normalize(a) {
-  return mulScalar(a, 1 / norm(a));
+  const result = [...a];
+  normalize_(result);
+  return result;
 }
 
 function dot(a, b) {
@@ -58,5 +67,6 @@ module.exports = {
   quadrance: quadrance,
   norm: norm,
   normalize: normalize,
+  normalize_: normalize_,
   dot: dot
 };
