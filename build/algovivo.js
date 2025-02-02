@@ -3,7 +3,7 @@
  * (c) 2023 Junior Rojas
  * License: MIT
  * 
- * Built from commit 951e90e1a363c4abad495d058a8e6fdb13243923
+ * Built from commit 4ea15873245ce719f6d4c5aba88731deea24df94
  */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -1981,8 +1981,17 @@
 	  return Math.sqrt(quadrance(a));
 	}
 
+	function normalize_(a) {
+	  const n = norm(a);
+	  if (n !== 0) {
+	    mulScalar_(a, 1 / n);
+	  }
+	}
+
 	function normalize(a) {
-	  return mulScalar(a, 1 / norm(a));
+	  const result = [...a];
+	  normalize_(result);
+	  return result;
 	}
 
 	function dot(a, b) {
@@ -1999,6 +2008,7 @@
 	  quadrance: quadrance,
 	  norm: norm,
 	  normalize: normalize,
+	  normalize_: normalize_,
 	  dot: dot
 	};
 
