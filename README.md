@@ -82,7 +82,7 @@ The code above imports the ES6 module `algovivo.min.mjs` and loads the compiled 
 
 ### muscle commands
 
-Muscle commands can be specified with `system.a.set([...])`. A value of 1 means that the muscle is relaxed and wants to keep its original rest length. Values less than 1 indicate that the muscle wants to contract to some fraction of its original rest length.
+Muscle commands can be specified with `system.a.set([...])`. The array length must match the number of muscles. A value of 1 means that the muscle is relaxed and wants to keep its original rest length. Values less than 1 indicate that the muscle wants to contract to some fraction of its original rest length.
 
 | `system.a.set([0.3, 1])` | `system.a.set([1, 0.3])` | `system.a.set([0.3, 0.3])`  |
 | ------------- |-------------| -----|
