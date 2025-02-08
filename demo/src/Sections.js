@@ -42,7 +42,7 @@ For more general energy functions, which extend beyond potential energy, the neg
     s = this.addSection(
       "six energy functions",
 `<p>
-This implementation defines six energy functions. Some are plain potential energy functions, that is, functions of vertex positions <span class="code">E(pos)</span>. Actuation mechanisms are modeled with an action-dependent energy function <span class="code">E(pos, a)</span>. Other energy functions may also depend on the previous state, given by vertex positions and velocities <span class="code">(pos0, vel0)</span>.
+This implementation defines six energy functions. Some are plain potential energy functions; that is, functions of vertex positions <span class="code">E(pos)</span>. Actuation mechanisms are modeled with an action-dependent energy function <span class="code">E(pos, a)</span>. Other energy functions may also depend on the previous state, given by vertex positions and velocities <span class="code">(pos0, vel0)</span>.
 </p>
 
 <ul>
