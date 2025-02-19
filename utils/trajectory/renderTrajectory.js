@@ -10,8 +10,8 @@ async function renderTrajectory(args = {}) {
   const framesDirname = args.framesDirname;
 
   const onServerReady = async (port) => {
-    const width = 300;
-    const height = 300;
+    const width = parseInt(process.env.WIDTH, 10) || 300;
+    const height = parseInt(process.env.HEIGHT, 10) || 300;
 
     const recorder = new FrameRecorder({ framesDirname });
 
