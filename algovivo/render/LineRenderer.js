@@ -81,7 +81,10 @@ class LineRenderer {
       const scale = camera.inferScale();
 
       const lineIdToMuscleId = args.mesh.getCustomAttribute("lineIdToMuscleId");
-      const muscleId = lineIdToMuscleId[args.id];
+      let muscleId = null;
+      if (lineIdToMuscleId != null) {
+        muscleId = lineIdToMuscleId[args.id];
+      }
       if (muscleId == null) {
         const borderWidth = 0.029;
         renderLine(ctx, scale, a, b, borderWidth, borderColor);
