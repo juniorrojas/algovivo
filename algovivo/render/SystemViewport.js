@@ -3,6 +3,7 @@ const Tracker = require("./Tracker");
 const Floor = require("./Floor");
 const VertexRenderer = require("./VertexRenderer");
 const LineRenderer = require("./LineRenderer");
+const TriangleRenderer = require("./TriangleRenderer");
 
 function hashSimplex(vids) {
   vids.sort();
@@ -138,20 +139,9 @@ class SystemViewport {
     
     mesh.pointShader.renderPoint = (args) => { this.vertices.renderVertex(args); };
 
-    mesh.triangleShader.renderTriangle = (args = {}) => {
-      const ctx = args.ctx;
-      const a = args.a;
-      const b = args.b;
-      const c = args.c;
+    this.triangleRenderer = new TriangleRenderer({ fillColor });
+    mesh.triangleShader.renderTriangle = (args = {}) => { this.triangleRenderer.renderTriangle(args) };
 
-      ctx.beginPath();
-      ctx.fillStyle = fillColor;
-      ctx.moveTo(...a);
-      ctx.lineTo(...b);
-      ctx.lineTo(...c);
-      ctx.closePath();
-      ctx.fill();
-    };
     mesh.lineShader.renderLine = this.lines.makeLineShaderFunction({
       activeMuscleColor: activeMuscleColor,
       inactiveMuscleColor: inactiveMuscleColor,
