@@ -10,22 +10,6 @@ function hashSimplex(vids) {
   return vids.join("_");
 }
 
-function edgesFromTriangles(triangles) {
-  const edges = new Map();
-  
-  function addEdge(i1, i2) {
-    const hash = hashSimplex([i1, i2]);
-    edges.set(hash, [i1, i2]);
-  }
-
-  triangles.forEach(t => {
-    addEdge(t[0], t[1]);
-    addEdge(t[1], t[2]);
-    addEdge(t[0], t[2]);
-  });
-  return Array.from(edges.values());
-}
-
 function hexToRgb(hex) {
   if (hex.length != 7) {
     throw new Error(`invalid hex string ${hex}`);
@@ -65,7 +49,7 @@ class SystemViewport {
       borderColor: borderColor,
       fillColor: fillColor
     });
-    this.lines = new LineRenderer({
+    const lineRenderer = this.lines = new LineRenderer({
       system: this.system
     });
 
@@ -244,7 +228,8 @@ class SystemViewport {
     }
 
     mesh.triangles = meshData.triangles;
-    mesh.lines = edgesFromTriangles(meshData.triangles);
+    const lineRenderer = this.lines;
+    mesh.lines = lineRenderer.makeEdgesFromTriangles(meshData.triangles);
     Array.prototype.push.apply(mesh.lines, meshData.muscles);
 
     const muscleHashToId = new Map();

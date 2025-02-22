@@ -1,3 +1,8 @@
+function hashSimplex(vids) {
+  vids.sort();
+  return vids.join("_");
+}
+
 function renderLine(ctx, scale, a, b, borderWidth, borderColor) {
   ctx.beginPath();
   ctx.lineJoin = "round";
@@ -45,6 +50,22 @@ function renderMuscle(ctx, scale, a, b, t, width, borderWidth, borderColor, colo
 class LineRenderer {
   constructor(args = {}) {
     this.system = args.system;
+  }
+
+  makeEdgesFromTriangles(triangles) {
+    const edges = new Map();
+  
+  function addEdge(i1, i2) {
+    const hash = hashSimplex([i1, i2]);
+      edges.set(hash, [i1, i2]);
+    }
+
+    triangles.forEach(t => {
+      addEdge(t[0], t[1]);
+      addEdge(t[1], t[2]);
+      addEdge(t[0], t[2]);
+    });
+    return Array.from(edges.values());
   }
 
   makeLineShaderFunction(args = {}) {
