@@ -3,26 +3,11 @@ const Tracker = require("./Tracker");
 const Floor = require("./Floor");
 const VertexRenderer = require("./VertexRenderer");
 const LineRenderer = require("./LineRenderer");
+const TriangleRenderer = require("./TriangleRenderer");
 
 function hashSimplex(vids) {
   vids.sort();
   return vids.join("_");
-}
-
-function edgesFromTriangles(triangles) {
-  const edges = new Map();
-  
-  function addEdge(i1, i2) {
-    const hash = hashSimplex([i1, i2]);
-    edges.set(hash, [i1, i2]);
-  }
-
-  triangles.forEach(t => {
-    addEdge(t[0], t[1]);
-    addEdge(t[1], t[2]);
-    addEdge(t[0], t[2]);
-  });
-  return Array.from(edges.values());
 }
 
 function hexToRgb(hex) {
@@ -64,7 +49,7 @@ class SystemViewport {
       borderColor: borderColor,
       fillColor: fillColor
     });
-    this.lines = new LineRenderer({
+    const lineRenderer = this.lines = new LineRenderer({
       system: this.system
     });
 
@@ -138,20 +123,9 @@ class SystemViewport {
     
     mesh.pointShader.renderPoint = (args) => { this.vertices.renderVertex(args); };
 
-    mesh.triangleShader.renderTriangle = (args = {}) => {
-      const ctx = args.ctx;
-      const a = args.a;
-      const b = args.b;
-      const c = args.c;
+    this.triangleRenderer = new TriangleRenderer({ fillColor });
+    mesh.triangleShader.renderTriangle = (args = {}) => { this.triangleRenderer.renderTriangle(args) };
 
-      ctx.beginPath();
-      ctx.fillStyle = fillColor;
-      ctx.moveTo(...a);
-      ctx.lineTo(...b);
-      ctx.lineTo(...c);
-      ctx.closePath();
-      ctx.fill();
-    };
     mesh.lineShader.renderLine = this.lines.makeLineShaderFunction({
       activeMuscleColor: activeMuscleColor,
       inactiveMuscleColor: inactiveMuscleColor,
@@ -254,7 +228,8 @@ class SystemViewport {
     }
 
     mesh.triangles = meshData.triangles;
-    mesh.lines = edgesFromTriangles(meshData.triangles);
+    const lineRenderer = this.lines;
+    mesh.lines = lineRenderer.makeEdgesFromTriangles(meshData.triangles);
     Array.prototype.push.apply(mesh.lines, meshData.muscles);
 
     const muscleHashToId = new Map();

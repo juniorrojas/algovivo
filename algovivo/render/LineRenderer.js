@@ -1,3 +1,8 @@
+function hashSimplex(vids) {
+  vids.sort();
+  return vids.join("_");
+}
+
 function renderLine(ctx, scale, a, b, borderWidth, borderColor) {
   ctx.beginPath();
   ctx.lineJoin = "round";
@@ -47,6 +52,22 @@ class LineRenderer {
     this.system = args.system;
   }
 
+  makeEdgesFromTriangles(triangles) {
+    const edges = new Map();
+  
+  function addEdge(i1, i2) {
+    const hash = hashSimplex([i1, i2]);
+      edges.set(hash, [i1, i2]);
+    }
+
+    triangles.forEach(t => {
+      addEdge(t[0], t[1]);
+      addEdge(t[1], t[2]);
+      addEdge(t[0], t[2]);
+    });
+    return Array.from(edges.values());
+  }
+
   makeLineShaderFunction(args = {}) {
     const activeMuscleColor = args.activeMuscleColor ?? [255, 0, 0];
     const inactiveMuscleColor = args.inactiveMuscleColor ?? [0, 0, 255];
@@ -60,7 +81,10 @@ class LineRenderer {
       const scale = camera.inferScale();
 
       const lineIdToMuscleId = args.mesh.getCustomAttribute("lineIdToMuscleId");
-      const muscleId = lineIdToMuscleId[args.id];
+      let muscleId = null;
+      if (lineIdToMuscleId != null) {
+        muscleId = lineIdToMuscleId[args.id];
+      }
       if (muscleId == null) {
         const borderWidth = 0.029;
         renderLine(ctx, scale, a, b, borderWidth, borderColor);
