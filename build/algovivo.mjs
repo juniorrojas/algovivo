@@ -3,7 +3,7 @@
  * (c) 2023 Junior Rojas
  * License: MIT
  * 
- * Built from commit 4e9da508a6a1a59e7756cd516fc0024c0f7c882d
+ * Built from commit a8993bd34317f7900f5fba460a12a02d01a03ec0
  */
 function getDefaultExportFromCjs (x) {
 	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
@@ -1288,6 +1288,12 @@ class Vertices$2 {
     this.posTmp = null;
 
     this._fixedVertexId = -1;
+  }
+
+  setVertexPos(i, pos) {
+    for (let j = 0; j < this.spaceDim; j++) {
+      this.pos.set([i, j], pos[j]);
+    }
   }
 
   getVertexPos(i) {
