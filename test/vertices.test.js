@@ -57,6 +57,9 @@ test("add vertex", async () => {
   expect(memoryManager.numReservedBytes()).not.toBe(0);
   const reservedBytesForOneVertex = memoryManager.numReservedBytes();
 
+  vertices.setVertexPos(0, [11, 22]);
+  expect(vertices.pos.toArray()).toBeCloseToArray([[11, 22]]);
+
   vertices.dispose();
   vertices.addVertex();
   expect(vertices.numVertices).toBe(1);

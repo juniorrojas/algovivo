@@ -19,6 +19,12 @@ class Vertices {
     this._fixedVertexId = -1;
   }
 
+  setVertexPos(i, pos) {
+    for (let j = 0; j < this.spaceDim; j++) {
+      this.pos.set([i, j], pos[j]);
+    }
+  }
+
   getVertexPos(i) {
     const pos = [];
     for (let j = 0; j < this.spaceDim; j++) {
