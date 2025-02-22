@@ -34,6 +34,7 @@ class Vertices {
   }
 
   get fixedVertexId() {
+    if (this._fixedVertexId == null) return -1;
     return this._fixedVertexId.u32()[0];
   }
 
@@ -160,6 +161,10 @@ class Vertices {
   }
 
   dispose() {
+    if (this._fixedVertexId != null) {
+      this._fixedVertexId.free();
+      this._fixedVertexId = null;
+    }
     if (this.pos0 != null) {
       this.pos0.dispose();
       this.pos0 = null;
