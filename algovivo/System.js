@@ -183,9 +183,10 @@ class System {
 
   step() {
     const numVertices = this.numVertices;
-    const numMuscles = this.numMuscles;
 
-    const fixedVertexId = this.vertices._fixedVertexId;
+    let fixedVertexId = this.vertices._fixedVertexId;
+    if (fixedVertexId == null) fixedVertexId = -1;
+    
     const vertexMass = this.vertexMass;
 
     this.wasmInstance.exports.backward_euler_update(

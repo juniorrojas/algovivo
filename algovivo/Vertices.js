@@ -16,7 +16,7 @@ class Vertices {
     this.posGrad = null;
     this.posTmp = null;
 
-    this._fixedVertexId = ten.mgr.malloc32(1);
+    this._fixedVertexId = null;
   }
 
   setVertexPos(i, pos) {
@@ -33,20 +33,21 @@ class Vertices {
     return pos;
   }
 
-  set fixedVertexId(value) {
-    throw new Error("use fixVertex instead");
-  }
-
   get fixedVertexId() {
-    return this._fixedVertexId;
+    return this._fixedVertexId.u32()[0];
   }
 
   fixVertex(vertexId) {
-    this._fixedVertexId = vertexId;
+    if (this._fixedVertexId == null) {
+      this._fixedVertexId = this.ten.mgr.malloc32(1);
+    }
+    this._fixedVertexId.u32().set([vertexId]);
   }
 
   freeVertex() {
-    this._fixedVertexId = -1;
+    if (this._fixedVertexId == null) return;
+    this._fixedVertexId.free();
+    this._fixedVertexId = null;
   }
 
   get pos() {
