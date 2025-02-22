@@ -16,7 +16,7 @@ class Vertices {
     this.posGrad = null;
     this.posTmp = null;
 
-    this._fixedVertexId = -1;
+    this._fixedVertexId = ten.mgr.malloc32(1);
   }
 
   setVertexPos(i, pos) {
