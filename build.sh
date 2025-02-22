@@ -43,7 +43,7 @@ if [ $build_wasm -eq 1 ]; then
     $ld --no-entry -allow-undefined --export-all -o ${wasm_filename} ${o_filename}
     echo "saved to ${wasm_filename}"
 else
-    so_filename="${build_dirname}/lib${lib_name}.so"
+    so_filename="${build_dirname}/${lib_name}.so"
 
     echo "compiling LLVM IR to dynamic library..."
     $clang -shared -o ${so_filename} ${ll_diff_opt_filename}
