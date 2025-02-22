@@ -3,7 +3,7 @@
  * (c) 2023 Junior Rojas
  * License: MIT
  * 
- * Built from commit 053069dadd3391fb0c5723dd78c3b4b2cc6541b0
+ * Built from commit 4e9da508a6a1a59e7756cd516fc0024c0f7c882d
  */
 function getDefaultExportFromCjs (x) {
 	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
@@ -2932,7 +2932,7 @@ var Simplex_1 = Simplex$1;
 
 const Simplex = Simplex_1;
 
-function hashSimplex$1(vids) {
+function hashSimplex$2(vids) {
   vids.sort();
   return vids.join("_");
 }
@@ -2953,7 +2953,7 @@ class Simplices$3 {
   }
 
   has(simplex) {
-    return this.simplicesByHash.has(hashSimplex$1(simplex.vertexIds));
+    return this.simplicesByHash.has(hashSimplex$2(simplex.vertexIds));
   }
 
   add(simplex, id) {
@@ -2972,7 +2972,7 @@ class Simplices$3 {
     if (vertexIds.length != this.order) {
       throw new Error(`expected ${this.order} vertices, found ${vertexIds.length}`);
     }
-    const h = hashSimplex$1(vertexIds);
+    const h = hashSimplex$2(vertexIds);
     this.simplicesByHash.set(h, simplex);
     return simplex;
   }
@@ -3399,6 +3399,11 @@ class VertexRenderer$1 {
 
 var VertexRenderer_1 = VertexRenderer$1;
 
+function hashSimplex$1(vids) {
+  vids.sort();
+  return vids.join("_");
+}
+
 function renderLine(ctx, scale, a, b, borderWidth, borderColor) {
   ctx.beginPath();
   ctx.lineJoin = "round";
@@ -3448,6 +3453,22 @@ class LineRenderer$1 {
     this.system = args.system;
   }
 
+  makeEdgesFromTriangles(triangles) {
+    const edges = new Map();
+  
+  function addEdge(i1, i2) {
+    const hash = hashSimplex$1([i1, i2]);
+      edges.set(hash, [i1, i2]);
+    }
+
+    triangles.forEach(t => {
+      addEdge(t[0], t[1]);
+      addEdge(t[1], t[2]);
+      addEdge(t[0], t[2]);
+    });
+    return Array.from(edges.values());
+  }
+
   makeLineShaderFunction(args = {}) {
     const activeMuscleColor = args.activeMuscleColor ?? [255, 0, 0];
     const inactiveMuscleColor = args.inactiveMuscleColor ?? [0, 0, 255];
@@ -3461,7 +3482,10 @@ class LineRenderer$1 {
       const scale = camera.inferScale();
 
       const lineIdToMuscleId = args.mesh.getCustomAttribute("lineIdToMuscleId");
-      const muscleId = lineIdToMuscleId[args.id];
+      let muscleId = null;
+      if (lineIdToMuscleId != null) {
+        muscleId = lineIdToMuscleId[args.id];
+      }
       if (muscleId == null) {
         const borderWidth = 0.029;
         renderLine(ctx, scale, a, b, borderWidth, borderColor);
@@ -3490,31 +3514,39 @@ class LineRenderer$1 {
 
 var LineRenderer_1 = LineRenderer$1;
 
+class TriangleRenderer$1 {
+  constructor(args = {}) { 
+    this.fillColor = args.fillColor ?? "white";
+  }
+
+  renderTriangle(args = {}) {
+    const ctx = args.ctx;
+    const a = args.a;
+    const b = args.b;
+    const c = args.c;
+
+    ctx.beginPath();
+    ctx.fillStyle = this.fillColor;
+    ctx.moveTo(...a);
+    ctx.lineTo(...b);
+    ctx.lineTo(...c);
+    ctx.closePath();
+    ctx.fill();
+  }
+}
+
+var TriangleRenderer_1 = TriangleRenderer$1;
+
 const mm2d$1 = mm2d$3;
 const Tracker = Tracker_1;
 const Floor = Floor_1;
 const VertexRenderer = VertexRenderer_1;
 const LineRenderer = LineRenderer_1;
+const TriangleRenderer = TriangleRenderer_1;
 
 function hashSimplex(vids) {
   vids.sort();
   return vids.join("_");
-}
-
-function edgesFromTriangles(triangles) {
-  const edges = new Map();
-  
-  function addEdge(i1, i2) {
-    const hash = hashSimplex([i1, i2]);
-    edges.set(hash, [i1, i2]);
-  }
-
-  triangles.forEach(t => {
-    addEdge(t[0], t[1]);
-    addEdge(t[1], t[2]);
-    addEdge(t[0], t[2]);
-  });
-  return Array.from(edges.values());
 }
 
 function hexToRgb(hex) {
@@ -3630,20 +3662,9 @@ class SystemViewport {
     
     mesh.pointShader.renderPoint = (args) => { this.vertices.renderVertex(args); };
 
-    mesh.triangleShader.renderTriangle = (args = {}) => {
-      const ctx = args.ctx;
-      const a = args.a;
-      const b = args.b;
-      const c = args.c;
+    this.triangleRenderer = new TriangleRenderer({ fillColor });
+    mesh.triangleShader.renderTriangle = (args = {}) => { this.triangleRenderer.renderTriangle(args); };
 
-      ctx.beginPath();
-      ctx.fillStyle = fillColor;
-      ctx.moveTo(...a);
-      ctx.lineTo(...b);
-      ctx.lineTo(...c);
-      ctx.closePath();
-      ctx.fill();
-    };
     mesh.lineShader.renderLine = this.lines.makeLineShaderFunction({
       activeMuscleColor: activeMuscleColor,
       inactiveMuscleColor: inactiveMuscleColor,
@@ -3746,7 +3767,8 @@ class SystemViewport {
     }
 
     mesh.triangles = meshData.triangles;
-    mesh.lines = edgesFromTriangles(meshData.triangles);
+    const lineRenderer = this.lines;
+    mesh.lines = lineRenderer.makeEdgesFromTriangles(meshData.triangles);
     Array.prototype.push.apply(mesh.lines, meshData.muscles);
 
     const muscleHashToId = new Map();
@@ -3864,6 +3886,8 @@ var SystemViewport_1 = SystemViewport;
 var render$1 = {
   SystemViewport: SystemViewport_1,
   VertexRenderer: VertexRenderer_1,
+  LineRenderer: LineRenderer_1,
+  TriangleRenderer: TriangleRenderer_1,
   Tracker: Tracker_1,
 };
 
