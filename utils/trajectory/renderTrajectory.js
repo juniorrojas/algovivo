@@ -1,3 +1,4 @@
+const { ArgumentParser } = require("argparse");
 const { Window, runWebServer } = require("./ppw");
 const TrajectoryData = require("./TrajectoryData");
 const FrameRecorder = require("./FrameRecorder");
@@ -98,17 +99,13 @@ async function renderTrajectory(args = {}) {
 }
 
 async function main() {
-  const meshFilename = process.env.MESH_FILENAME;
-  if (!meshFilename) {
-    console.error("MESH_FILENAME environment variable not set");
-    process.exit(1);
-  }
-  
-  const stepsDirname = process.env.STEPS_DIRNAME;
-  if (!stepsDirname) {
-    console.error("STEPS_DIRNAME environment variable not set");
-    process.exit(1);
-  }
+  const argParser = new ArgumentParser();
+  argParser.addArgument("--mesh-filename", { required: true });
+  argParser.addArgument("--steps-dirname", { required: true });
+  args = argParser.parseArgs();
+
+  const meshFilename = args.mesh_filename;
+  const stepsDirname = args.steps_dirname;
 
   const outputDirname = "frames.out";
 
