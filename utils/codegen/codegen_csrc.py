@@ -33,7 +33,7 @@ for arg in backward_euler.loss.args:
     if not arg.differentiable:
         forward_non_differentiable_args.add_arg(arg.t, arg.name)
 
-csrc_dirpath = this_dirpath.parent.parent.joinpath("csrc")
+csrc_dirpath = Path("csrc")
 
 with open(this_dirpath.joinpath("templates", "optim.template.h")) as f:
     template = f.read()
