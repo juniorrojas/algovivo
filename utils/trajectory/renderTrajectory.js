@@ -9,11 +9,11 @@ async function renderTrajectory(args = {}) {
   const stepsDirname = args.stepsDirname;
   const meshFilename = args.meshFilename;
   const framesDirname = args.framesDirname;
+  
+  const width = args.width ?? 300;
+  const height = args.height ?? 300;
 
   const onServerReady = async (port) => {
-    const width = parseInt(process.env.WIDTH, 10) || 300;
-    const height = parseInt(process.env.HEIGHT, 10) || 300;
-
     const recorder = new FrameRecorder({ framesDirname });
 
     const window = new Window({
@@ -102,6 +102,8 @@ async function main() {
   const argParser = new ArgumentParser();
   argParser.addArgument("--mesh-filename", { required: true });
   argParser.addArgument("--steps-dirname", { required: true });
+  argParser.addArgument("--width", { defaultValue: 300, type: "int" });
+  argParser.addArgument("--height", { defaultValue: 300, type: "int" });
   argParser.addArgument(["-o", "--output-dirname"], { defaultValue: "frames.out" });
   args = argParser.parseArgs();
 
@@ -112,7 +114,9 @@ async function main() {
   await renderTrajectory({
     meshFilename: meshFilename,
     stepsDirname: stepsDirname,
-    framesDirname: outputDirname
+    framesDirname: outputDirname,
+    width: args.width,
+    height: args.height
   });
 
   console.log(`Frames saved to ${outputDirname}`);
