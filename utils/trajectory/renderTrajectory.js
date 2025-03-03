@@ -102,7 +102,7 @@ async function main() {
   const argParser = new ArgumentParser();
   argParser.addArgument("--mesh-filename", { required: true });
   argParser.addArgument("--steps-dirname", { required: true });
-  argParser.addArgument("--output-dirname", { defaultValue: "frames.out" });
+  argParser.addArgument(["-o", "--output-dirname"], { defaultValue: "frames.out" });
   args = argParser.parseArgs();
 
   const meshFilename = args.mesh_filename;
