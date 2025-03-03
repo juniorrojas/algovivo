@@ -72,7 +72,8 @@ jobs:
         run: |
           node utils/trajectory/renderTrajectory.js \
             --mesh test/neural/data/mesh.json \
-            --steps test/neural/data/trajectory
+            --steps test/neural/data/trajectory \
+            --output frames.out
       - name: Install ffmpeg
         run: |
           sudo apt-get update
