@@ -14,6 +14,24 @@ env:
   BUILD_BRANCH_REPO_DIRNAME: build.repo
 
 jobs:
+  init-build-branch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v4
+      - name: Create branch if it does not exist
+        run: |
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          if ! git ls-remote --exit-code --heads origin ${{ env.BUILD_BRANCH }}; then
+            echo "Branch does not exist, creating and pushing..."
+            git checkout --orphan ${{ env.BUILD_BRANCH }}
+            git rm -rf .
+            git commit --allow-empty -m "First commit"
+            git push origin ${{ env.BUILD_BRANCH }}
+          else
+            echo "Branch already exists, skipping push."
+          fi
   build-wasm:
     runs-on: ubuntu-latest
     container:
@@ -69,7 +87,7 @@ jobs:
           path: ${{ env.BUILD_DIRNAME }}/
   push-build:
     runs-on: ubuntu-latest
-    needs: [build-wasm, build-dynamic-lib, build-js]
+    needs: [init-build-branch, build-wasm, build-dynamic-lib, build-js]
     steps:
       - name: Download WASM build
         uses: actions/download-artifact@v4
