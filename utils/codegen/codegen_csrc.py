@@ -4,6 +4,11 @@ this_filepath = Path(os.path.realpath(__file__))
 this_dirpath = this_filepath.parent
 import algovivo_codegen as codegen
 from algovivo_codegen import indent
+import argparse
+
+arg_parser = argparse.ArgumentParser()
+arg_parser.add_argument("-o", "--output-csrc-dirname", type=str, default="csrc")
+args = arg_parser.parse_args()
 
 backward_euler = codegen.BackwardEuler()
 
@@ -33,7 +38,7 @@ for arg in backward_euler.loss.args:
     if not arg.differentiable:
         forward_non_differentiable_args.add_arg(arg.t, arg.name)
 
-csrc_dirpath = Path("csrc")
+csrc_dirpath = Path(args.output_csrc_dirname)
 
 with open(this_dirpath.joinpath("templates", "optim.template.h")) as f:
     template = f.read()
