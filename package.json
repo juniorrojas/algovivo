@@ -22,7 +22,7 @@
     "argparse": "^2.0.1",
     "express": "^4.21.1",
     "jest": "^29.5.0",
-    "puppeteer": "^22.12.0",
+    "puppeteer": "^22.15.0",
     "rollup": "^2.79.2"
   }
 }
