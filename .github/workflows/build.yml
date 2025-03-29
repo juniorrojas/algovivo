@@ -35,7 +35,7 @@ jobs:
   build-wasm:
     runs-on: ubuntu-latest
     container:
-      image: juniorrojas/llvm-enzyme:latest
+      image: ghcr.io/juniorrojas/algovivo/llvm11-enzyme:latest
     steps:
       - name: Clone src branch
         uses: actions/checkout@v4
