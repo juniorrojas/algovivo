@@ -1,0 +1,33 @@
+name: docker-llvm-enzyme
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build Docker image
+        run: docker build -f docker/llvm-enzyme/Dockerfile -t ghcr.io/${{ github.repository_owner }}/${{ github.repository }}/llvm11-enzyme:latest .
+
+      - name: Push Docker image to GitHub Container Registry
+        run: docker push ghcr.io/${{ github.repository_owner }}/${{ github.repository }}/llvm11-enzyme:latest
