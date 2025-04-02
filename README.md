@@ -101,12 +101,13 @@ More details about this and other energy functions used in the simulation can be
 ### build WASM
 
 ```sh
-docker run -it -v $(pwd):/workspace ghcr.io/juniorrojas/algovivo/llvm11-enzyme /bin/bash
-
-export LLVM_BIN_DIR=/usr/lib/llvm-11/bin
-export ENZYME=/Enzyme/enzyme/build/Enzyme/LLVMEnzyme-11.so
-cd /workspace
-./build.sh
+docker run -it \
+  -e LLVM_BIN_DIR=/usr/lib/llvm-11/bin \
+  -e ENZYME=/Enzyme/enzyme/build/Enzyme/LLVMEnzyme-11.so \
+  -v $(pwd):/workspace \
+  -w /workspace \
+  ghcr.io/juniorrojas/algovivo/llvm11-enzyme \
+  ./build.sh
 ```
 
 ### build JS
