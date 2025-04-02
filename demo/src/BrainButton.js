@@ -57,8 +57,12 @@ export default class BrainButton {
     this.domElement.appendChild(svg);
   }
 
-  setActiveStyle() {
-    this.domElement.style.backgroundColor = "black";
+  setActiveStyle(active = true) {
+    if (active) {
+      this.domElement.style.backgroundColor = "black";
+    } else {
+      this.setInactiveStyle();
+    }
   }
 
   setInactiveStyle() {
