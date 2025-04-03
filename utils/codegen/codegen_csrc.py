@@ -10,6 +10,8 @@ arg_parser = argparse.ArgumentParser()
 arg_parser.add_argument("-o", "--output-csrc-dirname", type=str, default="csrc")
 args = arg_parser.parse_args()
 
+templates_dirpath = this_dirpath.joinpath("templates")
+
 backward_euler = codegen.BackwardEuler()
 
 backward_euler_loss_grad = backward_euler.loss.make_backward_pass()
@@ -40,7 +42,7 @@ for arg in backward_euler.loss.args:
 
 csrc_dirpath = Path(args.output_csrc_dirname)
 
-with open(this_dirpath.joinpath("templates", "optim.template.h")) as f:
+with open(templates_dirpath.joinpath("optim.template.h")) as f:
     template = f.read()
     
     src = template
@@ -76,7 +78,7 @@ backward_euler_update_vel_args.add_arg("float*", "pos1", mut=True)
 backward_euler_update_vel_args.add_arg("float*", "vel1", mut=True)
 backward_euler_update_vel_args.add_arg("float", "h")
 
-with open(this_dirpath.joinpath("templates", "backward_euler.template.h")) as f:
+with open(templates_dirpath.joinpath("backward_euler.template.h")) as f:
     template = f.read()
 
     src = template
