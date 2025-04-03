@@ -18,7 +18,7 @@ backward_euler.potentials = [
     codegen.potentials.Muscles(),
     codegen.Triangles(),
     codegen.Gravity(),
-    codegen.Collision(),
+    codegen.potentials.Collision(),
     codegen.Friction()
 ]
 backward_euler.make_loss()
