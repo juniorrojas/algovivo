@@ -1,9 +1,79 @@
 from .codegen import Fun, indent
 
+class Collision:
+    def __init__(self):
+        pass
+    
+    def add_to_loss(self, be):
+        be.loss_body += """
+for (int i = 0; i < num_vertices; i++) {
+  const auto offset = space_dim * i;
+  const auto py = pos[offset + 1];
+
+  accumulate_collision_energy(
+    potential_energy,
+    py
+  );
+}
+"""
+
+class Gravity:
+    def __init__(self):
+        pass
+
+    def add_to_loss(self, be):
+        be.loss_body += """
+for (int i = 0; i < num_vertices; i++) {
+  const auto offset = space_dim * i;
+
+  const auto px = pos[offset    ];
+  const auto py = pos[offset + 1];
+
+  accumulate_gravity_energy(
+    potential_energy,
+    py,
+    vertex_mass,
+    g
+  );
+}
+"""
+
+class Friction:
+    def __init__(self):
+        pass
+    
+    def add_to_loss(self, be):
+        be.loss_body += """
+for (int i = 0; i < num_vertices; i++) {
+  const auto offset = space_dim * i;
+
+  const auto px = pos[offset    ];
+  const auto py = pos[offset + 1];
+
+  const auto p0x = pos0[offset    ];
+  const auto p0y = pos0[offset + 1];
+
+  accumulate_friction_energy(
+    potential_energy,
+    px,
+    p0x, p0y,
+    h,
+    k_friction
+  );
+}
+"""
+    
+
 class BackwardEuler:
     def __init__(self):
         self.loss = Fun("backward_euler_loss")
+        self.potentials = [
+            Gravity(),
+            Collision(),
+            Friction()
+        ]
 
+    def make_loss(self):
         self.loss.args.add_arg("int", "space_dim")
         self.loss.args.add_arg("float", "g")
         self.loss.args.add_arg("float", "h")
@@ -22,7 +92,9 @@ float potential_energy = 0.0;"""
         self.add_inertia()
         self.add_muscles()
         self.add_triangles()
-        self.add_vertex_energy()
+
+        for potential in self.potentials:
+            potential.add_to_loss(self)
 
         self.loss_body += "return 0.5 * inertial_energy + h * h * potential_energy;"
 
@@ -92,53 +164,3 @@ for (int i = 0; i < num_muscles; i++) {
             simplex_name_singular="triangle"
         )
         self.loss_body += "\n" + neohookean.codegen_accumulate_simplices_energy()
-
-    def add_vertex_energy(self):
-        # gravity
-        self.loss_body += """
-for (int i = 0; i < num_vertices; i++) {
-  const auto offset = space_dim * i;
-
-  const auto px = pos[offset    ];
-  const auto py = pos[offset + 1];
-
-  accumulate_gravity_energy(
-    potential_energy,
-    py,
-    vertex_mass,
-    g
-  );
-}
-"""
-        # collision
-        self.loss_body += """
-for (int i = 0; i < num_vertices; i++) {
-  const auto offset = space_dim * i;
-  const auto py = pos[offset + 1];
-
-  accumulate_collision_energy(
-    potential_energy,
-    py
-  );
-}
-"""
-        # friction
-        self.loss_body += """
-for (int i = 0; i < num_vertices; i++) {
-  const auto offset = space_dim * i;
-
-  const auto px = pos[offset    ];
-  const auto py = pos[offset + 1];
-
-  const auto p0x = pos0[offset    ];
-  const auto p0y = pos0[offset + 1];
-
-  accumulate_friction_energy(
-    potential_energy,
-    px,
-    p0x, p0y,
-    h,
-    k_friction
-  );
-}
-"""
