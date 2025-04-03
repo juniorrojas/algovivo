@@ -10,7 +10,7 @@ arg_parser = argparse.ArgumentParser()
 arg_parser.add_argument("-o", "--output-csrc-dirname", type=str, default="csrc")
 args = arg_parser.parse_args()
 
-templates_dirpath = this_dirpath.joinpath("templates")
+templates_dirpath = this_dirpath.joinpath("algovivo_codegen", "templates")
 
 backward_euler = codegen.BackwardEuler()
 
