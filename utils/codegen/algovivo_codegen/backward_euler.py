@@ -97,13 +97,7 @@ for (int i = 0; i < num_vertices; i++) {
 class BackwardEuler:
     def __init__(self):
         self.loss = Fun("backward_euler_loss")
-        self.potentials = [
-            Muscles(),
-            Triangles(),
-            Gravity(),
-            Collision(),
-            Friction()
-        ]
+        self.potentials = []
 
     def make_loss(self):
         self.loss.args.add_arg("int", "space_dim")

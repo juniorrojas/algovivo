@@ -13,6 +13,14 @@ args = arg_parser.parse_args()
 templates_dirpath = this_dirpath.joinpath("templates")
 
 backward_euler = codegen.BackwardEuler()
+
+backward_euler.potentials = [
+    codegen.Muscles(),
+    codegen.Triangles(),
+    codegen.Gravity(),
+    codegen.Collision(),
+    codegen.Friction()
+]
 backward_euler.make_loss()
 
 backward_euler_loss_grad = backward_euler.loss.make_backward_pass()
