@@ -16,10 +16,10 @@ backward_euler = codegen.BackwardEuler()
 
 backward_euler.potentials = [
     codegen.potentials.Muscles(),
-    codegen.Triangles(),
-    codegen.Gravity(),
+    codegen.potentials.Triangles(),
+    codegen.potentials.Gravity(),
     codegen.potentials.Collision(),
-    codegen.Friction()
+    codegen.potentials.Friction()
 ]
 backward_euler.make_loss()
 
