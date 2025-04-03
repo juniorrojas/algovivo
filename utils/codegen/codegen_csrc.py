@@ -15,7 +15,7 @@ templates_dirpath = this_dirpath.joinpath("templates")
 backward_euler = codegen.BackwardEuler()
 
 backward_euler.potentials = [
-    codegen.Muscles(),
+    codegen.potentials.Muscles(),
     codegen.Triangles(),
     codegen.Gravity(),
     codegen.Collision(),
