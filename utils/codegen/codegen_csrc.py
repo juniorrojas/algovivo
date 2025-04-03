@@ -10,9 +10,17 @@ arg_parser = argparse.ArgumentParser()
 arg_parser.add_argument("-o", "--output-csrc-dirname", type=str, default="csrc")
 args = arg_parser.parse_args()
 
-templates_dirpath = this_dirpath.joinpath("templates")
+templates_dirpath = this_dirpath.joinpath("algovivo_codegen", "templates")
 
 backward_euler = codegen.BackwardEuler()
+
+backward_euler.potentials = [
+    codegen.potentials.Muscles(),
+    codegen.potentials.Triangles(),
+    codegen.potentials.Gravity(),
+    codegen.potentials.Collision(),
+    codegen.potentials.Friction()
+]
 backward_euler.make_loss()
 
 backward_euler_loss_grad = backward_euler.loss.make_backward_pass()
