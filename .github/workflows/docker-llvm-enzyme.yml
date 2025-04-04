@@ -20,8 +20,20 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build Docker image
-        run: docker build -f docker/llvm-enzyme/Dockerfile -t ghcr.io/${{ github.repository }}/llvm11-enzyme:latest .
+      # - name: Build Docker image
+      #   run: docker build -f docker/llvm-enzyme/Dockerfile -t ghcr.io/${{ github.repository }}/llvm11-enzyme:latest .
 
-      - name: Push Docker image to GitHub Container Registry
-        run: docker push ghcr.io/${{ github.repository }}/llvm11-enzyme:latest
+      # - name: Push Docker image to GitHub Container Registry
+      #   run: docker push ghcr.io/${{ github.repository }}/llvm11-enzyme:latest
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build and push multi-platform Docker image
+        run: |
+          docker buildx create --use
+          docker buildx build \
+            --platform linux/amd64,linux/arm64 \
+            -f docker/llvm-enzyme/Dockerfile \
+            -t ghcr.io/${{ github.repository }}/llvm11-enzyme:latest \
+            --push .
