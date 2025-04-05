@@ -3,7 +3,6 @@ import os
 this_filepath = Path(os.path.realpath(__file__))
 this_dirpath = this_filepath.parent
 import algovivo_codegen as codegen
-from algovivo_codegen import indent
 import argparse
 
 arg_parser = argparse.ArgumentParser()
