@@ -19,6 +19,20 @@ class Vertices {
     this._fixedVertexId = null;
   }
 
+  toStepArgs() {
+    const fixedVertexId = this.fixedVertexId;
+    const numVertices = this.numVertices;
+
+    return [
+      fixedVertexId == -1 ? 0 : this._fixedVertexId.ptr,
+
+      numVertices == 0 ? 0 : this.pos1.ptr,
+      numVertices == 0 ? 0 : this.posGrad.ptr,
+      numVertices == 0 ? 0 : this.posTmp.ptr,
+      numVertices == 0 ? 0 : this.vel1.ptr,
+    ];
+  }
+
   setVertexPos(i, pos) {
     for (let j = 0; j < this.spaceDim; j++) {
       this.pos.set([i, j], pos[j]);

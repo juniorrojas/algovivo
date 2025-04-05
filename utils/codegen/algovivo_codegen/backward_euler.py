@@ -1,8 +1,13 @@
-from .codegen import Fun, indent
+from .codegen import Fun, Args, indent
+from pathlib import Path
+import os
+this_filepath = Path(os.path.realpath(__file__))
+this_dirpath = this_filepath.parent
 
 class BackwardEuler:
     def __init__(self):
         self.loss = Fun("backward_euler_loss")
+        self.modules = []
         self.potentials = []
 
     def make_loss(self):
@@ -10,9 +15,8 @@ class BackwardEuler:
         self.loss.args.add_arg("float", "g")
         self.loss.args.add_arg("float", "h")
 
-        self.add_vertices_args()
-        self.add_muscles_args()
-        self.add_triangles_args()
+        for module in self.modules:
+            module.add_args(self.loss.args)
         self.add_friction_args()
 
         self.loss.args.add_arg("float*", "pos", differentiable=True)
@@ -30,28 +34,54 @@ float potential_energy = 0.0;"""
 
         self.loss_body = indent(self.loss_body)
 
-    def add_vertices_args(self):
-        args = self.loss.args
-        args.add_arg("int", "num_vertices")
-        args.add_arg("float*", "pos0")
-        args.add_arg("float*", "vel0")
-        args.add_arg("float", "vertex_mass")
+    def make_update_args(self):
+        update_args = Args()
 
-    def add_muscles_args(self):
-        args = self.loss.args
-        args.add_arg("int", "num_muscles")
-        args.add_arg("int*", "muscles")
-        args.add_arg("float", "k")
-        args.add_arg("float*", "a")
-        args.add_arg("float*", "l0")
+        for arg in self.loss.args:
+            if not arg.differentiable:
+                update_args.add_arg(arg.t, arg.name)
+        update_args.add_arg("int*", "fixed_vertex_id")
 
-    def add_triangles_args(self):
-        args = self.loss.args
-        args.add_arg("int", "num_triangles")
-        args.add_arg("int*", "triangles")
-        args.add_arg("float*", "rsi")
-        args.add_arg("float*", "mu")
-        args.add_arg("float*", "lambda")
+        for arg in self.loss.args:
+            if arg.differentiable:
+                update_args.add_arg(arg.t, f"{arg.name}1", mut=True)
+                update_args.add_arg(arg.t, f"{arg.name}_grad", mut=True)
+                update_args.add_arg(arg.t, f"{arg.name}_tmp", mut=True)
+                if arg.name == "pos":
+                    update_args.add_arg(arg.t, f"vel1", mut=True)
+                else:
+                    update_args.add_arg(arg.t, f"{arg.name}_v1", mut=True)
+
+        update_pos_args = Args()
+
+        for arg in self.loss.args:
+            if not arg.differentiable:
+                update_pos_args.add_arg(arg.t, arg.name)
+
+        for arg in self.loss.args:
+            if arg.differentiable:
+                update_pos_args.add_arg(arg.t, f"{arg.name}", mut=True)
+                update_pos_args.add_arg(arg.t, f"{arg.name}_grad", mut=True)
+                update_pos_args.add_arg(arg.t, f"{arg.name}_tmp", mut=True)
+        update_pos_args.add_arg("int*", "fixed_vertex_id")
+
+        update_vel_args = Args()
+        update_vel_args.add_arg("int", "num_vertices")
+        update_vel_args.add_arg("int", "space_dim")
+        update_vel_args.add_arg("float*", "pos0")
+        update_vel_args.add_arg("float*", "vel0")
+        update_vel_args.add_arg("float*", "pos1", mut=True)
+        update_vel_args.add_arg("float*", "vel1", mut=True)
+        update_vel_args.add_arg("float", "h")
+
+        return update_args, update_pos_args, update_vel_args
+    
+    def make_forward_non_differentiable_args(self):
+        forward_non_differentiable_args = Args()
+        for arg in self.loss.args:
+            if not arg.differentiable:
+                forward_non_differentiable_args.add_arg(arg.t, arg.name)
+        return forward_non_differentiable_args
 
     def add_friction_args(self):
         args = self.loss.args
@@ -71,3 +101,59 @@ for (int i = 0; i < num_vertices; i++) {
     space_dim
   );
 }"""
+
+    def instantiate_templates(self, csrc_dirpath):
+        self.make_loss()
+        loss_grad = self.loss.make_backward_pass()
+        update_args, update_pos_args, update_vel_args = self.make_update_args()
+        forward_non_differentiable_args = self.make_forward_non_differentiable_args()
+
+        templates_dirpath = this_dirpath.joinpath("templates")
+        
+        with open(templates_dirpath.joinpath("optim.template.h")) as f:
+            template = f.read()
+            
+            src = template
+            src = template.replace(
+                "/* {{forward_non_differentiable_args}} */",
+                forward_non_differentiable_args.codegen_call()
+            )
+
+        output_filepath = csrc_dirpath.joinpath("dynamics", "optim.h")
+        with open(output_filepath, "w") as f:
+            f.write(src)
+        print(f"Saved to {output_filepath}")
+
+        with open(templates_dirpath.joinpath("backward_euler.template.h")) as f:
+            template = f.read()
+
+            src = template
+
+            src = (src
+                .replace("/* {{backward_euler_update_pos_args}} */", update_pos_args.codegen_fun_signature())
+                .replace("/* {{backward_euler_update_pos_args_call}} */", update_pos_args.codegen_call().replace(", pos,", ", pos1,"))
+            )
+
+            src = (src
+                .replace("/* {{backward_euler_update_vel_args}} */", update_vel_args.codegen_fun_signature())
+                .replace("/* {{backward_euler_update_vel_args_call}} */", update_vel_args.codegen_call())
+            )
+
+            src = src.replace(
+                "/* {{backward_euler_update_args}} */",
+                indent(update_args.codegen_fun_signature())
+            )
+
+            src = (src
+                .replace("// {{backward_euler_loss_body}}", self.loss_body)
+                .replace("// {{backward_euler_loss_args}}", self.loss.args.codegen_fun_signature())
+                .replace("// {{backward_euler_loss_args_call}}", self.loss.args.codegen_call())
+                .replace("// {{backward_euler_loss_grad_args}}", loss_grad.args.codegen_fun_signature())
+                .replace("// {{backward_euler_loss_grad_args_call}}", loss_grad.args.codegen_call())
+                .replace("// {{backward_euler_loss_grad_body}}", indent(loss_grad.codegen_body()))
+            )
+
+        output_filepath = csrc_dirpath.joinpath("dynamics", "backward_euler.h")
+        with open(output_filepath, "w") as f:
+            f.write(src)
+        print(f"Saved to {output_filepath}")
