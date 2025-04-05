@@ -48,8 +48,8 @@ void frame_projection(
   auto ax = fx - cx;
   auto ay = fy - cy;
   normalize2d_(&ax, &ay);
-  const auto bx = clockwise ? ay : -ay;
-  const auto by = clockwise ? -ax : ax;
+  const auto bx = clockwise ?  ay : -ay;
+  const auto by = clockwise ? -ax :  ax;
 
   for (int i = 0; i < num_vertices; i++) {
     const auto offset = i * space_dim;
