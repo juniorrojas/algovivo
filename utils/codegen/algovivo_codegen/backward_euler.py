@@ -1,4 +1,8 @@
 from .codegen import Fun, Args, indent
+from pathlib import Path
+import os
+this_filepath = Path(os.path.realpath(__file__))
+this_dirpath = this_filepath.parent
 
 class BackwardEuler:
     def __init__(self):
@@ -119,3 +123,59 @@ for (int i = 0; i < num_vertices; i++) {
     space_dim
   );
 }"""
+
+    def instantiate_templates(self, csrc_dirpath):
+        self.make_loss()
+        backward_euler_loss_grad = self.loss.make_backward_pass()
+        update_args, update_pos_args, update_vel_args = self.make_update_args()
+        forward_non_differentiable_args = self.make_forward_non_differentiable_args()
+
+        templates_dirpath = this_dirpath.joinpath("templates")
+        
+        with open(templates_dirpath.joinpath("optim.template.h")) as f:
+            template = f.read()
+            
+            src = template
+            src = template.replace(
+                "/* {{forward_non_differentiable_args}} */",
+                forward_non_differentiable_args.codegen_call()
+            )
+
+        output_filepath = csrc_dirpath.joinpath("dynamics", "optim.h")
+        with open(output_filepath, "w") as f:
+            f.write(src)
+        print(f"Saved to {output_filepath}")
+
+        with open(templates_dirpath.joinpath("backward_euler.template.h")) as f:
+            template = f.read()
+
+            src = template
+
+            src = (src
+                .replace("/* {{backward_euler_update_pos_args}} */", update_pos_args.codegen_fun_signature())
+                .replace("/* {{backward_euler_update_pos_args_call}} */", update_pos_args.codegen_call().replace(", pos,", ", pos1,"))
+            )
+
+            src = (src
+                .replace("/* {{backward_euler_update_vel_args}} */", update_vel_args.codegen_fun_signature())
+                .replace("/* {{backward_euler_update_vel_args_call}} */", update_vel_args.codegen_call())
+            )
+
+            src = src.replace(
+                "/* {{backward_euler_update_args}} */",
+                indent(update_args.codegen_fun_signature())
+            )
+
+            src = (src
+                .replace("// {{backward_euler_loss_body}}", self.loss_body)
+                .replace("// {{backward_euler_loss_args}}", self.loss.args.codegen_fun_signature())
+                .replace("// {{backward_euler_loss_args_call}}", self.loss.args.codegen_call())
+                .replace("// {{backward_euler_loss_grad_args}}", backward_euler_loss_grad.args.codegen_fun_signature())
+                .replace("// {{backward_euler_loss_grad_args_call}}", backward_euler_loss_grad.args.codegen_call())
+                .replace("// {{backward_euler_loss_grad_body}}", indent(backward_euler_loss_grad.codegen_body()))
+            )
+
+        output_filepath = csrc_dirpath.joinpath("dynamics", "backward_euler.h")
+        with open(output_filepath, "w") as f:
+            f.write(src)
+        print(f"Saved to {output_filepath}")
