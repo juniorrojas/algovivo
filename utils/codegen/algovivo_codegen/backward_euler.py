@@ -126,7 +126,7 @@ for (int i = 0; i < num_vertices; i++) {
 
     def instantiate_templates(self, csrc_dirpath):
         self.make_loss()
-        backward_euler_loss_grad = self.loss.make_backward_pass()
+        loss_grad = self.loss.make_backward_pass()
         update_args, update_pos_args, update_vel_args = self.make_update_args()
         forward_non_differentiable_args = self.make_forward_non_differentiable_args()
 
@@ -170,9 +170,9 @@ for (int i = 0; i < num_vertices; i++) {
                 .replace("// {{backward_euler_loss_body}}", self.loss_body)
                 .replace("// {{backward_euler_loss_args}}", self.loss.args.codegen_fun_signature())
                 .replace("// {{backward_euler_loss_args_call}}", self.loss.args.codegen_call())
-                .replace("// {{backward_euler_loss_grad_args}}", backward_euler_loss_grad.args.codegen_fun_signature())
-                .replace("// {{backward_euler_loss_grad_args_call}}", backward_euler_loss_grad.args.codegen_call())
-                .replace("// {{backward_euler_loss_grad_body}}", indent(backward_euler_loss_grad.codegen_body()))
+                .replace("// {{backward_euler_loss_grad_args}}", loss_grad.args.codegen_fun_signature())
+                .replace("// {{backward_euler_loss_grad_args_call}}", loss_grad.args.codegen_call())
+                .replace("// {{backward_euler_loss_grad_body}}", indent(loss_grad.codegen_body()))
             )
 
         output_filepath = csrc_dirpath.joinpath("dynamics", "backward_euler.h")
