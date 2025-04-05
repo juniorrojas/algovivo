@@ -30,6 +30,8 @@ export default class NeuralPolicy {
     const outputSize = numMuscles;
     this.input = ten.zeros([inputSize]);
 
+    this.clockwise = false;
+
     const nn = ten.nn;
     this.model = nn.Sequential(
       nn.Linear(inputSize, 32),
@@ -53,7 +55,8 @@ export default class NeuralPolicy {
       this.forwardVertexId,
       this.projectedPos.ptr,
       this.projectedVel.ptr,
-      this.input.ptr
+      this.input.ptr,
+      this.clockwise
     );
 
     const da = this.model.forward(this.input);
