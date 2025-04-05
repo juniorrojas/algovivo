@@ -29,3 +29,7 @@ class Triangles:
         args.add_arg("float*", "rsi")
         args.add_arg("float*", "mu")
         args.add_arg("float*", "lambda")
+
+class Friction:
+    def add_args(self, args):
+        args.add_arg("float", "k_friction")
