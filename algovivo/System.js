@@ -181,12 +181,11 @@ class System {
     });
   }
 
-  step() {
+  toStepArgs() {
     const numVertices = this.numVertices;
-
     const vertexMass = this.vertexMass;
 
-    this.wasmInstance.exports.backward_euler_update(
+    return [
       this.spaceDim,
       this.g,
       this.h,
@@ -203,9 +202,14 @@ class System {
       this.friction.k,
 
       ...this.vertices.toStepArgs(),
-    );
+    ]
+  }
+
+  step() {
+    const args = this.toStepArgs();
+    this.wasmInstance.exports.backward_euler_update(...args);
     
-    if (numVertices != 0) {
+    if (this.numVertices != 0) {
       this.vertices.pos0.slot.f32().set(this.vertices.pos1.slot.f32());
       this.vertices.vel0.slot.f32().set(this.vertices.vel1.slot.f32());
     }
