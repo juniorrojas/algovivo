@@ -20,10 +20,16 @@ class Vertices {
   }
 
   toStepArgs() {
-    const fixedVertexId = this.fixedVertexId;
     const numVertices = this.numVertices;
+    const vertexMass = this.vertexMass;
+    const fixedVertexId = this.fixedVertexId;
 
     return [
+      numVertices,
+      numVertices == 0 ? 0 : this.pos0.ptr,
+      numVertices == 0 ? 0 : this.vel0.ptr,
+      vertexMass,
+
       fixedVertexId == -1 ? 0 : this._fixedVertexId.ptr,
 
       numVertices == 0 ? 0 : this.pos1.ptr,
