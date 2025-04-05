@@ -27,7 +27,8 @@ void frame_projection(
   int forward_vertex_id,
   const float* data,
   float* projected_data,
-  bool subtract_origin
+  bool subtract_origin,
+  bool clockwise
 ) {
   // A frame of reference is defined by two vertices: center_vertex_id 
   // (serving as the origin of the frame) and forward_vertex_id. 
@@ -43,12 +44,12 @@ void frame_projection(
 
   // a and b represent the basis vectors of the frame, both normalized to unit length.
   // a is the forward direction vector, pointing from the center vertex to the forward vertex.
-  // b is the orthogonal direction vector, computed to be perpendicular to a, forming a right-handed system.
+  // b is the orthogonal direction vector, computed to be perpendicular to a
   auto ax = fx - cx;
   auto ay = fy - cy;
   normalize2d_(&ax, &ay);
-  const auto bx = -ay;
-  const auto by =  ax;
+  const auto bx = clockwise ? ay : -ay;
+  const auto by = clockwise ? -ax : ax;
 
   for (int i = 0; i < num_vertices; i++) {
     const auto offset = i * space_dim;
@@ -93,7 +94,8 @@ void make_neural_policy_input(
   int forward_vertex_id,
   float* projected_pos,
   float* projected_vel,
-  float* policy_input
+  float* policy_input,
+  bool clockwise
 ) {
   frame_projection(
     // frame of reference
@@ -104,7 +106,8 @@ void make_neural_policy_input(
     // position projection
     pos,
     projected_pos,
-    true
+    true,
+    clockwise
   );
 
   frame_projection(
@@ -116,7 +119,8 @@ void make_neural_policy_input(
     // velocity projection
     vel,
     projected_vel,
-    false
+    false,
+    clockwise
   );
 
   cat_pos_vel(num_vertices, projected_pos, projected_vel, policy_input);
