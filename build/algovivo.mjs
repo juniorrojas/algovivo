@@ -3,7 +3,7 @@
  * (c) 2023 Junior Rojas
  * License: MIT
  * 
- * Built from commit 415c40b18fa03c9f8d7e372a843e7dac550a2c4e
+ * Built from commit 857cebeb7c5cf2ca6bdd128a88a2d0b65f315113
  */
 function getDefaultExportFromCjs (x) {
 	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
@@ -1287,7 +1287,7 @@ class Vertices$2 {
     this.posGrad = null;
     this.posTmp = null;
 
-    this._fixedVertexId = -1;
+    this._fixedVertexId = null;
   }
 
   setVertexPos(i, pos) {
@@ -1304,20 +1304,22 @@ class Vertices$2 {
     return pos;
   }
 
-  set fixedVertexId(value) {
-    throw new Error("use fixVertex instead");
-  }
-
   get fixedVertexId() {
-    return this._fixedVertexId;
+    if (this._fixedVertexId == null) return -1;
+    return this._fixedVertexId.u32()[0];
   }
 
   fixVertex(vertexId) {
-    this._fixedVertexId = vertexId;
+    if (this._fixedVertexId == null) {
+      this._fixedVertexId = this.ten.mgr.malloc32(1);
+    }
+    this._fixedVertexId.u32().set([vertexId]);
   }
 
   freeVertex() {
-    this._fixedVertexId = -1;
+    if (this._fixedVertexId == null) return;
+    this._fixedVertexId.free();
+    this._fixedVertexId = null;
   }
 
   get pos() {
@@ -1430,6 +1432,10 @@ class Vertices$2 {
   }
 
   dispose() {
+    if (this._fixedVertexId != null) {
+      this._fixedVertexId.free();
+      this._fixedVertexId = null;
+    }
     if (this.pos0 != null) {
       this.pos0.dispose();
       this.pos0 = null;
@@ -1895,9 +1901,9 @@ class System$1 {
 
   step() {
     const numVertices = this.numVertices;
-    this.numMuscles;
 
-    const fixedVertexId = this.vertices._fixedVertexId;
+    const fixedVertexId = this.vertices.fixedVertexId;
+
     const vertexMass = this.vertexMass;
 
     this.wasmInstance.exports.backward_euler_update(
@@ -1916,7 +1922,7 @@ class System$1 {
 
       this.friction.k,
 
-      fixedVertexId,
+      fixedVertexId == -1 ? 0 : this.vertices._fixedVertexId.ptr,
 
       numVertices == 0 ? 0 : this.vertices.pos1.ptr,
       numVertices == 0 ? 0 : this.vertices.posGrad.ptr,
