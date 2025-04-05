@@ -183,9 +183,9 @@ class System {
 
   step() {
     const numVertices = this.numVertices;
-    const numMuscles = this.numMuscles;
 
-    const fixedVertexId = this.vertices._fixedVertexId;
+    const fixedVertexId = this.vertices.fixedVertexId;
+
     const vertexMass = this.vertexMass;
 
     this.wasmInstance.exports.backward_euler_update(
@@ -204,7 +204,7 @@ class System {
 
       this.friction.k,
 
-      fixedVertexId,
+      fixedVertexId == -1 ? 0 : this.vertices._fixedVertexId.ptr,
 
       numVertices == 0 ? 0 : this.vertices.pos1.ptr,
       numVertices == 0 ? 0 : this.vertices.posGrad.ptr,

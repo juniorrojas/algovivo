@@ -23,8 +23,8 @@ void optim_init(
 #define loss_backward() { \
   zero_(num_vertices * space_dim, pos_grad); \
   backward_euler_loss_grad(/* {{forward_non_differentiable_args}} */, pos, pos_grad); \
-  if (fixed_vertex_id > -1) { \
-    const auto offset = fixed_vertex_id * space_dim; \
+  if (fixed_vertex_id != 0) { \
+    const auto offset = fixed_vertex_id[0] * space_dim; \
     for (int j = 0; j < space_dim; j++) { \
       pos_grad[offset + j] = 0.0; \
     } \
