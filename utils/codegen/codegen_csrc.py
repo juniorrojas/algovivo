@@ -11,6 +11,12 @@ args = arg_parser.parse_args()
 
 backward_euler = codegen.BackwardEuler()
 
+backward_euler.modules = [
+    codegen.modules.Vertices(),
+    codegen.modules.Muscles(),
+    # codegen.modules.Triangles()
+]
+
 backward_euler.potentials = [
     codegen.potentials.Muscles(),
     codegen.potentials.Triangles(),

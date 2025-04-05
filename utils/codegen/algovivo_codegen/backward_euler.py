@@ -7,6 +7,7 @@ this_dirpath = this_filepath.parent
 class BackwardEuler:
     def __init__(self):
         self.loss = Fun("backward_euler_loss")
+        self.modules = []
         self.potentials = []
 
     def make_loss(self):
@@ -14,8 +15,8 @@ class BackwardEuler:
         self.loss.args.add_arg("float", "g")
         self.loss.args.add_arg("float", "h")
 
-        self.add_vertices_args()
-        self.add_muscles_args()
+        for module in self.modules:
+            module.add_args(self.loss.args)
         self.add_triangles_args()
         self.add_friction_args()
 
@@ -36,6 +37,7 @@ float potential_energy = 0.0;"""
 
     def make_update_args(self):
         update_args = Args()
+
         for arg in self.loss.args:
             if not arg.differentiable:
                 update_args.add_arg(arg.t, arg.name)
@@ -81,21 +83,6 @@ float potential_energy = 0.0;"""
             if not arg.differentiable:
                 forward_non_differentiable_args.add_arg(arg.t, arg.name)
         return forward_non_differentiable_args
-
-    def add_vertices_args(self):
-        args = self.loss.args
-        args.add_arg("int", "num_vertices")
-        args.add_arg("float*", "pos0")
-        args.add_arg("float*", "vel0")
-        args.add_arg("float", "vertex_mass")
-
-    def add_muscles_args(self):
-        args = self.loss.args
-        args.add_arg("int", "num_muscles")
-        args.add_arg("int*", "muscles")
-        args.add_arg("float", "k")
-        args.add_arg("float*", "a")
-        args.add_arg("float*", "l0")
 
     def add_triangles_args(self):
         args = self.loss.args
