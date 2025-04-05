@@ -25,21 +25,7 @@ backward_euler.make_loss()
 
 backward_euler_loss_grad = backward_euler.loss.make_backward_pass()
 
-update_args = codegen.Args()
-for arg in backward_euler.loss.args:
-    if not arg.differentiable:
-        update_args.add_arg(arg.t, arg.name)
-update_args.add_arg("int*", "fixed_vertex_id")
-
-for arg in backward_euler.loss.args:
-    if arg.differentiable:
-        update_args.add_arg(arg.t, f"{arg.name}1", mut=True)
-        update_args.add_arg(arg.t, f"{arg.name}_grad", mut=True)
-        update_args.add_arg(arg.t, f"{arg.name}_tmp", mut=True)
-        if arg.name == "pos":
-            update_args.add_arg(arg.t, f"vel1", mut=True)
-        else:
-            update_args.add_arg(arg.t, f"{arg.name}_v1", mut=True)
+update_args = backward_euler.make_update_args()
 
 enzyme_args_call = backward_euler.loss.args.codegen_enzyme_call()
 backward_euler_loss_grad_body = backward_euler_loss_grad.codegen_body()

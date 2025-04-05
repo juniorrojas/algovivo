@@ -1,4 +1,4 @@
-from .codegen import Fun, indent
+from .codegen import Fun, Args, indent
 
 class BackwardEuler:
     def __init__(self):
@@ -29,6 +29,25 @@ float potential_energy = 0.0;"""
         self.loss_body += "return 0.5 * inertial_energy + h * h * potential_energy;"
 
         self.loss_body = indent(self.loss_body)
+
+    def make_update_args(self):
+        update_args = Args()
+        for arg in self.loss.args:
+            if not arg.differentiable:
+                update_args.add_arg(arg.t, arg.name)
+        update_args.add_arg("int*", "fixed_vertex_id")
+
+        for arg in self.loss.args:
+            if arg.differentiable:
+                update_args.add_arg(arg.t, f"{arg.name}1", mut=True)
+                update_args.add_arg(arg.t, f"{arg.name}_grad", mut=True)
+                update_args.add_arg(arg.t, f"{arg.name}_tmp", mut=True)
+                if arg.name == "pos":
+                    update_args.add_arg(arg.t, f"vel1", mut=True)
+                else:
+                    update_args.add_arg(arg.t, f"{arg.name}_v1", mut=True)
+
+        return update_args
 
     def add_vertices_args(self):
         args = self.loss.args
