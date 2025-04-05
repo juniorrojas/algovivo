@@ -48,6 +48,13 @@ float potential_energy = 0.0;"""
                     update_args.add_arg(arg.t, f"{arg.name}_v1", mut=True)
 
         return update_args
+    
+    def make_forward_non_differentiable_args(self):
+        forward_non_differentiable_args = Args()
+        for arg in self.loss.args:
+            if not arg.differentiable:
+                forward_non_differentiable_args.add_arg(arg.t, arg.name)
+        return forward_non_differentiable_args
 
     def add_vertices_args(self):
         args = self.loss.args

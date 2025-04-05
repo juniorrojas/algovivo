@@ -21,19 +21,11 @@ backward_euler.potentials = [
     codegen.potentials.Collision(),
     codegen.potentials.Friction()
 ]
+
 backward_euler.make_loss()
-
 backward_euler_loss_grad = backward_euler.loss.make_backward_pass()
-
 update_args = backward_euler.make_update_args()
-
-enzyme_args_call = backward_euler.loss.args.codegen_enzyme_call()
-backward_euler_loss_grad_body = backward_euler_loss_grad.codegen_body()
-
-forward_non_differentiable_args = codegen.Args()
-for arg in backward_euler.loss.args:
-    if not arg.differentiable:
-        forward_non_differentiable_args.add_arg(arg.t, arg.name)
+forward_non_differentiable_args = backward_euler.make_forward_non_differentiable_args()
 
 csrc_dirpath = Path(args.output_csrc_dirname)
 
@@ -99,7 +91,7 @@ with open(templates_dirpath.joinpath("backward_euler.template.h")) as f:
         .replace("// {{backward_euler_loss_args_call}}", backward_euler.loss.args.codegen_call())
         .replace("// {{backward_euler_loss_grad_args}}", backward_euler_loss_grad.args.codegen_fun_signature())
         .replace("// {{backward_euler_loss_grad_args_call}}", backward_euler_loss_grad.args.codegen_call())
-        .replace("// {{backward_euler_loss_grad_body}}", indent(backward_euler_loss_grad_body))
+        .replace("// {{backward_euler_loss_grad_body}}", indent(backward_euler_loss_grad.codegen_body()))
     )
 
 output_filepath = csrc_dirpath.joinpath("dynamics", "backward_euler.h")
