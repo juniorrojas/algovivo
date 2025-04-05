@@ -36,20 +36,12 @@ float potential_energy = 0.0;"""
     def make_update_args(self):
         update_args = Args()
 
-        for arg in self.loss.args:
-            if not arg.differentiable:
-                update_args.add_arg(arg.t, arg.name)
-        update_args.add_arg("int*", "fixed_vertex_id")
+        update_args.add_arg("int", "space_dim")
+        update_args.add_arg("float", "g")
+        update_args.add_arg("float", "h")
 
-        for arg in self.loss.args:
-            if arg.differentiable:
-                update_args.add_arg(arg.t, f"{arg.name}1", mut=True)
-                update_args.add_arg(arg.t, f"{arg.name}_grad", mut=True)
-                update_args.add_arg(arg.t, f"{arg.name}_tmp", mut=True)
-                if arg.name == "pos":
-                    update_args.add_arg(arg.t, f"vel1", mut=True)
-                else:
-                    update_args.add_arg(arg.t, f"{arg.name}_v1", mut=True)
+        for module in self.modules:
+            module.add_update_args(update_args)
 
         update_pos_args = Args()
 

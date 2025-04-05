@@ -170,7 +170,7 @@ void backward_euler_update_vel(
 
 extern "C"
 void backward_euler_update(
-    int space_dim, float g, float h, int num_vertices, const float* pos0, const float* vel0, float vertex_mass, int num_muscles, const int* muscles, float k, const float* a, const float* l0, int num_triangles, const int* triangles, const float* rsi, const float* mu, const float* lambda, float k_friction, const int* fixed_vertex_id, float* pos1, float* pos_grad, float* pos_tmp, float* vel1
+    int space_dim, float g, float h, int num_vertices, const float* pos0, const float* vel0, float vertex_mass, const int* fixed_vertex_id, float* pos1, float* pos_grad, float* pos_tmp, float* vel1, int num_muscles, const int* muscles, float k, const float* a, const float* l0, int num_triangles, const int* triangles, const float* rsi, const float* mu, const float* lambda, float k_friction
 ) {
   backward_euler_update_pos(space_dim, g, h, num_vertices, pos0, vel0, vertex_mass, num_muscles, muscles, k, a, l0, num_triangles, triangles, rsi, mu, lambda, k_friction, pos1, pos_grad, pos_tmp, fixed_vertex_id);
   backward_euler_update_vel(num_vertices, space_dim, pos0, vel0, pos1, vel1, h);

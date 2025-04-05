@@ -195,13 +195,13 @@ class System {
       numVertices == 0 ? 0 : this.vel0.ptr,
       vertexMass,
 
+      ...this.vertices.toStepArgs(),
+
       ...this.muscles.toStepArgs(),
 
       ...this.triangles.toStepArgs(),
 
       this.friction.k,
-
-      ...this.vertices.toStepArgs(),
     ]
   }
 
