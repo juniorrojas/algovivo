@@ -47,7 +47,29 @@ float potential_energy = 0.0;"""
                 else:
                     update_args.add_arg(arg.t, f"{arg.name}_v1", mut=True)
 
-        return update_args
+        update_pos_args = Args()
+
+        for arg in self.loss.args:
+            if not arg.differentiable:
+                update_pos_args.add_arg(arg.t, arg.name)
+
+        for arg in self.loss.args:
+            if arg.differentiable:
+                update_pos_args.add_arg(arg.t, f"{arg.name}", mut=True)
+                update_pos_args.add_arg(arg.t, f"{arg.name}_grad", mut=True)
+                update_pos_args.add_arg(arg.t, f"{arg.name}_tmp", mut=True)
+        update_pos_args.add_arg("int*", "fixed_vertex_id")
+
+        update_vel_args = Args()
+        update_vel_args.add_arg("int", "num_vertices")
+        update_vel_args.add_arg("int", "space_dim")
+        update_vel_args.add_arg("float*", "pos0")
+        update_vel_args.add_arg("float*", "vel0")
+        update_vel_args.add_arg("float*", "pos1", mut=True)
+        update_vel_args.add_arg("float*", "vel1", mut=True)
+        update_vel_args.add_arg("float", "h")
+
+        return update_args, update_pos_args, update_vel_args
     
     def make_forward_non_differentiable_args(self):
         forward_non_differentiable_args = Args()

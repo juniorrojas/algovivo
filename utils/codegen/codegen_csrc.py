@@ -24,7 +24,7 @@ backward_euler.potentials = [
 
 backward_euler.make_loss()
 backward_euler_loss_grad = backward_euler.loss.make_backward_pass()
-update_args = backward_euler.make_update_args()
+update_args, update_pos_args, update_vel_args = backward_euler.make_update_args()
 forward_non_differentiable_args = backward_euler.make_forward_non_differentiable_args()
 
 csrc_dirpath = Path(args.output_csrc_dirname)
@@ -43,41 +43,19 @@ with open(output_filepath, "w") as f:
     f.write(src)
 print(f"Saved to {output_filepath}")
 
-backward_euler_update_pos_args = codegen.Args()
-
-for arg in backward_euler.loss.args:
-    if not arg.differentiable:
-        backward_euler_update_pos_args.add_arg(arg.t, arg.name)
-
-for arg in backward_euler.loss.args:
-    if arg.differentiable:
-        backward_euler_update_pos_args.add_arg(arg.t, f"{arg.name}", mut=True)
-        backward_euler_update_pos_args.add_arg(arg.t, f"{arg.name}_grad", mut=True)
-        backward_euler_update_pos_args.add_arg(arg.t, f"{arg.name}_tmp", mut=True)
-backward_euler_update_pos_args.add_arg("int*", "fixed_vertex_id")
-
-backward_euler_update_vel_args = codegen.Args()
-backward_euler_update_vel_args.add_arg("int", "num_vertices")
-backward_euler_update_vel_args.add_arg("int", "space_dim")
-backward_euler_update_vel_args.add_arg("float*", "pos0")
-backward_euler_update_vel_args.add_arg("float*", "vel0")
-backward_euler_update_vel_args.add_arg("float*", "pos1", mut=True)
-backward_euler_update_vel_args.add_arg("float*", "vel1", mut=True)
-backward_euler_update_vel_args.add_arg("float", "h")
-
 with open(templates_dirpath.joinpath("backward_euler.template.h")) as f:
     template = f.read()
 
     src = template
 
     src = (src
-        .replace("/* {{backward_euler_update_pos_args}} */", backward_euler_update_pos_args.codegen_fun_signature())
-        .replace("/* {{backward_euler_update_pos_args_call}} */", backward_euler_update_pos_args.codegen_call().replace(", pos,", ", pos1,"))
+        .replace("/* {{backward_euler_update_pos_args}} */", update_pos_args.codegen_fun_signature())
+        .replace("/* {{backward_euler_update_pos_args_call}} */", update_pos_args.codegen_call().replace(", pos,", ", pos1,"))
     )
 
     src = (src
-        .replace("/* {{backward_euler_update_vel_args}} */", backward_euler_update_vel_args.codegen_fun_signature())
-        .replace("/* {{backward_euler_update_vel_args_call}} */", backward_euler_update_vel_args.codegen_call())
+        .replace("/* {{backward_euler_update_vel_args}} */", update_vel_args.codegen_fun_signature())
+        .replace("/* {{backward_euler_update_vel_args_call}} */", update_vel_args.codegen_call())
     )
 
     src = src.replace(
