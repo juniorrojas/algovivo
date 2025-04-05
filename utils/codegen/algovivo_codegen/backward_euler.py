@@ -17,7 +17,6 @@ class BackwardEuler:
 
         for module in self.modules:
             module.add_args(self.loss.args)
-        self.add_triangles_args()
         self.add_friction_args()
 
         self.loss.args.add_arg("float*", "pos", differentiable=True)
@@ -83,14 +82,6 @@ float potential_energy = 0.0;"""
             if not arg.differentiable:
                 forward_non_differentiable_args.add_arg(arg.t, arg.name)
         return forward_non_differentiable_args
-
-    def add_triangles_args(self):
-        args = self.loss.args
-        args.add_arg("int", "num_triangles")
-        args.add_arg("int*", "triangles")
-        args.add_arg("float*", "rsi")
-        args.add_arg("float*", "mu")
-        args.add_arg("float*", "lambda")
 
     def add_friction_args(self):
         args = self.loss.args

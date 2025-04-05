@@ -18,3 +18,14 @@ class Muscles:
         args.add_arg("float", "k")
         args.add_arg("float*", "a")
         args.add_arg("float*", "l0")
+
+class Triangles:
+    def __init__(self):
+        pass
+
+    def add_args(self, args):
+        args.add_arg("int", "num_triangles")
+        args.add_arg("int*", "triangles")
+        args.add_arg("float*", "rsi")
+        args.add_arg("float*", "mu")
+        args.add_arg("float*", "lambda")
