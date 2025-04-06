@@ -148,7 +148,7 @@ void backward_euler_update_pos(
     loss_backward();
     break_if_optim_converged();
     optim_step();
-}
+  }
 }
 
 extern "C"

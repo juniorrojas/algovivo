@@ -17,7 +17,7 @@ class BackwardEuler:
     loss_backward();
     break_if_optim_converged();
     optim_step();
-}"""
+  }"""
 
     def make_loss(self):
         self.loss.args.add_arg("int", "space_dim")
