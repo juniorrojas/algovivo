@@ -18,6 +18,10 @@ backward_euler.modules = [
     codegen.modules.Friction()
 ]
 
+backward_euler.inertial_modules = [
+    codegen.modules.Vertices()
+]
+
 backward_euler.potentials = [
     codegen.potentials.Muscles(),
     codegen.potentials.Triangles(),
