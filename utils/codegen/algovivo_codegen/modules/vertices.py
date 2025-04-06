@@ -23,6 +23,12 @@ class Vertices:
         args.add_arg(inertial_arg_t, f"{inertial_arg_name}_tmp", mut=True)
         args.add_arg(inertial_arg_t, f"vel1", mut=True)
 
+    def add_update_pos_args(self, update_pos_args):
+        update_pos_args.add_arg("float*", "pos", mut=True)
+        update_pos_args.add_arg("float*", "pos_grad", mut=True)
+        update_pos_args.add_arg("float*", "pos_tmp", mut=True)
+        update_pos_args.add_arg("int*", "fixed_vertex_id")
+
     def add_update_vel_args(self, update_vel_args):
         update_vel_args.add_arg("int", "num_vertices")
         update_vel_args.add_arg("int", "space_dim")

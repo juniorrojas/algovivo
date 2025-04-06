@@ -101,7 +101,7 @@ More details about this and other energy functions used in the simulation can be
 ### build WASM
 
 ```sh
-docker run -it \
+docker run \
   -e LLVM_BIN_DIR=/usr/lib/llvm-11/bin \
   -e ENZYME=/Enzyme/enzyme/build/Enzyme/LLVMEnzyme-11.so \
   -v $(pwd):/workspace \
