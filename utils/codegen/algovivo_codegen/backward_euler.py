@@ -11,6 +11,15 @@ class BackwardEuler:
         self.inertial_modules = []
         self.potentials = []
 
+        self.update_pos_body = """_optim_init();
+  const auto max_optim_iters = 100;
+  for (int i = 0; i < max_optim_iters; i++) {
+    loss_backward();
+    break_if_optim_converged();
+    optim_step();
+}
+"""
+
     def make_loss(self):
         self.loss.args.add_arg("int", "space_dim")
         self.loss.args.add_arg("float", "g")
@@ -50,12 +59,8 @@ float potential_energy = 0.0;"""
             if not arg.differentiable:
                 update_pos_args.add_arg(arg.t, arg.name)
 
-        for arg in self.loss.args:
-            if arg.differentiable:
-                update_pos_args.add_arg(arg.t, f"{arg.name}", mut=True)
-                update_pos_args.add_arg(arg.t, f"{arg.name}_grad", mut=True)
-                update_pos_args.add_arg(arg.t, f"{arg.name}_tmp", mut=True)
-        update_pos_args.add_arg("int*", "fixed_vertex_id")
+        for module in self.inertial_modules:
+            module.add_update_pos_args(update_pos_args)
         
         update_vel_args = Args()
         for module in self.inertial_modules:
@@ -115,6 +120,7 @@ for (int i = 0; i < num_vertices; i++) {
             src = (src
                 .replace("/* {{backward_euler_update_pos_args}} */", update_pos_args.codegen_fun_signature())
                 .replace("/* {{backward_euler_update_pos_args_call}} */", update_pos_args.codegen_call().replace(", pos,", ", pos1,"))
+                .replace("/* {{backward_euler_update_pos_body}} */", self.update_pos_body)
             )
 
             src = (src

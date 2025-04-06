@@ -28,13 +28,7 @@ static void backward_euler_loss_grad(
 void backward_euler_update_pos(
   /* {{backward_euler_update_pos_args}} */
 ) {
-  _optim_init();
-  const auto max_optim_iters = 100;
-  for (int i = 0; i < max_optim_iters; i++) {
-    loss_backward();
-    break_if_optim_converged();
-    optim_step();
-  }
+  /* {{backward_euler_update_pos_body}} */
 }
 
 extern "C"
