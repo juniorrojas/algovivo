@@ -47,9 +47,7 @@ async function loadWasm(args = {}) {
 
 async function loadTen() {
   const ten = new algovivo.mmgrten.Engine();
-  const wasmInstance = await loadWasm({
-    env: ten.env
-  });
+  const wasmInstance = await loadWasm();
   ten.init({ wasmInstance });
   return ten;
 }

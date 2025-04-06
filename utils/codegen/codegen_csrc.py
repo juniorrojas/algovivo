@@ -14,7 +14,8 @@ backward_euler = codegen.BackwardEuler()
 backward_euler.modules = [
     codegen.modules.Vertices(),
     codegen.modules.Muscles(),
-    codegen.modules.Triangles()
+    codegen.modules.Triangles(),
+    codegen.modules.Friction()
 ]
 
 backward_euler.potentials = [

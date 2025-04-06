@@ -17,7 +17,6 @@ class BackwardEuler:
 
         for module in self.modules:
             module.add_args(self.loss.args)
-        self.add_friction_args()
 
         self.loss.args.add_arg("float*", "pos", differentiable=True)
         
@@ -37,20 +36,12 @@ float potential_energy = 0.0;"""
     def make_update_args(self):
         update_args = Args()
 
-        for arg in self.loss.args:
-            if not arg.differentiable:
-                update_args.add_arg(arg.t, arg.name)
-        update_args.add_arg("int*", "fixed_vertex_id")
+        update_args.add_arg("int", "space_dim")
+        update_args.add_arg("float", "g")
+        update_args.add_arg("float", "h")
 
-        for arg in self.loss.args:
-            if arg.differentiable:
-                update_args.add_arg(arg.t, f"{arg.name}1", mut=True)
-                update_args.add_arg(arg.t, f"{arg.name}_grad", mut=True)
-                update_args.add_arg(arg.t, f"{arg.name}_tmp", mut=True)
-                if arg.name == "pos":
-                    update_args.add_arg(arg.t, f"vel1", mut=True)
-                else:
-                    update_args.add_arg(arg.t, f"{arg.name}_v1", mut=True)
+        for module in self.modules:
+            module.add_update_args(update_args)
 
         update_pos_args = Args()
 
@@ -82,10 +73,6 @@ float potential_energy = 0.0;"""
             if not arg.differentiable:
                 forward_non_differentiable_args.add_arg(arg.t, arg.name)
         return forward_non_differentiable_args
-
-    def add_friction_args(self):
-        args = self.loss.args
-        args.add_arg("float", "k_friction")
 
     def add_inertia(self):
         self.loss_body += """

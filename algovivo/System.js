@@ -182,26 +182,18 @@ class System {
   }
 
   toStepArgs() {
-    const numVertices = this.numVertices;
-    const vertexMass = this.vertexMass;
-
     return [
       this.spaceDim,
       this.g,
       this.h,
 
-      numVertices,
-      numVertices == 0 ? 0 : this.pos0.ptr,
-      numVertices == 0 ? 0 : this.vel0.ptr,
-      vertexMass,
+      ...this.vertices.toStepArgs(),
 
       ...this.muscles.toStepArgs(),
 
       ...this.triangles.toStepArgs(),
 
       this.friction.k,
-
-      ...this.vertices.toStepArgs(),
     ]
   }
 
