@@ -23,6 +23,15 @@ class Vertices:
         args.add_arg(inertial_arg_t, f"{inertial_arg_name}_tmp", mut=True)
         args.add_arg(inertial_arg_t, f"vel1", mut=True)
 
+    def add_update_vel_args(self, update_vel_args):
+        update_vel_args.add_arg("int", "num_vertices")
+        update_vel_args.add_arg("int", "space_dim")
+        update_vel_args.add_arg("float*", "pos0")
+        update_vel_args.add_arg("float*", "vel0")
+        update_vel_args.add_arg("float*", "pos1", mut=True)
+        update_vel_args.add_arg("float*", "vel1", mut=True)
+        update_vel_args.add_arg("float", "h")
+
 class Muscles:
     def __init__(self):
         pass

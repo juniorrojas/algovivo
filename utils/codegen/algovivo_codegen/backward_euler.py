@@ -8,6 +8,7 @@ class BackwardEuler:
     def __init__(self):
         self.loss = Fun("backward_euler_loss")
         self.modules = []
+        self.inertial_modules = []
         self.potentials = []
 
     def make_loss(self):
@@ -55,15 +56,10 @@ float potential_energy = 0.0;"""
                 update_pos_args.add_arg(arg.t, f"{arg.name}_grad", mut=True)
                 update_pos_args.add_arg(arg.t, f"{arg.name}_tmp", mut=True)
         update_pos_args.add_arg("int*", "fixed_vertex_id")
-
+        
         update_vel_args = Args()
-        update_vel_args.add_arg("int", "num_vertices")
-        update_vel_args.add_arg("int", "space_dim")
-        update_vel_args.add_arg("float*", "pos0")
-        update_vel_args.add_arg("float*", "vel0")
-        update_vel_args.add_arg("float*", "pos1", mut=True)
-        update_vel_args.add_arg("float*", "vel1", mut=True)
-        update_vel_args.add_arg("float", "h")
+        for module in self.inertial_modules:
+            module.add_update_vel_args(update_vel_args)
 
         return update_args, update_pos_args, update_vel_args
     
