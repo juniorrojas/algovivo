@@ -56,7 +56,7 @@ float potential_energy = 0.0;"""
 
         for arg in self.loss.args:
             if not arg.differentiable:
-                update_pos_args.add_arg(arg.t, arg.name)
+                update_pos_args.add_arg(arg.t, arg.name, mut=arg.mut)
 
         for module in self.inertial_modules:
             module.add_update_pos_args(update_pos_args)
