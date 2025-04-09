@@ -5,11 +5,16 @@
 #include "../vec2.h"
 
 #include "../dynamics/inertia.h"
-#include "../potential/friction.h"
-#include "../potential/collision.h"
-#include "../potential/gravity.h"
+
+#include "../modules/muscles.h"
+#include "../modules/triangles.h"
+#include "../modules/friction.h"
+#include "../modules/collision.h"
+#include "../modules/gravity.h"
 
 #include "optim.h"
+
+// {{includes}}
 
 namespace algovivo {
 

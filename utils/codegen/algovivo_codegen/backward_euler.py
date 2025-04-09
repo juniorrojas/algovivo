@@ -90,6 +90,17 @@ for (int i = 0; i < num_vertices; i++) {
 }"""
 
     def instantiate_templates(self, csrc_dirpath):
+        includes_src = ""
+
+        for module in self.modules:
+            if hasattr(module, "get_src"):
+                src = module.get_src()
+                output_filepath = csrc_dirpath.joinpath("potential", f"{module.name}.h")
+                with open(output_filepath, "w") as f:
+                    f.write("#pragma once\n\n" + src)
+                print(f"Module {module.name} saved to {output_filepath}")
+                includes_src += f"#include \"../potential/{module.name}.h\"\n"
+
         self.make_loss()
         loss_grad = self.loss.make_backward_pass()
         update_args, update_pos_args, update_vel_args = self.make_update_args()
@@ -131,6 +142,8 @@ for (int i = 0; i < num_vertices; i++) {
                 "/* {{backward_euler_update_args}} */",
                 indent(update_args.codegen_fun_signature())
             )
+
+            src = src.replace("// {{includes}}", includes_src)
 
             src = (src
                 .replace("// {{backward_euler_loss_body}}", self.loss_body)

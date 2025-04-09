@@ -14,9 +14,9 @@ export default class SystemViewport extends algovivo.SystemViewport {
     const mq = window.matchMedia("(max-width: 410px)");
     const updateMq = () => {
       if (mq.matches) {
-        this.setSize({ width: 300, height: 350});
+        this.setSize({ width: 300, height: 350 });
       } else {
-        this.setSize({ width: 400, height: 400});
+        this.setSize({ width: 400, height: 400 });
       }
     }
     mq.addEventListener("change", (event) => {
