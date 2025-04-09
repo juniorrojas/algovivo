@@ -95,11 +95,11 @@ for (int i = 0; i < num_vertices; i++) {
         for module in self.modules:
             if hasattr(module, "get_src"):
                 src = module.get_src()
-                output_filepath = csrc_dirpath.joinpath("potential", f"{module.name}.h")
+                output_filepath = csrc_dirpath.joinpath("modules", f"{module.name}.h")
                 with open(output_filepath, "w") as f:
                     f.write("#pragma once\n\n" + src)
                 print(f"Module {module.name} saved to {output_filepath}")
-                includes_src += f"#include \"../potential/{module.name}.h\"\n"
+                includes_src += f"#include \"../modules/{module.name}.h\"\n"
 
         self.make_loss()
         loss_grad = self.loss.make_backward_pass()
