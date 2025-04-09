@@ -62,7 +62,7 @@
       const now = new Date();
       const nstr = now.getTime().toString();
       script.type = "module";
-      script.src = `main.js?t=${nstr}`;
+      script.src = `main.build.js?t=${nstr}`;
       document.body.appendChild(script);
     })();
   </script>
