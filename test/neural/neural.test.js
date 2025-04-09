@@ -2,7 +2,6 @@ const algovivo = require("../../algovivo");
 const utils = require("../utils");
 const fsp = require("fs/promises");
 const path = require("path");
-const NeuralPolicy = require("./NeuralPolicy");
 const TrajectoryData = require("../../utils/trajectory/TrajectoryData");
 
 expect.extend({ toBeCloseToArray: utils.toBeCloseToArray });
@@ -19,7 +18,7 @@ async function loadPolicyData() {
   return JSON.parse(await fsp.readFile(policyFilename));
 }
 
-test("neural policy", async () => {
+test("neural frame policy", async () => {
   const [wasmInstance, meshData, policyData] = await Promise.all(
     [utils.loadWasm, loadMeshData, loadPolicyData].map(f => f())
   );
@@ -35,7 +34,7 @@ test("neural policy", async () => {
   });
   expect(system.l0.toArray()).toEqual(meshData.l0);
   expect(system.rsi.toArray()).toEqual(meshData.rsi);
-  const policy = new NeuralPolicy({
+  const policy = new algovivo.nn.NeuralFramePolicy({
     system: system,
     stochastic: false,
     active: true

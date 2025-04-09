@@ -5,7 +5,7 @@ function sampleNormal(mean, stdDev) {
   return mean + z * stdDev;
 }
 
-export default class NeuralPolicy {
+class NeuralPolicy {
   constructor(args = {}) {
     if (args.system == null) {
       throw new Error("system required to create policy");
@@ -48,7 +48,7 @@ export default class NeuralPolicy {
     return this.system.spaceDim;
   }
 
-  step() {
+  step(args = {}) {
     const system = this.system;
     const wasmInstance = this.ten.wasmInstance;
 
@@ -89,6 +89,13 @@ export default class NeuralPolicy {
       daF32[i] = dai;
     }
 
+    const trace = args.trace;
+    
+    if (trace != null) {
+      trace.policyInput = this.input.toArray();
+      trace.policyOutput = da.toArray();
+    }
+
     da.clamp_({ min: -maxAbsDa, max: maxAbsDa });
 
     const aF32 = a.slot.f32();
@@ -120,3 +127,5 @@ export default class NeuralPolicy {
     this.model.dispose();
   }
 }
+
+module.exports = NeuralPolicy;

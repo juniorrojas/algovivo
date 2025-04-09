@@ -1,5 +1,4 @@
 import algovivo from "../../build/algovivo.min.mjs";
-import NeuralPolicy from "./NeuralPolicy.js";
 import BrainButton from "./BrainButton.js";
 import { initStyle, makeGitHubLink } from "./ui.js";
 import SystemViewport from "./SystemViewport.js";
@@ -68,7 +67,7 @@ async function main() {
   });
   divContent.appendChild(viewport.domElement);
 
-  const policy = new NeuralPolicy({
+  const policy = new algovivo.nn.NeuralFramePolicy({
     system: system,
     stochastic: true
   });
