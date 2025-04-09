@@ -1,7 +1,6 @@
 const algovivo = require("algovivo");
 const fsp = require("fs/promises");
 const path = require("path");
-const NeuralPolicy = require("./NeuralPolicy");
 const utils = require("../utils");
 
 const dataDirname = path.join(__dirname, "data");
@@ -30,7 +29,7 @@ async function main() {
     triangles: meshData.triangles,
     trianglesRsi: meshData.rsi
   });
-  const policy = new NeuralPolicy({
+  const policy = new algovivo.nn.NeuralFramePolicy({
     system: system,
     active: true
   });

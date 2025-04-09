@@ -5,7 +5,7 @@ function sampleNormal(mean, stdDev) {
   return mean + z * stdDev;
 }
 
-export default class NeuralPolicy {
+class NeuralPolicy {
   constructor(args = {}) {
     if (args.system == null) {
       throw new Error("system required to create policy");
@@ -20,9 +20,12 @@ export default class NeuralPolicy {
     const system = this.system;
     const ten = this.ten;
 
-    const numVertices = system.numVertices;
-    const numMuscles = system.numMuscles;
+    const numVertices = this.numVertices = args.numVertices ?? system.numVertices;
+    const numMuscles = this.numMuscles = args.numMuscles ?? system.numMuscles;
     const spaceDim = system.spaceDim;
+
+    this.vertexIdOffset = args.vertexIdOffset ?? 0;
+    this.muscleIdOffset = args.muscleIdOffset ?? 0;
 
     this.projectedPos = ten.zeros([numVertices, spaceDim]);
     this.projectedVel = ten.zeros([numVertices, spaceDim]);
@@ -41,16 +44,21 @@ export default class NeuralPolicy {
     );
   }
 
-  step() {
+  get spaceDim() {
+    return this.system.spaceDim;
+  }
+
+  step(args = {}) {
     const system = this.system;
     const wasmInstance = this.ten.wasmInstance;
 
-    const numVertices = system.numVertices;
+    const bytesPerFloat = 4;
+    const bytesOffset = this.vertexIdOffset * this.spaceDim * bytesPerFloat;
     
     wasmInstance.exports.make_neural_policy_input(
-      numVertices,
-      system.pos.ptr,
-      system.vel.ptr,
+      this.numVertices,
+      system.pos.ptr + bytesOffset,
+      system.vel.ptr + bytesOffset,
       this.centerVertexId,
       this.forwardVertexId,
       this.projectedPos.ptr,
@@ -67,7 +75,7 @@ export default class NeuralPolicy {
     const a = this.system.a;
     const daF32 = da.slot.f32();
     
-    const numMuscles = this.system.numMuscles;
+    const numMuscles = this.numMuscles;
     for (let i = 0; i < numMuscles; i++) {
       let dai;
       if (this.active) {
@@ -81,11 +89,18 @@ export default class NeuralPolicy {
       daF32[i] = dai;
     }
 
+    const trace = args.trace;
+    
+    if (trace != null) {
+      trace.policyInput = this.input.toArray();
+      trace.policyOutput = da.toArray();
+    }
+
     da.clamp_({ min: -maxAbsDa, max: maxAbsDa });
 
     const aF32 = a.slot.f32();
     for (let i = 0; i < numMuscles; i++) {
-      aF32[i] += daF32[i];
+      aF32[this.muscleIdOffset + i] += daF32[i];
     }
 
     a.clamp_({ min: minA, max: 1.0 });
@@ -112,3 +127,5 @@ export default class NeuralPolicy {
     this.model.dispose();
   }
 }
+
+module.exports = NeuralPolicy;
