@@ -29,4 +29,5 @@ jobs:
         with:
           python-version: 3.9
       - run: |
+          export PYTHONPATH=utils/py
           python utils/py/test/load_lib.py
