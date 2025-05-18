@@ -29,5 +29,7 @@ jobs:
         with:
           python-version: 3.9
       - run: |
+          pip install -r utils/py/requirements.txt
+      - run: |
           export PYTHONPATH=utils/py
-          python utils/py/test/load_lib.py
+          pytest ./utils/py/test
