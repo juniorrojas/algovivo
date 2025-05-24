@@ -39,10 +39,10 @@ jobs:
         run: |
           export PYTHONPATH=utils/py
           python utils/py/test/trajectory/test_trajectory.py
-      - name: npm build
+      - name: Build JS
         run: |
           npm ci
-          npm build
+          npm run build
       - name: Build WASM
         run: |
           docker run \
