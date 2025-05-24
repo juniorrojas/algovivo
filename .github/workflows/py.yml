@@ -14,7 +14,7 @@ jobs:
     steps:
       - name: Clone repo
         uses: actions/checkout@v4
-      - name: Build csrc
+      - name: Build native library
         run: |
           docker run \
             -e LLVM_BIN_DIR=/usr/lib/llvm-11/bin \
@@ -39,4 +39,34 @@ jobs:
         run: |
           export PYTHONPATH=utils/py
           python utils/py/test/trajectory/test_trajectory.py
-          ls -l steps.out
+      - name: npm build
+        run: |
+          npm ci
+          npm build
+      - name: Build WASM
+        run: |
+          docker run \
+            -e LLVM_BIN_DIR=/usr/lib/llvm-11/bin \
+            -e ENZYME=/Enzyme/enzyme/build/Enzyme/LLVMEnzyme-11.so \
+            -v $(pwd):/workspace \
+            -w /workspace \
+            ghcr.io/juniorrojas/algovivo/llvm11-enzyme \
+            ./build.sh
+      - name: Generate trajectory frames
+        run: |
+          node utils/trajectory/renderTrajectory.js \
+            --mesh utils/py/test/trajectory/data/mesh.json \
+            --steps steps.out \
+            --output frames.out
+      - name: Install ffmpeg
+        run: |
+          sudo apt-get update
+          sudo apt-get install ffmpeg
+      - name: Make trajectory video
+        run: |
+          ffmpeg -framerate 30 -i frames.out/%d.png -pix_fmt yuv420p video.out.mp4 -y
+      - name: Upload trajectory video
+        uses: actions/upload-artifact@v4
+        with:
+          name: video
+          path: video.out.mp4
