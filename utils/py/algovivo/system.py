@@ -30,6 +30,11 @@ class System:
     def num_triangles(self):
         return self.triangles.num_triangles
 
+    def set(self, pos=None, muscles=None, muscles_l0=None, triangles=None, triangles_rsi=None):
+        self.vertices.set(pos)
+        self.muscles.set(indices=muscles, pos=pos, l0=muscles_l0)
+        self.triangles.set(indices=triangles, pos=pos, rsi=triangles_rsi)
+
     def step(self):
         g = 9.8
         h = self.h
