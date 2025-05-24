@@ -14,6 +14,10 @@ jobs:
     steps:
       - name: Clone repo
         uses: actions/checkout@v4
+      - name: Build JS
+        run: |
+          npm ci
+          npm run build
       - name: Build native library
         run: |
           docker run \
@@ -39,10 +43,6 @@ jobs:
         run: |
           export PYTHONPATH=utils/py
           python utils/py/test/trajectory/test_trajectory.py
-      - name: Build JS
-        run: |
-          npm ci
-          npm run build
       - name: Build WASM
         run: |
           docker run \
