@@ -24,10 +24,10 @@ jobs:
             -w /workspace \
             ghcr.io/juniorrojas/algovivo/llvm11-enzyme \
             ./build.sh
-      - name: Set up python 3.9
+      - name: Set up python 3.11
         uses: actions/setup-python@v5
         with:
-          python-version: 3.9
+          python-version: 3.11
       - run: |
           pip install -r utils/py/requirements.txt
       - run: |
