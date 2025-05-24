@@ -98,6 +98,13 @@ More details about this and other energy functions used in the simulation can be
 
 ## build from source
 
+### build JS
+
+```sh
+npm ci
+npm run build
+```
+
 ### build WASM
 
 ```sh
@@ -108,11 +115,4 @@ docker run \
   -w /workspace \
   ghcr.io/juniorrojas/algovivo/llvm11-enzyme \
   ./build.sh
-```
-
-### build JS
-
-```sh
-npm ci
-npm run build
 ```
