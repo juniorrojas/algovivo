@@ -6,9 +6,9 @@ const fs = require("fs");
 const path = require("path");
 
 async function renderState(recorder, window, pos, a) {
-  await window.evaluate(async (data) => {
-    system.pos.set(data.pos);
-    if (system.a != null) system.a.set(data.a);
+  await window.evaluate(async (state) => {
+    system.pos.set(state.pos);
+    if (system.a != null) system.a.set(state.a);
     viewport.render();
   }, { pos: pos, a: a });
   await recorder.saveFrame(window);
