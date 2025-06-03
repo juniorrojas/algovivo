@@ -1,5 +1,4 @@
 #pragma once
-// #include "../system.h"
 
 #define _optim_init() { \
   for (int i = 0; i < num_vertices; i++) { \
