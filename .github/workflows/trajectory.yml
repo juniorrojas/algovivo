@@ -76,6 +76,13 @@ jobs:
             --mesh test/neural/data/mesh.json \
             --steps test/neural/data/trajectory \
             --output frames.out
+      - name: Check number of frames
+        run: |
+          NUM_FRAMES=$(ls frames.out/*.png 2>/dev/null | wc -l)
+          if [ "$NUM_FRAMES" -ne 101 ]; then
+            echo "Expected 101 frames, found $NUM_FRAMES"
+            exit 1
+          fi
       - name: Install ffmpeg
         run: |
           sudo apt-get update
