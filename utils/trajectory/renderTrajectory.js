@@ -87,6 +87,20 @@ async function renderTrajectory(args = {}) {
         viewport.render();
       }, { pos: stepData.pos0, a: stepData.a0 });
       await recorder.saveFrame(window);
+
+      if (i == n - 1) {
+        const pos = stepData.pos1;
+        const a = stepData.a1;
+        if (pos != null && a != null) {
+          console.log("rendering final state...");
+          await window.evaluate(async (data) => {
+            system.pos.set(data.pos);
+            if (system.a != null) system.a.set(data.a);
+            viewport.render();
+          }, { pos: pos, a: a });
+          await recorder.saveFrame(window);
+        }
+      }
     }
 
     await window.close();
