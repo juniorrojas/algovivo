@@ -5,6 +5,15 @@ const FrameRecorder = require("./FrameRecorder");
 const fs = require("fs");
 const path = require("path");
 
+async function renderState(recorder, window, pos, a) {
+  await window.evaluate(async (data) => {
+    system.pos.set(data.pos);
+    if (system.a != null) system.a.set(data.a);
+    viewport.render();
+  }, { pos: pos, a: a });
+  await recorder.saveFrame(window);
+}
+
 async function renderTrajectory(args = {}) {
   const stepsDirname = args.stepsDirname;
   const meshFilename = args.meshFilename;
@@ -81,24 +90,16 @@ async function renderTrajectory(args = {}) {
     for (let i = 0; i < n; i++) {
       console.log(`${i + 1} / ${n}`);
       const stepData = await trajectoryData.loadStep(i);
-      await window.evaluate(async (data) => {
-        system.pos.set(data.pos);
-        if (system.a != null) system.a.set(data.a);
-        viewport.render();
-      }, { pos: stepData.pos0, a: stepData.a0 });
-      await recorder.saveFrame(window);
+      const pos = stepData.pos0;
+      const a = stepData.a0;
+      await renderState(recorder, window, pos, a);
 
       if (i == n - 1) {
         const pos = stepData.pos1;
         const a = stepData.a1;
-        if (pos != null && a != null) {
+        if (pos != null ) {
           console.log("rendering final state...");
-          await window.evaluate(async (data) => {
-            system.pos.set(data.pos);
-            if (system.a != null) system.a.set(data.a);
-            viewport.render();
-          }, { pos: pos, a: a });
-          await recorder.saveFrame(window);
+          await renderState(recorder, window, pos, a);
         }
       }
     }
