@@ -4,7 +4,7 @@
 
 An energy-based formulation for soft-bodied [virtual creatures](https://direct.mit.edu/isal/proceedings/isal2024/36/30/123447), implemented in JavaScript + WebAssembly.
 
-## [live demo](https://juniorrojas.com/algovivo)
+## [interactive demo](https://juniorrojas.com/algovivo)
 
 <a href="https://juniorrojas.com/algovivo">
   <img src="media/locomotion.gif" width="250px">
