@@ -1,6 +1,6 @@
 const { ArgumentParser } = require("argparse");
 const { Window, runWebServer } = require("./ppw");
-const TrajectoryData = require("./TrajectoryData");
+const Trajectory = require("./Trajectory");
 const FrameRecorder = require("./FrameRecorder");
 const fs = require("fs");
 const path = require("path");
@@ -35,8 +35,8 @@ async function renderTrajectory(args = {}) {
 
     const meshData = JSON.parse(await fs.promises.readFile(meshFilename, "utf8"));
 
-    const trajectoryData = new TrajectoryData(stepsDirname);
-    const step0 = await trajectoryData.loadStep(0);
+    const trajectory = new Trajectory(stepsDirname);
+    const step0 = await trajectory.loadStep(0);
     
     await window.evaluate(
       async (args) => {
@@ -85,11 +85,11 @@ async function renderTrajectory(args = {}) {
       }
     );
     
-    const n = await trajectoryData.numSteps();
+    const n = await trajectory.numSteps();
     console.log(`found ${n} steps`);
     for (let i = 0; i < n; i++) {
       console.log(`${i + 1} / ${n}`);
-      const stepData = await trajectoryData.loadStep(i);
+      const stepData = await trajectory.loadStep(i);
       const pos = stepData.pos0;
       const a = stepData.a0;
       await renderState(recorder, window, pos, a);
@@ -97,7 +97,7 @@ async function renderTrajectory(args = {}) {
       if (i == n - 1) {
         const pos = stepData.pos1;
         const a = stepData.a1;
-        if (pos != null ) {
+        if (pos != null) {
           console.log("rendering final state...");
           await renderState(recorder, window, pos, a);
         }

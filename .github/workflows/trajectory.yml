@@ -42,16 +42,16 @@ jobs:
           name: algovivo.wasm
           path: build/
       - name: Generate trajectory data
-        run: node test/neural/generateTrajectory.js
+        run: node test/nn/generateTrajectory.js
       - name: Upload trajectory output
         uses: actions/upload-artifact@v4
         with:
-          name: trajectory-output
+          name: trajectory
           path: ${{ env.OUTPUT_DIRNAME }}
       - name: Check trajectory output
         run: |
           test -d ${{ env.OUTPUT_DIRNAME }} || (echo "Directory does not exist" && exit 1)
-          diff -r ${{ env.OUTPUT_DIRNAME }} test/neural/data/trajectory || (echo "Files do not match" && exit 1)
+          diff -r ${{ env.OUTPUT_DIRNAME }} test/nn/data/trajectory || (echo "Files do not match" && exit 1)
   # render-trajectory does not depend on generate-trajectory because render-trajectory uses the reference trajectory data
   # which already exists in the repo, while generate-trajectory checks that the current version of the code generates the same
   # trajectory that is already stored in the repo.
@@ -73,8 +73,8 @@ jobs:
       - name: Generate trajectory frames
         run: |
           node utils/trajectory/renderTrajectory.js \
-            --mesh test/neural/data/mesh.json \
-            --steps test/neural/data/trajectory \
+            --mesh test/nn/data/mesh.json \
+            --steps test/nn/data/trajectory \
             --output frames.out
       - name: Check number of frames
         run: |

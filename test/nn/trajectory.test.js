@@ -2,7 +2,7 @@ const algovivo = require("../../algovivo");
 const utils = require("../utils");
 const fsp = require("fs/promises");
 const path = require("path");
-const TrajectoryData = require("../../utils/trajectory/TrajectoryData");
+const Trajectory = require("../../utils/trajectory/Trajectory");
 
 expect.extend({ toBeCloseToArray: utils.toBeCloseToArray });
 
@@ -41,16 +41,16 @@ test("neural frame policy", async () => {
   });
   policy.loadData(policyData);
 
-  const trajectoryDataDirname = path.join(dataDirname, "trajectory");
-  const trajectoryData = new TrajectoryData(trajectoryDataDirname);
+  const trajectoryDirname = path.join(dataDirname, "trajectory");
+  const trajectory = new Trajectory(trajectoryDirname);
 
   let expectedNumReservedBytes = null;
   const mgr = system.memoryManager;
 
-  const n = await trajectoryData.numSteps();
+  const n = await trajectory.numSteps();
   expect(n).toBe(100);
   for (let i = 0; i < n; i++) {
-    const data = await trajectoryData.loadStep(i);
+    const data = await trajectory.loadStep(i);
 
     system.pos0.set(data.pos0);
     system.vel0.set(data.vel0);
