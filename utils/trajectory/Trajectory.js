@@ -11,7 +11,7 @@ async function getNumFilesWithExtension(dirname, ext = ".json") {
   }
 }
 
-class TrajectoryData {
+class Trajectory {
   constructor(dirname) {
     this.dirname = dirname;
   }
@@ -27,4 +27,4 @@ class TrajectoryData {
   }
 }
 
-module.exports = TrajectoryData;
+module.exports = Trajectory;
