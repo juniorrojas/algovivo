@@ -5,7 +5,7 @@ function sampleNormal(mean, stdDev) {
   return mean + z * stdDev;
 }
 
-class NeuralPolicy {
+class NeuralFramePolicy {
   constructor(args = {}) {
     if (args.system == null) {
       throw new Error("system required to create policy");
@@ -128,4 +128,4 @@ class NeuralPolicy {
   }
 }
 
-module.exports = NeuralPolicy;
+module.exports = NeuralFramePolicy;

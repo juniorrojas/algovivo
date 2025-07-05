@@ -46,7 +46,7 @@ jobs:
       - name: Upload trajectory output
         uses: actions/upload-artifact@v4
         with:
-          name: trajectory-output
+          name: trajectory
           path: ${{ env.OUTPUT_DIRNAME }}
       - name: Check trajectory output
         run: |
