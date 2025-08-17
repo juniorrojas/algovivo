@@ -93,7 +93,8 @@ float backward_euler_loss(
   
     accumulate_collision_energy(
       potential_energy,
-      py
+      py,
+      k_collision
     );
   }
   
