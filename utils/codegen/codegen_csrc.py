@@ -16,8 +16,8 @@ if __name__ == "__main__":
         codegen.modules.Vertices(),
         codegen.modules.Muscles(),
         codegen.modules.Triangles(),
-        codegen.modules.Collision(),
-        codegen.modules.Friction()
+        codegen.modules.Friction(),
+        codegen.modules.Collision()
     ]
 
     backward_euler.inertial_modules = [
@@ -28,8 +28,8 @@ if __name__ == "__main__":
         codegen.potentials.Muscles(),
         codegen.potentials.Triangles(),
         codegen.potentials.Gravity(),
-        codegen.potentials.Friction(),
-        codegen.potentials.Collision()
+        codegen.potentials.Collision(),
+        codegen.potentials.Friction()
     ]
 
     csrc_dirpath = Path(args.output_csrc_dirname)

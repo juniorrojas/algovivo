@@ -38,7 +38,7 @@ class System {
       simplexOrder: this.spaceDim + 1
     });
 
-    this.friction = { k: Math.fround(300) }
+    this.friction = { k: Math.fround(300) };
     this.collision = { k: Math.fround(14000) };
   }
 
