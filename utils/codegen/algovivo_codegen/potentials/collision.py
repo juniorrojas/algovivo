@@ -10,7 +10,8 @@ for (int i = 0; i < num_vertices; i++) {
 
   accumulate_collision_energy(
     potential_energy,
-    py
+    py,
+    k_collision
   );
 }
 """

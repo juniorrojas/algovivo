@@ -39,6 +39,7 @@ class System {
     });
 
     this.friction = { k: Math.fround(300) }
+    this.collision = { k: Math.fround(14000) };
   }
 
   set fixedVertexId(value) {
@@ -194,6 +195,7 @@ class System {
       ...this.triangles.toStepArgs(),
 
       this.friction.k,
+      this.collision.k
     ]
   }
 
