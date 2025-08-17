@@ -28,8 +28,8 @@ if __name__ == "__main__":
         codegen.potentials.Muscles(),
         codegen.potentials.Triangles(),
         codegen.potentials.Gravity(),
-        codegen.potentials.Collision(),
-        codegen.potentials.Friction()
+        codegen.potentials.Friction(),
+        codegen.potentials.Collision()
     ]
 
     csrc_dirpath = Path(args.output_csrc_dirname)
