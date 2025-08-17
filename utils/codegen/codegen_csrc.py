@@ -16,7 +16,8 @@ if __name__ == "__main__":
         codegen.modules.Vertices(),
         codegen.modules.Muscles(),
         codegen.modules.Triangles(),
-        codegen.modules.Friction()
+        codegen.modules.Friction(),
+        codegen.modules.Collision()
     ]
 
     backward_euler.inertial_modules = [

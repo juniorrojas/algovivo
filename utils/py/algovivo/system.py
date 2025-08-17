@@ -13,6 +13,7 @@ class System:
         self.triangles = Triangles(native_instance.lib)
 
         self.k_friction = float(300)
+        self.k_collision = float(14000)
 
     @property
     def space_dim(self):
@@ -50,7 +51,9 @@ class System:
 
             *self.triangles.to_step_args(),
 
-            self.k_friction
+            self.k_friction,
+
+            self.k_collision
         )
 
         if self.num_vertices != 0:

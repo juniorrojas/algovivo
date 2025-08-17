@@ -19,7 +19,7 @@
 namespace algovivo {
 
 float backward_euler_loss(
-  int space_dim, float g, float h, int num_vertices, const float* pos0, const float* vel0, float vertex_mass, int num_muscles, const int* muscles, float k, const float* a, const float* l0, int num_triangles, const int* triangles, const float* rsi, const float* mu, const float* lambda, float k_friction, const float* pos
+  int space_dim, float g, float h, int num_vertices, const float* pos0, const float* vel0, float vertex_mass, int num_muscles, const int* muscles, float k, const float* a, const float* l0, int num_triangles, const int* triangles, const float* rsi, const float* mu, const float* lambda, float k_friction, float k_collision, const float* pos
 ) {
   
   float inertial_energy = 0.0;
@@ -93,7 +93,8 @@ float backward_euler_loss(
   
     accumulate_collision_energy(
       potential_energy,
-      py
+      py,
+      k_collision
     );
   }
   
@@ -118,7 +119,7 @@ float backward_euler_loss(
 }
 
 static void backward_euler_loss_grad(
-  int space_dim, float g, float h, int num_vertices, const float* pos0, const float* vel0, float vertex_mass, int num_muscles, const int* muscles, float k, const float* a, const float* l0, int num_triangles, const int* triangles, const float* rsi, const float* mu, const float* lambda, float k_friction, const float* pos, const float* pos_grad
+  int space_dim, float g, float h, int num_vertices, const float* pos0, const float* vel0, float vertex_mass, int num_muscles, const int* muscles, float k, const float* a, const float* l0, int num_triangles, const int* triangles, const float* rsi, const float* mu, const float* lambda, float k_friction, float k_collision, const float* pos, const float* pos_grad
 ) {
   __enzyme_autodiff(
     backward_euler_loss,
@@ -140,12 +141,13 @@ static void backward_euler_loss_grad(
     enzyme_const, mu,
     enzyme_const, lambda,
     enzyme_const, k_friction,
+    enzyme_const, k_collision,
     enzyme_dup, pos, pos_grad
   );
 }
 
 void backward_euler_update_pos(
-  int space_dim, float g, float h, int num_vertices, const float* pos0, const float* vel0, float vertex_mass, int num_muscles, const int* muscles, float k, const float* a, const float* l0, int num_triangles, const int* triangles, const float* rsi, const float* mu, const float* lambda, float k_friction, float* pos, float* pos_grad, float* pos_tmp, const int* fixed_vertex_id
+  int space_dim, float g, float h, int num_vertices, const float* pos0, const float* vel0, float vertex_mass, int num_muscles, const int* muscles, float k, const float* a, const float* l0, int num_triangles, const int* triangles, const float* rsi, const float* mu, const float* lambda, float k_friction, float k_collision, float* pos, float* pos_grad, float* pos_tmp, const int* fixed_vertex_id
 ) {
   _optim_init();
   const auto max_optim_iters = 100;
@@ -175,9 +177,9 @@ void backward_euler_update_vel(
 
 extern "C"
 void backward_euler_update(
-    int space_dim, float g, float h, int num_vertices, const float* pos0, const float* vel0, float vertex_mass, const int* fixed_vertex_id, float* pos1, float* pos_grad, float* pos_tmp, float* vel1, int num_muscles, const int* muscles, float k, const float* a, const float* l0, int num_triangles, const int* triangles, const float* rsi, const float* mu, const float* lambda, float k_friction
+    int space_dim, float g, float h, int num_vertices, const float* pos0, const float* vel0, float vertex_mass, const int* fixed_vertex_id, float* pos1, float* pos_grad, float* pos_tmp, float* vel1, int num_muscles, const int* muscles, float k, const float* a, const float* l0, int num_triangles, const int* triangles, const float* rsi, const float* mu, const float* lambda, float k_friction, float k_collision
 ) {
-  backward_euler_update_pos(space_dim, g, h, num_vertices, pos0, vel0, vertex_mass, num_muscles, muscles, k, a, l0, num_triangles, triangles, rsi, mu, lambda, k_friction, pos1, pos_grad, pos_tmp, fixed_vertex_id);
+  backward_euler_update_pos(space_dim, g, h, num_vertices, pos0, vel0, vertex_mass, num_muscles, muscles, k, a, l0, num_triangles, triangles, rsi, mu, lambda, k_friction, k_collision, pos1, pos_grad, pos_tmp, fixed_vertex_id);
   backward_euler_update_vel(num_vertices, space_dim, pos0, vel0, pos1, vel1, h);
 }
 
