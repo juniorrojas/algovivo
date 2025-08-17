@@ -35,6 +35,7 @@ class NativeInstance:
             ctypes.POINTER(ctypes.c_float),  # lambda
 
             ctypes.c_float,                  # k_friction
+            ctypes.c_float                   # k_collision
         ]
 
     @staticmethod
