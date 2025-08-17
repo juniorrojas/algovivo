@@ -3,7 +3,7 @@
  * (c) 2023 Junior Rojas
  * License: MIT
  * 
- * Built from commit 84c084c48c12794dcd4f0f7cbf264f80179a4bb0
+ * Built from commit 89cab85b0317f416a9dfd6de4d5100c34435a25f
  */
 function getDefaultExportFromCjs (x) {
 	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
@@ -1776,6 +1776,7 @@ class System$1 {
     });
 
     this.friction = { k: Math.fround(300) };
+    this.collision = { k: Math.fround(14000) };
   }
 
   set fixedVertexId(value) {
@@ -1931,6 +1932,7 @@ class System$1 {
       ...this.triangles.toStepArgs(),
 
       this.friction.k,
+      this.collision.k
     ]
   }
 
@@ -3918,7 +3920,7 @@ function sampleNormal(mean, stdDev) {
   return mean + z * stdDev;
 }
 
-class NeuralPolicy {
+class NeuralFramePolicy {
   constructor(args = {}) {
     if (args.system == null) {
       throw new Error("system required to create policy");
@@ -4041,10 +4043,10 @@ class NeuralPolicy {
   }
 }
 
-var NeuralFramePolicy = NeuralPolicy;
+var NeuralFramePolicy_1 = NeuralFramePolicy;
 
 var nn$1 = {
-  NeuralFramePolicy: NeuralFramePolicy
+  NeuralFramePolicy: NeuralFramePolicy_1
 };
 
 const System = System_1;
