@@ -89,17 +89,6 @@ float backward_euler_loss(
   
   for (int i = 0; i < num_vertices; i++) {
     const auto offset = space_dim * i;
-    const auto py = pos[offset + 1];
-  
-    accumulate_collision_energy(
-      potential_energy,
-      py,
-      k_collision
-    );
-  }
-  
-  for (int i = 0; i < num_vertices; i++) {
-    const auto offset = space_dim * i;
   
     const auto px = pos[offset    ];
     const auto py = pos[offset + 1];
@@ -113,6 +102,17 @@ float backward_euler_loss(
       p0x, p0y,
       h,
       k_friction
+    );
+  }
+  
+  for (int i = 0; i < num_vertices; i++) {
+    const auto offset = space_dim * i;
+    const auto py = pos[offset + 1];
+  
+    accumulate_collision_energy(
+      potential_energy,
+      py,
+      k_collision
     );
   }
   return 0.5 * inertial_energy + h * h * potential_energy;
