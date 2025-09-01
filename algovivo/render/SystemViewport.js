@@ -141,6 +141,7 @@ class SystemViewport {
           const worldCursor = camera.domToWorldSpace(domCursor);
           const vertexId = this.hitTestVertex(worldCursor);
           if (vertexId != null) {
+            event.preventDefault();
             this.fixVertex(vertexId);
             dragBehavior.beginDrag();
             this.setVertexPos(

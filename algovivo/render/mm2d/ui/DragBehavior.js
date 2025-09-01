@@ -29,6 +29,7 @@ class DragBehavior {
 
   domCursorMove(domCursor, event) {
     if (!this.dragging()) return;
+    event.preventDefault();
     if (this.onDragProgress != null) this.onDragProgress(domCursor, event);
   }
 
@@ -43,7 +44,6 @@ class DragBehavior {
     }
     this.domElement = domElement;
     const onDomCursorDown = (event) => {
-      event.preventDefault();
       const domCursor = cursorUtils.computeDomCursor(event, domElement);
       this.domCursorDown(domCursor, event);
     }
