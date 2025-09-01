@@ -3,7 +3,7 @@
  * (c) 2023 Junior Rojas
  * License: MIT
  * 
- * Built from commit 89cab85b0317f416a9dfd6de4d5100c34435a25f
+ * Built from commit b2f96470e1dcbc4fbb09da266ee5eaac9c3e8ba5
  */
 function getDefaultExportFromCjs (x) {
 	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
@@ -2717,6 +2717,7 @@ class DragBehavior {
 
   domCursorMove(domCursor, event) {
     if (!this.dragging()) return;
+    event.preventDefault();
     if (this.onDragProgress != null) this.onDragProgress(domCursor, event);
   }
 
@@ -2731,7 +2732,6 @@ class DragBehavior {
     }
     this.domElement = domElement;
     const onDomCursorDown = (event) => {
-      event.preventDefault();
       const domCursor = cursorUtils.computeDomCursor(event, domElement);
       this.domCursorDown(domCursor, event);
     };
@@ -3702,6 +3702,7 @@ class SystemViewport {
           const worldCursor = camera.domToWorldSpace(domCursor);
           const vertexId = this.hitTestVertex(worldCursor);
           if (vertexId != null) {
+            event.preventDefault();
             this.fixVertex(vertexId);
             dragBehavior.beginDrag();
             this.setVertexPos(
