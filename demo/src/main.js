@@ -1,7 +1,7 @@
-import algovivo from "../../build/algovivo.min.mjs";
+import algovivo from "../../build/algovivo.mjs";
 import BrainButton from "./BrainButton.js";
 import { initStyle, makeGitHubLink } from "./ui.js";
-import SystemViewport from "./SystemViewport.js";
+import AgentViewport from "./AgentViewport.js";
 import Sections from "./Sections.js";
 import Header from "./Header.js";
 
@@ -12,16 +12,6 @@ async function loadWasm() {
 }
 
 const dataRoot = "data";
-
-async function loadMeshData() {
-  const response = await fetch(`${dataRoot}/mesh.json`);
-  return await response.json();
-}
-
-async function loadPolicyData() {
-  const response = await fetch(`${dataRoot}/policy.json`);
-  return await response.json();
-}
 
 async function main() {
   initStyle();
@@ -36,65 +26,49 @@ async function main() {
   divContent.style.width = "100%";
   document.body.appendChild(divContent);
 
+  document.documentElement.style.height = "100%";
+  document.body.style.height = "100%";
+  document.body.style.display = "flex";
+  document.body.style.flexDirection = "column";
+  document.body.style.margin = 0;
+  document.body.style.padding = 0;
+  document.body.style.alignItems = "center";
+
   const wasmInstance = await loadWasm();
   const system = new algovivo.System({
     wasmInstance: wasmInstance
   });
 
-  document.documentElement.style.height = "100%";
-  document.body.style.height = "100%";
-  document.body.style.display = "flex";
-  document.body.style.margin = 0;
-  document.body.style.padding = 0;
-  document.body.style.alignItems = "center";
-
-  const [meshData, policyData] = await Promise.all(
-    [loadMeshData, loadPolicyData].map(f => f())
-  );
-
-  system.set({
-    pos: meshData.pos,
-    muscles: meshData.muscles,
-    musclesL0: meshData.l0,
-    triangles: meshData.triangles,
-    trianglesRsi: meshData.rsi
-  });
-
-  const viewport = new SystemViewport({
+  const agentViewport = new AgentViewport({
     system: system,
-    sortedVertexIds: meshData.sorted_vertex_ids,
-    vertexDepths: meshData.depth
+    algovivo: algovivo,
+    dataRoot: dataRoot
   });
-  divContent.appendChild(viewport.domElement);
+  divContent.appendChild(agentViewport.domElement);
 
-  const policy = new algovivo.nn.NeuralFramePolicy({
-    system: system,
-    stochastic: true
-  });
-  policy.loadData(policyData);
-
-  window.togglePolicy = () => {
-    policy.active = !policy.active;
-    if (policy.active) btnBrain.setActiveStyle();
-    else btnBrain.setInactiveStyle();
-  }
+  await agentViewport.preloadMiniButtonData();
+  await agentViewport.switchToAgent("biped");
 
   const btnBrain = new BrainButton();
   btnBrain.domElement.style.marginTop = "8px";
   btnBrain.domElement.style.marginBottom = "16px";
   btnBrain.domElement.addEventListener("click", () => {
-    togglePolicy();
+    const isActive = agentViewport.togglePolicy();
+    if (isActive) btnBrain.setActiveStyle();
+    else btnBrain.setInactiveStyle();
   });
   divContent.appendChild(btnBrain.domElement);
 
   const sections = new Sections();
   divContent.appendChild(sections.domElement);
 
-  viewport.render();
+  agentViewport.render();
   setInterval(() => {
-    policy.step();
+    if (agentViewport.agentManager.policy != null) {
+      agentViewport.agentManager.policy.step();
+    }
     system.step();
-    viewport.render();
+    agentViewport.render();
   }, 1000 / 30);
 
   window.system = system;
