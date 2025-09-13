@@ -48,59 +48,50 @@ export default class AgentViewport {
     this.miniContainer.style.gap = "8px";
     
     this.miniButtons = {};
-
-    const miniSize = 40;
     
-    this.miniButtons.quadruped = new AgentMini({
-      mm2d: algovivo.mm2d,
-      pos: [0, 0],
-      triangles: [],
-      size: miniSize
-    });
-    this.miniButtons.quadruped.domElement.style.cursor = "pointer";
-    this.miniButtons.quadruped.domElement.addEventListener("click", () => {
-      this.switchToAgent("quadruped");
-    });
+    const agentNames = ["biped", "quadruped"];
     
-    this.miniButtons.biped = new AgentMini({
-      mm2d: algovivo.mm2d,
-      pos: [0, 0],
-      triangles: [],
-      size: miniSize
-    });
-    this.miniButtons.biped.domElement.style.cursor = "pointer";
-    this.miniButtons.biped.domElement.addEventListener("click", () => {
-      this.switchToAgent("biped");
+    agentNames.forEach(agentName => {
+      this.miniButtons[agentName] = new AgentMini({
+        mm2d: algovivo.mm2d,
+        pos: [],
+        triangles: [],
+        muscles: [],
+        size: 40
+      });
+      this.miniButtons[agentName].domElement.style.cursor = "pointer";
+      this.miniButtons[agentName].domElement.addEventListener("click", () => {
+        this.switchToAgent(agentName);
+      });
+      this.miniContainer.appendChild(this.miniButtons[agentName].domElement);
     });
     
-    this.miniContainer.appendChild(this.miniButtons.biped.domElement);
-    this.miniContainer.appendChild(this.miniButtons.quadruped.domElement);
     this.domElement.appendChild(this.miniContainer);
   }
 
   async preloadMiniButtonData() {
     await this.agentManager.preloadAllData();
     
-    for (const agentType of this.agentManager.agents) {
+    for (const agentName of this.agentManager.agents) {
       try {
-        const meshData = this.agentManager.meshCache.get(agentType);
-        if (this.miniButtons[agentType] && meshData) {
-          this.miniButtons[agentType].updateMesh({
+        const meshData = this.agentManager.meshCache.get(agentName);
+        if (this.miniButtons[agentName] && meshData) {
+          this.miniButtons[agentName].updateMesh({
             pos: meshData.pos,
             triangles: meshData.triangles
           });
         }
       } catch (error) {
-        console.warn(`Failed to preload mesh data for ${agentType}:`, error);
+        console.warn(`Failed to preload mesh data for ${agentName}:`, error);
       }
     }
   }
 
-  async switchToAgent(agentType) {
-    if (this.agentManager.getCurrentAgent() === agentType) return;
+  async switchToAgent(agentName) {
+    if (this.agentManager.getCurrentAgent() === agentName) return;
 
     try {
-      const { meshData } = await this.agentManager.switchToAgent(agentType);
+      const { meshData } = await this.agentManager.switchToAgent(agentName);
       
       if (this.viewport) {
         this.viewport.needsMeshUpdate = true;
@@ -121,17 +112,17 @@ export default class AgentViewport {
         this.initResponsiveSize();
       }
 
-      this.updateMiniButtonStates(agentType);
+      this.updateMiniButtonStates(agentName);
       
     } catch (error) {
-      console.error(`Failed to switch to agent ${agentType}:`, error);
+      console.error(`Failed to switch to agent ${agentName}:`, error);
     }
   }
 
   updateMiniButtonStates(activeAgent) {
-    Object.keys(this.miniButtons).forEach(agentType => {
-      const button = this.miniButtons[agentType];
-      button.setActive(agentType === activeAgent);
+    Object.keys(this.miniButtons).forEach(agentName => {
+      const button = this.miniButtons[agentName];
+      button.setActive(agentName === activeAgent);
     });
   }
 
