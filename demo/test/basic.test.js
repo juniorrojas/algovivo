@@ -13,12 +13,18 @@ test("main", async () => {
       const numVertices = await window.evaluate(async () => {
         function waitInit() {
           return new Promise((resolve, reject) => {
+            const timeout = setTimeout(() => {
+              clearInterval(interval);
+              reject(new Error("Timeout waiting for system initialization"));
+            }, 5000);
+            
             const interval = setInterval(() => {
               if (window.system != null) {
                 clearInterval(interval);
+                clearTimeout(timeout);
                 resolve();
               }
-            }, 1);
+            }, 50);
           });
         }
         await waitInit();

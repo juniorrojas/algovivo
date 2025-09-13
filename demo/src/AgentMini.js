@@ -10,7 +10,7 @@ export default class AgentMini {
     this.initContainer();
     this.initRenderer();
     this.initMesh(args);
-    this.setupShaders();
+    this.initRenderers();
     this.render();
     this.setActive(false);
   }
@@ -37,7 +37,7 @@ export default class AgentMini {
     this.mesh.triangles = args.triangles || [];
   }
 
-  setupShaders() {
+  initRenderers() {
     this.mesh.pointShader.renderPoint = () => {};
     
     this.mesh.triangleShader.renderTriangle = (args) => {

@@ -13,7 +13,7 @@ env:
   DEPLOY_DIRNAME: gh-pages-repo
   DEPLOY_BRANCH: gh-pages
   DEMO_SRC_DIRNAME: ./demo
-  DEMO_BUILD_DIRNAME: ./demo/public
+  DEMO_PUBLIC_DIRNAME: ./demo/public
   DEPLOY_LOCAL_SCRIPT: ./demo/scripts/deploy-local
 
 permissions:
@@ -77,15 +77,16 @@ jobs:
       - name: Upload demo build
         uses: actions/upload-artifact@v4
         with:
-          name: demo-build
-          path: ${{ env.DEMO_BUILD_DIRNAME }}
+          name: demo-public
+          path: ${{ env.DEMO_PUBLIC_DIRNAME }}
   test-demo:
     runs-on: ubuntu-22.04
     needs: [build-demo]
     steps:
       - name: Clone repo
         uses: actions/checkout@v4
-      - run: ls -l ${{ env.DEMO_BUILD_DIRNAME }}
+      - name: List demo public dir before build
+        run: ls -l ${{ env.DEMO_PUBLIC_DIRNAME }}
       - name: Download WASM build
         uses: actions/download-artifact@v4
         with:
@@ -94,9 +95,10 @@ jobs:
       - name: Download demo build
         uses: actions/download-artifact@v4
         with:
-          name: demo-build
-          path: ${{ env.DEMO_BUILD_DIRNAME }}
-      - run: ls -l ${{ env.DEMO_BUILD_DIRNAME }}
+          name: demo-public
+          path: ${{ env.DEMO_PUBLIC_DIRNAME }}
+      - name: List demo public dir after build
+        run: ls -l ${{ env.DEMO_PUBLIC_DIRNAME }}
       - name: Test demo
         run: |
           cd ${{ env.DEMO_SRC_DIRNAME }}
@@ -131,7 +133,8 @@ jobs:
     steps:
       - name: Clone repo
         uses: actions/checkout@v4
-      - run: ls -l ${{ env.DEMO_BUILD_DIRNAME }}
+      - name: List demo public dir before deploy
+        run: ls -l ${{ env.DEMO_PUBLIC_DIRNAME }}
       - name: Download WASM build
         uses: actions/download-artifact@v4
         with:
@@ -140,9 +143,10 @@ jobs:
       - name: Download demo build
         uses: actions/download-artifact@v4
         with:
-          name: demo-build
-          path: ${{ env.DEMO_BUILD_DIRNAME }}
-      - run: ls -l ${{ env.DEMO_BUILD_DIRNAME }}
+          name: demo-public
+          path: ${{ env.DEMO_PUBLIC_DIRNAME }}
+      - name: List demo public dir after download
+        run: ls -l ${{ env.DEMO_PUBLIC_DIRNAME }}
       - name: Clone deploy branch
         uses: actions/checkout@v4
         with:
