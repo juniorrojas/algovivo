@@ -1,6 +1,6 @@
 import algovivo from "../../build/algovivo.mjs";
 import BrainButton from "./BrainButton.js";
-import { initStyle, makeGitHubLink } from "./ui.js";
+import { initStyle } from "./ui.js";
 import AgentViewport from "./AgentViewport.js";
 import Sections from "./Sections.js";
 import Header from "./Header.js";
@@ -12,10 +12,11 @@ async function loadWasm() {
 }
 
 const dataRoot = "data";
+const agentNames = ["biped", "quadruped"];
 
 async function main() {
   initStyle();
-  makeGitHubLink();
+  
   const header = new Header();
   document.body.appendChild(header.domElement);
 
@@ -42,7 +43,8 @@ async function main() {
   const agentViewport = new AgentViewport({
     system: system,
     algovivo: algovivo,
-    dataRoot: dataRoot
+    dataRoot: dataRoot,
+    agentNames: agentNames
   });
   divContent.appendChild(agentViewport.domElement);
 
