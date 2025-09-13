@@ -133,7 +133,7 @@ jobs:
     steps:
       - name: Clone repo
         uses: actions/checkout@v4
-      - name: List demo public dir before deploy
+      - name: List demo public dir
         run: ls -l ${{ env.DEMO_PUBLIC_DIRNAME }}
       - name: Download WASM build
         uses: actions/download-artifact@v4
@@ -145,7 +145,7 @@ jobs:
         with:
           name: demo-public
           path: ${{ env.DEMO_PUBLIC_DIRNAME }}
-      - name: List demo public dir after download
+      - name: List demo public dir
         run: ls -l ${{ env.DEMO_PUBLIC_DIRNAME }}
       - name: Clone deploy branch
         uses: actions/checkout@v4
