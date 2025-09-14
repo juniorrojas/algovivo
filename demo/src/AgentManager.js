@@ -1,52 +1,52 @@
 export default class AgentManager {
-  constructor(system, algovivo, dataRoot = "data") {
+  constructor(system, algovivo, dataRoot = "data", agentNames = []) {
     this.system = system;
     this.algovivo = algovivo;
     this.dataRoot = dataRoot;
     this.currentAgent = null;
     this.policy = null;
-    this.agents = ["quadruped", "biped"];
+    this.agents = agentNames;
     this.meshCache = new Map();
     this.policyCache = new Map();
   }
 
-  async loadMeshData(agentType) {
-    if (this.meshCache.has(agentType)) {
-      return this.meshCache.get(agentType);
+  async loadMeshData(agentName) {
+    if (this.meshCache.has(agentName)) {
+      return this.meshCache.get(agentName);
     }
-    const response = await fetch(`${this.dataRoot}/${agentType}/mesh.json`);
+    const response = await fetch(`${this.dataRoot}/${agentName}/mesh.json`);
     const data = await response.json();
-    this.meshCache.set(agentType, data);
+    this.meshCache.set(agentName, data);
     return data;
   }
 
-  async loadPolicyData(agentType) {
-    if (this.policyCache.has(agentType)) {
-      return this.policyCache.get(agentType);
+  async loadPolicyData(agentName) {
+    if (this.policyCache.has(agentName)) {
+      return this.policyCache.get(agentName);
     }
-    const response = await fetch(`${this.dataRoot}/${agentType}/policy.json`);
+    const response = await fetch(`${this.dataRoot}/${agentName}/policy.json`);
     const data = await response.json();
-    this.policyCache.set(agentType, data);
+    this.policyCache.set(agentName, data);
     return data;
   }
 
   async preloadAllData() {
     await Promise.all(
-      this.agents.map(agentType => 
+      this.agents.map(agentName => 
         Promise.all([
-          this.loadMeshData(agentType),
-          this.loadPolicyData(agentType)
+          this.loadMeshData(agentName),
+          this.loadPolicyData(agentName)
         ])
       )
     );
   }
 
-  async switchToAgent(agentType) {
-    if (this.currentAgent === agentType) return;
+  async switchToAgent(agentName) {
+    if (this.currentAgent === agentName) return;
 
     const [meshData, policyData] = await Promise.all([
-      this.loadMeshData(agentType),
-      this.loadPolicyData(agentType)
+      this.loadMeshData(agentName),
+      this.loadPolicyData(agentName)
     ]);
 
     // recenter mesh to avoid camera jump
@@ -80,7 +80,7 @@ export default class AgentManager {
     });
     this.policy.loadData(policyData);
 
-    this.currentAgent = agentType;
+    this.currentAgent = agentName;
     
     return { meshData, policyData };
   }

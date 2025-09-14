@@ -3,9 +3,9 @@ import AgentMini from "./AgentMini.js";
 import AgentManager from "./AgentManager.js";
 
 export default class AgentViewport {
-  constructor({ system, algovivo, dataRoot = "data" }) {
+  constructor({ system, algovivo, dataRoot = "data", agentNames = [] }) {
     this.system = system;
-    this.agentManager = new AgentManager(system, algovivo, dataRoot);
+    this.agentManager = new AgentManager(system, algovivo, dataRoot, agentNames);
     this.viewport = null;
     
     this.initContainer();
@@ -49,9 +49,7 @@ export default class AgentViewport {
     
     this.miniButtons = {};
     
-    const agentNames = ["biped", "quadruped"];
-    
-    agentNames.forEach(agentName => {
+    this.agentManager.agents.forEach(agentName => {
       this.miniButtons[agentName] = new AgentMini({
         mm2d: algovivo.mm2d,
         pos: [],
