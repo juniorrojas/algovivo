@@ -8,6 +8,7 @@ permissions:
   pull-requests: write
 
 env:
+  LIB_NAME: algovivo
   SRC_BRANCH: main
   BUILD_BRANCH: build
   BUILD_DIRNAME: build
@@ -51,8 +52,8 @@ jobs:
       - name: Upload WASM
         uses: actions/upload-artifact@v4
         with:
-          name: algovivo.wasm
-          path: build/algovivo.wasm
+          name: ${{ env.LIB_NAME }}.wasm
+          path: build/${{ env.LIB_NAME }}.wasm
   build-dynamic-lib:
     runs-on: ubuntu-latest
     steps:
@@ -73,8 +74,8 @@ jobs:
       - name: Upload dynamic lib
         uses: actions/upload-artifact@v4
         with:
-          name: algovivo.so
-          path: build/algovivo.so
+          name: ${{ env.LIB_NAME }}.so
+          path: build/${{ env.LIB_NAME }}.so
   build-js:
     runs-on: ubuntu-latest
     steps:
@@ -98,12 +99,12 @@ jobs:
       - name: Download WASM build
         uses: actions/download-artifact@v4
         with:
-          name: algovivo.wasm
+          name: ${{ env.LIB_NAME }}.wasm
           path: ${{ env.BUILD_DIRNAME }}/
       - name: Download dynamic lib
         uses: actions/download-artifact@v4
         with:
-          name: algovivo.so
+          name: ${{ env.LIB_NAME }}.so
           path: ${{ env.BUILD_DIRNAME }}/
       - name: Download JS build
         uses: actions/download-artifact@v4
