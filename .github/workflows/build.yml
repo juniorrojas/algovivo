@@ -2,6 +2,17 @@ name: build
 
 on:
   workflow_dispatch:
+    inputs:
+      src_branch:
+        description: "Source branch to build from"
+        required: true
+        default: "main"
+        type: string
+      build_branch:
+        description: "Build branch to push artifacts to"
+        required: true
+        default: "build"
+        type: string
 
 permissions:
   contents: write
@@ -9,8 +20,8 @@ permissions:
 
 env:
   LIB_NAME: algovivo
-  SRC_BRANCH: main
-  BUILD_BRANCH: build
+  SRC_BRANCH: ${{ inputs.src_branch || "main" }}
+  BUILD_BRANCH: ${{ inputs.build_branch || "build" }}
   BUILD_DIRNAME: build
   BUILD_BRANCH_REPO_DIRNAME: build.repo
 
