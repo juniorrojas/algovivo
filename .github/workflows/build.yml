@@ -142,5 +142,19 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add build
-          git commit -m "Update build"
-          git push origin ${{ env.BUILD_BRANCH }}
+          
+          # check if there are any changes to commit
+          if git diff --cached --quiet; then
+            echo "No changes to commit. Build artifacts are already up to date."
+          else
+            echo "Changes detected. Committing and pushing..."
+            git commit -m "Update build"
+            
+            # check if the push is needed by comparing with remote
+            if git diff --quiet HEAD origin/${{ env.BUILD_BRANCH }}; then
+              echo "Local branch is already up to date with remote. No push needed."
+            else
+              git push origin ${{ env.BUILD_BRANCH }}
+              echo "Successfully pushed changes to ${{ env.BUILD_BRANCH }} branch."
+            fi
+          fi
