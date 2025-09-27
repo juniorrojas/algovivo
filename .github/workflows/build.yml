@@ -2,14 +2,26 @@ name: build
 
 on:
   workflow_dispatch:
+    inputs:
+      src_branch:
+        description: "Source branch to build from"
+        required: true
+        default: "main"
+        type: string
+      build_branch:
+        description: "Build branch to push artifacts to"
+        required: true
+        default: "build"
+        type: string
 
 permissions:
   contents: write
   pull-requests: write
 
 env:
-  SRC_BRANCH: main
-  BUILD_BRANCH: build
+  LIB_NAME: algovivo
+  SRC_BRANCH: ${{ inputs.src_branch || 'main' }}
+  BUILD_BRANCH: ${{ inputs.build_branch || 'build' }}
   BUILD_DIRNAME: build
   BUILD_BRANCH_REPO_DIRNAME: build.repo
 
@@ -51,8 +63,8 @@ jobs:
       - name: Upload WASM
         uses: actions/upload-artifact@v4
         with:
-          name: algovivo.wasm
-          path: build/algovivo.wasm
+          name: ${{ env.LIB_NAME }}.wasm
+          path: build/${{ env.LIB_NAME }}.wasm
   build-dynamic-lib:
     runs-on: ubuntu-latest
     steps:
@@ -73,8 +85,8 @@ jobs:
       - name: Upload dynamic lib
         uses: actions/upload-artifact@v4
         with:
-          name: algovivo.so
-          path: build/algovivo.so
+          name: ${{ env.LIB_NAME }}.so
+          path: build/${{ env.LIB_NAME }}.so
   build-js:
     runs-on: ubuntu-latest
     steps:
@@ -98,12 +110,12 @@ jobs:
       - name: Download WASM build
         uses: actions/download-artifact@v4
         with:
-          name: algovivo.wasm
+          name: ${{ env.LIB_NAME }}.wasm
           path: ${{ env.BUILD_DIRNAME }}/
       - name: Download dynamic lib
         uses: actions/download-artifact@v4
         with:
-          name: algovivo.so
+          name: ${{ env.LIB_NAME }}.so
           path: ${{ env.BUILD_DIRNAME }}/
       - name: Download JS build
         uses: actions/download-artifact@v4
@@ -130,5 +142,19 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add build
-          git commit -m "Update build"
-          git push origin ${{ env.BUILD_BRANCH }}
+          
+          # check if there are any changes to commit
+          if git diff --cached --quiet; then
+            echo "No changes to commit. Build artifacts are already up to date."
+          else
+            echo "Changes detected. Committing and pushing..."
+            git commit -m "Update build"
+            
+            # check if the push is needed by comparing with remote
+            if git diff --quiet HEAD origin/${{ env.BUILD_BRANCH }}; then
+              echo "Local branch is already up to date with remote. No push needed."
+            else
+              git push origin ${{ env.BUILD_BRANCH }}
+              echo "Successfully pushed changes to ${{ env.BUILD_BRANCH }} branch."
+            fi
+          fi
