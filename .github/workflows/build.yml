@@ -20,8 +20,8 @@ permissions:
 
 env:
   LIB_NAME: algovivo
-  SRC_BRANCH: ${{ inputs.src_branch || "main" }}
-  BUILD_BRANCH: ${{ inputs.build_branch || "build" }}
+  SRC_BRANCH: ${{ inputs.src_branch || 'main' }}
+  BUILD_BRANCH: ${{ inputs.build_branch || 'build' }}
   BUILD_DIRNAME: build
   BUILD_BRANCH_REPO_DIRNAME: build.repo
 
