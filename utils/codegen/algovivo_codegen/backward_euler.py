@@ -1,5 +1,6 @@
 from .codegen import Fun, Args, indent
 from pathlib import Path
+import shutil
 import os
 this_filepath = Path(os.path.realpath(__file__))
 this_dirpath = this_filepath.parent
@@ -90,6 +91,9 @@ for (int i = 0; i < num_vertices; i++) {
 }"""
 
     def instantiate_templates(self, csrc_dirpath):
+        if isinstance(csrc_dirpath, str):
+            csrc_dirpath = Path(csrc_dirpath)
+        
         includes_src = ""
 
         for module in self.modules:
@@ -158,3 +162,10 @@ for (int i = 0; i < num_vertices; i++) {
         with open(output_filepath, "w") as f:
             f.write(src)
         print(f"Saved to {output_filepath}")
+
+
+    def init_csrc(self, csrc_dirname):
+        os.makedirs(csrc_dirname, exist_ok=True)
+        csrc_dirpath = Path(csrc_dirname)
+        codegen_csrc_dirpath = this_dirpath.joinpath("csrc")
+        shutil.copytree(codegen_csrc_dirpath, csrc_dirpath, dirs_exist_ok=True)

@@ -1,7 +1,3 @@
-from pathlib import Path
-import os
-this_filepath = Path(os.path.realpath(__file__))
-this_dirpath = this_filepath.parent
 import algovivo_codegen as codegen
 import argparse
 
@@ -32,5 +28,5 @@ if __name__ == "__main__":
         codegen.potentials.Friction()
     ]
 
-    csrc_dirpath = Path(args.output_csrc_dirname)
-    backward_euler.instantiate_templates(csrc_dirpath)
+    backward_euler.init_csrc(args.output_csrc_dirname)
+    backward_euler.instantiate_templates(args.output_csrc_dirname)
