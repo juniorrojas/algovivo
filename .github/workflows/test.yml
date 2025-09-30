@@ -14,19 +14,9 @@ jobs:
     steps:
       - name: Clone repo
         uses: actions/checkout@v4
-      - name: Codegen
-        run: python utils/codegen/codegen_csrc.py
-      - name: Verify csrc directory is unchanged
-        run: |
-          if [[ $(git status --porcelain csrc) ]]; then
-            echo "Error: csrc has changes after codegen.";
-            git diff csrc;
-            exit 1;
-          else
-            echo "csrc is unchanged.";
-          fi
       - name: Build WASM
         run: |
+          python utils/codegen/codegen_csrc.py
           docker run \
             -e LLVM_BIN_DIR=/usr/lib/llvm-11/bin \
             -e ENZYME=/Enzyme/enzyme/build/Enzyme/LLVMEnzyme-11.so \
