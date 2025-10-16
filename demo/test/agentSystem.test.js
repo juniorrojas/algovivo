@@ -1,5 +1,5 @@
 import AgentSystem from "../src/AgentSystem.js";
-import algovivo from "../../build/algovivo.js";
+import algovivo from "../../algovivo/index.js";
 import { loadWasm } from "./utils.js";
 
 test("agent system", async () => {
