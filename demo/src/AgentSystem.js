@@ -9,6 +9,10 @@ export default class AgentSystem {
     this.policy = null;
   }
 
+  get numVertices() {
+    return this.system.numVertices;
+  }
+
   set(args = {}) {
     const mesh = args.mesh;
     const policy = args.policy;
