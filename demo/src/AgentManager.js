@@ -1,13 +1,23 @@
+import AgentSystem from "./AgentSystem.js";
+
 export default class AgentManager {
   constructor(system, algovivo, dataRoot = "data", agentNames = []) {
-    this.system = system;
     this.algovivo = algovivo;
     this.dataRoot = dataRoot;
     this.currentAgent = null;
-    this.policy = null;
     this.agents = agentNames;
     this.meshCache = new Map();
     this.policyCache = new Map();
+
+    this.agentSystem = new AgentSystem({ algovivo, system });
+  }
+
+  get system() {
+    return this.agentSystem.system;
+  }
+
+  get policy() {
+    return this.agentSystem.policy;
   }
 
   async loadMeshData(agentName) {
@@ -63,34 +73,22 @@ export default class AgentManager {
     }
 
     const activePolicy = this.policy ? this.policy.active : false;
-    this.dispose();
 
-    this.system.set({
-      pos: processedPos,
-      muscles: meshData.muscles,
-      musclesL0: meshData.l0,
-      triangles: meshData.triangles,
-      trianglesRsi: meshData.rsi
+    this.agentSystem.set({
+      mesh: {
+        pos: processedPos,
+        muscles: meshData.muscles,
+        musclesL0: meshData.l0,
+        triangles: meshData.triangles,
+        trianglesRsi: meshData.rsi
+      },
+      policy: policyData
     });
-
-    this.policy = new this.algovivo.nn.NeuralFramePolicy({
-      system: this.system,
-      stochastic: true,
-      active: activePolicy
-    });
-    this.policy.loadData(policyData);
+    this.agentSystem.policy.active = activePolicy;
 
     this.currentAgent = agentName;
     
     return { meshData, policyData };
-  }
-
-  dispose() {
-    if (this.policy != null) {
-      this.policy.dispose();
-      this.policy = null;
-    }
-    this.system.dispose();
   }
 
   togglePolicy() {
