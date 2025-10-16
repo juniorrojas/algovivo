@@ -1,7 +1,8 @@
 import algovivo from "../../build/algovivo.mjs";
 import BrainButton from "./BrainButton.js";
 import { initStyle } from "./ui.js";
-import AgentViewport from "./AgentViewport.js";
+import AgentViewportWithMenu from "./AgentViewportWithMenu.js";
+import AgentSystem from "./AgentSystem.js";
 import Sections from "./Sections.js";
 import Header from "./Header.js";
 
@@ -39,8 +40,9 @@ async function main() {
   const system = new algovivo.System({
     wasmInstance: wasmInstance
   });
+  const agentSystem = new AgentSystem({ system });
 
-  const agentViewport = new AgentViewport({
+  const agentViewport = new AgentViewportWithMenu({
     system: system,
     algovivo: algovivo,
     dataRoot: dataRoot,

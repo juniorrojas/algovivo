@@ -1,11 +1,12 @@
 import AgentMini from "./AgentMini.js";
 import AgentManager from "./AgentManager.js";
 
-export default class AgentViewport {
+export default class AgentViewportWithMenu {
   constructor({ system, algovivo, dataRoot = "data", agentNames = [], headless = false }) {
     this.system = system;
     this.agentManager = new AgentManager(system, algovivo, dataRoot, agentNames);
     this.viewport = null;
+    this.algovivo = algovivo;
     
     this.headless = headless;
     if (!headless) {
@@ -101,7 +102,7 @@ export default class AgentViewport {
           this.viewport.sortedVertexIds = meshData.sorted_vertex_ids;
         }
       } else {
-        this.viewport = new algovivo.render.SystemViewport({
+        this.viewport = new this.algovivo.render.SystemViewport({
           system: this.system,
           sortedVertexIds: meshData.sorted_vertex_ids,
           vertexDepths: meshData.depth,
