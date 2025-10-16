@@ -1,15 +1,17 @@
-import algovivo from "../../build/algovivo.min.mjs";
 import AgentMini from "./AgentMini.js";
 import AgentManager from "./AgentManager.js";
 
 export default class AgentViewport {
-  constructor({ system, algovivo, dataRoot = "data", agentNames = [] }) {
+  constructor({ system, algovivo, dataRoot = "data", agentNames = [], headless = false }) {
     this.system = system;
     this.agentManager = new AgentManager(system, algovivo, dataRoot, agentNames);
     this.viewport = null;
     
-    this.initContainer();
-    this.initMiniButtons(algovivo);
+    this.headless = headless;
+    if (!headless) {
+      this.initContainer();
+      this.initMiniButtons(algovivo);
+    }
   }
 
   initContainer() {
