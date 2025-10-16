@@ -1,5 +1,6 @@
 import AgentViewportWithMenu from "../src/AgentViewportWithMenu.js";
+import algovivo from "../../build/algovivo.js";
 
-test("agent viewport", () => {
-  const agentViewport = new AgentViewportWithMenu({ headless: true });
+test("agent viewport", async () => {
+  const agentViewport = new AgentViewportWithMenu({ algovivo, headless: true });
 });
