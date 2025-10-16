@@ -1,7 +1,7 @@
 import AgentMini from "./AgentMini.js";
 import AgentManager from "./AgentManager.js";
 
-export default class AgentViewportWithMenu {
+export default class AgentViewport {
   constructor({ system, algovivo, dataRoot = "data", agentNames = [], headless = false }) {
     this.system = system;
     this.agentManager = new AgentManager(system, algovivo, dataRoot, agentNames);
