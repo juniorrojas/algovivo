@@ -18,5 +18,5 @@ jobs:
       - run: pip install pytest
 
       - run: |
-          export PYTHONPATH=./utils/codegen
-          pytest -s ./utils/codegen/test
+          export PYTHONPATH=./codegen
+          pytest -s ./codegen/test
