@@ -1,0 +1,20 @@
+name: test-codegen
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test-codegen:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v4
+
+      - run: |
+          export PYTHONPATH=./utils/codegen
+          pytest -s ./utils/codegen/test
