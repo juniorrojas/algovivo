@@ -7,6 +7,10 @@ class Fun:
         self.name = name
         self.src_body = ""
 
+    @property
+    def num_args(self):
+        return len(self.args)
+
     def codegen(self):
         src_fun_signature = self.args.codegen_fun_signature()
         return f"""extern \"C\"
