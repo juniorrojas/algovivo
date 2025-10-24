@@ -15,6 +15,8 @@ jobs:
       - name: Clone repo
         uses: actions/checkout@v4
 
+      - run: pip install pytest
+
       - run: |
           export PYTHONPATH=./utils/codegen
           pytest -s ./utils/codegen/test
