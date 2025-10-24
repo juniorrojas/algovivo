@@ -14,10 +14,12 @@ jobs:
     steps:
       - name: Clone repo
         uses: actions/checkout@v4
+
       - name: Build JS
         run: |
           npm ci
           npm run build
+
       - name: Build native library
         run: |
           python codegen/codegen_csrc.py
@@ -29,21 +31,26 @@ jobs:
             -w /workspace \
             ghcr.io/juniorrojas/algovivo/llvm11-enzyme \
             ./build.sh
+
       - name: Set up python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: 3.11
+
       - name: Install python dependencies
         run: |
           pip install -r utils/py/requirements.txt
+
       - name: Test
         run: |
           export PYTHONPATH=utils/py
           pytest ./utils/py/test
+
       - name: Generate trajectory
         run: |
           export PYTHONPATH=utils/py
           python utils/py/test/trajectory/test_trajectory.py
+
       - name: Build WASM
         run: |
           python codegen/codegen_csrc.py
@@ -54,19 +61,23 @@ jobs:
             -w /workspace \
             ghcr.io/juniorrojas/algovivo/llvm11-enzyme \
             ./build.sh
+
       - name: Generate trajectory frames
         run: |
           node utils/trajectory/renderTrajectory.js \
             --mesh utils/py/test/trajectory/data/mesh.json \
             --steps steps.out \
             --output frames.out
+
       - name: Install ffmpeg
         run: |
           sudo apt-get update
           sudo apt-get install ffmpeg
+
       - name: Make trajectory video
         run: |
           ffmpeg -framerate 30 -i frames.out/%d.png -pix_fmt yuv420p video.out.mp4 -y
+
       - name: Upload trajectory video
         uses: actions/upload-artifact@v4
         with:
