@@ -14,6 +14,7 @@ jobs:
     steps:
       - name: Clone repo
         uses: actions/checkout@v4
+
       - name: Build WASM
         run: |
           python codegen/codegen_csrc.py
@@ -24,11 +25,13 @@ jobs:
             -w /workspace \
             ghcr.io/juniorrojas/algovivo/llvm11-enzyme \
             ./build.sh
+
       - name: Upload WASM
         uses: actions/upload-artifact@v4
         with:
           name: algovivo.wasm
           path: build/algovivo.wasm
+
   generate-trajectory:
     runs-on: ubuntu-latest
     needs: build-wasm
@@ -37,22 +40,27 @@ jobs:
     steps:
       - name: Clone repo
         uses: actions/checkout@v4
+
       - name: Download WASM build
         uses: actions/download-artifact@v4
         with:
           name: algovivo.wasm
           path: build/
+
       - name: Generate trajectory data
         run: node test/nn/generateTrajectory.js
+
       - name: Upload trajectory output
         uses: actions/upload-artifact@v4
         with:
           name: trajectory
           path: ${{ env.OUTPUT_DIRNAME }}
+
       - name: Check trajectory output
         run: |
           test -d ${{ env.OUTPUT_DIRNAME }} || (echo "Directory does not exist" && exit 1)
           diff -r ${{ env.OUTPUT_DIRNAME }} test/nn/data/trajectory || (echo "Files do not match" && exit 1)
+
   # render-trajectory does not depend on generate-trajectory because render-trajectory uses the reference trajectory data
   # which already exists in the repo, while generate-trajectory checks that the current version of the code generates the same
   # trajectory that is already stored in the repo.
@@ -62,21 +70,25 @@ jobs:
     steps:
       - name: Clone repo
         uses: actions/checkout@v4
+
       - name: Download WASM build
         uses: actions/download-artifact@v4
         with:
           name: algovivo.wasm
           path: build/
+
       - name: Build
         run: |
           npm ci
           npm run build
+
       - name: Generate trajectory frames
         run: |
           node utils/trajectory/renderTrajectory.js \
             --mesh test/nn/data/mesh.json \
             --steps test/nn/data/trajectory \
             --output frames.out
+
       - name: Check number of frames
         run: |
           NUM_FRAMES=$(ls frames.out/*.png 2>/dev/null | wc -l)
@@ -84,13 +96,16 @@ jobs:
             echo "Expected 101 frames, found $NUM_FRAMES"
             exit 1
           fi
+
       - name: Install ffmpeg
         run: |
           sudo apt-get update
           sudo apt-get install ffmpeg
+
       - name: Make trajectory video
         run: |
           ffmpeg -framerate 30 -i frames.out/%d.png -pix_fmt yuv420p video.out.mp4 -y
+
       - name: Upload trajectory video
         uses: actions/upload-artifact@v4
         with:
