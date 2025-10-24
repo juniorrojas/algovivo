@@ -108,7 +108,7 @@ npm run build
 ### build WASM
 
 ```sh
-python utils/codegen/codegen_csrc.py && \
+python codegen/codegen_csrc.py && \
 docker run \
   -e LLVM_BIN_DIR=/usr/lib/llvm-11/bin \
   -e ENZYME=/Enzyme/enzyme/build/Enzyme/LLVMEnzyme-11.so \

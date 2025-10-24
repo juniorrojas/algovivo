@@ -25,9 +25,10 @@ jobs:
     steps:
       - name: Clone repo
         uses: actions/checkout@v4
+
       - name: Build WASM
         run: |
-          python utils/codegen/codegen_csrc.py
+          python codegen/codegen_csrc.py
           docker run \
             -e LLVM_BIN_DIR=/usr/lib/llvm-11/bin \
             -e ENZYME=/Enzyme/enzyme/build/Enzyme/LLVMEnzyme-11.so \
@@ -35,6 +36,7 @@ jobs:
             -w /workspace \
             ghcr.io/juniorrojas/algovivo/llvm11-enzyme \
             ./build.sh
+
       - name: Upload WASM
         uses: actions/upload-artifact@v4
         with:
@@ -45,76 +47,92 @@ jobs:
     steps:
       - name: Clone repo
         uses: actions/checkout@v4
+
       - name: Build lib
         run: |
           npm ci
           npm run build
+
       - name: Upload lib build
         uses: actions/upload-artifact@v4
         with:
           name: build
           path: ./build
+
   build-demo:
     runs-on: ubuntu-latest
     needs: [build-wasm, build-js]
     steps:
       - name: Clone repo
         uses: actions/checkout@v4
+
       - name: Download WASM build
         uses: actions/download-artifact@v4
         with:
           name: algovivo.wasm
           path: build/
+
       - name: Download JS build
         uses: actions/download-artifact@v4
         with:
           name: build
           path: ./build
+
       - name: Build demo
         run: |
           cd ${{ env.DEMO_SRC_DIRNAME }}
           npm ci
           npm run build
+
       - name: Upload demo build
         uses: actions/upload-artifact@v4
         with:
           name: demo-public
           path: ${{ env.DEMO_PUBLIC_DIRNAME }}
+
   test-demo:
     runs-on: ubuntu-22.04
     needs: [build-demo]
     steps:
       - name: Clone repo
         uses: actions/checkout@v4
+
       - name: List demo public dir before build
         run: ls -l ${{ env.DEMO_PUBLIC_DIRNAME }}
+
       - name: Download WASM build
         uses: actions/download-artifact@v4
         with:
           name: algovivo.wasm
           path: build/
+
       - name: Download demo build
         uses: actions/download-artifact@v4
         with:
           name: demo-public
           path: ${{ env.DEMO_PUBLIC_DIRNAME }}
+
       - name: List demo public dir after build
         run: ls -l ${{ env.DEMO_PUBLIC_DIRNAME }}
+
       - name: Test demo
         run: |
           cd ${{ env.DEMO_SRC_DIRNAME }}
           npm ci
           npm test
+
       - name: Upload demo screenshot
         uses: actions/upload-artifact@v4
         with:
           name: screenshot
           path: ./demo/test/screenshot.out.png
+
   init-deploy-branch:
     runs-on: ubuntu-latest
     steps:
       - name: Clone repo
         uses: actions/checkout@v4
+
       - name: Create branch if it does not exist
         run: |
           git config --global user.name "GitHub Actions"
@@ -128,39 +146,48 @@ jobs:
           else
             echo "Branch already exists, skipping push."
           fi
+
   deploy-demo:
     runs-on: ubuntu-latest
     needs: [init-deploy-branch, build-demo]
     steps:
       - name: Clone repo
         uses: actions/checkout@v4
+
       - name: List demo public dir
         run: ls -l ${{ env.DEMO_PUBLIC_DIRNAME }}
+
       - name: Download WASM build
         uses: actions/download-artifact@v4
         with:
           name: algovivo.wasm
           path: build/
+
       - name: Download demo build
         uses: actions/download-artifact@v4
         with:
           name: demo-public
           path: ${{ env.DEMO_PUBLIC_DIRNAME }}
+
       - name: List demo public dir
         run: ls -l ${{ env.DEMO_PUBLIC_DIRNAME }}
+
       - name: Clone deploy branch
         uses: actions/checkout@v4
         with:
           ref: ${{ env.DEPLOY_BRANCH }}
           path: ${{ env.DEPLOY_DIRNAME }}
+
       - name: Deploy to local directory
         run: |
           ${{ env.DEPLOY_LOCAL_SCRIPT }} --deploy-dirname ${{ env.DEPLOY_DIRNAME }}
+
       - name: Upload deployment
         uses: actions/upload-artifact@v4
         with:
           name: deployment
           path: ${{ env.DEPLOY_DIRNAME }}
+
       - name: Push deployment
         if: ${{ github.event_name == 'workflow_dispatch' }}
         run: |

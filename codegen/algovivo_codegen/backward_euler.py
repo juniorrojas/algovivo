@@ -20,6 +20,10 @@ class BackwardEuler:
     optim_step();
   }"""
 
+    @property
+    def src_body(self):
+        return self.loss_body
+
     def make_loss(self):
         self.loss.args.add_arg("int", "space_dim")
         self.loss.args.add_arg("float", "g")
@@ -102,7 +106,7 @@ for (int i = 0; i < num_vertices; i++) {
                 output_filepath = csrc_dirpath.joinpath("modules", f"{module.name}.h")
                 with open(output_filepath, "w") as f:
                     f.write("#pragma once\n\n" + src)
-                print(f"Module {module.name} saved to {output_filepath}")
+                print(f"module {module.name} saved to {output_filepath}")
                 includes_src += f"#include \"../modules/{module.name}.h\"\n"
 
         self.make_loss()
@@ -124,7 +128,7 @@ for (int i = 0; i < num_vertices; i++) {
         output_filepath = csrc_dirpath.joinpath("dynamics", "optim.h")
         with open(output_filepath, "w") as f:
             f.write(src)
-        print(f"Saved to {output_filepath}")
+        print(f"instantiated optimizer to {output_filepath}")
 
         with open(templates_dirpath.joinpath("backward_euler.template.h")) as f:
             template = f.read()
@@ -161,7 +165,7 @@ for (int i = 0; i < num_vertices; i++) {
         output_filepath = csrc_dirpath.joinpath("dynamics", "backward_euler.h")
         with open(output_filepath, "w") as f:
             f.write(src)
-        print(f"Saved to {output_filepath}")
+        print(f"instantiated backward Euler to {output_filepath}")
 
 
     def init_csrc(self, csrc_dirname):
