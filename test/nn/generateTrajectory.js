@@ -39,7 +39,6 @@ async function main() {
 
   await utils.cleandir(outputDirname);
 
-  const writePromises = [];
   const n = process.env.STEPS ? parseInt(process.env.STEPS, 10) : 100;
   for (let i = 0; i < n; i++) {
     console.log(`${i + 1} / ${n}`);
@@ -60,11 +59,10 @@ async function main() {
     itemData.policy_output = policyTrace.policyOutput;
 
     const filename = `${outputDirname}/${i}.json`;
-    const p = fsp.writeFile(filename, JSON.stringify(itemData, null, 2));
-    writePromises.push(p);
+    await fsp.writeFile(filename, JSON.stringify(itemData, null, 2));
   }
 
-  await Promise.all(writePromises);
+  console.log(`trajectory saved to ${outputDirname}`);
 }
 
 main();
