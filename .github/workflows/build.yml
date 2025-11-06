@@ -72,8 +72,14 @@ jobs:
           path: build/${{ env.LIB_NAME }}.wasm
 
   build-dynamic-lib:
-    # runs-on: ubuntu-24.04-arm
-    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            arch: x64
+          - runner: ubuntu-24.04-arm
+            arch: arm
+    runs-on: ${{ matrix.runner }}
     steps:
       - name: Clone src branch
         uses: actions/checkout@v4
@@ -95,7 +101,7 @@ jobs:
       - name: Upload dynamic lib
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.LIB_NAME }}.so
+          name: ${{ env.LIB_NAME }}.${{ matrix.arch }}.so
           path: build/${{ env.LIB_NAME }}.so
 
   build-js:
