@@ -72,7 +72,7 @@ jobs:
           path: build/${{ env.LIB_NAME }}.wasm
 
   build-dynamic-lib:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     steps:
       - name: Clone src branch
         uses: actions/checkout@v4
@@ -116,64 +116,64 @@ jobs:
           name: build-js
           path: ${{ env.BUILD_DIRNAME }}/
 
-  push-build:
-    runs-on: ubuntu-latest
-    needs: [init-build-branch, build-wasm, build-dynamic-lib, build-js]
-    steps:
-      - name: Download WASM build
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ env.LIB_NAME }}.wasm
-          path: ${{ env.BUILD_DIRNAME }}/
+  # push-build:
+  #   runs-on: ubuntu-latest
+  #   needs: [init-build-branch, build-wasm, build-dynamic-lib, build-js]
+  #   steps:
+  #     - name: Download WASM build
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: ${{ env.LIB_NAME }}.wasm
+  #         path: ${{ env.BUILD_DIRNAME }}/
 
-      - name: Download dynamic lib
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ env.LIB_NAME }}.so
-          path: ${{ env.BUILD_DIRNAME }}/
+  #     - name: Download dynamic lib
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: ${{ env.LIB_NAME }}.so
+  #         path: ${{ env.BUILD_DIRNAME }}/
 
-      - name: Download JS build
-        uses: actions/download-artifact@v4
-        with:
-          name: build-js
-          path: ${{ env.BUILD_DIRNAME }}/
+  #     - name: Download JS build
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: build-js
+  #         path: ${{ env.BUILD_DIRNAME }}/
 
-      - name: Configure git
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+  #     - name: Configure git
+  #       run: |
+  #         git config --global user.name "GitHub Actions"
+  #         git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-      - run: ls -l build
+  #     - run: ls -l build
 
-      - name: Clone build branch
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ env.BUILD_BRANCH }}
-          path: ${{ env.BUILD_BRANCH_REPO_DIRNAME }}
+  #     - name: Clone build branch
+  #       uses: actions/checkout@v4
+  #       with:
+  #         ref: ${{ env.BUILD_BRANCH }}
+  #         path: ${{ env.BUILD_BRANCH_REPO_DIRNAME }}
 
-      - name: Push to build branch
-        run: |
-          rm -rf ${{ env.BUILD_BRANCH_REPO_DIRNAME }}/${{ env.BUILD_DIRNAME }}
-          cp -r build ${{ env.BUILD_BRANCH_REPO_DIRNAME }}
-          cd ${{ env.BUILD_BRANCH_REPO_DIRNAME }}
-          ls -la
-          ls -la ${{ env.BUILD_DIRNAME }}
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add build
+  #     - name: Push to build branch
+  #       run: |
+  #         rm -rf ${{ env.BUILD_BRANCH_REPO_DIRNAME }}/${{ env.BUILD_DIRNAME }}
+  #         cp -r build ${{ env.BUILD_BRANCH_REPO_DIRNAME }}
+  #         cd ${{ env.BUILD_BRANCH_REPO_DIRNAME }}
+  #         ls -la
+  #         ls -la ${{ env.BUILD_DIRNAME }}
+  #         git config --global user.name "GitHub Actions"
+  #         git config --global user.email "github-actions[bot]@users.noreply.github.com"
+  #         git add build
           
-          # check if there are any changes to commit
-          if git diff --cached --quiet; then
-            echo "No changes to commit. Build artifacts are already up to date."
-          else
-            echo "Changes detected. Committing and pushing..."
-            git commit -m "Update build"
+  #         # check if there are any changes to commit
+  #         if git diff --cached --quiet; then
+  #           echo "No changes to commit. Build artifacts are already up to date."
+  #         else
+  #           echo "Changes detected. Committing and pushing..."
+  #           git commit -m "Update build"
             
-            # check if the push is needed by comparing with remote
-            if git diff --quiet HEAD origin/${{ env.BUILD_BRANCH }}; then
-              echo "Local branch is already up to date with remote. No push needed."
-            else
-              git push origin ${{ env.BUILD_BRANCH }}
-              echo "Successfully pushed changes to ${{ env.BUILD_BRANCH }} branch."
-            fi
-          fi
+  #           # check if the push is needed by comparing with remote
+  #           if git diff --quiet HEAD origin/${{ env.BUILD_BRANCH }}; then
+  #             echo "Local branch is already up to date with remote. No push needed."
+  #           else
+  #             git push origin ${{ env.BUILD_BRANCH }}
+  #             echo "Successfully pushed changes to ${{ env.BUILD_BRANCH }} branch."
+  #           fi
+  #         fi
