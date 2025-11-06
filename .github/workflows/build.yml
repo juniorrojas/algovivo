@@ -72,7 +72,8 @@ jobs:
           path: build/${{ env.LIB_NAME }}.wasm
 
   build-dynamic-lib:
-    runs-on: ubuntu-24.04-arm
+    # runs-on: ubuntu-24.04-arm
+    runs-on: ubuntu-24.04
     steps:
       - name: Clone src branch
         uses: actions/checkout@v4
