@@ -14,3 +14,4 @@ node_modules
 *.build.*
 /csrc
 *.ignore
+*.egg-info

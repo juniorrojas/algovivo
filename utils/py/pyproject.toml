@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools>=45", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "algovivo"
+dynamic = ["version"]
+
+[tool.setuptools]
+packages = ["algovivo"]
+
+[tool.setuptools_scm]
+root = "../.."
+write_to = "utils/py/algovivo/_version.py"
+local_scheme = "node-and-timestamp"
