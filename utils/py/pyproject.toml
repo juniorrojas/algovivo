@@ -7,6 +7,7 @@ name = "algovivo"
 dynamic = ["version"]
 dependencies = [
     "torch>=2.7.0",
+    "numpy>=1.24.1",
 ]
 
 [project.optional-dependencies]
