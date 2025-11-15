@@ -2,8 +2,9 @@ import algovivo from "../../build/algovivo.mjs";
 import BrainButton from "./BrainButton.js";
 import { initStyle } from "./ui.js";
 import AgentViewport from "./AgentViewport.js";
-import Sections from "./Sections.js";
 import Header from "./Header.js";
+import Sections from "./Sections.js";
+import Footer from "./Footer.js";
 
 async function loadWasm() {
   const response = await fetch("algovivo.wasm");
@@ -63,6 +64,9 @@ async function main() {
 
   const sections = new Sections();
   divContent.appendChild(sections.domElement);
+
+  const footer = new Footer();
+  document.body.appendChild(footer.domElement);
 
   agentViewport.render();
   setInterval(() => {
