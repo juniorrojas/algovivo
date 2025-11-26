@@ -16,7 +16,8 @@ export default class Window {
     const browser = this.browser = await puppeteer.launch({
       headless: this.headless,
       args: [
-        `--window-size=${this.width},${this.height}`
+        `--window-size=${this.width},${this.height}`,
+        "--no-sandbox"
       ]
     });
     const page = await browser.newPage();
