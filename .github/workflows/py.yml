@@ -44,6 +44,7 @@ jobs:
 
       - name: Test
         run: |
+          export ALGOVIVO_LIB_FILENAME=$(pwd)/build/algovivo.so
           pytest ./utils/py/test
 
       - name: Generate trajectory
