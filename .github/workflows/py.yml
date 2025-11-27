@@ -43,7 +43,7 @@ jobs:
 
       - name: Install python dependencies
         run: |
-          uv pip install -e "utils/py[dev]"
+          uv pip install --system -e "utils/py[dev]"
 
       - name: Test
         run: |
