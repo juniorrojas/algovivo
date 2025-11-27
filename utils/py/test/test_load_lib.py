@@ -6,6 +6,6 @@ import algovivo
 
 def test_load_lib():
     native_instance = algovivo.NativeInstance.load(
-        str(this_dirpath.parent.parent.parent.joinpath("build", "algovivo.so"))
+        os.environ["ALGOVIVO_LIB_FILENAME"]
     )
     assert native_instance.lib.backward_euler_update is not None
