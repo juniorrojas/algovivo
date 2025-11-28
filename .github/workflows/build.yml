@@ -76,7 +76,7 @@ jobs:
       matrix:
         include:
           - runner: ubuntu-24.04
-            arch: x64
+            arch: amd64
           - runner: ubuntu-24.04-arm
             arch: arm64
     runs-on: ${{ matrix.runner }}
@@ -135,10 +135,10 @@ jobs:
           name: ${{ env.LIB_NAME }}.wasm
           path: ${{ env.BUILD_DIRNAME }}/
 
-      - name: Download dynamic lib (x64)
+      - name: Download dynamic lib (amd64)
         uses: actions/download-artifact@v4
         with:
-          name: ${{ env.LIB_NAME }}.x64.so
+          name: ${{ env.LIB_NAME }}.amd64.so
           path: ${{ env.BUILD_DIRNAME }}/native/
 
       - name: Download dynamic lib (arm64)
