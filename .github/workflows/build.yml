@@ -97,12 +97,13 @@ jobs:
             -w /workspace \
             ghcr.io/juniorrojas/algovivo/llvm11-enzyme \
             ./build.sh
+          mv ${{ env.BUILD_DIRNAME }}/${{ env.LIB_NAME }}.so ${{ env.BUILD_DIRNAME }}/${{ env.LIB_NAME }}.${{ matrix.arch }}.so
 
       - name: Upload dynamic lib
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.LIB_NAME }}.${{ matrix.arch }}.so
-          path: build/${{ env.LIB_NAME }}.so
+          path: build/${{ env.LIB_NAME }}.${{ matrix.arch }}.so
 
   build-js:
     runs-on: ubuntu-latest
@@ -123,21 +124,29 @@ jobs:
           name: build-js
           path: ${{ env.BUILD_DIRNAME }}/
 
-  # push-build:
-  #   runs-on: ubuntu-latest
-  #   needs: [init-build-branch, build-wasm, build-dynamic-lib, build-js]
-  #   steps:
-  #     - name: Download WASM build
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: ${{ env.LIB_NAME }}.wasm
-  #         path: ${{ env.BUILD_DIRNAME }}/
+  push-build:
+    runs-on: ubuntu-latest
+    needs: [init-build-branch, build-wasm, build-dynamic-lib, build-js]
+    steps:
+      - name: Download WASM build
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.LIB_NAME }}.wasm
+          path: ${{ env.BUILD_DIRNAME }}/
 
-  #     - name: Download dynamic lib
-  #       uses: actions/download-artifact@v4
-  #       with:
-  #         name: ${{ env.LIB_NAME }}.so
-  #         path: ${{ env.BUILD_DIRNAME }}/
+      - name: Download dynamic lib (x64)
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.LIB_NAME }}.x64.so
+          path: ${{ env.BUILD_DIRNAME }}/
+
+      - name: Download dynamic lib (arm)
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.LIB_NAME }}.arm.so
+          path: ${{ env.BUILD_DIRNAME }}/
+
+      - run: ls -l ${{ env.BUILD_DIRNAME }}
 
   #     - name: Download JS build
   #       uses: actions/download-artifact@v4
