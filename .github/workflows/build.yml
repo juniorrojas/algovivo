@@ -69,10 +69,17 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.LIB_NAME }}.wasm
-          path: build/${{ env.LIB_NAME }}.wasm
+          path: ${{ env.BUILD_DIRNAME }}/${{ env.LIB_NAME }}.wasm
 
   build-dynamic-lib:
-    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - runner: ubuntu-24.04
+            arch: x64
+          - runner: ubuntu-24.04-arm
+            arch: arm64
+    runs-on: ${{ matrix.runner }}
     steps:
       - name: Clone src branch
         uses: actions/checkout@v4
@@ -82,6 +89,7 @@ jobs:
       - name: Build
         run: |
           python codegen/codegen_csrc.py
+          mkdir -p build
           docker run \
             -e LLVM_BIN_DIR=/usr/lib/llvm-11/bin \
             -e ENZYME=/Enzyme/enzyme/build/Enzyme/LLVMEnzyme-11.so \
@@ -90,12 +98,13 @@ jobs:
             -w /workspace \
             ghcr.io/juniorrojas/algovivo/llvm11-enzyme \
             ./build.sh
+          mv ${{ env.BUILD_DIRNAME }}/${{ env.LIB_NAME }}.so ${{ env.BUILD_DIRNAME }}/${{ env.LIB_NAME }}.${{ matrix.arch }}.so
 
       - name: Upload dynamic lib
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ env.LIB_NAME }}.so
-          path: build/${{ env.LIB_NAME }}.so
+          name: ${{ env.LIB_NAME }}.${{ matrix.arch }}.so
+          path: ${{ env.BUILD_DIRNAME }}/${{ env.LIB_NAME }}.${{ matrix.arch }}.so
 
   build-js:
     runs-on: ubuntu-latest
@@ -126,11 +135,17 @@ jobs:
           name: ${{ env.LIB_NAME }}.wasm
           path: ${{ env.BUILD_DIRNAME }}/
 
-      - name: Download dynamic lib
+      - name: Download dynamic lib (x64)
         uses: actions/download-artifact@v4
         with:
-          name: ${{ env.LIB_NAME }}.so
-          path: ${{ env.BUILD_DIRNAME }}/
+          name: ${{ env.LIB_NAME }}.x64.so
+          path: ${{ env.BUILD_DIRNAME }}/native/
+
+      - name: Download dynamic lib (arm64)
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ env.LIB_NAME }}.arm64.so
+          path: ${{ env.BUILD_DIRNAME }}/native/
 
       - name: Download JS build
         uses: actions/download-artifact@v4
@@ -138,12 +153,12 @@ jobs:
           name: build-js
           path: ${{ env.BUILD_DIRNAME }}/
 
+      - run: ls -l ${{ env.BUILD_DIRNAME }}
+
       - name: Configure git
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
-      - run: ls -l build
 
       - name: Clone build branch
         uses: actions/checkout@v4
