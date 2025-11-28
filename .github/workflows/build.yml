@@ -139,13 +139,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: ${{ env.LIB_NAME }}.x64.so
-          path: ${{ env.BUILD_DIRNAME }}/
+          path: ${{ env.BUILD_DIRNAME }}/native/
 
       - name: Download dynamic lib (arm64)
         uses: actions/download-artifact@v4
         with:
           name: ${{ env.LIB_NAME }}.arm64.so
-          path: ${{ env.BUILD_DIRNAME }}/
+          path: ${{ env.BUILD_DIRNAME }}/native/
 
       - name: Download JS build
         uses: actions/download-artifact@v4
