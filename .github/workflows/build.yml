@@ -69,7 +69,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.LIB_NAME }}.wasm
-          path: build/${{ env.LIB_NAME }}.wasm
+          path: ${{ env.BUILD_DIRNAME }}/${{ env.LIB_NAME }}.wasm
 
   build-dynamic-lib:
     strategy:
@@ -78,7 +78,7 @@ jobs:
           - runner: ubuntu-24.04
             arch: x64
           - runner: ubuntu-24.04-arm
-            arch: arm
+            arch: arm64
     runs-on: ${{ matrix.runner }}
     steps:
       - name: Clone src branch
@@ -104,7 +104,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.LIB_NAME }}.${{ matrix.arch }}.so
-          path: build/${{ env.LIB_NAME }}.${{ matrix.arch }}.so
+          path: ${{ env.BUILD_DIRNAME }}/${{ env.LIB_NAME }}.${{ matrix.arch }}.so
 
   build-js:
     runs-on: ubuntu-latest
@@ -141,10 +141,10 @@ jobs:
           name: ${{ env.LIB_NAME }}.x64.so
           path: ${{ env.BUILD_DIRNAME }}/
 
-      - name: Download dynamic lib (arm)
+      - name: Download dynamic lib (arm64)
         uses: actions/download-artifact@v4
         with:
-          name: ${{ env.LIB_NAME }}.arm.so
+          name: ${{ env.LIB_NAME }}.arm64.so
           path: ${{ env.BUILD_DIRNAME }}/
 
       - name: Download JS build
