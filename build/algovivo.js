@@ -3,7 +3,7 @@
  * (c) 2023 Junior Rojas
  * License: MIT
  * 
- * Built from commit 008bf9e1de2e942123909b4c67653c72eeeb9088
+ * Built from commit 1f7ca505efcd9d2533323b53537eab3e0796d5ae
  */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
