@@ -117,3 +117,20 @@ docker run \
   ghcr.io/juniorrojas/algovivo/llvm11-enzyme \
   ./build.sh
 ```
+
+## citation
+
+```bibtex
+@proceedings{10.1162/isal_a_00748,
+  author = {Rojas, Junior},
+  title = "{Energy-Based Models for Virtual Creatures}",
+  volume = {ALIFE 2024: Proceedings of the 2024 Artificial Life Conference},
+  series = {Artificial Life Conference Proceedings},
+  pages = {30},
+  year = {2024},
+  month = {07},
+  doi = {10.1162/isal_a_00748},
+  url = {https://doi.org/10.1162/isal\_a\_00748},
+  eprint = {https://direct.mit.edu/isal/proceedings-pdf/isal2024/36/30/2461221/isal\_a\_00748.pdf},
+}
+```
