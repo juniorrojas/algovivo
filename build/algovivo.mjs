@@ -3,7 +3,7 @@
  * (c) 2023 Junior Rojas
  * License: MIT
  * 
- * Built from commit 1f7ca505efcd9d2533323b53537eab3e0796d5ae
+ * Built from commit af71a02bad6fba84a454766c67f9f7bad3b7228a
  */
 function getDefaultExportFromCjs (x) {
 	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
