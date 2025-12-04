@@ -130,3 +130,14 @@ test("add and remove muscles", async () => {
   });
   expect(system.numMuscles).toBe(1);
 });
+
+test("set indices only", async () => {
+  const ten = await utils.loadTen();
+  const system = new algovivo.System({ ten });
+  
+  expect(() => {
+    system.muscles.set({
+      indices: [[0, 1]]
+    });
+  }).toThrow("pos required to compute l0");
+})
