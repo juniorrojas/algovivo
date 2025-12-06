@@ -3,7 +3,7 @@
  * (c) 2023 Junior Rojas
  * License: MIT
  * 
- * Built from commit af71a02bad6fba84a454766c67f9f7bad3b7228a
+ * Built from commit 784662005ad96f046e0af3a6241ed9de64ec7525
  */
 function getDefaultExportFromCjs (x) {
 	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
@@ -1541,9 +1541,16 @@ class Muscles$1 {
       this.l0 = l0;
 
       if (args.l0 == null) {
+        const pos = args.pos;
+        if (pos == null) {
+          throw new Error("pos required to compute l0");
+        }
+        if (pos.ptr == null) {
+          throw new Error("pos.ptr not available");
+        }
         this.wasmInstance.exports.l0_of_pos(
           this.numVertices,
-          args.pos.ptr,
+          pos.ptr,
           numMuscles,
           this.indices.ptr,
           this.l0.ptr
