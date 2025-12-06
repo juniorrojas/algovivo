@@ -46,6 +46,9 @@ class Muscles:
             pos = torch.tensor(pos, dtype=torch.float32)
         if pos is not None:
             assert isinstance(pos, torch.Tensor)
+        
+        if pos is None and l0 is None:
+            raise ValueError("either pos or l0 required")
 
         indices = self.indices = torch.tensor(indices, dtype=torch.int32)
 
