@@ -78,7 +78,6 @@ test("frame_projection", async () => {
   );
 
   const result = projectedX.toArray();
-  console.log(result);
 
   expect(result).toBeCloseToArray([
     [3.9701590538024902, 0.6616933345794678],
