@@ -46,6 +46,11 @@ jobs:
           name: algovivo.wasm
           path: build/
 
+      - name: Set up node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
       - name: Install dependencies
         run: npm ci
 

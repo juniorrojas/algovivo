@@ -115,12 +115,12 @@ async function renderTrajectory(args = {}) {
 
 async function main() {
   const argParser = new ArgumentParser();
-  argParser.addArgument("--mesh-filename", { required: true });
-  argParser.addArgument("--steps-dirname", { required: true });
-  argParser.addArgument("--width", { defaultValue: 300, type: "int" });
-  argParser.addArgument("--height", { defaultValue: 300, type: "int" });
-  argParser.addArgument(["-o", "--output-dirname"], { defaultValue: "frames.out" });
-  const args = argParser.parseArgs();
+  argParser.add_argument("--mesh-filename", { required: true });
+  argParser.add_argument("--steps-dirname", { required: true });
+  argParser.add_argument("--width", { default: 300, type: "int" });
+  argParser.add_argument("--height", { default: 300, type: "int" });
+  argParser.add_argument("-o", "--output-dirname", { default: "frames.out" });
+  const args = argParser.parse_args();
 
   const meshFilename = args.mesh_filename;
   const stepsDirname = args.steps_dirname;
