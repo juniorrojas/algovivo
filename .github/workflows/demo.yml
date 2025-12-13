@@ -48,6 +48,11 @@ jobs:
       - name: Clone repo
         uses: actions/checkout@v4
 
+      - name: Set up node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
       - name: Build lib
         run: |
           npm ci
@@ -77,6 +82,11 @@ jobs:
         with:
           name: build
           path: ./build
+
+      - name: Set up node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
 
       - name: Build demo
         run: |
@@ -114,6 +124,11 @@ jobs:
 
       - name: List demo public dir after build
         run: ls -l ${{ env.DEMO_PUBLIC_DIRNAME }}
+
+      - name: Set up node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
 
       - name: Test demo
         run: |

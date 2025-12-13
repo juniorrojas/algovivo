@@ -114,6 +114,11 @@ jobs:
         with:
           ref: ${{ env.SRC_BRANCH }}
 
+      - name: Set up node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
       - name: Build lib
         run: |
           npm ci
