@@ -120,7 +120,7 @@ async function main() {
   argParser.addArgument("--width", { defaultValue: 300, type: "int" });
   argParser.addArgument("--height", { defaultValue: 300, type: "int" });
   argParser.addArgument(["-o", "--output-dirname"], { defaultValue: "frames.out" });
-  args = argParser.parseArgs();
+  const args = argParser.parseArgs();
 
   const meshFilename = args.mesh_filename;
   const stepsDirname = args.steps_dirname;
@@ -134,7 +134,7 @@ async function main() {
     height: args.height
   });
 
-  console.log(`Frames saved to ${outputDirname}`);
+  console.log(`frames saved to ${outputDirname}`);
 }
 
 main();
