@@ -24,6 +24,7 @@ env:
   BUILD_BRANCH: ${{ inputs.build_branch || 'build' }}
   BUILD_DIRNAME: build
   BUILD_BRANCH_REPO_DIRNAME: build.repo
+  ENZYME_IMAGE: ghcr.io/juniorrojas/algovivo/llvm11-enzyme:latest
 
 jobs:
   init-build-branch:
@@ -62,7 +63,7 @@ jobs:
             -e ENZYME=/Enzyme/enzyme/build/Enzyme/LLVMEnzyme-11.so \
             -v $(pwd):/workspace \
             -w /workspace \
-            ghcr.io/juniorrojas/algovivo/llvm11-enzyme \
+            ${{ env.ENZYME_IMAGE }} \
             ./build.sh
 
       - name: Upload WASM
@@ -96,7 +97,7 @@ jobs:
             -e BUILD_WASM=0 \
             -v $(pwd):/workspace \
             -w /workspace \
-            ghcr.io/juniorrojas/algovivo/llvm11-enzyme \
+            ${{ env.ENZYME_IMAGE }} \
             ./build.sh
           mv ${{ env.BUILD_DIRNAME }}/${{ env.LIB_NAME }}.so ${{ env.BUILD_DIRNAME }}/${{ env.LIB_NAME }}.${{ matrix.arch }}.so
 
