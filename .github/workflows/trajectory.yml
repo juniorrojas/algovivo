@@ -9,9 +9,14 @@ on:
     branches:
       - main
 
+env:
+  ENZYME_IMAGE: ghcr.io/juniorrojas/algovivo/llvm11-enzyme:latest
+
 jobs:
   build-wasm:
     runs-on: ubuntu-latest
+    env:
+      ENZYME_IMAGE: ghcr.io/juniorrojas/algovivo/llvm11-enzyme:latest
     steps:
       - name: Clone repo
         uses: actions/checkout@v4
@@ -24,7 +29,7 @@ jobs:
             -e ENZYME=/Enzyme/enzyme/build/Enzyme/LLVMEnzyme-11.so \
             -v $(pwd):/workspace \
             -w /workspace \
-            ghcr.io/juniorrojas/algovivo/llvm11-enzyme \
+            ${{ env.ENZYME_IMAGE }} \
             ./build.sh
 
       - name: Upload WASM
@@ -37,6 +42,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-wasm
     env:
+      ENZYME_IMAGE: ghcr.io/juniorrojas/algovivo/llvm11-enzyme:latest
       OUTPUT_DIRNAME: trajectory.out
     steps:
       - name: Clone repo
@@ -73,6 +79,8 @@ jobs:
   render-trajectory:
     runs-on: ubuntu-latest
     needs: build-wasm
+    env:
+      ENZYME_IMAGE: ghcr.io/juniorrojas/algovivo/llvm11-enzyme:latest
     steps:
       - name: Clone repo
         uses: actions/checkout@v4

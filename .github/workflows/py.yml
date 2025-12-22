@@ -9,6 +9,9 @@ on:
     branches:
       - main
 
+env:
+  ENZYME_IMAGE: ghcr.io/juniorrojas/algovivo/llvm11-enzyme:latest
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -35,7 +38,7 @@ jobs:
             -e BUILD_WASM=0 \
             -v $(pwd):/workspace \
             -w /workspace \
-            ghcr.io/juniorrojas/algovivo/llvm11-enzyme \
+            ${{ env.ENZYME_IMAGE }} \
             ./build.sh
 
       - name: Set up python 3.11
@@ -67,7 +70,7 @@ jobs:
             -e ENZYME=/Enzyme/enzyme/build/Enzyme/LLVMEnzyme-11.so \
             -v $(pwd):/workspace \
             -w /workspace \
-            ghcr.io/juniorrojas/algovivo/llvm11-enzyme \
+            ${{ env.ENZYME_IMAGE }} \
             ./build.sh
 
       - name: Generate trajectory frames
