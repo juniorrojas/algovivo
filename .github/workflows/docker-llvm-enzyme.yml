@@ -39,7 +39,7 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: docker/llvm-enzyme/Dockerfile-llvm11
+          file: enzyme/Dockerfile-llvm11
           platforms: linux/${{ matrix.platform }}
           push: true
           tags: ghcr.io/${{ github.repository }}/llvm11-enzyme:${{ github.sha }}-${{ matrix.platform }}
