@@ -1,4 +1,4 @@
-name: docker-llvm-enzyme
+name: build-enzyme-docker-image
 
 on:
   workflow_dispatch:
