@@ -2,16 +2,31 @@ name: docker-llvm-enzyme
 
 on:
   workflow_dispatch:
+    inputs:
+      latest:
+        description: 'Tag as latest'
+        type: boolean
+        required: false
+        default: false
 
 jobs:
-  docker:
+  build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        platform: [amd64, arm64]
     permissions:
       contents: read
       packages: write
     steps:
       - name: Clone repo
         uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
@@ -20,20 +35,40 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # - name: Build Docker image
-      #   run: docker build -f docker/llvm-enzyme/Dockerfile -t ghcr.io/${{ github.repository }}/llvm11-enzyme:latest .
+      - name: Build and push ${{ matrix.platform }}
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: docker/llvm-enzyme/Dockerfile-llvm11
+          platforms: linux/${{ matrix.platform }}
+          push: true
+          tags: ghcr.io/${{ github.repository }}/llvm11-enzyme:${{ github.sha }}-${{ matrix.platform }}
+          cache-from: type=gha,scope=${{ matrix.platform }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.platform }}
 
-      # - name: Push Docker image to GitHub Container Registry
-      #   run: docker push ghcr.io/${{ github.repository }}/llvm11-enzyme:latest
+  create-manifest:
+    runs-on: ubuntu-latest
+    needs: [build]
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Build and push multi-platform Docker image
+      - name: Create and push SHA manifest
         run: |
-          docker buildx create --use
-          docker buildx build \
-            --platform linux/amd64,linux/arm64 \
-            -f docker/llvm-enzyme/Dockerfile \
-            -t ghcr.io/${{ github.repository }}/llvm11-enzyme:latest \
-            --push .
+          docker buildx imagetools create -t ghcr.io/${{ github.repository }}/llvm11-enzyme:${{ github.sha }} \
+            ghcr.io/${{ github.repository }}/llvm11-enzyme:${{ github.sha }}-amd64 \
+            ghcr.io/${{ github.repository }}/llvm11-enzyme:${{ github.sha }}-arm64
+
+      - name: Create and push latest manifest
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.latest == true }}
+        run: |
+          docker buildx imagetools create -t ghcr.io/${{ github.repository }}/llvm11-enzyme:latest \
+            ghcr.io/${{ github.repository }}/llvm11-enzyme:${{ github.sha }}-amd64 \
+            ghcr.io/${{ github.repository }}/llvm11-enzyme:${{ github.sha }}-arm64
