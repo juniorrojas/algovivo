@@ -15,8 +15,6 @@ env:
 jobs:
   build-wasm:
     runs-on: ubuntu-latest
-    env:
-      ENZYME_IMAGE: ghcr.io/juniorrojas/algovivo/llvm11-enzyme:latest
     steps:
       - name: Clone repo
         uses: actions/checkout@v4
@@ -25,8 +23,6 @@ jobs:
         run: |
           python codegen/codegen_csrc.py
           docker run \
-            -e LLVM_BIN_DIR=/usr/lib/llvm-11/bin \
-            -e ENZYME=/Enzyme/enzyme/build/Enzyme/LLVMEnzyme-11.so \
             -v $(pwd):/workspace \
             -w /workspace \
             ${{ env.ENZYME_IMAGE }} \
@@ -42,7 +38,6 @@ jobs:
     runs-on: ubuntu-latest
     needs: build-wasm
     env:
-      ENZYME_IMAGE: ghcr.io/juniorrojas/algovivo/llvm11-enzyme:latest
       OUTPUT_DIRNAME: trajectory.out
     steps:
       - name: Clone repo
@@ -79,8 +74,6 @@ jobs:
   render-trajectory:
     runs-on: ubuntu-latest
     needs: build-wasm
-    env:
-      ENZYME_IMAGE: ghcr.io/juniorrojas/algovivo/llvm11-enzyme:latest
     steps:
       - name: Clone repo
         uses: actions/checkout@v4

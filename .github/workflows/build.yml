@@ -1,6 +1,12 @@
 name: build
 
 on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       src_branch:
@@ -8,6 +14,11 @@ on:
         required: true
         default: "main"
         type: string
+      push_to_build_branch:
+        description: "Push build artifacts to build branch"
+        required: false
+        default: true
+        type: boolean
       build_branch:
         description: "Build branch to push artifacts to"
         required: true
@@ -20,7 +31,7 @@ permissions:
 
 env:
   LIB_NAME: algovivo
-  SRC_BRANCH: ${{ inputs.src_branch || 'main' }}
+  SRC_BRANCH: ${{ inputs.src_branch || github.head_ref || github.ref_name }}
   BUILD_BRANCH: ${{ inputs.build_branch || 'build' }}
   BUILD_DIRNAME: build
   BUILD_BRANCH_REPO_DIRNAME: build.repo
@@ -29,6 +40,7 @@ env:
 jobs:
   init-build-branch:
     runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && inputs.push_to_build_branch == true
     steps:
       - name: Clone repo
         uses: actions/checkout@v4
@@ -59,8 +71,6 @@ jobs:
         run: |
           python codegen/codegen_csrc.py
           docker run \
-            -e LLVM_BIN_DIR=/usr/lib/llvm-11/bin \
-            -e ENZYME=/Enzyme/enzyme/build/Enzyme/LLVMEnzyme-11.so \
             -v $(pwd):/workspace \
             -w /workspace \
             ${{ env.ENZYME_IMAGE }} \
@@ -72,7 +82,7 @@ jobs:
           name: ${{ env.LIB_NAME }}.wasm
           path: ${{ env.BUILD_DIRNAME }}/${{ env.LIB_NAME }}.wasm
 
-  build-dynamic-lib:
+  build-native-lib:
     strategy:
       matrix:
         include:
@@ -90,11 +100,9 @@ jobs:
       - name: Build
         run: |
           python codegen/codegen_csrc.py
-          mkdir -p build
+          mkdir -p ${{ env.BUILD_DIRNAME }}
           docker run \
-            -e LLVM_BIN_DIR=/usr/lib/llvm-11/bin \
-            -e ENZYME=/Enzyme/enzyme/build/Enzyme/LLVMEnzyme-11.so \
-            -e BUILD_WASM=0 \
+            -e NATIVE=true \
             -v $(pwd):/workspace \
             -w /workspace \
             ${{ env.ENZYME_IMAGE }} \
@@ -133,7 +141,8 @@ jobs:
 
   push-build:
     runs-on: ubuntu-latest
-    needs: [init-build-branch, build-wasm, build-dynamic-lib, build-js]
+    needs: [init-build-branch, build-wasm, build-native-lib, build-js]
+    if: github.event_name == 'workflow_dispatch' && inputs.push_to_build_branch == true
     steps:
       - name: Download WASM build
         uses: actions/download-artifact@v4
