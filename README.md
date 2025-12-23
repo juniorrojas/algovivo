@@ -118,11 +118,9 @@ npm run build
 python codegen/codegen_csrc.py && \
 docker run \
   --user $(id -u):$(id -g) \
-  -e LLVM_BIN_DIR=/usr/lib/llvm-11/bin \
-  -e ENZYME=/Enzyme/enzyme/build/Enzyme/LLVMEnzyme-11.so \
   -v $(pwd):/workspace \
   -w /workspace \
-  ghcr.io/juniorrojas/algovivo/llvm11-enzyme \
+  ghcr.io/juniorrojas/algovivo/llvm11-enzyme:latest \
   ./build.sh
 ```
 
