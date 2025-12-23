@@ -16,10 +16,13 @@ ll_diff_opt_filename="${build_dirname}/${lib_name}.diff.opt.out.ll"
 
 mkdir -p ${build_dirname}
 
+echo "NATIVE environment variable: ${NATIVE}"
 build_native=${NATIVE:-false}
+echo "build_native variable: $build_native"
 
 echo "compiling C++ to LLVM IR..."
 if [ "$build_native" = "true" ]; then
+  echo "Building native library (.so)"
   $clang -emit-llvm -c -S ${src_filename} -o ${ll_filename}
 else
   $clang --target=wasm32 -emit-llvm -c -S ${src_filename} -o ${ll_filename}
