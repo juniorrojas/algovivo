@@ -207,3 +207,19 @@ jobs:
               echo "Successfully pushed changes to ${{ env.BUILD_BRANCH }} branch."
             fi
           fi
+
+  summary:
+    runs-on: ubuntu-latest
+    needs: [build-wasm, build-native-lib, build-js, push-build]
+    if: always()
+    steps:
+      - name: Write summary
+        run: |
+          echo "## Build Summary" >> $GITHUB_STEP_SUMMARY
+          echo "**Source branch:** \`${{ env.SRC_BRANCH }}\`" >> $GITHUB_STEP_SUMMARY
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ inputs.push_to_build_branch }}" == "true" ]]; then
+            echo "**Build branch:** \`${{ env.BUILD_BRANCH }}\`" >> $GITHUB_STEP_SUMMARY
+            echo "**Status:** Pushed to build branch" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "**Status:** Build artifacts created (not pushed)" >> $GITHUB_STEP_SUMMARY
+          fi
