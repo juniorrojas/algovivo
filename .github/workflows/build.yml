@@ -1,6 +1,12 @@
 name: build
 
 on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       src_branch:
@@ -8,6 +14,11 @@ on:
         required: true
         default: "main"
         type: string
+      push_to_build_branch:
+        description: "Push build artifacts to build branch"
+        required: false
+        default: true
+        type: boolean
       build_branch:
         description: "Build branch to push artifacts to"
         required: true
@@ -29,6 +40,7 @@ env:
 jobs:
   init-build-branch:
     runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && inputs.push_to_build_branch == true
     steps:
       - name: Clone repo
         uses: actions/checkout@v4
@@ -88,7 +100,7 @@ jobs:
       - name: Build
         run: |
           python codegen/codegen_csrc.py
-          mkdir -p build
+          mkdir -p ${{ env.BUILD_DIRNAME }}
           docker run \
             -e NATIVE=true \
             -v $(pwd):/workspace \
@@ -130,6 +142,7 @@ jobs:
   push-build:
     runs-on: ubuntu-latest
     needs: [init-build-branch, build-wasm, build-dynamic-lib, build-js]
+    if: github.event_name == 'workflow_dispatch' && inputs.push_to_build_branch == true
     steps:
       - name: Download WASM build
         uses: actions/download-artifact@v4
