@@ -82,7 +82,7 @@ jobs:
           name: ${{ env.LIB_NAME }}.wasm
           path: ${{ env.BUILD_DIRNAME }}/${{ env.LIB_NAME }}.wasm
 
-  build-dynamic-lib:
+  build-native-lib:
     strategy:
       matrix:
         include:
@@ -141,7 +141,7 @@ jobs:
 
   push-build:
     runs-on: ubuntu-latest
-    needs: [init-build-branch, build-wasm, build-dynamic-lib, build-js]
+    needs: [init-build-branch, build-wasm, build-native-lib, build-js]
     if: github.event_name == 'workflow_dispatch' && inputs.push_to_build_branch == true
     steps:
       - name: Download WASM build
