@@ -16,19 +16,10 @@ async function loadPolicyData(filename) {
 
 async function main() {
   const argParser = new ArgumentParser();
-  argParser.add_argument("--mesh-filename", {
-    default: path.join(dataDirname, "mesh.json")
-  });
-  argParser.add_argument("--policy-filename", {
-    default: path.join(dataDirname, "policy.json")
-  });
-  argParser.add_argument("--output-dirname", {
-    default: "trajectory.out"
-  });
-  argParser.add_argument("--steps", {
-    type: "int",
-    default: 100
-  });
+  argParser.add_argument("--mesh-filename", { default: path.join(dataDirname, "mesh.json") });
+  argParser.add_argument("--policy-filename", { default: path.join(dataDirname, "policy.json") });
+  argParser.add_argument("--output-dirname", { default: "trajectory.out" });
+  argParser.add_argument("--steps", { type: "int", default: 100 });
   const args = argParser.parse_args();
 
   const [wasmInstance, meshData, policyData] = await Promise.all([
