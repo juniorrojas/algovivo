@@ -1,24 +1,41 @@
 const algovivo = require("algovivo");
 const fsp = require("fs/promises");
 const path = require("path");
+const { ArgumentParser } = require("argparse");
 const utils = require("../utils");
 
 const dataDirname = path.join(__dirname, "data");
 
-async function loadMeshData() {
-  const meshFilename = process.env.MESH_FILENAME || path.join(dataDirname, "mesh.json");
-  return JSON.parse(await fsp.readFile(meshFilename));
+async function loadMeshData(filename) {
+  return JSON.parse(await fsp.readFile(filename));
 }
 
-async function loadPolicyData() {
-  const policyFilename = process.env.POLICY_FILENAME || path.join(dataDirname, "policy.json");
-  return JSON.parse(await fsp.readFile(policyFilename));
+async function loadPolicyData(filename) {
+  return JSON.parse(await fsp.readFile(filename));
 }
 
 async function main() {
-  const [wasmInstance, meshData, policyData] = await Promise.all(
-    [utils.loadWasm, loadMeshData, loadPolicyData].map(f => f())
-  );
+  const argParser = new ArgumentParser();
+  argParser.add_argument("--mesh-filename", {
+    default: path.join(dataDirname, "mesh.json")
+  });
+  argParser.add_argument("--policy-filename", {
+    default: path.join(dataDirname, "policy.json")
+  });
+  argParser.add_argument("--output-dirname", {
+    default: "trajectory.out"
+  });
+  argParser.add_argument("--steps", {
+    type: "int",
+    default: 100
+  });
+  const args = argParser.parse_args();
+
+  const [wasmInstance, meshData, policyData] = await Promise.all([
+    utils.loadWasm(),
+    loadMeshData(args.mesh_filename),
+    loadPolicyData(args.policy_filename)
+  ]);
 
   const system = new algovivo.System({ wasmInstance });
 
@@ -35,11 +52,9 @@ async function main() {
   });
   policy.loadData(policyData);
 
-  const outputDirname = process.env.OUTPUT_DIRNAME || path.join(__dirname, "data", "trajectory");
+  await utils.cleandir(args.output_dirname);
 
-  await utils.cleandir(outputDirname);
-
-  const n = process.env.STEPS ? parseInt(process.env.STEPS, 10) : 100;
+  const n = args.steps;
   for (let i = 0; i < n; i++) {
     console.log(`${i + 1} / ${n}`);
     const itemData = {
@@ -58,11 +73,11 @@ async function main() {
     itemData.policy_input = policyTrace.policyInput;
     itemData.policy_output = policyTrace.policyOutput;
 
-    const filename = `${outputDirname}/${i}.json`;
+    const filename = `${args.output_dirname}/${i}.json`;
     await fsp.writeFile(filename, JSON.stringify(itemData, null, 2));
   }
 
-  console.log(`trajectory saved to ${outputDirname}`);
+  console.log(`trajectory saved to ${args.output_dirname}`);
 }
 
 main();
