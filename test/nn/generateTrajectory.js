@@ -1,24 +1,26 @@
 const algovivo = require("algovivo");
 const fsp = require("fs/promises");
 const path = require("path");
+const { ArgumentParser } = require("argparse");
 const utils = require("../utils");
 
 const dataDirname = path.join(__dirname, "data");
 
-async function loadMeshData() {
-  const meshFilename = process.env.MESH_FILENAME || path.join(dataDirname, "mesh.json");
-  return JSON.parse(await fsp.readFile(meshFilename));
-}
-
-async function loadPolicyData() {
-  const policyFilename = process.env.POLICY_FILENAME || path.join(dataDirname, "policy.json");
-  return JSON.parse(await fsp.readFile(policyFilename));
-}
-
 async function main() {
-  const [wasmInstance, meshData, policyData] = await Promise.all(
-    [utils.loadWasm, loadMeshData, loadPolicyData].map(f => f())
-  );
+  const argParser = new ArgumentParser();
+  argParser.add_argument("--mesh-filename", { default: path.join(dataDirname, "mesh.json") });
+  argParser.add_argument("--policy-filename", { default: path.join(dataDirname, "policy.json") });
+  argParser.add_argument("-o", "--output-dirname", { default: "trajectory.out" });
+  argParser.add_argument("--steps", { type: "int", default: 100 });
+  const args = argParser.parse_args();
+
+  const loadJson = async (filename) => JSON.parse(await fsp.readFile(filename));
+
+  const [wasmInstance, meshData, policyData] = await Promise.all([
+    utils.loadWasm(),
+    loadJson(args.mesh_filename),
+    loadJson(args.policy_filename)
+  ]);
 
   const system = new algovivo.System({ wasmInstance });
 
@@ -35,14 +37,12 @@ async function main() {
   });
   policy.loadData(policyData);
 
-  const outputDirname = process.env.OUTPUT_DIRNAME || path.join(__dirname, "data", "trajectory");
+  await utils.cleandir(args.output_dirname);
 
-  await utils.cleandir(outputDirname);
-
-  const n = process.env.STEPS ? parseInt(process.env.STEPS, 10) : 100;
+  const n = args.steps;
   for (let i = 0; i < n; i++) {
     console.log(`${i + 1} / ${n}`);
-    const itemData = {
+    const stepData = {
       pos0: system.pos0.toArray(),
       vel0: system.vel0.toArray(),
       a0: system.a.toArray()
@@ -52,17 +52,17 @@ async function main() {
     policy.step({ trace: policyTrace });
     system.step();
 
-    itemData.pos1 = system.pos0.toArray();
-    itemData.vel1 = system.vel0.toArray();
-    itemData.a1 = system.a.toArray();
-    itemData.policy_input = policyTrace.policyInput;
-    itemData.policy_output = policyTrace.policyOutput;
+    stepData.pos1 = system.pos0.toArray();
+    stepData.vel1 = system.vel0.toArray();
+    stepData.a1 = system.a.toArray();
+    stepData.policy_input = policyTrace.policyInput;
+    stepData.policy_output = policyTrace.policyOutput;
 
-    const filename = `${outputDirname}/${i}.json`;
-    await fsp.writeFile(filename, JSON.stringify(itemData, null, 2));
+    const stepFilename = path.join(args.output_dirname, `${i}.json`);
+    await fsp.writeFile(stepFilename, JSON.stringify(stepData, null, 2));
   }
 
-  console.log(`trajectory saved to ${outputDirname}`);
+  console.log(`trajectory saved to ${args.output_dirname}`);
 }
 
 main();
