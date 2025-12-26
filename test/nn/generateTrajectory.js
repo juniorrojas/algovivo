@@ -6,14 +6,6 @@ const utils = require("../utils");
 
 const dataDirname = path.join(__dirname, "data");
 
-async function loadMeshData(filename) {
-  return JSON.parse(await fsp.readFile(filename));
-}
-
-async function loadPolicyData(filename) {
-  return JSON.parse(await fsp.readFile(filename));
-}
-
 async function main() {
   const argParser = new ArgumentParser();
   argParser.add_argument("--mesh-filename", { default: path.join(dataDirname, "mesh.json") });
@@ -22,10 +14,12 @@ async function main() {
   argParser.add_argument("--steps", { type: "int", default: 100 });
   const args = argParser.parse_args();
 
+  const loadJson = async (filename) => JSON.parse(await fsp.readFile(filename));
+
   const [wasmInstance, meshData, policyData] = await Promise.all([
     utils.loadWasm(),
-    loadMeshData(args.mesh_filename),
-    loadPolicyData(args.policy_filename)
+    loadJson(args.mesh_filename),
+    loadJson(args.policy_filename)
   ]);
 
   const system = new algovivo.System({ wasmInstance });
