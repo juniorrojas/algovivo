@@ -42,7 +42,7 @@ async function main() {
   const n = args.steps;
   for (let i = 0; i < n; i++) {
     console.log(`${i + 1} / ${n}`);
-    const itemData = {
+    const stepData = {
       pos0: system.pos0.toArray(),
       vel0: system.vel0.toArray(),
       a0: system.a.toArray()
@@ -52,14 +52,14 @@ async function main() {
     policy.step({ trace: policyTrace });
     system.step();
 
-    itemData.pos1 = system.pos0.toArray();
-    itemData.vel1 = system.vel0.toArray();
-    itemData.a1 = system.a.toArray();
-    itemData.policy_input = policyTrace.policyInput;
-    itemData.policy_output = policyTrace.policyOutput;
+    stepData.pos1 = system.pos0.toArray();
+    stepData.vel1 = system.vel0.toArray();
+    stepData.a1 = system.a.toArray();
+    stepData.policy_input = policyTrace.policyInput;
+    stepData.policy_output = policyTrace.policyOutput;
 
-    const filename = `${args.output_dirname}/${i}.json`;
-    await fsp.writeFile(filename, JSON.stringify(itemData, null, 2));
+    const stepFilename = path.join(args.output_dirname, `${i}.json`);
+    await fsp.writeFile(stepFilename, JSON.stringify(stepData, null, 2));
   }
 
   console.log(`trajectory saved to ${args.output_dirname}`);
