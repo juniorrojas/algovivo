@@ -59,7 +59,7 @@ jobs:
       - name: Generate trajectory data
         run: |
           node test/nn/generateTrajectory.js \
-            --output-dirname trajectory.out
+            -o trajectory.out
 
       - name: Upload trajectory output
         uses: actions/upload-artifact@v4
