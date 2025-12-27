@@ -1,0 +1,24 @@
+FROM ubuntu:20.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && \
+    apt-get install -y \
+    llvm-18 clang-18 lld-18 \
+    ninja-build build-essential cmake \
+    git \
+    zlib1g-dev libzstd-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN git clone https://github.com/EnzymeAD/Enzyme.git /Enzyme && \
+    cd /Enzyme && \
+    git checkout main
+
+RUN cd /Enzyme/enzyme && \
+    mkdir build && \
+    cd build && \
+    cmake -G Ninja .. -DLLVM_DIR=/usr/lib/llvm-18/ && \
+    ninja -j2
+
+ENV ENZYME=/Enzyme/enzyme/build/Enzyme/LLVMEnzyme-18.so
+ENV LLVM_BIN_DIR=/usr/lib/llvm-18/bin

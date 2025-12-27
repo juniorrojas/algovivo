@@ -3,6 +3,14 @@ name: build-enzyme-docker-image
 on:
   workflow_dispatch:
     inputs:
+      llvm_version:
+        description: 'LLVM version'
+        type: choice
+        required: true
+        default: '11'
+        options:
+          - '11'
+          - '18'
       latest:
         description: 'Tag as latest'
         type: boolean
@@ -39,12 +47,12 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: utils/enzyme/Dockerfile-llvm11
+          file: utils/enzyme/Dockerfile-llvm${{ inputs.llvm_version }}
           platforms: linux/${{ matrix.platform }}
           push: true
-          tags: ghcr.io/${{ github.repository }}/llvm11-enzyme:${{ github.sha }}-${{ matrix.platform }}
-          cache-from: type=gha,scope=${{ matrix.platform }}
-          cache-to: type=gha,mode=max,scope=${{ matrix.platform }}
+          tags: ghcr.io/${{ github.repository }}/llvm${{ inputs.llvm_version }}-enzyme:${{ github.sha }}-${{ matrix.platform }}
+          cache-from: type=gha,scope=llvm${{ inputs.llvm_version }}-${{ matrix.platform }}
+          cache-to: type=gha,mode=max,scope=llvm${{ inputs.llvm_version }}-${{ matrix.platform }}
 
   create-manifest:
     runs-on: ubuntu-latest
@@ -62,13 +70,13 @@ jobs:
 
       - name: Create and push SHA manifest
         run: |
-          docker buildx imagetools create -t ghcr.io/${{ github.repository }}/llvm11-enzyme:${{ github.sha }} \
-            ghcr.io/${{ github.repository }}/llvm11-enzyme:${{ github.sha }}-amd64 \
-            ghcr.io/${{ github.repository }}/llvm11-enzyme:${{ github.sha }}-arm64
+          docker buildx imagetools create -t ghcr.io/${{ github.repository }}/llvm${{ inputs.llvm_version }}-enzyme:${{ github.sha }} \
+            ghcr.io/${{ github.repository }}/llvm${{ inputs.llvm_version }}-enzyme:${{ github.sha }}-amd64 \
+            ghcr.io/${{ github.repository }}/llvm${{ inputs.llvm_version }}-enzyme:${{ github.sha }}-arm64
 
       - name: Create and push latest manifest
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.latest == true }}
         run: |
-          docker buildx imagetools create -t ghcr.io/${{ github.repository }}/llvm11-enzyme:latest \
-            ghcr.io/${{ github.repository }}/llvm11-enzyme:${{ github.sha }}-amd64 \
-            ghcr.io/${{ github.repository }}/llvm11-enzyme:${{ github.sha }}-arm64
+          docker buildx imagetools create -t ghcr.io/${{ github.repository }}/llvm${{ inputs.llvm_version }}-enzyme:latest \
+            ghcr.io/${{ github.repository }}/llvm${{ inputs.llvm_version }}-enzyme:${{ github.sha }}-amd64 \
+            ghcr.io/${{ github.repository }}/llvm${{ inputs.llvm_version }}-enzyme:${{ github.sha }}-arm64
