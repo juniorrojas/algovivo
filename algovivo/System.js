@@ -185,8 +185,8 @@ class System {
   toStepArgs() {
     return [
       this.spaceDim,
-      this.g,
       this.h,
+      this.g,
 
       ...this.vertices.toStepArgs(),
 
