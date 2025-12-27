@@ -80,3 +80,19 @@ jobs:
           docker buildx imagetools create -t ghcr.io/${{ github.repository }}/llvm${{ inputs.llvm_version }}-enzyme:latest \
             ghcr.io/${{ github.repository }}/llvm${{ inputs.llvm_version }}-enzyme:${{ github.sha }}-amd64 \
             ghcr.io/${{ github.repository }}/llvm${{ inputs.llvm_version }}-enzyme:${{ github.sha }}-arm64
+
+      - name: Write summary
+        run: |
+          echo "## Docker image build summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| property | value |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| LLVM version | ${{ inputs.llvm_version }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| image | \`ghcr.io/${{ github.repository }}/llvm${{ inputs.llvm_version }}-enzyme\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| SHA tag | \`${{ github.sha }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| latest tag | ${{ inputs.latest }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### pull command" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
+          echo "docker pull ghcr.io/${{ github.repository }}/llvm${{ inputs.llvm_version }}-enzyme:${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "\`\`\`" >> $GITHUB_STEP_SUMMARY
