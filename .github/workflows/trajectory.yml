@@ -10,7 +10,7 @@ on:
       - main
 
 env:
-  ENZYME_IMAGE: ghcr.io/juniorrojas/algovivo/llvm11-enzyme:latest
+  ENZYME_IMAGE: ghcr.io/juniorrojas/algovivo/llvm18-enzyme:latest
 
 jobs:
   build-wasm:

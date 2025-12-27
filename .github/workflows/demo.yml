@@ -15,7 +15,7 @@ env:
   DEMO_SRC_DIRNAME: ./demo
   DEMO_PUBLIC_DIRNAME: ./demo/public
   DEPLOY_LOCAL_SCRIPT: ./demo/scripts/deploy-local
-  ENZYME_IMAGE: ghcr.io/juniorrojas/algovivo/llvm11-enzyme:latest
+  ENZYME_IMAGE: ghcr.io/juniorrojas/algovivo/llvm18-enzyme:latest
 
 permissions:
   contents: write

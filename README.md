@@ -120,7 +120,7 @@ docker run \
   --user $(id -u):$(id -g) \
   -v $(pwd):/workspace \
   -w /workspace \
-  ghcr.io/juniorrojas/algovivo/llvm11-enzyme:latest \
+  ghcr.io/juniorrojas/algovivo/llvm18-enzyme:latest \
   ./build.sh
 ```
 

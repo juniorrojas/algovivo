@@ -29,7 +29,17 @@ else
 fi
 
 echo "differentiating LLVM IR..."
-$opt ${ll_filename} -load=$ENZYME -enzyme -S -o ${ll_diff_filename}
+
+llvm_version=$($opt --version | grep -oP 'version \K[0-9]+' | head -1)
+echo "detected LLVM version: ${llvm_version}"
+
+if [ "$llvm_version" -ge 14 ]; then
+  echo "using -load-pass-plugin"
+  $opt ${ll_filename} -load-pass-plugin=$ENZYME -passes=enzyme -S -o ${ll_diff_filename}
+else
+  echo "using -load"
+  $opt ${ll_filename} -load=$ENZYME -enzyme -S -o ${ll_diff_filename}
+fi
 
 echo "optimizing differentiated LLVM IR..."
 $opt ${ll_diff_filename} -S -o ${ll_diff_opt_filename}

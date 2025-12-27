@@ -35,7 +35,7 @@ env:
   BUILD_BRANCH: ${{ inputs.build_branch || 'build' }}
   BUILD_DIRNAME: build
   BUILD_BRANCH_REPO_DIRNAME: build.repo
-  ENZYME_IMAGE: ghcr.io/juniorrojas/algovivo/llvm11-enzyme:latest
+  ENZYME_IMAGE: ghcr.io/juniorrojas/algovivo/llvm18-enzyme:latest
 
 jobs:
   init-build-branch:
