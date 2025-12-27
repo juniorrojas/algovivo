@@ -37,13 +37,13 @@ class System:
         self.triangles.set(indices=triangles, pos=pos, rsi=triangles_rsi)
 
     def step(self):
-        g = 9.8
         h = self.h
+        g = 9.8
 
         self.native_instance.lib.backward_euler_update(
             2, # 2D
-            g,
             h,
+            g,
 
             *self.vertices.to_step_args(),
 
