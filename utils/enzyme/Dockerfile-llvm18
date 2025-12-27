@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -12,13 +12,13 @@ RUN apt-get update && \
 
 RUN git clone https://github.com/EnzymeAD/Enzyme.git /Enzyme && \
     cd /Enzyme && \
-    git checkout main
+    git checkout v0.0.232
 
 RUN cd /Enzyme/enzyme && \
     mkdir build && \
     cd build && \
     cmake -G Ninja .. -DLLVM_DIR=/usr/lib/llvm-18/ && \
-    ninja -j2
+    ninja
 
 ENV ENZYME=/Enzyme/enzyme/build/Enzyme/LLVMEnzyme-18.so
 ENV LLVM_BIN_DIR=/usr/lib/llvm-18/bin
