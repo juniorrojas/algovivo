@@ -20,7 +20,7 @@
     "@rollup/plugin-node-resolve": "^15.0.2",
     "@rollup/plugin-terser": "^0.4.1",
     "argparse": "^2.0.1",
-    "express": "^4.21.1",
+    "express": "^4.22.1",
     "jest": "^29.5.0",
     "puppeteer": "^22.15.0",
     "rollup": "^2.79.2"
