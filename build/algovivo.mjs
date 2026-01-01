@@ -3,7 +3,7 @@
  * (c) 2023 Junior Rojas
  * License: MIT
  * 
- * Built from commit 6102f662144757c43cebb0d4238cbe96e1eebb09
+ * Built from commit 67a0c9bed595c026b3ac48221f49eb4b5bc4eb05
  */
 function getDefaultExportFromCjs (x) {
 	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
@@ -1929,8 +1929,8 @@ class System$1 {
   toStepArgs() {
     return [
       this.spaceDim,
-      this.g,
       this.h,
+      this.g,
 
       ...this.vertices.toStepArgs(),
 
