@@ -100,10 +100,18 @@ for (int i = 0; i < num_vertices; i++) {
   );
 }"""
 
+    def make_energy_functions(self):
+        energy_fns_src = ""
+        for potential in self.potentials:
+            if hasattr(potential, "make_energy_fn"):
+                fn = potential.make_energy_fn()
+                energy_fns_src += fn.codegen() + "\n\n"
+        return energy_fns_src
+
     def instantiate_templates(self, csrc_dirpath):
         if isinstance(csrc_dirpath, str):
             csrc_dirpath = Path(csrc_dirpath)
-        
+
         includes_src = ""
 
         for module in self.modules:
@@ -116,6 +124,7 @@ for (int i = 0; i < num_vertices; i++) {
                 includes_src += f"#include \"../modules/{module.name}.h\"\n"
 
         self.make_loss()
+        energy_fns_src = self.make_energy_functions()
         loss_grad = self.loss.make_backward_pass()
         update_args, update_pos_args, update_vel_args = self.make_update_args()
         forward_non_differentiable_args = self.make_forward_non_differentiable_args()
@@ -158,6 +167,7 @@ for (int i = 0; i < num_vertices; i++) {
             )
 
             src = src.replace("// {{includes}}", includes_src)
+            src = src.replace("// {{energy_functions}}", energy_fns_src)
 
             src = (src
                 .replace("// {{backward_euler_loss_body}}", self.loss_body)

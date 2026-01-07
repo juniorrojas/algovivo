@@ -27,12 +27,14 @@ for (int i = 0; i < num_vertices; i++) {
 }
 """
 
-    def make_loss_fn(self, name):
+    def make_energy_fn(self, name="gravity_energy"):
         f = Fun(name)
         f.args.add_arg("int", "space_dim")
         f.args.add_arg("float", "g")
         f.args.add_arg("int", "num_vertices")
-        f.src_body = self.get_src()
+        f.args.add_arg("float*", "pos")
+        f.args.add_arg("float", "vertex_mass")
+        f.src_body = "float potential_energy = 0.0;" + self.get_src() + "return potential_energy;"
         return f
 
     def add_to_loss(self, be):

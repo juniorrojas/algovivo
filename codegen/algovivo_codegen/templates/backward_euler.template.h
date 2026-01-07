@@ -18,6 +18,8 @@
 
 namespace algovivo {
 
+// {{energy_functions}}
+
 float backward_euler_loss(
   // {{backward_euler_loss_args}}
 ) {
