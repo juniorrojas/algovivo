@@ -7,6 +7,7 @@ class System:
         self.native_instance = native_instance
 
         self.h = 0.033
+        self.g = 9.8
 
         self.vertices = Vertices()
         self.muscles = Muscles(native_instance.lib)
@@ -37,13 +38,9 @@ class System:
         self.triangles.set(indices=triangles, pos=pos, rsi=triangles_rsi)
 
     def step(self):
-        h = self.h
-        g = 9.8
-
         self.native_instance.lib.backward_euler_update(
-            2, # 2D
-            h,
-            g,
+            self.space_dim,
+            self.h,
 
             *self.vertices.to_step_args(),
 
@@ -51,8 +48,8 @@ class System:
 
             *self.triangles.to_step_args(),
 
+            self.g,
             self.k_friction,
-
             self.k_collision
         )
 
