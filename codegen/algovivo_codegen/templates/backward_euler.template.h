@@ -6,11 +6,11 @@
 
 #include "../dynamics/inertia.h"
 
-#include "../modules/muscles.h"
-#include "../modules/triangles.h"
-#include "../modules/friction.h"
-#include "../modules/collision.h"
-#include "../modules/gravity.h"
+#include "../potentials/muscles.h"
+#include "../potentials/triangles.h"
+#include "../potentials/friction.h"
+#include "../potentials/collision.h"
+#include "../potentials/gravity.h"
 
 #include "optim.h"
 

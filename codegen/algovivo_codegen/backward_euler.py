@@ -117,11 +117,11 @@ for (int i = 0; i < num_vertices; i++) {
         for module in self.modules:
             if hasattr(module, "get_src"):
                 src = module.get_src()
-                output_filepath = csrc_dirpath.joinpath("modules", f"{module.name}.h")
+                output_filepath = csrc_dirpath.joinpath("potentials", f"{module.name}.h")
                 with open(output_filepath, "w") as f:
                     f.write("#pragma once\n\n" + src)
                 print(f"module {module.name} saved to {output_filepath}")
-                includes_src += f"#include \"../modules/{module.name}.h\"\n"
+                includes_src += f"#include \"../potentials/{module.name}.h\"\n"
 
         self.make_loss()
         energy_fns_src = self.make_energy_functions()

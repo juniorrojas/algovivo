@@ -38,7 +38,7 @@ def compile_gravity_energy() -> ctypes.CDLL:
     generated_fn = fn.codegen()
 
     # read the helper (single-vertex) function from csrc
-    with open(csrc_dirpath / "modules" / "gravity.h") as f:
+    with open(csrc_dirpath / "potentials" / "gravity.h") as f:
         gravity_h = f.read()
 
     # combine helper + generated function
