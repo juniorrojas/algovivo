@@ -2,7 +2,7 @@ import subprocess
 import ctypes
 import tempfile
 from pathlib import Path
-from algovivo_codegen import Fun
+import algovivo_codegen
 
 this_dirpath = Path(__file__).parent
 codegen_dirpath = this_dirpath.parent
@@ -27,7 +27,7 @@ for (int i = 0; i < num_vertices; i++) {
 
 
 def make_inertial_energy_fn(name="inertial_energy"):
-    f = Fun(name)
+    f = algovivo_codegen.Fun(name)
     f.args.add_arg("int", "space_dim")
     f.args.add_arg("float", "h")
     f.args.add_arg("int", "num_vertices")

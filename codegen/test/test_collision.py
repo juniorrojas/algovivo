@@ -2,8 +2,7 @@ import subprocess
 import ctypes
 import tempfile
 from pathlib import Path
-import algovivo_codegen as codegen
-from algovivo_codegen.potentials.collision import Collision
+import algovivo_codegen
 
 this_dirpath = Path(__file__).parent
 codegen_dirpath = this_dirpath.parent
@@ -11,7 +10,7 @@ csrc_dirpath = codegen_dirpath / "algovivo_codegen" / "csrc"
 
 
 def test_collision_energy_codegen():
-    collision = Collision()
+    collision = algovivo_codegen.potentials.Collision()
     fn = collision.make_energy_fn("collision_energy")
 
     assert len(fn.args) == 4
@@ -32,7 +31,7 @@ def test_collision_energy_codegen():
 
 
 def compile_collision_energy() -> ctypes.CDLL:
-    collision = codegen.potentials.Collision()
+    collision = algovivo_codegen.potentials.Collision()
     fn = collision.make_energy_fn("collision_energy")
     generated_fn = fn.codegen()
 
