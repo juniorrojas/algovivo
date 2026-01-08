@@ -2,6 +2,8 @@ const mmgrten = require("./mmgrten");
 const Vertices = require("./Vertices");
 const Muscles = require("./Muscles");
 const Triangles = require("./Triangles");
+const Friction = require("./Friction");
+const Collision = require("./Collision");
 
 class System {
   constructor(args = {}) {
@@ -38,8 +40,8 @@ class System {
       simplexOrder: this.spaceDim + 1
     });
 
-    this.friction = { k: Math.fround(300) };
-    this.collision = { k: Math.fround(14000) };
+    this.friction = new Friction();
+    this.collision = new Collision();
   }
 
   set fixedVertexId(value) {
@@ -194,8 +196,8 @@ class System {
 
       ...this.triangles.toStepArgs(),
 
-      this.friction.k,
-      this.collision.k
+      ...this.friction.toStepArgs(),
+      ...this.collision.toStepArgs()
     ]
   }
 
@@ -213,6 +215,8 @@ class System {
     this.vertices.dispose();
     this.muscles.dispose();
     this.triangles.dispose();
+    this.friction.dispose();
+    this.collision.dispose();
   }
 }
 
