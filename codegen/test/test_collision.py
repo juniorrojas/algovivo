@@ -80,6 +80,7 @@ def test_collision_energy_forward():
     if lib is None:
         raise RuntimeError("compilation failed")
 
+    # test case: 3 vertices in 2D
     space_dim = 2
     k_collision = 100.0
     num_vertices = 3
