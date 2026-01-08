@@ -12,6 +12,7 @@ if __name__ == "__main__":
         codegen.modules.Vertices(),
         codegen.modules.Muscles(),
         codegen.modules.Triangles(),
+        codegen.modules.Gravity(),
         codegen.modules.Friction(),
         codegen.modules.Collision()
     ]

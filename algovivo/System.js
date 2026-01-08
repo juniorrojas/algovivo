@@ -2,6 +2,7 @@ const mmgrten = require("./mmgrten");
 const Vertices = require("./Vertices");
 const Muscles = require("./Muscles");
 const Triangles = require("./Triangles");
+const Gravity = require("./Gravity");
 const Friction = require("./Friction");
 const Collision = require("./Collision");
 
@@ -23,7 +24,7 @@ class System {
     }
     
     this.h = 0.033;
-    this.g = 9.8;
+    this.gravity = new Gravity();
 
     this.spaceDim = args.spaceDim ?? 2;
 
@@ -58,6 +59,14 @@ class System {
 
   get memoryManager() {
     return this.ten.mgr;
+  }
+
+  get g() {
+    return this.gravity.g;
+  }
+
+  set g(value) {
+    this.gravity.g = value;
   }
 
   get vertexMass() {
@@ -188,7 +197,6 @@ class System {
     return [
       this.spaceDim,
       this.h,
-      this.g,
 
       ...this.vertices.toStepArgs(),
 
@@ -196,6 +204,7 @@ class System {
 
       ...this.triangles.toStepArgs(),
 
+      ...this.gravity.toStepArgs(),
       ...this.friction.toStepArgs(),
       ...this.collision.toStepArgs()
     ]
@@ -215,6 +224,7 @@ class System {
     this.vertices.dispose();
     this.muscles.dispose();
     this.triangles.dispose();
+    this.gravity.dispose();
     this.friction.dispose();
     this.collision.dispose();
   }
