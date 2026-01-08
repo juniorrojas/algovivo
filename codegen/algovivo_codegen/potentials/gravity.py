@@ -8,7 +8,7 @@ class Gravity:
         args.add_arg("float", "g")
 
     def add_update_args(self, args):
-        args.add_arg("float", "g")
+        self.add_args(args)
 
     def get_src(self):
         return """
