@@ -1,9 +1,11 @@
+from .. import Fun
+
 class Friction:
     def __init__(self):
         pass
-    
-    def add_to_loss(self, be):
-        be.loss_body += """
+
+    def get_src(self):
+        return """
 for (int i = 0; i < num_vertices; i++) {
   const auto offset = space_dim * i;
 
@@ -22,3 +24,17 @@ for (int i = 0; i < num_vertices; i++) {
   );
 }
 """
+
+    def make_energy_fn(self, name="friction_energy"):
+        f = Fun(name)
+        f.args.add_arg("int", "space_dim")
+        f.args.add_arg("float", "h")
+        f.args.add_arg("float", "k_friction")
+        f.args.add_arg("int", "num_vertices")
+        f.args.add_arg("float*", "pos0")
+        f.args.add_arg("float*", "pos")
+        f.src_body = "float potential_energy = 0.0;" + self.get_src() + "return potential_energy;"
+        return f
+
+    def add_to_loss(self, be):
+        be.loss_body += self.get_src()

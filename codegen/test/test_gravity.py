@@ -2,8 +2,7 @@ import subprocess
 import ctypes
 import tempfile
 from pathlib import Path
-import algovivo_codegen as codegen
-from algovivo_codegen.potentials.gravity import Gravity
+import algovivo_codegen
 
 this_dirpath = Path(__file__).parent
 codegen_dirpath = this_dirpath.parent
@@ -11,7 +10,7 @@ csrc_dirpath = codegen_dirpath / "algovivo_codegen" / "csrc"
 
 
 def test_gravity_energy_codegen():
-    gravity = Gravity()
+    gravity = algovivo_codegen.potentials.Gravity()
     fn = gravity.make_energy_fn("gravity_energy")
 
     assert len(fn.args) == 5
@@ -33,15 +32,13 @@ def test_gravity_energy_codegen():
 
 
 def compile_gravity_energy() -> ctypes.CDLL:
-    gravity = codegen.potentials.Gravity()
+    gravity = algovivo_codegen.potentials.Gravity()
     fn = gravity.make_energy_fn("gravity_energy")
     generated_fn = fn.codegen()
 
-    # read the helper (single-vertex) function from csrc
     with open(csrc_dirpath / "potentials" / "gravity.h") as f:
         gravity_h = f.read()
 
-    # combine helper + generated function
     cpp_src = gravity_h + "\nnamespace algovivo {\n" + generated_fn + "\n}"
 
     with tempfile.TemporaryDirectory() as tmp_dirname:
@@ -51,7 +48,6 @@ def compile_gravity_energy() -> ctypes.CDLL:
         with open(cpp_path, "w") as f:
             f.write(cpp_src)
 
-        # compile to shared library
         result = subprocess.run(
             [
                 "clang++",
@@ -68,7 +64,6 @@ def compile_gravity_energy() -> ctypes.CDLL:
             print(result.stderr)
             return None
 
-        # load and return the library
         lib = ctypes.CDLL(str(so_path))
         lib.gravity_energy.argtypes = [
             ctypes.c_int,      # space_dim

@@ -8,9 +8,8 @@ class NativeInstance:
         lib.backward_euler_update.restype = None
         lib.backward_euler_update.argtypes = [
             ctypes.c_int,                    # space_dim
-            ctypes.c_float,                  # g
             ctypes.c_float,                  # h
-            
+
             ctypes.c_int,                    # num_vertices
             ctypes.POINTER(ctypes.c_float),  # pos0
             ctypes.POINTER(ctypes.c_float),  # vel0
@@ -34,6 +33,7 @@ class NativeInstance:
             ctypes.POINTER(ctypes.c_float),  # mu
             ctypes.POINTER(ctypes.c_float),  # lambda
 
+            ctypes.c_float,                  # g
             ctypes.c_float,                  # k_friction
             ctypes.c_float                   # k_collision
         ]
