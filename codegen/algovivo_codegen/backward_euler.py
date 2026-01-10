@@ -35,7 +35,7 @@ class BackwardEuler:
         for module in self.modules:
             module.add_args(self.loss.args)
 
-        self.loss.args.add_arg("float*", "pos", differentiable=True)
+        self.loss.args.add_arg("float*", "pos", differentiable=True, size="num_vertices * space_dim")
         
         self.loss_body = """
 float inertial_energy = 0.0;
@@ -130,14 +130,34 @@ for (int i = 0; i < num_vertices; i++) {
         forward_non_differentiable_args = self.make_forward_non_differentiable_args()
 
         templates_dirpath = this_dirpath.joinpath("templates")
-        
+
         with open(templates_dirpath.joinpath("optim.template.h")) as f:
             template = f.read()
-            
+
             src = template
-            src = template.replace(
-                "/* {{forward_non_differentiable_args}} */",
-                forward_non_differentiable_args.codegen_call()
+            src = src.replace(
+                "/* {{optim_zero_grads}} */",
+                self.loss.args.codegen_optim_zero_grads()
+            )
+            src = src.replace(
+                "/* {{backward_euler_loss_grad_args_call}} */",
+                loss_grad.args.codegen_call()
+            )
+            src = src.replace(
+                "/* {{backward_euler_loss_args_call}} */",
+                self.loss.args.codegen_call()
+            )
+            src = src.replace(
+                "/* {{optim_call_with_tmp}} */",
+                self.loss.args.codegen_optim_call_with_tmp()
+            )
+            src = src.replace(
+                "/* {{optim_line_search_update}} */",
+                self.loss.args.codegen_optim_line_search_update()
+            )
+            src = src.replace(
+                "/* {{optim_apply_step}} */",
+                self.loss.args.codegen_optim_apply_step()
             )
 
         output_filepath = csrc_dirpath.joinpath("dynamics", "optim.h")
