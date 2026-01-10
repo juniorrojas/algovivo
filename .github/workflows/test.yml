@@ -55,6 +55,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Build
+        run: npm run build
+
       - name: Test
         run: npm test
 
@@ -63,3 +66,10 @@ jobs:
         with:
           name: build
           path: ./build
+
+      - name: Upload test screenshots
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: test-screenshots
+          path: test/**/*.out.png

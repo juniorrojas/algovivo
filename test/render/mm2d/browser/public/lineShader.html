@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+<body>
+  <script type="module">
+    import algovivo from "./algovivo.mjs";
+
+    const mm2d = algovivo.mm2d;
+
+    const renderer = new mm2d.Renderer();
+    renderer.setSize({ width: 200, height: 200 });
+    document.body.appendChild(renderer.domElement);
+
+    const scene = new mm2d.Scene();
+    const camera = new mm2d.Camera();
+
+    const mesh = scene.addMesh();
+    mesh.pos = [
+      [0, 0],
+      [1, 0],
+      [0.5, 1]
+    ];
+    mesh.lines = [
+      [0, 1],
+      [1, 2],
+      [2, 0]
+    ];
+
+    // a line shader is a function that gets executed per mesh line (edge)
+    mesh.lineShader = {
+      renderLine(args) {
+        const { ctx, camera, id, a, b } = args;
+
+        // use camera.inferScale() to convert world units to screen pixels
+        const scale = camera.inferScale();
+        const worldLineWidth = 0.02;
+        const screenLineWidth = worldLineWidth * scale;
+
+        ctx.beginPath();
+        ctx.moveTo(a[0], a[1]);
+        ctx.lineTo(b[0], b[1]);
+        ctx.strokeStyle = ["red", "green", "blue"][id];
+        ctx.lineWidth = screenLineWidth;
+        ctx.stroke();
+      }
+    };
+
+    camera.center({
+      worldCenter: [0.5, 0.5],
+      worldWidth: 2,
+      viewportWidth: renderer.width,
+      viewportHeight: renderer.height
+    });
+
+    renderer.render(scene, camera);
+
+    window.mm2dReady = true;
+  </script>
+</body>
+</html>

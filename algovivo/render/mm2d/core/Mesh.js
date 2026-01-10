@@ -3,8 +3,6 @@ const shaders = require("../shaders");
 
 class Mesh {
   constructor(args = {}) {
-    // if (args.scene == null) throw new Error("scene required");
-    // if (args.id == null) throw new Error("id required");
     this.scene = args.scene;
     this.id = args.id;
     
