@@ -20,7 +20,7 @@ void optim_init(
 }
 
 #define loss_backward() { \
-  /* {{zero_all_grads}} */ \
+  /* {{optim_zero_grads}} */ \
   backward_euler_loss_grad(/* {{backward_euler_loss_grad_args_call}} */); \
   if (fixed_vertex_id != 0) { \
     const auto offset = fixed_vertex_id[0] * space_dim; \
@@ -52,17 +52,16 @@ bool optim_converged(int space_dim, int num_vertices, const float* pos_grad) {
   float step_size = 1.0; \
   const auto max_line_search_iters = 20; \
   float backtracking_scale = 0.3; \
-  /* {{save_differentiable_params}} */ \
   const auto loss0 = backward_euler_loss(/* {{backward_euler_loss_args_call}} */); \
   for (int i = 0; i < max_line_search_iters; i++) { \
-    /* {{line_search_update_differentiable_params}} */ \
-    const auto loss1 = backward_euler_loss(/* {{backward_euler_loss_args_call_tmp}} */); \
+    /* write trial values to _tmp buffers for line search evaluation */ \
+    /* {{optim_line_search_update}} */ \
+    const auto loss1 = backward_euler_loss(/* {{optim_call_with_tmp}} */); \
     if (loss1 < loss0) { \
       break; \
     } else { \
       step_size *= backtracking_scale; \
-      /* {{line_search_restore_differentiable_params}} */ \
     } \
   } \
-  /* {{apply_final_step}} */ \
+  /* {{optim_apply_step}} */ \
 }

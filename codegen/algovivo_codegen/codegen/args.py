@@ -82,10 +82,10 @@ class Args:
     def get_differentiable_args(self):
         return [arg for arg in self.args if arg.differentiable]
 
-    # TODO: the methods below are coupled with the optimization method,
-    # consider moving to a separate optimizer codegen module in the future
+    # TODO the methods below are coupled with the optimization method,
+    # consider moving them to a separate optimizer codegen module in the future
 
-    def codegen_zero_all_grads(self):
+    def codegen_optim_zero_grads(self):
         lines = []
         for arg in self.get_differentiable_args():
             if arg.size is None:
@@ -93,38 +93,16 @@ class Args:
             lines.append(f"zero_({arg.size}, {arg.name}_grad);")
         return " \\\n  ".join(lines)
 
-    def codegen_save_differentiable_params(self, inertial_arg_name="pos"):
-        lines = []
-        for arg in self.get_differentiable_args():
-            if arg.name == inertial_arg_name:
-                continue
-            if arg.size is None:
-                raise ValueError(f"differentiable arg '{arg.name}' must have a size")
-            lines.append(f"copy_({arg.size}, {arg.name}, {arg.name}_saved);")
-        return " \\\n  ".join(lines)
-
-    def codegen_line_search_update(self, inertial_arg_name="pos"):
+    def codegen_optim_line_search_update(self):
+        # write trial values to _tmp buffers for line search evaluation
         lines = []
         for arg in self.get_differentiable_args():
             if arg.size is None:
                 raise ValueError(f"differentiable arg '{arg.name}' must have a size")
-            if arg.name == inertial_arg_name:
-                lines.append(f"add_scaled({arg.size}, {inertial_arg_name}, {inertial_arg_name}_grad, -step_size, {inertial_arg_name}_tmp);")
-            else:
-                lines.append(f"add_scaled({arg.size}, {arg.name}_saved, {arg.name}_grad, -step_size, {arg.name});")
+            lines.append(f"add_scaled({arg.size}, {arg.name}, {arg.name}_grad, -step_size, {arg.name}_tmp);")
         return " \\\n  ".join(lines)
 
-    def codegen_line_search_restore(self, inertial_arg_name="pos"):
-        lines = []
-        for arg in self.get_differentiable_args():
-            if arg.name == inertial_arg_name:
-                continue
-            if arg.size is None:
-                raise ValueError(f"differentiable arg '{arg.name}' must have a size")
-            lines.append(f"copy_({arg.size}, {arg.name}_saved, {arg.name});")
-        return " \\\n  ".join(lines)
-
-    def codegen_apply_final_step(self):
+    def codegen_optim_apply_step(self):
         lines = []
         for arg in self.get_differentiable_args():
             if arg.size is None:
@@ -132,13 +110,14 @@ class Args:
             lines.append(f"add_scaled({arg.size}, {arg.name}, {arg.name}_grad, -step_size, {arg.name});")
         return " \\\n  ".join(lines)
 
-    def codegen_call_with_tmp(self, inertial_arg_name="pos"):
+    def codegen_optim_call_with_tmp(self):
+        # use _tmp buffers for line search loss evaluation
         s = ""
         num_args = len(self.args)
         for i, arg in enumerate(self.args):
             name = arg.name
-            if arg.differentiable and arg.name == inertial_arg_name:
-                s += f"{inertial_arg_name}_tmp"
+            if arg.differentiable:
+                s += f"{name}_tmp"
             else:
                 s += name
             if i < num_args - 1:

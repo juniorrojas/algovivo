@@ -136,8 +136,8 @@ for (int i = 0; i < num_vertices; i++) {
 
             src = template
             src = src.replace(
-                "/* {{zero_all_grads}} */",
-                self.loss.args.codegen_zero_all_grads()
+                "/* {{optim_zero_grads}} */",
+                self.loss.args.codegen_optim_zero_grads()
             )
             src = src.replace(
                 "/* {{backward_euler_loss_grad_args_call}} */",
@@ -148,24 +148,16 @@ for (int i = 0; i < num_vertices; i++) {
                 self.loss.args.codegen_call()
             )
             src = src.replace(
-                "/* {{backward_euler_loss_args_call_tmp}} */",
-                self.loss.args.codegen_call_with_tmp()
+                "/* {{optim_call_with_tmp}} */",
+                self.loss.args.codegen_optim_call_with_tmp()
             )
             src = src.replace(
-                "/* {{save_differentiable_params}} */",
-                self.loss.args.codegen_save_differentiable_params()
+                "/* {{optim_line_search_update}} */",
+                self.loss.args.codegen_optim_line_search_update()
             )
             src = src.replace(
-                "/* {{line_search_update_differentiable_params}} */",
-                self.loss.args.codegen_line_search_update()
-            )
-            src = src.replace(
-                "/* {{line_search_restore_differentiable_params}} */",
-                self.loss.args.codegen_line_search_restore()
-            )
-            src = src.replace(
-                "/* {{apply_final_step}} */",
-                self.loss.args.codegen_apply_final_step()
+                "/* {{optim_apply_step}} */",
+                self.loss.args.codegen_optim_apply_step()
             )
 
         output_filepath = csrc_dirpath.joinpath("dynamics", "optim.h")
