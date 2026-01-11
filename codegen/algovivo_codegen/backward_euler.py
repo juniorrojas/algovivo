@@ -35,7 +35,7 @@ class BackwardEuler:
         for module in self.modules:
             module.add_args(self.loss.args)
 
-        self.loss.args.add_arg("float*", "pos", differentiable=True, size="num_vertices * space_dim")
+        self.loss.args.add_arg("float*", "pos", differentiable=True, size="num_vertices * space_dim", convergence_stride="space_dim")
         
         self.loss_body = """
 float inertial_energy = 0.0;
@@ -158,6 +158,18 @@ for (int i = 0; i < num_vertices; i++) {
             src = src.replace(
                 "/* {{optim_apply_step}} */",
                 self.loss.args.codegen_optim_apply_step()
+            )
+            src = src.replace(
+                "/* {{optim_converged_args}} */",
+                self.loss.args.codegen_optim_converged_args()
+            )
+            src = src.replace(
+                "/* {{optim_converged_signature}} */",
+                self.loss.args.codegen_optim_converged_signature()
+            )
+            src = src.replace(
+                "/* {{optim_converged_body}} */",
+                self.loss.args.codegen_optim_converged_body()
             )
 
         output_filepath = csrc_dirpath.joinpath("dynamics", "optim.h")
