@@ -159,6 +159,18 @@ for (int i = 0; i < num_vertices; i++) {
                 "/* {{optim_apply_step}} */",
                 self.loss.args.codegen_optim_apply_step()
             )
+            src = src.replace(
+                "/* {{optim_converged_args}} */",
+                self.loss.args.codegen_optim_converged_args()
+            )
+            src = src.replace(
+                "/* {{optim_converged_signature}} */",
+                self.loss.args.codegen_optim_converged_signature()
+            )
+            src = src.replace(
+                "/* {{optim_converged_body}} */",
+                self.loss.args.codegen_optim_converged_body()
+            )
 
         output_filepath = csrc_dirpath.joinpath("dynamics", "optim.h")
         with open(output_filepath, "w") as f:

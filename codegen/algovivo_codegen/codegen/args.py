@@ -123,3 +123,31 @@ class Args:
             if i < num_args - 1:
                 s += ", "
         return s
+
+    def codegen_optim_converged_args(self):
+        # generate args for optim_converged function
+        parts = []
+        for arg in self.get_differentiable_args():
+            if arg.size is None:
+                raise ValueError(f"differentiable arg '{arg.name}' must have a size")
+            parts.append(f"{arg.size}, {arg.name}_grad")
+        return ", ".join(parts)
+
+    def codegen_optim_converged_signature(self):
+        # generate function signature for optim_converged
+        parts = []
+        for arg in self.get_differentiable_args():
+            if arg.size is None:
+                raise ValueError(f"differentiable arg '{arg.name}' must have a size")
+            parts.append(f"int {arg.name}_size, const float* {arg.name}_grad")
+        return ", ".join(parts)
+
+    def codegen_optim_converged_body(self):
+        # generate body of optim_converged that checks all differentiable grads
+        lines = []
+        for arg in self.get_differentiable_args():
+            lines.append(f"""for (int k = 0; k < {arg.name}_size; k++) {{
+    float q = {arg.name}_grad[k] * {arg.name}_grad[k];
+    if (q > grad_max_q) grad_max_q = q;
+  }}""")
+        return "\n  ".join(lines)
