@@ -35,7 +35,7 @@ class BackwardEuler:
         for module in self.modules:
             module.add_args(self.loss.args)
 
-        self.loss.args.add_arg("float*", "pos", differentiable=True, size="num_vertices * space_dim")
+        self.loss.args.add_arg("float*", "pos", differentiable=True, size="num_vertices * space_dim", convergence_stride="space_dim")
         
         self.loss_body = """
 float inertial_energy = 0.0;
