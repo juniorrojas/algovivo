@@ -3,7 +3,7 @@
  * (c) 2023 Junior Rojas
  * License: MIT
  * 
- * Built from commit 67a0c9bed595c026b3ac48221f49eb4b5bc4eb05
+ * Built from commit 96a1af708cf63e813167721f169db4a9bf4b588d
  */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -1748,10 +1748,55 @@
 
 	var Triangles_1 = Triangles$1;
 
+	class Gravity$1 {
+	  constructor(args = {}) {
+	    this.g = args.g ?? 9.8;
+	  }
+
+	  toStepArgs() {
+	    return [this.g];
+	  }
+
+	  dispose() {}
+	}
+
+	var Gravity_1 = Gravity$1;
+
+	class Friction$1 {
+	  constructor(args = {}) {
+	    this.k = args.k ?? Math.fround(300);
+	  }
+
+	  toStepArgs() {
+	    return [this.k];
+	  }
+
+	  dispose() {}
+	}
+
+	var Friction_1 = Friction$1;
+
+	class Collision$1 {
+	  constructor(args = {}) {
+	    this.k = args.k ?? Math.fround(14000);
+	  }
+
+	  toStepArgs() {
+	    return [this.k];
+	  }
+
+	  dispose() {}
+	}
+
+	var Collision_1 = Collision$1;
+
 	const mmgrten$1 = mmgrten$2;
 	const Vertices$1 = Vertices_1;
 	const Muscles = Muscles_1;
 	const Triangles = Triangles_1;
+	const Gravity = Gravity_1;
+	const Friction = Friction_1;
+	const Collision = Collision_1;
 
 	class System$1 {
 	  constructor(args = {}) {
@@ -1771,7 +1816,7 @@
 	    }
 	    
 	    this.h = 0.033;
-	    this.g = 9.8;
+	    this.gravity = new Gravity();
 
 	    this.spaceDim = args.spaceDim ?? 2;
 
@@ -1788,8 +1833,8 @@
 	      simplexOrder: this.spaceDim + 1
 	    });
 
-	    this.friction = { k: Math.fround(300) };
-	    this.collision = { k: Math.fround(14000) };
+	    this.friction = new Friction();
+	    this.collision = new Collision();
 	  }
 
 	  set fixedVertexId(value) {
@@ -1806,6 +1851,14 @@
 
 	  get memoryManager() {
 	    return this.ten.mgr;
+	  }
+
+	  get g() {
+	    return this.gravity.g;
+	  }
+
+	  set g(value) {
+	    this.gravity.g = value;
 	  }
 
 	  get vertexMass() {
@@ -1936,7 +1989,6 @@
 	    return [
 	      this.spaceDim,
 	      this.h,
-	      this.g,
 
 	      ...this.vertices.toStepArgs(),
 
@@ -1944,8 +1996,9 @@
 
 	      ...this.triangles.toStepArgs(),
 
-	      this.friction.k,
-	      this.collision.k
+	      ...this.gravity.toStepArgs(),
+	      ...this.friction.toStepArgs(),
+	      ...this.collision.toStepArgs()
 	    ]
 	  }
 
@@ -1963,6 +2016,9 @@
 	    this.vertices.dispose();
 	    this.muscles.dispose();
 	    this.triangles.dispose();
+	    this.gravity.dispose();
+	    this.friction.dispose();
+	    this.collision.dispose();
 	  }
 	}
 
@@ -2362,8 +2418,6 @@
 
 	class Mesh$2 {
 	  constructor(args = {}) {
-	    // if (args.scene == null) throw new Error("scene required");
-	    // if (args.id == null) throw new Error("id required");
 	    this.scene = args.scene;
 	    this.id = args.id;
 	    
