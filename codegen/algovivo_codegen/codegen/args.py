@@ -42,7 +42,19 @@ class Args:
             if i < num_args - 1:
                 s += ", "
         return s
-    
+
+    def codegen_call_with_renames(self, renames):
+        # generate call with specified arg name renames
+        # renames is a dict like {"pos": "pos1", "abc": "abc1"}
+        s = ""
+        num_args = len(self.args)
+        for i, arg in enumerate(self.args):
+            name = arg.name
+            s += renames.get(name, name)
+            if i < num_args - 1:
+                s += ", "
+        return s
+
     def codegen_enzyme_call(self):
         s = ""
         num_args = len(self.args)

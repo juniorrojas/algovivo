@@ -37,3 +37,30 @@ class Vertices:
         update_vel_args.add_arg("float*", "pos1", mut=True)
         update_vel_args.add_arg("float*", "vel1", mut=True)
         update_vel_args.add_arg("float", "h")
+
+    def get_inertia_src(self):
+        return """for (int i = 0; i < num_vertices; i++) {
+  accumulate_inertial_energy(
+    inertial_energy,
+    i,
+    pos,
+    vel0,
+    pos0,
+    h,
+    vertex_mass,
+    space_dim
+  );
+}"""
+
+    def get_optim_init_src(self):
+        return """for (int i = 0; i < num_vertices; i++) { \\
+    const auto offset = i * space_dim; \\
+    for (int j = 0; j < space_dim; j++) { \\
+      pos[offset + j] = pos0[offset + j] + h * vel0[offset + j]; \\
+    } \\
+  }"""
+
+    def get_update_vel_src(self):
+        return """// vel1 = (pos1 - pos0) / h
+  add_scaled(num_vertices * space_dim, pos1, pos0, -1.0, vel1);
+  scale_(num_vertices * space_dim, vel1, 1 / h);"""
