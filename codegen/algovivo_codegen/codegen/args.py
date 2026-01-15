@@ -44,8 +44,6 @@ class Args:
         return s
 
     def codegen_call_with_renames(self, renames):
-        # generate call with specified arg name renames
-        # renames is a dict like {"pos": "pos1", "abc": "abc1"}
         s = ""
         num_args = len(self.args)
         for i, arg in enumerate(self.args):
