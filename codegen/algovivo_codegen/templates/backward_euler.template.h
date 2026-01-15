@@ -39,6 +39,13 @@ void backward_euler_update_pos(
 }
 
 extern "C"
+void optim_init(
+  /* {{optim_init_args}} */
+) {
+  /* {{optim_init_body_fn}} */
+}
+
+extern "C"
 void backward_euler_update_vel(
   /* {{backward_euler_update_vel_args}} */
 ) {

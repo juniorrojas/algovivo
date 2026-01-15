@@ -35,8 +35,6 @@ class BackwardEuler:
         for module in self.modules:
             module.add_args(self.loss.args)
 
-        self.loss.args.add_arg("float*", "pos", differentiable=True, size="num_vertices * space_dim", convergence_stride="space_dim")
-
         for module in self.inertial_modules:
             if hasattr(module, "add_differentiable_args"):
                 module.add_differentiable_args(self.loss.args)
@@ -106,6 +104,24 @@ float potential_energy = 0.0;"""
                 if src:
                     parts.append(src)
         return " \\\n".join(parts) if parts else ""
+
+    def make_optim_init_body_fn(self):
+        parts = []
+        for module in self.inertial_modules:
+            if hasattr(module, "get_optim_init_src"):
+                src = module.get_optim_init_src()
+                if src:
+                    # remove backslash continuations for regular function body
+                    src = src.replace(" \\", "")
+                    parts.append(src)
+        return "\n".join(parts) if parts else ""
+
+    def make_optim_init_args(self):
+        optim_init_args = Args()
+        for module in self.inertial_modules:
+            if hasattr(module, "add_optim_init_args"):
+                module.add_optim_init_args(optim_init_args)
+        return optim_init_args
 
     def add_inertia(self):
         for module in self.inertial_modules:
@@ -202,8 +218,7 @@ float potential_energy = 0.0;"""
             src = template
 
             # build renames for inertial args that have *1 output buffers
-            # pos is always renamed, plus any args from inertial modules with add_differentiable_args
-            inertial_arg_renames = {"pos": "pos1"}
+            inertial_arg_renames = {}
             for module in self.inertial_modules:
                 if hasattr(module, "add_differentiable_args"):
                     temp_args = Args()
@@ -215,6 +230,13 @@ float potential_energy = 0.0;"""
                 .replace("/* {{backward_euler_update_pos_args}} */", update_pos_args.codegen_fun_signature())
                 .replace("/* {{backward_euler_update_pos_args_call}} */", update_pos_args.codegen_call_with_renames(inertial_arg_renames))
                 .replace("/* {{backward_euler_update_pos_body}} */", self.update_pos_body)
+            )
+
+            optim_init_args = self.make_optim_init_args()
+            optim_init_body_fn = self.make_optim_init_body_fn()
+            src = (src
+                .replace("/* {{optim_init_args}} */", optim_init_args.codegen_fun_signature())
+                .replace("/* {{optim_init_body_fn}} */", optim_init_body_fn)
             )
 
             update_vel_body = self.make_update_vel_body()
