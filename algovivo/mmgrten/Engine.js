@@ -74,7 +74,7 @@ class Engine {
     return this.zeros(x.shape.toArray());
   }
 
-  empty(_shape) {
+  empty(_shape, dtype = "float32") {
     let shape;
     if (_shape instanceof IntTuple) {
       shape = _shape;
@@ -89,13 +89,14 @@ class Engine {
     const x = new Tensor({
       engine: this,
       shape: shape,
-      slot: slot
+      slot: slot,
+      dtype: dtype
     });
     return x;
   }
 
-  zeros(shape) {
-    const x = this.empty(shape);
+  zeros(shape, dtype = "float32") {
+    const x = this.empty(shape, dtype);
     x.zero_();
     return x;
   }

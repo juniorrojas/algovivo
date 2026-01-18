@@ -76,6 +76,10 @@ class Slot {
     return this.toTypedArray(Float32Array);
   }
 
+  i32() {
+    return this.toTypedArray(Int32Array);
+  }
+
   u32() {
     return this.toTypedArray(Uint32Array);
   }

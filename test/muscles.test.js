@@ -23,6 +23,12 @@ test("set pos and muscles", async () => {
   expect(system.numMuscles).toBe(3);
   const expectedL0 = [1.4142135381698608, 1.4142135381698608, 2];
   expect(system.l0.toArray()).toBeCloseToArray(expectedL0);
+
+  expect(system.muscles.indices.toArray()).toEqual([
+    [0, 2],
+    [1, 2],
+    [3, 4]
+  ]);
 });
 
 test("set muscles", async () => {

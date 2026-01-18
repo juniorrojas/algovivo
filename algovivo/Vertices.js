@@ -55,19 +55,19 @@ class Vertices {
 
   get fixedVertexId() {
     if (this._fixedVertexId == null) return -1;
-    return this._fixedVertexId.u32()[0];
+    return this._fixedVertexId.typedArray()[0];
   }
 
   fixVertex(vertexId) {
     if (this._fixedVertexId == null) {
-      this._fixedVertexId = this.ten.mgr.malloc32(1);
+      this._fixedVertexId = this.ten.zeros([1], "int32");
     }
-    this._fixedVertexId.u32().set([vertexId]);
+    this._fixedVertexId.typedArray()[0] = vertexId;
   }
 
   freeVertex() {
     if (this._fixedVertexId == null) return;
-    this._fixedVertexId.free();
+    this._fixedVertexId.dispose();
     this._fixedVertexId = null;
   }
 
