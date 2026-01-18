@@ -146,36 +146,15 @@ class System {
   }
 
   getMusclesArray() {
+    console.warn("getMusclesArray() is deprecated, use muscles.indices.toArray() instead");
     if (this.numMuscles == 0) return [];
-
-    const numMuscles = this.numMuscles;
-    const musclesU32 = this.muscles.indices.typedArray();
-    const muscles = [];
-    for (let i = 0; i < numMuscles; i++) {
-      const offset = i * 2;
-      muscles.push([
-        musclesU32[offset    ],
-        musclesU32[offset + 1]
-      ]);
-    }
-    return muscles;
+    return this.muscles.indices.toArray();
   }
 
   getTrianglesArray() {
+    console.warn("getTrianglesArray() is deprecated, use triangles.indices.toArray() instead");
     if (this.numTriangles == 0) return [];
-
-    const numTriangles = this.numTriangles;
-    const trianglesU32 = this.triangles.indices.typedArray();
-    const triangles = [];
-    for (let i = 0; i < numTriangles; i++) {
-      const offset = i * 3;
-      triangles.push([
-        trianglesU32[offset    ],
-        trianglesU32[offset + 1],
-        trianglesU32[offset + 2]
-      ]);
-    }
-    return triangles;
+    return this.triangles.indices.toArray();
   }
 
   set(args) {
