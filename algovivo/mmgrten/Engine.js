@@ -95,14 +95,8 @@ class Engine {
     return x;
   }
 
-  intTensor(shape) {
-    const x = this.empty(shape, "uint32");
-    x.zero_();
-    return x;
-  }
-
-  zeros(shape) {
-    const x = this.empty(shape);
+  zeros(shape, dtype = "float32") {
+    const x = this.empty(shape, dtype);
     x.zero_();
     return x;
   }

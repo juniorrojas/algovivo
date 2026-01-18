@@ -52,7 +52,7 @@ class Triangles {
 
     if (indices) {
       if (this.indices != null) this.indices.dispose();
-      this.indices = ten.intTensor([numTriangles * this.simplexOrder]);
+      this.indices = ten.zeros([numTriangles * this.simplexOrder], "uint32");
     }
 
     if (indices != null) {
