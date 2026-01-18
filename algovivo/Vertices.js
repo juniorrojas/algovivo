@@ -60,7 +60,7 @@ class Vertices {
 
   fixVertex(vertexId) {
     if (this._fixedVertexId == null) {
-      this._fixedVertexId = this.ten.zeros([1], "uint32");
+      this._fixedVertexId = this.ten.zeros([1], "int32");
     }
     this._fixedVertexId.typedArray()[0] = vertexId;
   }

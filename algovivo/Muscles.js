@@ -36,7 +36,7 @@ class Muscles {
     if (args.k != null) this.k = args.k;
 
     if (this.indices != null) this.indices.dispose();
-    this.indices = ten.zeros([numMuscles * 2], "uint32");
+    this.indices = ten.zeros([numMuscles * 2], "int32");
 
     const musclesU32 = this.indices.typedArray();
     indices.forEach((m, i) => {

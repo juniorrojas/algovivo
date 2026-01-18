@@ -60,7 +60,7 @@ class Tensor {
   }
 
   fill_(x) {
-    this.wasmInstance.exports.fill_(this.numel, this.ptr, x);
+    this.typedArray().fill(x);
   }
 
   clamp_(args = {}) {
@@ -95,6 +95,7 @@ class Tensor {
   }
 
   typedArray() {
+    if (this.dtype === "int32") return this.slot.i32();
     if (this.dtype === "uint32") return this.slot.u32();
     return this.slot.f32();
   }
