@@ -74,3 +74,44 @@ test("set tensor with leading zero dim", async () => {
   expect(a.shape.toArray()).toEqual([0, 2, 3]);
   expect(a.toArray()).toEqual([]);
 });
+
+test("int32 tensor", async () => {
+  const ten = await utils.loadTen();
+
+  const a = ten.zeros([2, 3], "int32");
+  expect(a.dtype).toBe("int32");
+  expect(a.toArray()).toEqual([
+    [0, 0, 0],
+    [0, 0, 0]
+  ]);
+
+  a.set([0, 0], -1);
+  a.set([0, 1], 1);
+  a.set([0, 2], -2147483648); // min int32
+  a.set([1, 0], 2147483647); // max int32
+  expect(a.get([0, 0])).toBe(-1);
+  expect(a.get([0, 2])).toBe(-2147483648);
+  expect(a.get([1, 0])).toBe(2147483647);
+  expect(a.toArray()).toEqual([
+    [-1, 1, -2147483648],
+    [2147483647, 0, 0]
+  ]);
+
+  a.fill_(-1);
+  expect(a.toArray()).toEqual([
+    [-1, -1, -1],
+    [-1, -1, -1]
+  ]);
+});
+
+test("uint32 tensor", async () => {
+  const ten = await utils.loadTen();
+
+  const a = ten.zeros([3], "uint32");
+  expect(a.dtype).toBe("uint32");
+
+  a.set([0], 0);
+  a.set([1], 1);
+  a.set([2], 4294967295); // max uint32 (2^32 - 1)
+  expect(a.toArray()).toEqual([0, 1, 4294967295]);
+});
