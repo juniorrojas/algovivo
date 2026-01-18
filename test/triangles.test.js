@@ -36,6 +36,11 @@ test("set pos and triangles", async () => {
     [0, 1, 2],
     [0, 2, 3]
   ]);
+
+  expect(system.triangles.indices.toArray()).toEqual([
+    [0, 1, 2],
+    [0, 2, 3]
+  ]);
 });
 
 test("set rsi", async () => {

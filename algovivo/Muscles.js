@@ -20,7 +20,7 @@ class Muscles {
 
   get numMuscles() {
     if (this.indices == null) return 0;
-    return this.indices.numel / 2;
+    return this.indices.shape.get(0);
   }
 
   set(args = {}) {
@@ -36,13 +36,13 @@ class Muscles {
     if (args.k != null) this.k = args.k;
 
     if (this.indices != null) this.indices.dispose();
-    this.indices = ten.zeros([numMuscles * 2], "int32");
+    this.indices = ten.zeros([numMuscles, 2], "int32");
 
-    const musclesU32 = this.indices.typedArray();
+    const musclesI32 = this.indices.typedArray();
     indices.forEach((m, i) => {
       const offset = i * 2;
-      musclesU32[offset    ] = m[0];
-      musclesU32[offset + 1] = m[1];
+      musclesI32[offset    ] = m[0];
+      musclesI32[offset + 1] = m[1];
     });
 
     if (this.l0 != null) this.l0.dispose();

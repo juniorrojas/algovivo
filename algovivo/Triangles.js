@@ -21,7 +21,7 @@ class Triangles {
 
   get numElements() {
     if (this.indices == null) return 0;
-    return this.indices.numel / this.simplexOrder;
+    return this.indices.shape.get(0);
   }
 
   get numTriangles() {
@@ -52,15 +52,15 @@ class Triangles {
 
     if (indices) {
       if (this.indices != null) this.indices.dispose();
-      this.indices = ten.zeros([numTriangles * this.simplexOrder], "int32");
+      this.indices = ten.zeros([numTriangles, this.simplexOrder], "int32");
     }
 
     if (indices != null) {
-      const trianglesU32 = this.indices.typedArray();
+      const trianglesI32 = this.indices.typedArray();
       indices.forEach((t, i) => {
         const offset = i * this.simplexOrder;
         for (let j = 0; j < this.simplexOrder; j++) {
-          trianglesU32[offset + j] = t[j];
+          trianglesI32[offset + j] = t[j];
         }
       });
     }
