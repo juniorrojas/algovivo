@@ -147,9 +147,9 @@ class System {
 
   getMusclesArray() {
     if (this.numMuscles == 0) return [];
-    
+
     const numMuscles = this.numMuscles;
-    const musclesU32 = this.muscles.indices.u32();
+    const musclesU32 = this.muscles.indices.typedArray();
     const muscles = [];
     for (let i = 0; i < numMuscles; i++) {
       const offset = i * 2;
@@ -163,9 +163,9 @@ class System {
 
   getTrianglesArray() {
     if (this.numTriangles == 0) return [];
-    
+
     const numTriangles = this.numTriangles;
-    const trianglesU32 = this.triangles.indices.u32();
+    const trianglesU32 = this.triangles.indices.typedArray();
     const triangles = [];
     for (let i = 0; i < numTriangles; i++) {
       const offset = i * 3;

@@ -20,7 +20,7 @@ class Muscles {
 
   get numMuscles() {
     if (this.indices == null) return 0;
-    return this.indices.u32().length / 2;
+    return this.indices.numel / 2;
   }
 
   set(args = {}) {
@@ -31,16 +31,14 @@ class Muscles {
     const numMuscles = indices.length;
     const numMuscles0 = this.numMuscles;
 
-    const mgr = this.memoryManager;
     const ten = this.ten;
 
     if (args.k != null) this.k = args.k;
 
-    const muscles = mgr.malloc32(numMuscles * 2);
-    if (this.indices != null) this.indices.free();
-    this.indices = muscles;
+    if (this.indices != null) this.indices.dispose();
+    this.indices = ten.intTensor([numMuscles * 2]);
 
-    const musclesU32 = muscles.u32();
+    const musclesU32 = this.indices.typedArray();
     indices.forEach((m, i) => {
       const offset = i * 2;
       musclesU32[offset    ] = m[0];
@@ -113,7 +111,7 @@ class Muscles {
 
   dispose() {
     if (this.indices != null) {
-      this.indices.free();
+      this.indices.dispose();
       this.indices = null;
     }
     if (this.l0 != null) {

@@ -10,6 +10,8 @@ class Tensor {
     }
     this.engine = engine;
 
+    this.dtype = args.dtype ?? "float32";
+
     const shape = args.shape;
     if (shape == null) {
       throw new Error("shape required to create tensor");
@@ -93,6 +95,7 @@ class Tensor {
   }
 
   typedArray() {
+    if (this.dtype === "uint32") return this.slot.u32();
     return this.slot.f32();
   }
 

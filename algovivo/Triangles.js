@@ -21,7 +21,7 @@ class Triangles {
 
   get numElements() {
     if (this.indices == null) return 0;
-    return this.indices.u32().length / this.simplexOrder;
+    return this.indices.numel / this.simplexOrder;
   }
 
   get numTriangles() {
@@ -48,15 +48,15 @@ class Triangles {
       throw new Error("rsi is not consistent with the number of indices");
     }
 
-    const mgr = this.memoryManager;
     const ten = this.ten;
-    
-    const triangles = indices ? mgr.malloc32(numTriangles * this.simplexOrder) : this.indices;
-    if (indices && this.indices != null) this.indices.free();
-    this.indices = triangles;
+
+    if (indices) {
+      if (this.indices != null) this.indices.dispose();
+      this.indices = ten.intTensor([numTriangles * this.simplexOrder]);
+    }
 
     if (indices != null) {
-      const trianglesU32 = triangles.u32();
+      const trianglesU32 = this.indices.typedArray();
       indices.forEach((t, i) => {
         const offset = i * this.simplexOrder;
         for (let j = 0; j < this.simplexOrder; j++) {
@@ -105,7 +105,7 @@ class Triangles {
 
   dispose() {
     if (this.indices != null) {
-      this.indices.free();
+      this.indices.dispose();
       this.indices = null;
     }
     if (this.rsi != null) {
