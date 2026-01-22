@@ -35,7 +35,9 @@ class BackwardEuler:
         for module in self.modules:
             module.add_args(self.loss.args)
 
-        self.loss.args.add_arg("float*", "pos", differentiable=True, size="num_vertices * space_dim", convergence_stride="space_dim")
+        for module in self.inertial_modules:
+            if hasattr(module, "add_differentiable_args"):
+                module.add_differentiable_args(self.loss.args)
         
         self.loss_body = """
 float inertial_energy = 0.0;
@@ -85,20 +87,48 @@ float potential_energy = 0.0;"""
                 forward_non_differentiable_args.add_arg(arg.t, arg.name)
         return forward_non_differentiable_args
 
+    def make_update_vel_body(self):
+        parts = []
+        for module in self.inertial_modules:
+            if hasattr(module, "get_update_vel_src"):
+                src = module.get_update_vel_src()
+                if src:
+                    parts.append(src)
+        return "\n\n".join(parts) if parts else ""
+
+    def make_optim_init_body(self):
+        parts = []
+        for module in self.inertial_modules:
+            if hasattr(module, "get_optim_init_src"):
+                src = module.get_optim_init_src()
+                if src:
+                    parts.append(src)
+        return " \\\n".join(parts) if parts else ""
+
+    def make_optim_init_body_fn(self):
+        parts = []
+        for module in self.inertial_modules:
+            if hasattr(module, "get_optim_init_src"):
+                src = module.get_optim_init_src()
+                if src:
+                    # remove backslash continuations for regular function body
+                    src = src.replace(" \\", "")
+                    parts.append(src)
+        return "\n".join(parts) if parts else ""
+
+    def make_optim_init_args(self):
+        optim_init_args = Args()
+        for module in self.inertial_modules:
+            if hasattr(module, "add_optim_init_args"):
+                module.add_optim_init_args(optim_init_args)
+        return optim_init_args
+
     def add_inertia(self):
-        self.loss_body += """
-for (int i = 0; i < num_vertices; i++) {
-  accumulate_inertial_energy(
-    inertial_energy,
-    i,
-    pos,
-    vel0,
-    pos0,
-    h,
-    vertex_mass,
-    space_dim
-  );
-}"""
+        for module in self.inertial_modules:
+            if hasattr(module, "get_inertia_src"):
+                src = module.get_inertia_src()
+                if src:
+                    self.loss_body += "\n" + src
 
     def make_energy_functions(self):
         energy_fns_src = ""
@@ -171,6 +201,11 @@ for (int i = 0; i < num_vertices; i++) {
                 "/* {{optim_converged_body}} */",
                 self.loss.args.codegen_optim_converged_body()
             )
+            optim_init_body = self.make_optim_init_body()
+            src = src.replace(
+                "/* {{optim_init_body}} */",
+                optim_init_body
+            )
 
         output_filepath = csrc_dirpath.joinpath("dynamics", "optim.h")
         with open(output_filepath, "w") as f:
@@ -182,15 +217,33 @@ for (int i = 0; i < num_vertices; i++) {
 
             src = template
 
+            # build renames for inertial args that have *1 output buffers
+            inertial_arg_renames = {}
+            for module in self.inertial_modules:
+                if hasattr(module, "add_differentiable_args"):
+                    temp_args = Args()
+                    module.add_differentiable_args(temp_args)
+                    for arg in temp_args.args:
+                        if arg.differentiable:
+                            inertial_arg_renames[arg.name] = f"{arg.name}1"
             src = (src
                 .replace("/* {{backward_euler_update_pos_args}} */", update_pos_args.codegen_fun_signature())
-                .replace("/* {{backward_euler_update_pos_args_call}} */", update_pos_args.codegen_call().replace(", pos,", ", pos1,"))
+                .replace("/* {{backward_euler_update_pos_args_call}} */", update_pos_args.codegen_call_with_renames(inertial_arg_renames))
                 .replace("/* {{backward_euler_update_pos_body}} */", self.update_pos_body)
             )
 
+            optim_init_args = self.make_optim_init_args()
+            optim_init_body_fn = self.make_optim_init_body_fn()
+            src = (src
+                .replace("/* {{optim_init_args}} */", optim_init_args.codegen_fun_signature())
+                .replace("/* {{optim_init_body_fn}} */", optim_init_body_fn)
+            )
+
+            update_vel_body = self.make_update_vel_body()
             src = (src
                 .replace("/* {{backward_euler_update_vel_args}} */", update_vel_args.codegen_fun_signature())
                 .replace("/* {{backward_euler_update_vel_args_call}} */", update_vel_args.codegen_call())
+                .replace("/* {{backward_euler_update_vel_body}} */", update_vel_body)
             )
 
             src = src.replace(

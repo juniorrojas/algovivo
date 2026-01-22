@@ -1,22 +1,7 @@
 #pragma once
 
 #define _optim_init() { \
-  for (int i = 0; i < num_vertices; i++) { \
-    const auto offset = i * space_dim; \
-    for (int j = 0; j < space_dim; j++) { \
-      pos[offset + j] = pos0[offset + j] + h * vel0[offset + j]; \
-    } \
-  } \
-}
-
-extern "C"
-void optim_init(
-  int num_vertices, int space_dim,
-  float h,
-  const float* pos0, const float* vel0,
-  float* pos
-) {
-  _optim_init();
+  /* {{optim_init_body}} */ \
 }
 
 #define loss_backward() { \

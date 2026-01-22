@@ -39,20 +39,17 @@ void backward_euler_update_pos(
 }
 
 extern "C"
+void optim_init(
+  /* {{optim_init_args}} */
+) {
+  /* {{optim_init_body_fn}} */
+}
+
+extern "C"
 void backward_euler_update_vel(
   /* {{backward_euler_update_vel_args}} */
 ) {
-  // vel1 = (pos1 - pos0) / h
-  add_scaled(
-    num_vertices * space_dim,
-    pos1, pos0,
-    -1.0,
-    vel1
-  );
-  scale_(
-    num_vertices * space_dim,
-    vel1, 1 / h
-  );
+  /* {{backward_euler_update_vel_body}} */
 }
 
 extern "C"

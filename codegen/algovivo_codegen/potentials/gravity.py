@@ -26,7 +26,7 @@ for (int i = 0; i < num_vertices; i++) {
         f.args.add_arg("int", "space_dim")
         f.args.add_arg("float", "g")
         f.args.add_arg("int", "num_vertices")
-        f.args.add_arg("float*", "pos")
+        f.args.add_arg("float*", "pos", differentiable=True, size="num_vertices * space_dim")
         f.args.add_arg("float", "vertex_mass")
         f.src_body = "float potential_energy = 0.0;" + self.get_src() + "return potential_energy;"
         return f
