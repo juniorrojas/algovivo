@@ -1,3 +1,3 @@
 module.exports = {
-  NeuralFramePolicy: require("./NeuralFramePolicy")
+  MLPPolicy: require("./MLPPolicy")
 }
