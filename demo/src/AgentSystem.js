@@ -23,7 +23,7 @@ export default class AgentSystem {
     
     this.system.set(mesh);
     if (policy != null) {
-      this.policy = new this.algovivo.nn.NeuralFramePolicy({ system: this.system });
+      this.policy = new this.algovivo.nn.MLPPolicy({ system: this.system });
       this.policy.loadData(policy);
     }
   }

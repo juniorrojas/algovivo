@@ -34,7 +34,7 @@ test("neural frame policy", async () => {
   });
   expect(system.l0.toArray()).toEqual(meshData.l0);
   expect(system.rsi.toArray()).toEqual(meshData.rsi);
-  const policy = new algovivo.nn.NeuralFramePolicy({
+  const policy = new algovivo.nn.MLPPolicy({
     system: system,
     stochastic: false,
     active: true

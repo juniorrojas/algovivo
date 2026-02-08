@@ -31,7 +31,7 @@ async function main() {
     triangles: meshData.triangles,
     trianglesRsi: meshData.rsi
   });
-  const policy = new algovivo.nn.NeuralFramePolicy({
+  const policy = new algovivo.nn.MLPPolicy({
     system: system,
     active: true
   });
