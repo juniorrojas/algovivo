@@ -3,7 +3,7 @@
  * (c) 2023 Junior Rojas
  * License: MIT
  * 
- * Built from commit 96a1af708cf63e813167721f169db4a9bf4b588d
+ * Built from commit eb33b95318909f79da665a81a9780412d3eabdeb
  */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -276,6 +276,10 @@
 
 		  f32() {
 		    return this.toTypedArray(Float32Array);
+		  }
+
+		  i32() {
+		    return this.toTypedArray(Int32Array);
 		  }
 
 		  u32() {
@@ -684,6 +688,8 @@
 	    }
 	    this.engine = engine;
 
+	    this.dtype = args.dtype ?? "float32";
+
 	    const shape = args.shape;
 	    if (shape == null) {
 	      throw new Error("shape required to create tensor");
@@ -732,7 +738,7 @@
 	  }
 
 	  fill_(x) {
-	    this.wasmInstance.exports.fill_(this.numel, this.ptr, x);
+	    this.typedArray().fill(x);
 	  }
 
 	  clamp_(args = {}) {
@@ -767,6 +773,8 @@
 	  }
 
 	  typedArray() {
+	    if (this.dtype === "int32") return this.slot.i32();
+	    if (this.dtype === "uint32") return this.slot.u32();
 	    return this.slot.f32();
 	  }
 
@@ -1222,7 +1230,7 @@
 	    return this.zeros(x.shape.toArray());
 	  }
 
-	  empty(_shape) {
+	  empty(_shape, dtype = "float32") {
 	    let shape;
 	    if (_shape instanceof IntTuple) {
 	      shape = _shape;
@@ -1237,13 +1245,14 @@
 	    const x = new Tensor({
 	      engine: this,
 	      shape: shape,
-	      slot: slot
+	      slot: slot,
+	      dtype: dtype
 	    });
 	    return x;
 	  }
 
-	  zeros(shape) {
-	    const x = this.empty(shape);
+	  zeros(shape, dtype = "float32") {
+	    const x = this.empty(shape, dtype);
 	    x.zero_();
 	    return x;
 	  }
@@ -1331,19 +1340,19 @@
 
 	  get fixedVertexId() {
 	    if (this._fixedVertexId == null) return -1;
-	    return this._fixedVertexId.u32()[0];
+	    return this._fixedVertexId.typedArray()[0];
 	  }
 
 	  fixVertex(vertexId) {
 	    if (this._fixedVertexId == null) {
-	      this._fixedVertexId = this.ten.mgr.malloc32(1);
+	      this._fixedVertexId = this.ten.zeros([1], "int32");
 	    }
-	    this._fixedVertexId.u32().set([vertexId]);
+	    this._fixedVertexId.typedArray()[0] = vertexId;
 	  }
 
 	  freeVertex() {
 	    if (this._fixedVertexId == null) return;
-	    this._fixedVertexId.free();
+	    this._fixedVertexId.dispose();
 	    this._fixedVertexId = null;
 	  }
 
@@ -1512,7 +1521,7 @@
 
 	  get numMuscles() {
 	    if (this.indices == null) return 0;
-	    return this.indices.u32().length / 2;
+	    return this.indices.shape.get(0);
 	  }
 
 	  set(args = {}) {
@@ -1523,20 +1532,18 @@
 	    const numMuscles = indices.length;
 	    const numMuscles0 = this.numMuscles;
 
-	    const mgr = this.memoryManager;
 	    const ten = this.ten;
 
 	    if (args.k != null) this.k = args.k;
 
-	    const muscles = mgr.malloc32(numMuscles * 2);
-	    if (this.indices != null) this.indices.free();
-	    this.indices = muscles;
+	    if (this.indices != null) this.indices.dispose();
+	    this.indices = ten.zeros([numMuscles, 2], "int32");
 
-	    const musclesU32 = muscles.u32();
+	    const musclesI32 = this.indices.typedArray();
 	    indices.forEach((m, i) => {
 	      const offset = i * 2;
-	      musclesU32[offset    ] = m[0];
-	      musclesU32[offset + 1] = m[1];
+	      musclesI32[offset    ] = m[0];
+	      musclesI32[offset + 1] = m[1];
 	    });
 
 	    if (this.l0 != null) this.l0.dispose();
@@ -1605,7 +1612,7 @@
 
 	  dispose() {
 	    if (this.indices != null) {
-	      this.indices.free();
+	      this.indices.dispose();
 	      this.indices = null;
 	    }
 	    if (this.l0 != null) {
@@ -1644,7 +1651,7 @@
 
 	  get numElements() {
 	    if (this.indices == null) return 0;
-	    return this.indices.u32().length / this.simplexOrder;
+	    return this.indices.shape.get(0);
 	  }
 
 	  get numTriangles() {
@@ -1671,19 +1678,19 @@
 	      throw new Error("rsi is not consistent with the number of indices");
 	    }
 
-	    const mgr = this.memoryManager;
 	    const ten = this.ten;
-	    
-	    const triangles = indices ? mgr.malloc32(numTriangles * this.simplexOrder) : this.indices;
-	    if (indices && this.indices != null) this.indices.free();
-	    this.indices = triangles;
+
+	    if (indices) {
+	      if (this.indices != null) this.indices.dispose();
+	      this.indices = ten.zeros([numTriangles, this.simplexOrder], "int32");
+	    }
 
 	    if (indices != null) {
-	      const trianglesU32 = triangles.u32();
+	      const trianglesI32 = this.indices.typedArray();
 	      indices.forEach((t, i) => {
 	        const offset = i * this.simplexOrder;
 	        for (let j = 0; j < this.simplexOrder; j++) {
-	          trianglesU32[offset + j] = t[j];
+	          trianglesI32[offset + j] = t[j];
 	        }
 	      });
 	    }
@@ -1728,7 +1735,7 @@
 
 	  dispose() {
 	    if (this.indices != null) {
-	      this.indices.free();
+	      this.indices.dispose();
 	      this.indices = null;
 	    }
 	    if (this.rsi != null) {
@@ -1938,36 +1945,15 @@
 	  }
 
 	  getMusclesArray() {
+	    console.warn("getMusclesArray() is deprecated, use muscles.indices.toArray() instead");
 	    if (this.numMuscles == 0) return [];
-	    
-	    const numMuscles = this.numMuscles;
-	    const musclesU32 = this.muscles.indices.u32();
-	    const muscles = [];
-	    for (let i = 0; i < numMuscles; i++) {
-	      const offset = i * 2;
-	      muscles.push([
-	        musclesU32[offset    ],
-	        musclesU32[offset + 1]
-	      ]);
-	    }
-	    return muscles;
+	    return this.muscles.indices.toArray();
 	  }
 
 	  getTrianglesArray() {
+	    console.warn("getTrianglesArray() is deprecated, use triangles.indices.toArray() instead");
 	    if (this.numTriangles == 0) return [];
-	    
-	    const numTriangles = this.numTriangles;
-	    const trianglesU32 = this.triangles.indices.u32();
-	    const triangles = [];
-	    for (let i = 0; i < numTriangles; i++) {
-	      const offset = i * 3;
-	      triangles.push([
-	        trianglesU32[offset    ],
-	        trianglesU32[offset + 1],
-	        trianglesU32[offset + 2]
-	      ]);
-	    }
-	    return triangles;
+	    return this.triangles.indices.toArray();
 	  }
 
 	  set(args) {
@@ -3988,7 +3974,7 @@
 	  return mean + z * stdDev;
 	}
 
-	class NeuralFramePolicy {
+	class MLPPolicy {
 	  constructor(args = {}) {
 	    if (args.system == null) {
 	      throw new Error("system required to create policy");
@@ -4111,10 +4097,10 @@
 	  }
 	}
 
-	var NeuralFramePolicy_1 = NeuralFramePolicy;
+	var MLPPolicy_1 = MLPPolicy;
 
 	var nn$1 = {
-	  NeuralFramePolicy: NeuralFramePolicy_1
+	  MLPPolicy: MLPPolicy_1
 	};
 
 	const System = System_1;
