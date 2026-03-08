@@ -103,6 +103,60 @@ $$
 
 More details about this and other energy functions used in the simulation can be found [here](https://arxiv.org/abs/2102.05791).
 
+## neural controller
+
+<img src="media/locomotion.gif" width="250px">
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+</head>
+<body>
+  <script type="module">
+    import algovivo from "https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@9f68b2c/build/algovivo.min.mjs";
+
+    async function loadWasm() {
+      const response = await fetch("https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@9f68b2c/build/algovivo.wasm");
+      const wasm = await WebAssembly.instantiateStreaming(response);
+      return wasm.instance;
+    }
+
+    async function main() {
+      const meshData = await (await fetch("https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@a5e8c73/demo/public/data/biped/mesh.json")).json();
+
+      const policyData = await (await fetch("https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@a5e8c73/demo/public/data/biped/policy.json")).json();
+
+      const system = new algovivo.System({
+        wasmInstance: await loadWasm()
+      });
+      system.set(meshData);
+
+      const policy = new algovivo.nn.MLPPolicy({ system, active: true });
+      policy.loadData(policyData);
+
+      const viewport = new algovivo.SystemViewport({
+        system,
+        sortedVertexIds: meshData.sorted_vertex_ids,
+        vertexDepths: meshData.depth
+      });
+      document.body.appendChild(viewport.domElement);
+      viewport.render();
+
+      setInterval(() => {
+        policy.step();
+        system.step();
+        viewport.render();
+      }, 1000 / 30);
+    }
+
+    main();
+  </script>
+</body>
+</html>
+```
+
 ## build from source
 
 ### build JS
