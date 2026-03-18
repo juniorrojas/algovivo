@@ -121,6 +121,10 @@ class MemoryManager {
 
   free(ptr) {
     const slot = this.ptrToSlot.get(ptr);
+    if (slot == null) {
+      throw new Error(`no slot found for ptr ${ptr}`);
+    }
+    this.ptrToSlot.delete(ptr);
     slot.free();
   }
 }
