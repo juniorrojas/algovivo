@@ -7,8 +7,6 @@ test("malloc free with non-numeric heapBase", () => {
   const mgr = new algovivo.mmgrten.mmgr.MemoryManager(buffer, heapBase);
 
   const ptr = mgr.malloc(32);
-  // WASM receives ptr coerced to i32, then passes it back as a number
   const numericPtr = Number(ptr);
-  // this is what the WASM free import does
   mgr.free(numericPtr);
 });
