@@ -16,7 +16,7 @@ class Engine {
     }
     this.wasmInstance = args.wasmInstance;
     const arr = args.wasmInstance.exports.memory.buffer;
-    const mgr = new mmgr.MemoryManager(arr, args.wasmInstance.exports.__heap_base);
+    const mgr = new mmgr.MemoryManager(arr, Number(args.wasmInstance.exports.__heap_base));
     this.mgr = mgr;
 
     this.functional = this.F = new Functional({

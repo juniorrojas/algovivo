@@ -6,6 +6,7 @@ class MemoryManager {
     this.array = array;
 
     if (heapBase == null) heapBase = 0;
+    else heapBase = Number(heapBase);
 
     this.ptrToSlot = new Map();
 
@@ -121,6 +122,10 @@ class MemoryManager {
 
   free(ptr) {
     const slot = this.ptrToSlot.get(ptr);
+    if (slot == null) {
+      throw new Error(`no slot found for ptr ${ptr}`);
+    }
+    this.ptrToSlot.delete(ptr);
     slot.free();
   }
 }
