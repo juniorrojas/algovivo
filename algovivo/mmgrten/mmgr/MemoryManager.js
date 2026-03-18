@@ -6,6 +6,7 @@ class MemoryManager {
     this.array = array;
 
     if (heapBase == null) heapBase = 0;
+    else heapBase = Number(heapBase);
 
     this.ptrToSlot = new Map();
 
