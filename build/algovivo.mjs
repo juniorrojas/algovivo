@@ -3,7 +3,7 @@
  * (c) 2023 Junior Rojas
  * License: MIT
  * 
- * Built from commit e1aa44cc225f7caad6112dfce52620ab1fae2f63
+ * Built from commit 03a651030349592258a70d4e079daf3fba35593f
  */
 function getDefaultExportFromCjs (x) {
 	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
@@ -342,6 +342,7 @@ class MemoryManager {
     this.array = array;
 
     if (heapBase == null) heapBase = 0;
+    else heapBase = Number(heapBase);
 
     this.ptrToSlot = new Map();
 
@@ -457,6 +458,10 @@ class MemoryManager {
 
   free(ptr) {
     const slot = this.ptrToSlot.get(ptr);
+    if (slot == null) {
+      throw new Error(`no slot found for ptr ${ptr}`);
+    }
+    this.ptrToSlot.delete(ptr);
     slot.free();
   }
 }
@@ -1166,7 +1171,7 @@ class Engine$1 {
     }
     this.wasmInstance = args.wasmInstance;
     const arr = args.wasmInstance.exports.memory.buffer;
-    const mgr = new mmgr.MemoryManager(arr, args.wasmInstance.exports.__heap_base);
+    const mgr = new mmgr.MemoryManager(arr, Number(args.wasmInstance.exports.__heap_base));
     this.mgr = mgr;
 
     this.functional = this.F = new Functional({
