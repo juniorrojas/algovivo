@@ -3,7 +3,7 @@
  * (c) 2023 Junior Rojas
  * License: MIT
  * 
- * Built from commit 03a651030349592258a70d4e079daf3fba35593f
+ * Built from commit 04adf909818f3ac4ae69ded2897acbf2827e9f54
  */
 function getDefaultExportFromCjs (x) {
 	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
@@ -3804,8 +3804,8 @@ class SystemViewport {
   render() {
     if (this.needsMeshUpdate == null || this.needsMeshUpdate) {
       this._updateMesh({
-        triangles: this.system.getTrianglesArray(),
-        muscles: this.system.getMusclesArray()
+        triangles: this.system.triangles.indices.toArray(),
+        muscles: this.system.muscles.indices.toArray()
       });
       this.needsMeshUpdate = false;
     }
