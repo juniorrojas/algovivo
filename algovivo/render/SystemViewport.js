@@ -191,8 +191,8 @@ class SystemViewport {
   render() {
     if (this.needsMeshUpdate == null || this.needsMeshUpdate) {
       this._updateMesh({
-        triangles: this.system.getTrianglesArray(),
-        muscles: this.system.getMusclesArray()
+        triangles: this.system.triangles.indices.toArray(),
+        muscles: this.system.muscles.indices.toArray()
       });
       this.needsMeshUpdate = false;
     }

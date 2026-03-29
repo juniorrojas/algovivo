@@ -31,7 +31,7 @@ test("set pos and triangles", async () => {
   ];
   expect(system.rsi.toArray()).toBeCloseToArray(expectedRsi);
 
-  const trianglesArray = system.getTrianglesArray();
+  const trianglesArray = system.triangles.indices.toArray();
   expect(trianglesArray).toEqual([
     [0, 1, 2],
     [0, 2, 3]
