@@ -162,13 +162,13 @@ class System {
 
     this.setMuscles({
       indices: args.muscles ?? [],
-      l0: args.musclesL0,
+      l0: args.musclesL0 ?? args.l0,
       k: args.musclesK
     });
 
     this.setTriangles({
       indices: args.triangles ?? [],
-      rsi: args.trianglesRsi
+      rsi: args.trianglesRsi ?? args.rsi
     });
   }
 
