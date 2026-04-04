@@ -3,7 +3,7 @@
  * (c) 2023 Junior Rojas
  * License: MIT
  * 
- * Built from commit 04adf909818f3ac4ae69ded2897acbf2827e9f54
+ * Built from commit 69620393aafe556d96e9a9be9945d88132e7ff2f
  */
 (function (global, factory) {
 	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -1966,13 +1966,13 @@
 
 	    this.setMuscles({
 	      indices: args.muscles ?? [],
-	      l0: args.musclesL0,
+	      l0: args.musclesL0 ?? args.l0,
 	      k: args.musclesK
 	    });
 
 	    this.setTriangles({
 	      indices: args.triangles ?? [],
-	      rsi: args.trianglesRsi
+	      rsi: args.trianglesRsi ?? args.rsi
 	    });
 	  }
 
