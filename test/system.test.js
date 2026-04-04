@@ -50,3 +50,22 @@ test("step with fixed vertex", async () => {
   expect(p[1][0]).toEqual(5);
   expect(p[1][1]).toBeLessThan(6);
 });
+
+test("set l0 and rsi", async () => {
+  const ten = await utils.loadTen();
+  const system = new algovivo.System({ ten });
+  system.set({
+    pos: [
+      [0, 0],
+      [2, 0],
+      [1, 1]
+    ],
+    muscles: [[0, 1]],
+    l0: [5.0],
+    triangles: [[0, 1, 2]],
+    rsi: [[[1, 0], [0, 1]]]
+  });
+
+  expect(system.l0.toArray()).toBeCloseToArray([5.0]);
+  expect(system.rsi.toArray()).toBeCloseToArray([[[1, 0], [0, 1]]]);
+});
