@@ -43,7 +43,7 @@ jobs:
     if: github.event_name == 'workflow_dispatch' && inputs.push_to_build_branch == true
     steps:
       - name: Clone repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Create branch if it does not exist
         run: |
@@ -63,7 +63,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Clone src branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ env.SRC_BRANCH }}
 
@@ -77,7 +77,7 @@ jobs:
             ./build.sh
 
       - name: Upload WASM
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ${{ env.LIB_NAME }}.wasm
           path: ${{ env.BUILD_DIRNAME }}/${{ env.LIB_NAME }}.wasm
@@ -93,7 +93,7 @@ jobs:
     runs-on: ${{ matrix.runner }}
     steps:
       - name: Clone src branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ env.SRC_BRANCH }}
 
@@ -110,7 +110,7 @@ jobs:
           mv ${{ env.BUILD_DIRNAME }}/${{ env.LIB_NAME }}.so ${{ env.BUILD_DIRNAME }}/${{ env.LIB_NAME }}.${{ matrix.arch }}.so
 
       - name: Upload dynamic lib
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: ${{ env.LIB_NAME }}.${{ matrix.arch }}.so
           path: ${{ env.BUILD_DIRNAME }}/${{ env.LIB_NAME }}.${{ matrix.arch }}.so
@@ -119,14 +119,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Clone src branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ env.SRC_BRANCH }}
 
       - name: Set up node 22
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: 24
 
       - name: Build lib
         run: |
@@ -134,7 +134,7 @@ jobs:
           npm run build
 
       - name: Upload lib build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: build-js
           path: ${{ env.BUILD_DIRNAME }}/
@@ -145,25 +145,25 @@ jobs:
     if: github.event_name == 'workflow_dispatch' && inputs.push_to_build_branch == true
     steps:
       - name: Download WASM build
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: ${{ env.LIB_NAME }}.wasm
           path: ${{ env.BUILD_DIRNAME }}/
 
       - name: Download dynamic lib (amd64)
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: ${{ env.LIB_NAME }}.amd64.so
           path: ${{ env.BUILD_DIRNAME }}/native/
 
       - name: Download dynamic lib (arm64)
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: ${{ env.LIB_NAME }}.arm64.so
           path: ${{ env.BUILD_DIRNAME }}/native/
 
       - name: Download JS build
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with:
           name: build-js
           path: ${{ env.BUILD_DIRNAME }}/
@@ -176,7 +176,7 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Clone build branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ env.BUILD_BRANCH }}
           path: ${{ env.BUILD_BRANCH_REPO_DIRNAME }}

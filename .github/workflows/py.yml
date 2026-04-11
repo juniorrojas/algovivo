@@ -17,12 +17,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Clone repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up node 22
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: 24
 
       - name: Build JS
         run: |
@@ -40,7 +40,7 @@ jobs:
             ./build.sh
 
       - name: Set up python 3.11
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: 3.11
       
@@ -86,7 +86,7 @@ jobs:
           ffmpeg -framerate 30 -i frames.out/%d.png -pix_fmt yuv420p video.out.mp4 -y
 
       - name: Upload trajectory video
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: video
           path: video.out.mp4
