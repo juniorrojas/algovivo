@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Clone repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Build WASM
         run: |
@@ -37,7 +37,7 @@ jobs:
             ./build.sh
 
       - name: Upload WASM
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: algovivo.wasm
           path: build/algovivo.wasm
@@ -45,10 +45,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Clone repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up node 22
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 22
 
@@ -58,7 +58,7 @@ jobs:
           npm run build
 
       - name: Upload lib build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: build
           path: ./build
@@ -68,22 +68,22 @@ jobs:
     needs: [build-wasm, build-js]
     steps:
       - name: Clone repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Download WASM build
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: algovivo.wasm
           path: build/
 
       - name: Download JS build
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: build
           path: ./build
 
       - name: Set up node 22
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 22
 
@@ -94,7 +94,7 @@ jobs:
           npm run build
 
       - name: Upload demo build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: demo-public
           path: ${{ env.DEMO_PUBLIC_DIRNAME }}
@@ -104,25 +104,25 @@ jobs:
     needs: [build-demo]
     steps:
       - name: Clone repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: List demo public dir before build
         run: ls -l ${{ env.DEMO_PUBLIC_DIRNAME }}
 
       - name: Download WASM build
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: algovivo.wasm
           path: build/
 
       - name: Download JS build
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: build
           path: ./build
 
       - name: Download demo build
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: demo-public
           path: ${{ env.DEMO_PUBLIC_DIRNAME }}
@@ -131,7 +131,7 @@ jobs:
         run: ls -l ${{ env.DEMO_PUBLIC_DIRNAME }}
 
       - name: Set up node 22
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 22
 
@@ -142,7 +142,7 @@ jobs:
           npm test
 
       - name: Upload demo screenshot
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: screenshot
           path: ./demo/test/screenshot.out.png
@@ -151,7 +151,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Clone repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Create branch if it does not exist
         run: |
@@ -172,19 +172,19 @@ jobs:
     needs: [init-deploy-branch, build-demo]
     steps:
       - name: Clone repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: List demo public dir
         run: ls -l ${{ env.DEMO_PUBLIC_DIRNAME }}
 
       - name: Download WASM build
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: algovivo.wasm
           path: build/
 
       - name: Download demo build
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: demo-public
           path: ${{ env.DEMO_PUBLIC_DIRNAME }}
@@ -193,7 +193,7 @@ jobs:
         run: ls -l ${{ env.DEMO_PUBLIC_DIRNAME }}
 
       - name: Clone deploy branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           ref: ${{ env.DEPLOY_BRANCH }}
           path: ${{ env.DEPLOY_DIRNAME }}
@@ -203,7 +203,7 @@ jobs:
           ${{ env.DEPLOY_LOCAL_SCRIPT }} --deploy-dirname ${{ env.DEPLOY_DIRNAME }}
 
       - name: Upload deployment
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: deployment
           path: ${{ env.DEPLOY_DIRNAME }}

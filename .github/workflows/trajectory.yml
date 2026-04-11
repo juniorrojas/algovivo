@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Clone repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Build WASM
         run: |
@@ -29,7 +29,7 @@ jobs:
             ./build.sh
 
       - name: Upload WASM
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: algovivo.wasm
           path: build/algovivo.wasm
@@ -41,16 +41,16 @@ jobs:
       TRAJECTORY_OUTPUT_DIRNAME: trajectory.out
     steps:
       - name: Clone repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Download WASM build
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: algovivo.wasm
           path: build/
 
       - name: Set up node 22
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 22
 
@@ -67,7 +67,7 @@ jobs:
             -o ${{ env.TRAJECTORY_OUTPUT_DIRNAME }}
 
       - name: Upload trajectory output
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: trajectory
           path: ${{ env.TRAJECTORY_OUTPUT_DIRNAME }}
@@ -85,17 +85,17 @@ jobs:
     needs: build-wasm
     steps:
       - name: Clone repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Download WASM build
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: algovivo.wasm
           path: build/
 
 
       - name: Set up node 22
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: 22
 
@@ -129,7 +129,7 @@ jobs:
           ffmpeg -framerate 30 -i frames.out/%d.png -pix_fmt yuv420p video.out.mp4 -y
 
       - name: Upload trajectory video
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: video
           path: video.out.mp4
