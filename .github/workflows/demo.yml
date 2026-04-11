@@ -50,7 +50,7 @@ jobs:
       - name: Set up node 22
         uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: 24
 
       - name: Build lib
         run: |
@@ -85,7 +85,7 @@ jobs:
       - name: Set up node 22
         uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: 24
 
       - name: Build demo
         run: |
@@ -133,7 +133,7 @@ jobs:
       - name: Set up node 22
         uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: 24
 
       - name: Test demo
         run: |
