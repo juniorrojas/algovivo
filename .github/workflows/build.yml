@@ -145,25 +145,25 @@ jobs:
     if: github.event_name == 'workflow_dispatch' && inputs.push_to_build_branch == true
     steps:
       - name: Download WASM build
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: ${{ env.LIB_NAME }}.wasm
           path: ${{ env.BUILD_DIRNAME }}/
 
       - name: Download dynamic lib (amd64)
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: ${{ env.LIB_NAME }}.amd64.so
           path: ${{ env.BUILD_DIRNAME }}/native/
 
       - name: Download dynamic lib (arm64)
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: ${{ env.LIB_NAME }}.arm64.so
           path: ${{ env.BUILD_DIRNAME }}/native/
 
       - name: Download JS build
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: build-js
           path: ${{ env.BUILD_DIRNAME }}/

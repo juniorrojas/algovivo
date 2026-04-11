@@ -71,13 +71,13 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Download WASM build
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: algovivo.wasm
           path: build/
 
       - name: Download JS build
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: build
           path: ./build
@@ -110,19 +110,19 @@ jobs:
         run: ls -l ${{ env.DEMO_PUBLIC_DIRNAME }}
 
       - name: Download WASM build
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: algovivo.wasm
           path: build/
 
       - name: Download JS build
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: build
           path: ./build
 
       - name: Download demo build
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: demo-public
           path: ${{ env.DEMO_PUBLIC_DIRNAME }}
@@ -178,13 +178,13 @@ jobs:
         run: ls -l ${{ env.DEMO_PUBLIC_DIRNAME }}
 
       - name: Download WASM build
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: algovivo.wasm
           path: build/
 
       - name: Download demo build
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: demo-public
           path: ${{ env.DEMO_PUBLIC_DIRNAME }}

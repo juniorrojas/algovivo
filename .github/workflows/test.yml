@@ -42,7 +42,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Download WASM build
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: algovivo.wasm
           path: build/
