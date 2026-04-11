@@ -1,4 +1,4 @@
-import algovivo from "../../build/algovivo.mjs";
+import * as algovivo from "../../build/algovivo.mjs";
 import BrainButton from "./BrainButton.js";
 import { initStyle } from "./ui.js";
 import AgentViewport from "./AgentViewport.js";
