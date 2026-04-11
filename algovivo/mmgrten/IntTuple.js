@@ -1,5 +1,3 @@
-// const mmgr = require("./mmgr");
-
 export default class IntTuple {
   constructor(args = {}) {
     const engine = args.engine;
