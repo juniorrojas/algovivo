@@ -1,4 +1,4 @@
-const Engine = require("./Engine");
+import Engine from "./Engine.js";
 
 function engine(args = {}) {
   const ten = new Engine({
@@ -7,10 +7,11 @@ function engine(args = {}) {
   return ten;
 }
 
-module.exports = {
-  engine: engine,
-  Engine: Engine,
-  Tensor: require("./Tensor"),
-  mmgr: require("./mmgr"),
-  utils: require("./utils")
-};
+export { engine, Engine };
+export { default as Tensor } from "./Tensor.js";
+
+import * as mmgr from "./mmgr/index.js";
+export { mmgr };
+
+import * as utils from "./utils.js";
+export { utils };

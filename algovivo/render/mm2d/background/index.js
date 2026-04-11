@@ -1,4 +1,2 @@
-module.exports = {
-  Grid: require("./Grid"),
-  Background: require("./Background")
-}
+export { default as Grid } from "./Grid.js";
+export { default as Background } from "./Background.js";

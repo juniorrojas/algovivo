@@ -1,6 +1,6 @@
-const Module = require("./Module");
+import Module from "./Module.js";
 
-class Tanh extends Module {
+export default class Tanh extends Module {
   constructor(nn) {
     super();
     this.nn = nn;
@@ -21,5 +21,3 @@ class Tanh extends Module {
     if (this.output != null) this.output.dispose();
   }
 }
-
-module.exports = Tanh;

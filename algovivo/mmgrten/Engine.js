@@ -1,11 +1,11 @@
-const mmgr = require("./mmgr");
-const utils = require("./utils");
-const Tensor = require("./Tensor");
-const IntTuple = require("./IntTuple");
-const Functional = require("./Functional");
-const nn = require("./nn");
+import { MemoryManager } from "./mmgr/index.js";
+import * as utils from "./utils.js";
+import Tensor from "./Tensor.js";
+import IntTuple from "./IntTuple.js";
+import Functional from "./Functional.js";
+import nn from "./nn/index.js";
 
-class Engine {
+export default class Engine {
   constructor(args = {}) {
     if (args.wasmInstance != null) this.init(args);
   }
@@ -16,7 +16,7 @@ class Engine {
     }
     this.wasmInstance = args.wasmInstance;
     const arr = args.wasmInstance.exports.memory.buffer;
-    const mgr = new mmgr.MemoryManager(arr, Number(args.wasmInstance.exports.__heap_base));
+    const mgr = new MemoryManager(arr, Number(args.wasmInstance.exports.__heap_base));
     this.mgr = mgr;
 
     this.functional = this.F = new Functional({
@@ -107,5 +107,3 @@ class Engine {
     return x;
   }
 }
-
-module.exports = Engine;

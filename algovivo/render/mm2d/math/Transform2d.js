@@ -1,7 +1,7 @@
-const Matrix2x2 = require("./Matrix2x2");
-const Vec2 = require("./Vec2");
+import Matrix2x2 from "./Matrix2x2.js";
+import * as Vec2 from "./Vec2.js";
 
-class Transform2d {
+export default class Transform2d {
   constructor() {
     this.translation = [0, 0];
     this.linear = new Matrix2x2(
@@ -37,5 +37,3 @@ class Transform2d {
     ];
   }
 }
-
-module.exports = Transform2d;

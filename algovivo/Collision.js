@@ -1,4 +1,4 @@
-class Collision {
+export default class Collision {
   constructor(args = {}) {
     this.k = args.k ?? Math.fround(14000);
   }
@@ -9,5 +9,3 @@ class Collision {
 
   dispose() {}
 }
-
-module.exports = Collision;

@@ -1,4 +1,4 @@
-class AABB {
+export default class AABB {
   constructor(args = {}) {
     if (args.x0 == null) throw new Error("x0 required");
     if (args.y0 == null) throw new Error("y0 required");
@@ -38,5 +38,3 @@ class AABB {
     ];
   }
 }
-
-module.exports = AABB;

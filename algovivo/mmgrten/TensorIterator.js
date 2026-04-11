@@ -1,6 +1,6 @@
-const IntTuple = require("./IntTuple");
+import IntTuple from "./IntTuple.js";
 
-class TensorIterator {
+export default class TensorIterator {
   constructor(shape) {
     if (shape == null) throw new Error("shape required");
     if (!(shape instanceof IntTuple)) {
@@ -39,5 +39,3 @@ class TensorIterator {
     }
   }
 }
-
-module.exports = TensorIterator;

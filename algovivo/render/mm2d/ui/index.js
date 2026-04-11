@@ -1,4 +1,3 @@
-module.exports = {
-  cursorUtils: require("./cursorUtils"),
-  DragBehavior: require("./DragBehavior")
-};
+import * as cursorUtils from "./cursorUtils.js";
+export { cursorUtils };
+export { default as DragBehavior } from "./DragBehavior.js";

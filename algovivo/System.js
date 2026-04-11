@@ -1,12 +1,12 @@
-const mmgrten = require("./mmgrten");
-const Vertices = require("./Vertices");
-const Muscles = require("./Muscles");
-const Triangles = require("./Triangles");
-const Gravity = require("./Gravity");
-const Friction = require("./Friction");
-const Collision = require("./Collision");
+import { Engine } from "./mmgrten/index.js";
+import Vertices from "./Vertices.js";
+import Muscles from "./Muscles.js";
+import Triangles from "./Triangles.js";
+import Gravity from "./Gravity.js";
+import Friction from "./Friction.js";
+import Collision from "./Collision.js";
 
-class System {
+export default class System {
   constructor(args = {}) {
     let ten;
     if (args.ten == null) {
@@ -14,7 +14,7 @@ class System {
       if (wasmInstance == null) {
         throw new Error("wasmInstance required");
       }
-      ten = new mmgrten.Engine({
+      ten = new Engine({
         wasmInstance: args.wasmInstance
       });
       this.ten = ten;
@@ -22,7 +22,7 @@ class System {
       ten = args.ten;
       this.ten = ten;
     }
-    
+
     this.h = 0.033;
     this.gravity = new Gravity();
 
@@ -192,7 +192,7 @@ class System {
   step() {
     const args = this.toStepArgs();
     this.wasmInstance.exports.backward_euler_update(...args);
-    
+
     if (this.numVertices != 0) {
       this.vertices.pos0.slot.f32().set(this.vertices.pos1.slot.f32());
       this.vertices.vel0.slot.f32().set(this.vertices.vel1.slot.f32());
@@ -208,5 +208,3 @@ class System {
     this.collision.dispose();
   }
 }
-
-module.exports = System;

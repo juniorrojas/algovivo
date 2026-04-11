@@ -1,6 +1,6 @@
-const cursorUtils = require("./cursorUtils");
+import * as cursorUtils from "./cursorUtils.js";
 
-class DragBehavior {
+export default class DragBehavior {
   constructor(args = {}) {
     this._dragging = false;
 
@@ -49,7 +49,7 @@ class DragBehavior {
     }
     domElement.addEventListener("mousedown", onDomCursorDown, { passive: false });
     domElement.addEventListener("touchstart", onDomCursorDown, { passive: false });
-    
+
     const onDomCursorMove = (event) => {
       const domCursor = cursorUtils.computeDomCursor(event, domElement);
       this.domCursorMove(domCursor, event);
@@ -67,5 +67,3 @@ class DragBehavior {
     window.addEventListener("touchcancel", onDomCursorUp);
   }
 }
-
-module.exports = DragBehavior;

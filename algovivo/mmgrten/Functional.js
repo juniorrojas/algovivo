@@ -1,4 +1,4 @@
-class Functional {
+export default class Functional {
   constructor(args = {}) {
     const engine = this.engine = args.engine;
     this.wasmInstance = engine.wasmInstance;
@@ -45,11 +45,6 @@ class Functional {
 
   tanh(a, b) {
     // TODO c++ version
-    // this.wasmInstance.exports.tanh(
-    //   a.numel,
-    //   a.ptr,
-    //   b.ptr
-    // );
     const n = a.numel;
     const _a = a.typedArray();
     const _b = b.typedArray();
@@ -57,7 +52,7 @@ class Functional {
       _b[i] = Math.tanh(_a[i]);
     }
   }
-  
+
   add(a, b, c) {
     this.wasmInstance.exports.add(
       a.numel,
@@ -85,5 +80,3 @@ class Functional {
     );
   }
 }
-
-module.exports = Functional;

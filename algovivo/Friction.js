@@ -1,4 +1,4 @@
-class Friction {
+export default class Friction {
   constructor(args = {}) {
     this.k = args.k ?? Math.fround(300);
   }
@@ -9,5 +9,3 @@ class Friction {
 
   dispose() {}
 }
-
-module.exports = Friction;

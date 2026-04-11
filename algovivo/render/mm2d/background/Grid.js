@@ -55,7 +55,7 @@ function makeGridData(args = {}) {
   return { x, lineIndices, lineWidths };
 }
 
-class Grid {
+export default class Grid {
   constructor(args = {}) {
     if (args.scene == null) {
       throw new Error("scene required");
@@ -66,7 +66,7 @@ class Grid {
     const mesh = this.mesh = args.scene.addMesh();
 
     this.set(args);
-    
+
     mesh.setCustomAttribute("translation", [0, 0]);
 
     mesh.pointShader.renderPoint = () => {}
@@ -137,5 +137,3 @@ class Grid {
     }
   }
 }
-
-module.exports = Grid;

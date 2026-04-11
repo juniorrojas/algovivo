@@ -1,4 +1,4 @@
-class Muscles {
+export default class Muscles {
   constructor(args = {}) {
     const ten = args.ten;
     if (ten == null) throw new Error("ten required");
@@ -124,5 +124,3 @@ class Muscles {
     }
   }
 }
-
-module.exports = Muscles;

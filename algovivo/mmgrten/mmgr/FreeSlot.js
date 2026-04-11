@@ -1,6 +1,6 @@
-const Slot = require("./Slot");
+import Slot from "./Slot.js";
 
-class FreeSlot extends Slot {
+export default class FreeSlot extends Slot {
   constructor(args = {}) {
     super(args);
   }
@@ -36,5 +36,3 @@ class FreeSlot extends Slot {
     return merged;
   }
 }
-
-module.exports = FreeSlot;

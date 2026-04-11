@@ -1,4 +1,4 @@
-class Vertices {
+export default class Vertices {
   constructor(args = {}) {
     const ten = args.ten;
     if (ten == null) throw new Error("ten required");
@@ -91,7 +91,7 @@ class Vertices {
     const numVertices = this.numVertices;
     const spaceDim = this.spaceDim;
     const ten = this.ten;
-    
+
     // TODO only allocate new memory if necessary
     const posGrad = ten.zeros([numVertices, spaceDim]);
     if (this.posGrad != null) this.posGrad.dispose();
@@ -112,7 +112,7 @@ class Vertices {
 
   set(pos) {
     const ten = this.ten;
-    
+
     const spaceDim = this.spaceDim;
 
     if (pos == null) throw new Error("pos required");
@@ -141,12 +141,12 @@ class Vertices {
     const ten = this.ten;
     const numVertices0 = this.numVertices;
     const spaceDim = this.spaceDim;
-    
+
     const pos0 = ten.empty([numVertices0 + 1, spaceDim]);
     const vel0 = ten.empty([numVertices0 + 1, spaceDim]);
     const pos1 = ten.empty([numVertices0 + 1, spaceDim]);
     const vel1 = ten.empty([numVertices0 + 1, spaceDim]);
-    
+
     for (let i = 0; i < numVertices0; i++) {
       for (let j = 0; j < spaceDim; j++) {
         pos0.set([i, j], this.pos0.get([i, j]));
@@ -211,5 +211,3 @@ class Vertices {
     }
   }
 }
-
-module.exports = Vertices;

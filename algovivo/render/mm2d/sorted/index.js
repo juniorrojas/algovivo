@@ -1,5 +1,5 @@
-const MeshTopology = require("./MeshTopology");
-const Simplices = require("./Simplices");
+import MeshTopology from "./MeshTopology.js";
+import Simplices from "./Simplices.js";
 
 function makeSortedElements(args = {}) {
   if (args.sortedVertexIds == null) {
@@ -12,7 +12,7 @@ function makeSortedElements(args = {}) {
     throw new Error("edges required");
   }
   const sortedVertexIds = args.sortedVertexIds;
-  
+
   const vertexIdToOrder = new Map();
   sortedVertexIds.forEach((id, order) => {
     vertexIdToOrder.set(id, order);
@@ -24,7 +24,7 @@ function makeSortedElements(args = {}) {
   const edgeTopology = new MeshTopology({
     edges: args.edges
   });
-  
+
   const sortedElements = [];
   const trianglesAdded = new Simplices({ order: 3 });
   const edgesAdded = new Simplices({ order: 2 });
@@ -81,9 +81,9 @@ function makeSortedElements(args = {}) {
   return sortedElements;
 }
 
-module.exports = {
-  makeSortedElements: makeSortedElements,
-  MeshTopology: require("./MeshTopology"),
-  Simplex: require("./Simplex"),
-  Simplices: require("./Simplices")
+export {
+  makeSortedElements,
 };
+export { default as MeshTopology } from "./MeshTopology.js";
+export { default as Simplex } from "./Simplex.js";
+export { default as Simplices } from "./Simplices.js";

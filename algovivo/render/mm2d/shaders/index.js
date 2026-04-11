@@ -1,5 +1,3 @@
-module.exports = {
-  PointShader: require("./PointShader"),
-  LineShader: require("./LineShader"),
-  TriangleShader: require("./TriangleShader")
-};
+export { default as PointShader } from "./PointShader.js";
+export { default as LineShader } from "./LineShader.js";
+export { default as TriangleShader } from "./TriangleShader.js";

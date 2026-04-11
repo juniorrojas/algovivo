@@ -1,7 +1,7 @@
-const linked = require("./linked");
-const FreeSlot = require("./FreeSlot");
+import * as linked from "./linked/index.js";
+import FreeSlot from "./FreeSlot.js";
 
-class MemoryManager {
+export default class MemoryManager {
   constructor(array, heapBase) {
     this.array = array;
 
@@ -19,11 +19,11 @@ class MemoryManager {
       ptr: heapBase,
       size: array.byteLength - heapBase
     });
-    
+
     const node = this.slots.append();
     node.data = slot;
     slot.node = node;
-    
+
     const freeNode = this.freeSlots.append();
     freeNode.data = slot;
     slot.freeNode = freeNode;
@@ -129,5 +129,3 @@ class MemoryManager {
     slot.free();
   }
 }
-
-module.exports = MemoryManager;

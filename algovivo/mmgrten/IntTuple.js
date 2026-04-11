@@ -1,13 +1,13 @@
 // const mmgr = require("./mmgr");
 
-class IntTuple {
+export default class IntTuple {
   constructor(args = {}) {
     const engine = args.engine;
     if (engine == null) {
       throw new Error("engine required to create IntTuple");
     }
     this.engine = engine;
-    
+
     const slot = args.slot;
     if (slot == null) {
       throw new Error("slot required to create IntTuple");
@@ -74,5 +74,3 @@ class IntTuple {
     this.slot.free();
   }
 }
-
-module.exports = IntTuple;

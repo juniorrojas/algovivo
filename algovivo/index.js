@@ -1,17 +1,19 @@
-const System = require("./System");
-const Vertices = require("./Vertices");
+import System from "./System.js";
+import Vertices from "./Vertices.js";
 
-const mmgrten = require("./mmgrten/index");
-const render = require("./render");
-const mm2d = require("./render/mm2d");
-const nn = require("./nn");
+import * as mmgrten from "./mmgrten/index.js";
+import * as render from "./render/index.js";
+import * as mm2d from "./render/mm2d/index.js";
+import * as nn from "./nn/index.js";
 
-module.exports = {
-  System: System,
-  Vertices: Vertices,
-  mmgrten: mmgrten,
-  SystemViewport: render.SystemViewport,
-  mm2d: mm2d,
-  render: render,
-  nn: nn
+const { SystemViewport } = render;
+
+export {
+  System,
+  Vertices,
+  mmgrten,
+  SystemViewport,
+  mm2d,
+  render,
+  nn
 };

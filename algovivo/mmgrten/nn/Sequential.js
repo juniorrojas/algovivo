@@ -1,6 +1,6 @@
-const Module = require("./Module");
+import Module from "./Module.js";
 
-class Sequential extends Module {
+export default class Sequential extends Module {
   constructor(nn, layers) {
     super();
     this.nn = nn;
@@ -21,5 +21,3 @@ class Sequential extends Module {
     });
   }
 }
-
-module.exports = Sequential;

@@ -1,4 +1,4 @@
-const mm2d = require("./mm2d");
+import * as mm2d from "./mm2d/index.js";
 
 function renderCircle(ctx, scale, p, radius, borderWidth, borderColor, fillColor) {
   const radius1 = (radius + borderWidth * 0.5) * scale;
@@ -13,7 +13,7 @@ function renderCircle(ctx, scale, p, radius, borderWidth, borderColor, fillColor
   ctx.stroke();
 }
 
-class VertexRenderer {
+export default class VertexRenderer {
   constructor(args = {}) {
     this.system = args.system;
     this.renderVertexIds = args.renderVertexIds ?? false;
@@ -28,12 +28,12 @@ class VertexRenderer {
     const borderColor = this.borderColor;
     const fillColor = this.fillColor;
     const borderWidth = this.borderWidth;
-  
+
     const ctx = args.ctx;
     const p = args.p;
     const camera = args.camera;
     const scale = camera.inferScale();
-    
+
     renderCircle(ctx, scale, p, radius, borderWidth, borderColor, fillColor);
 
     if (this.renderVertexIds) {
@@ -41,7 +41,7 @@ class VertexRenderer {
       ctx.fillStyle = "rgba(255, 255, 255, 0.8)";
       ctx.arc(p[0], p[1], 0.1 * scale, 0, 2 * Math.PI);
       ctx.fill();
-      
+
       const fontSize = Math.floor(0.15 * scale);
       ctx.font = `${fontSize}px monospace`;
       ctx.fillStyle = "black";
@@ -96,5 +96,3 @@ class VertexRenderer {
     vF32[offset + 1] = v[1];
   }
 }
-
-module.exports = VertexRenderer;

@@ -1,8 +1,8 @@
-const math = require("../math");
+import { Transform2d, Matrix2x2 } from "../math/index.js";
 
-class Camera {
+export default class Camera {
   constructor() {
-    this.transform = new math.Transform2d();
+    this.transform = new Transform2d();
   }
 
   domToWorldSpace(pos) {
@@ -42,8 +42,8 @@ class Camera {
     if (args.worldWidth != null) {
       scale = viewportWidth / args.worldWidth;
     }
-    
-    this.transform.linear = new math.Matrix2x2(
+
+    this.transform.linear = new Matrix2x2(
       scale, 0,
       0, -scale
     );
@@ -64,5 +64,3 @@ class Camera {
     this.transform.translation = translation;
   }
 }
-
-module.exports = Camera;

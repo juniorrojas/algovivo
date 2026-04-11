@@ -1,6 +1,6 @@
-const Mesh = require("./Mesh");
+import Mesh from "./Mesh.js";
 
-class Renderer {
+export default class Renderer {
   constructor(args = {}) {
     const headless = args.headless ?? false;
     this.headless = headless;
@@ -34,7 +34,7 @@ class Renderer {
 
     this.width = width;
     this.height = height;
-    
+
     this.viewportWidth = viewportWidth;
     this.viewportHeight = viewportHeight;
 
@@ -73,7 +73,7 @@ class Renderer {
     const line = mesh.lines[id];
     const a = camera.transform.apply(mesh.pos[line[0]]);
     const b = camera.transform.apply(mesh.pos[line[1]]);
-    
+
     ctx.save();
     mesh.lineShader.renderLine({
       ctx: ctx,
@@ -138,7 +138,7 @@ class Renderer {
       for (let i = 0; i < mesh.lines.length; i++) {
         this.renderLine(renderer, mesh, camera, i, customArgs);
       }
-      
+
       for (let i = 0; i < mesh.pos.length; i++) {
         this.renderPoint(renderer, mesh, camera, i, customArgs);
       }
@@ -166,7 +166,7 @@ class Renderer {
   render(scene, camera, customArgs = {}) {
     const ctx = this.ctx;
     ctx.clearRect(0, 0, this.viewportWidth, this.viewportHeight);
-    
+
     scene.meshes.forEach((mesh) => {
       this.renderMesh(
         this,
@@ -177,5 +177,3 @@ class Renderer {
     });
   }
 }
-
-module.exports = Renderer;

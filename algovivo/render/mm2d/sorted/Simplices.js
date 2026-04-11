@@ -1,11 +1,11 @@
-const Simplex = require("./Simplex");
+import Simplex from "./Simplex.js";
 
 function hashSimplex(vids) {
   vids.sort();
   return vids.join("_");
 }
 
-class Simplices {
+export default class Simplices {
   constructor(args = {}) {
     if (args.order == null) throw new Error("order required");
     this.order = args.order;
@@ -45,5 +45,3 @@ class Simplices {
     return simplex;
   }
 }
-
-module.exports = Simplices;

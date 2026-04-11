@@ -1,4 +1,4 @@
-class TriangleShader {
+export default class TriangleShader {
   constructor() {
   }
 
@@ -19,5 +19,3 @@ class TriangleShader {
     ctx.restore();
   }
 }
-
-module.exports = TriangleShader;

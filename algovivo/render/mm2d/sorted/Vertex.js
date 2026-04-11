@@ -1,6 +1,6 @@
-const Simplices = require("./Simplices");
+import Simplices from "./Simplices.js";
 
-class Vertex {
+export default class Vertex {
   constructor(id) {
     this.id = id;
     this.edges = new Simplices({ order: 2 });
@@ -15,5 +15,3 @@ class Vertex {
     this.edges.add(edge, id);
   }
 }
-
-module.exports = Vertex;

@@ -1,9 +1,9 @@
-const mm2d = require("./mm2d");
-const Tracker = require("./Tracker");
-const Floor = require("./Floor");
-const VertexRenderer = require("./VertexRenderer");
-const LineRenderer = require("./LineRenderer");
-const TriangleRenderer = require("./TriangleRenderer");
+import * as mm2d from "./mm2d/index.js";
+import Tracker from "./Tracker.js";
+import Floor from "./Floor.js";
+import VertexRenderer from "./VertexRenderer.js";
+import LineRenderer from "./LineRenderer.js";
+import TriangleRenderer from "./TriangleRenderer.js";
 
 function hashSimplex(vids) {
   vids.sort();
@@ -24,7 +24,7 @@ function hexToRgb(hex) {
   return [r, g, b];
 }
 
-class SystemViewport {
+export default class SystemViewport {
   constructor(args = {}) {
     if (args.system == null) {
       throw new Error("system required");
@@ -66,7 +66,7 @@ class SystemViewport {
 
     const camera = new mm2d.Camera();
     this.camera = camera;
-    
+
     let activeMuscleColor = args.activeMuscleColor ?? [255, 0, 0];
     let inactiveMuscleColor = args.inactiveMuscleColor ?? [250, 190, 190];
     if (typeof activeMuscleColor === "string") {
@@ -120,7 +120,7 @@ class SystemViewport {
 
     const mesh = scene.addMesh();
     this.mesh = mesh;
-    
+
     mesh.pointShader.renderPoint = (args) => { this.vertices.renderVertex(args); };
 
     this.triangleRenderer = new TriangleRenderer({ fillColor });
@@ -167,7 +167,7 @@ class SystemViewport {
         dragBehavior.linkToDom(renderer.domElement, domElementForMoveEvents);
       }
     }
-    
+
     this.tracker = new Tracker();
   }
 
@@ -213,7 +213,7 @@ class SystemViewport {
         renderer: this.renderer
       });
     }
-    
+
     renderer.render(scene, camera);
   }
 
@@ -240,7 +240,7 @@ class SystemViewport {
         i
       );
     });
-    
+
     const lineIdToMuscleId = [];
     mesh.setCustomAttribute("lineIdToMuscleId", lineIdToMuscleId);
     mesh.lines.forEach(line => {
@@ -248,7 +248,7 @@ class SystemViewport {
       const muscleId = muscleHashToId.get(h);
       lineIdToMuscleId.push(muscleId);
     });
-    
+
     let sortedVertexIds = this.sortedVertexIds;
     if (sortedVertexIds == null) {
       sortedVertexIds = [];
@@ -301,7 +301,7 @@ class SystemViewport {
     }
 
     let muscleIntensity = [];
-    
+
     if (numMuscles > 0) {
       if (system.a) {
         const aF32 = system.a.slot.f32();
@@ -312,7 +312,7 @@ class SystemViewport {
         muscleIntensity = new Array(numMuscles).fill(1);
       }
     }
-    
+
     mesh.setCustomAttribute("muscleIntensity", muscleIntensity);
   }
 
@@ -342,5 +342,3 @@ class SystemViewport {
     system.vertices.freeVertex();
   }
 }
-
-module.exports = SystemViewport;

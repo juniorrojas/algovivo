@@ -1,4 +1,4 @@
-class Node {
+export default class Node {
   constructor(list, data) {
     this.list = list;
     this.data = data;
@@ -49,5 +49,3 @@ class Node {
     this.prev = null;
   }
 }
-
-module.exports = Node;
