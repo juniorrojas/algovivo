@@ -58,6 +58,9 @@ jobs:
         run: |
           npm ci
 
+      - name: Build
+        run: npm run build
+
       - name: Generate trajectory data
         run: |
           node test/nn/generateTrajectory.js \
