@@ -1,5 +1,5 @@
-class TriangleRenderer {
-  constructor(args = {}) { 
+export default class TriangleRenderer {
+  constructor(args = {}) {
     this.fillColor = args.fillColor ?? "white";
   }
 
@@ -18,5 +18,3 @@ class TriangleRenderer {
     ctx.fill();
   }
 }
-
-module.exports = TriangleRenderer;

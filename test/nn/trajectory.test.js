@@ -1,4 +1,4 @@
-const algovivo = require("../../algovivo");
+const algovivo = require("algovivo");
 const utils = require("../utils");
 const fsp = require("fs/promises");
 const path = require("path");

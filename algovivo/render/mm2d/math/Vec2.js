@@ -57,16 +57,16 @@ function dot(a, b) {
   return a[0] * b[0] + a[1] * b[1];
 }
 
-module.exports = {
-  clone: clone,
-  add: add,
-  add_: add_,
-  mulScalar_: mulScalar_,
-  mulScalar: mulScalar,
-  sub: sub,
-  quadrance: quadrance,
-  norm: norm,
-  normalize: normalize,
-  normalize_: normalize_,
-  dot: dot
+export {
+  clone,
+  add,
+  add_,
+  mulScalar_,
+  mulScalar,
+  sub,
+  quadrance,
+  norm,
+  normalize,
+  normalize_,
+  dot
 };

@@ -1,9 +1,9 @@
-const Sequential = require("./Sequential");
-const Linear = require("./Linear");
-const ReLU = require("./ReLU");
-const Tanh = require("./Tanh");
+import Sequential from "./Sequential.js";
+import Linear from "./Linear.js";
+import ReLU from "./ReLU.js";
+import Tanh from "./Tanh.js";
 
-class nn {
+export default class nn {
   constructor(args = {}) {
     this.engine = args.engine;
   }
@@ -25,5 +25,3 @@ class nn {
     return new Sequential(this, layers);
   }
 }
-
-module.exports = nn;

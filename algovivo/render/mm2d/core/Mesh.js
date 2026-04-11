@@ -1,18 +1,18 @@
-const math = require("../math");
-const shaders = require("../shaders");
+import { AABB, Vec2 } from "../math/index.js";
+import { PointShader, LineShader, TriangleShader } from "../shaders/index.js";
 
-class Mesh {
+export default class Mesh {
   constructor(args = {}) {
     this.scene = args.scene;
     this.id = args.id;
-    
+
     this.x = [];
     this.triangles = [];
     this.lines = [];
 
-    this.pointShader = new shaders.PointShader({});
-    this.lineShader = new shaders.LineShader({});
-    this.triangleShader = new shaders.TriangleShader({});
+    this.pointShader = new PointShader({});
+    this.lineShader = new LineShader({});
+    this.triangleShader = new TriangleShader({});
 
     this.customAttributes = {};
   }
@@ -53,7 +53,7 @@ class Mesh {
       if (minY == null || y < minY) minY = y;
       if (maxY == null || y > maxY) maxY = y;
     });
-    return new math.AABB({
+    return new AABB({
       x0: minX,
       y0: minY,
       x1: maxX,
@@ -70,11 +70,9 @@ class Mesh {
     let center = [0, 0];
     for (let i = 0; i < numVertices; i++) {
       const xi = this.pos[i];
-      math.Vec2.add_(center, xi);
+      Vec2.add_(center, xi);
     }
-    math.Vec2.mulScalar_(center, 1 / numVertices);
+    Vec2.mulScalar_(center, 1 / numVertices);
     return center;
   }
 }
-
-module.exports = Mesh;

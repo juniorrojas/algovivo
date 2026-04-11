@@ -1,4 +1,4 @@
-class Triangles {
+export default class Triangles {
   constructor(args = {}) {
     const ten = args.ten;
     if (ten == null) throw new Error("ten required");
@@ -64,10 +64,10 @@ class Triangles {
         }
       });
     }
-    
+
     if (this.rsi != null) this.rsi.dispose();
     this.rsi = ten.zeros([numTriangles, this.simplexOrder - 1, this.simplexOrder - 1]);
-    
+
     if (rsi == null) {
       let pos = null;
       let tmpPos = false;
@@ -93,7 +93,7 @@ class Triangles {
     } else {
       this.rsi.set(rsi);
     }
-    
+
     if (this.mu != null) this.mu.dispose();
     this.mu = ten.zeros([numTriangles]);
     this.mu.fill_(Math.fround(500));
@@ -122,5 +122,3 @@ class Triangles {
     }
   }
 }
-
-module.exports = Triangles;

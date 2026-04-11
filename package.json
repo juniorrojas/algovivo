@@ -3,11 +3,11 @@
   "author": {
     "name": "Junior Rojas"
   },
-  "main": "./algovivo/index.js",
-  "module": "./build/algovivo.mjs",
+  "main": "./build/algovivo.cjs",
+  "module": "./build/algovivo.js",
   "exports": {
-    "import": "./build/algovivo.mjs",
-    "require": "./algovivo/index.js"
+    "import": "./build/algovivo.js",
+    "require": "./build/algovivo.cjs"
   },
   "scripts": {
     "build": "rollup -c rollup.config.js",
@@ -16,7 +16,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.23.2",
-    "@rollup/plugin-commonjs": "^24.1.0",
+
     "@rollup/plugin-node-resolve": "^15.0.2",
     "@rollup/plugin-terser": "^1.0.0",
     "argparse": "^2.0.1",

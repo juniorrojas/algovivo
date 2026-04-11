@@ -25,7 +25,7 @@ function renderMuscle(ctx, scale, a, b, t, width, borderWidth, borderColor, colo
   ctx.stroke();
 
   ctx.beginPath();
-  
+
   const cr0 = color0[0];
   const cr1 = color1[0];
 
@@ -47,14 +47,14 @@ function renderMuscle(ctx, scale, a, b, t, width, borderWidth, borderColor, colo
   ctx.stroke();
 }
 
-class LineRenderer {
+export default class LineRenderer {
   constructor(args = {}) {
     this.system = args.system;
   }
 
   makeEdgesFromTriangles(triangles) {
     const edges = new Map();
-  
+
   function addEdge(i1, i2) {
     const hash = hashSimplex([i1, i2]);
       edges.set(hash, [i1, i2]);
@@ -72,7 +72,7 @@ class LineRenderer {
     const activeMuscleColor = args.activeMuscleColor ?? [255, 0, 0];
     const inactiveMuscleColor = args.inactiveMuscleColor ?? [0, 0, 255];
     const borderColor = args.borderColor ?? "black";
-    
+
     return (args = {}) => {
       const ctx = args.ctx;
       const a = args.a;
@@ -91,7 +91,7 @@ class LineRenderer {
       } else {
         const color0 = activeMuscleColor;
         const color1 = inactiveMuscleColor;
-        
+
         const width = 0.065;
         const borderWidth = 0.017;
         const muscleIntensityAttributeName = "muscleIntensity";
@@ -103,12 +103,10 @@ class LineRenderer {
         if (!Array.isArray(muscleIntensity)) {
           throw new Error(`muscle intensity attribute must be an array with values for each fiber, found ${typeof muscleIntensity}`);
         }
-        
+
         const t = muscleIntensity[muscleId];
         renderMuscle(ctx, scale, a, b, t, width, borderWidth, borderColor, color0, color1);
       }
     }
   }
 }
-
-module.exports = LineRenderer;

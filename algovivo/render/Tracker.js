@@ -1,4 +1,4 @@
-class Tracker {
+export default class Tracker {
   constructor(args = {}) {
     this.targetCenterX = null;
     this.currentCenterX = null;
@@ -12,7 +12,7 @@ class Tracker {
 
   step(args = {}) {
     if (!this.active) return;
-    
+
     const renderer = args.renderer;
     const camera = args.camera;
     const mesh = args.mesh;
@@ -43,7 +43,7 @@ class Tracker {
     const bottomLeft = camera.domToWorldSpace([0, renderer.height]);
 
     const marginCells = 1;
-    
+
     const [_x0, _y0] = bottomLeft;
     const x0 = Math.floor(_x0) - marginCells;
     let y0 = Math.floor(_y0);
@@ -78,5 +78,3 @@ class Tracker {
     ];
   }
 }
-
-module.exports = Tracker;

@@ -1,17 +1,17 @@
-const Simplices = require("./Simplices");
-const Vertex = require("./Vertex");
+import Simplices from "./Simplices.js";
+import Vertex from "./Vertex.js";
 
-class MeshTopology {
+export default class MeshTopology {
   constructor(args = {}) {
     this.vertices = new Map();
     this.edges = new Simplices({ order: 2 });
     this.triangles = new Simplices({ order: 3 });
-    
+
     const edges = args.edges ?? [];
     edges.forEach((e, i) => {
       this.addEdge(i, e);
     });
-    
+
     const triangles = args.triangles ?? [];
     triangles.forEach((t, i) => {
       this.addTriangle(i, t);
@@ -55,5 +55,3 @@ class MeshTopology {
     return triangle;
   }
 }
-
-module.exports = MeshTopology;

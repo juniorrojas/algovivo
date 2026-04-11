@@ -1,4 +1,12 @@
-class Slot {
+let _ReservedSlot = null;
+let _FreeSlot = null;
+
+export function _registerSlotTypes(ReservedSlot, FreeSlot) {
+  _ReservedSlot = ReservedSlot;
+  _FreeSlot = FreeSlot;
+}
+
+export default class Slot {
   constructor(args = {}) {
     this.manager = args.manager;
     this.ptr = args.ptr;
@@ -23,9 +31,8 @@ class Slot {
   }
 
   appendReserved(ptr, size) {
-    const ReservedSlot = require("./ReservedSlot");
     const node = this.node.append(null);
-    const slot = new ReservedSlot({
+    const slot = new _ReservedSlot({
       manager: this.manager,
       ptr: ptr,
       size: size,
@@ -37,9 +44,8 @@ class Slot {
   }
 
   appendFree(ptr, size) {
-    const FreeSlot = require("./FreeSlot");
     const node = this.node.append(null);
-    const slot = new FreeSlot({
+    const slot = new _FreeSlot({
       manager: this.manager,
       ptr: ptr,
       size: size,
@@ -84,5 +90,3 @@ class Slot {
     return this.toTypedArray(Uint32Array);
   }
 }
-
-module.exports = Slot;

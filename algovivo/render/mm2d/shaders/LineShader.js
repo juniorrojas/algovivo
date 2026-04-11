@@ -1,4 +1,4 @@
-class LineShader {
+export default class LineShader {
   constructor() {
   }
 
@@ -16,5 +16,3 @@ class LineShader {
     ctx.stroke();
   }
 }
-
-module.exports = LineShader;

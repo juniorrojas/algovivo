@@ -1,3 +1,5 @@
+import IntTuple from "./IntTuple.js";
+
 function inferShape(arr) {
   const shapeArr = [];
   let _arr = arr;
@@ -27,7 +29,6 @@ function _makeNdArray(arr, dim, shape, value) {
 }
 
 function makeNdArray(_shape, value) {
-  const IntTuple = require("./IntTuple");
   let shape = _shape;
   if (_shape instanceof IntTuple) {
     shape = _shape.toArray();
@@ -67,10 +68,10 @@ function setArrElem(arr, idx, v) {
   }
 }
 
-module.exports = {
+export {
   inferShape,
   makeNdArray,
   numelOfShape,
   getArrElem,
   setArrElem
-}
+};

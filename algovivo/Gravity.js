@@ -1,4 +1,4 @@
-class Gravity {
+export default class Gravity {
   constructor(args = {}) {
     this.g = args.g ?? 9.8;
   }
@@ -9,5 +9,3 @@ class Gravity {
 
   dispose() {}
 }
-
-module.exports = Gravity;

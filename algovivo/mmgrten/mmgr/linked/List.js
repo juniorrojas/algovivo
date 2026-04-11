@@ -1,4 +1,4 @@
-const Node = require("./Node");
+import Node from "./Node.js";
 
 class ListIter {
   constructor(list) {
@@ -22,7 +22,7 @@ class ListIter {
   }
 }
 
-class List {
+export default class List {
   constructor() {
     this.first = null;
     this.last = null;
@@ -76,5 +76,3 @@ class List {
     }
   }
 }
-
-module.exports = List;

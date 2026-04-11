@@ -5,7 +5,7 @@ function sampleNormal(mean, stdDev) {
   return mean + z * stdDev;
 }
 
-class MLPPolicy {
+export default class MLPPolicy {
   constructor(args = {}) {
     if (args.system == null) {
       throw new Error("system required to create policy");
@@ -54,7 +54,7 @@ class MLPPolicy {
 
     const bytesPerFloat = 4;
     const bytesOffset = this.vertexIdOffset * this.spaceDim * bytesPerFloat;
-    
+
     wasmInstance.exports.make_neural_policy_input(
       this.numVertices,
       system.pos.ptr + bytesOffset,
@@ -74,7 +74,7 @@ class MLPPolicy {
 
     const a = this.system.a;
     const daF32 = da.slot.f32();
-    
+
     const numMuscles = this.numMuscles;
     for (let i = 0; i < numMuscles; i++) {
       let dai;
@@ -90,7 +90,7 @@ class MLPPolicy {
     }
 
     const trace = args.trace;
-    
+
     if (trace != null) {
       trace.policyInput = this.input.toArray();
       trace.policyOutput = da.toArray();
@@ -127,5 +127,3 @@ class MLPPolicy {
     this.model.dispose();
   }
 }
-
-module.exports = MLPPolicy;

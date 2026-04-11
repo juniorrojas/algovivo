@@ -36,6 +36,6 @@ function computeDomCursor(event, domElement) {
   return cursor;
 }
 
-module.exports = {
-  computeDomCursor: computeDomCursor
-}
+export {
+  computeDomCursor
+};

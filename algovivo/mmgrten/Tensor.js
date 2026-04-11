@@ -1,8 +1,8 @@
-const utils = require("./utils");
-const TensorIterator = require("./TensorIterator");
-const IntTuple = require("./IntTuple");
+import * as utils from "./utils.js";
+import TensorIterator from "./TensorIterator.js";
+import IntTuple from "./IntTuple.js";
 
-class Tensor {
+export default class Tensor {
   constructor(args = {}) {
     const engine = args.engine;
     if (engine == null) {
@@ -142,7 +142,6 @@ class Tensor {
 
     const isScalar = this.isScalar();
     if (isScalar) {
-      // arr can be a number, for scalar tensors
       if (typeof arr !== "number") {
         throw new Error(`expected number, found ${typeof arr}: ${arr}`);
       }
@@ -179,7 +178,6 @@ class Tensor {
 
   squeeze(i) {
     if (i == -1) i = this.shape.length - 1;
-    // TODO check out of bounds
     const si = this.shape.get(i);
     if (si != 1) {
       throw new Error(`cannot squeeze a dimension that is not equal to 1, shape[${i}] = ${si}`);
@@ -214,7 +212,6 @@ class Tensor {
   }
 
   add(b, c) {
-    // c = a + b
     this.engine.functional.add(this, b, c);
   }
 
@@ -234,5 +231,3 @@ class Tensor {
     this.stride.dispose();
   }
 }
-
-module.exports = Tensor;

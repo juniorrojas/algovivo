@@ -1,6 +1,6 @@
-const Mesh = require("./Mesh");
+import Mesh from "./Mesh.js";
 
-class Scene {
+export default class Scene {
   constructor() {
     this.meshes = new Map();
   }
@@ -23,5 +23,3 @@ class Scene {
     return mesh;
   }
 }
-
-module.exports = Scene;

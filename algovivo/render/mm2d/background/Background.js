@@ -1,4 +1,4 @@
-class Background {
+export default class Background {
   constructor(args = {}) {
     if (args.scene == null) {
       throw new Error("scene required");
@@ -24,5 +24,3 @@ class Background {
     }
   }
 }
-
-module.exports = Background;

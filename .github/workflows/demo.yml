@@ -115,6 +115,12 @@ jobs:
           name: algovivo.wasm
           path: build/
 
+      - name: Download JS build
+        uses: actions/download-artifact@v4
+        with:
+          name: build
+          path: ./build
+
       - name: Download demo build
         uses: actions/download-artifact@v4
         with:

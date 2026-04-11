@@ -1,4 +1,4 @@
-class Simplex {
+export default class Simplex {
   constructor(id, vertexIds) {
     if (id == null) {
       throw new Error("id required to create simplex");
@@ -8,5 +8,3 @@ class Simplex {
     this.vertexIds = vertexIds;
   }
 }
-
-module.exports = Simplex;

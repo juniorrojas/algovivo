@@ -1,4 +1,2 @@
-module.exports = {
-  List: require("./List"),
-  Node: require("./Node")
-};
+export { default as List } from "./List.js";
+export { default as Node } from "./Node.js";

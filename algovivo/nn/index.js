@@ -1,3 +1,1 @@
-module.exports = {
-  MLPPolicy: require("./MLPPolicy")
-}
+export { default as MLPPolicy } from "./MLPPolicy.js";

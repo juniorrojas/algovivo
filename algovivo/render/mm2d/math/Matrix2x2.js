@@ -1,4 +1,4 @@
-class Matrix2x2 {
+export default class Matrix2x2 {
   constructor(m00, m01, m10, m11) {
     this.m00 = m00;
     this.m01 = m01;
@@ -82,5 +82,3 @@ class Matrix2x2 {
     );
   }
 }
-
-module.exports = Matrix2x2;

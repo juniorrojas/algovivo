@@ -1,4 +1,4 @@
-class PointShader {
+export default class PointShader {
   constructor() {
   }
 
@@ -12,5 +12,3 @@ class PointShader {
     ctx.fill();
   }
 }
-
-module.exports = PointShader;

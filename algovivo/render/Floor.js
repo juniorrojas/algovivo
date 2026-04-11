@@ -1,4 +1,4 @@
-class Floor {
+export default class Floor {
   constructor(args = {}) {
     if (args.scene == null) {
       throw new Error("scene required");
@@ -46,5 +46,3 @@ class Floor {
     }
   }
 }
-
-module.exports = Floor;

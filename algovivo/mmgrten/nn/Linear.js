@@ -1,6 +1,6 @@
-const Module = require("./Module");
+import Module from "./Module.js";
 
-class Linear extends Module {
+export default class Linear extends Module {
   constructor(nn, inputSize, outputSize) {
     super();
     this.nn = nn;
@@ -28,5 +28,3 @@ class Linear extends Module {
     this.output.dispose();
   }
 }
-
-module.exports = Linear;
