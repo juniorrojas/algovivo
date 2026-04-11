@@ -35,10 +35,10 @@ You can create a simple simulation with one triangle and two muscles, where one 
 </head>
 <body>
   <script type="module">
-    import algovivo from "https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@19117fa/build/algovivo.min.mjs";
+    import * as algovivo from "https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@d79f7d7/build/algovivo.min.js";
 
     async function loadWasm() {
-      const response = await fetch("https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@19117fa/build/algovivo.wasm");
+      const response = await fetch("https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@d79f7d7/build/algovivo.wasm");
       const wasm = await WebAssembly.instantiateStreaming(response);
       return wasm.instance;
     }
@@ -85,7 +85,7 @@ You can create a simple simulation with one triangle and two muscles, where one 
 </html>
 ```
 
-The code above imports the ES6 module `algovivo.min.mjs` and loads the compiled WASM `algovivo.wasm` from [jsDelivr](https://www.jsdelivr.com/). To serve these files from your own server, you can download them from the [build](https://github.com/juniorrojas/algovivo/tree/build/build) branch.
+The code above imports the ES6 module `algovivo.min.js` and loads the compiled WASM `algovivo.wasm` from [jsDelivr](https://www.jsdelivr.com/). To serve these files from your own server, you can download them from the [build](https://github.com/juniorrojas/algovivo/tree/build/build) branch.
 
 ### muscle commands
 
@@ -117,10 +117,10 @@ Instead of manually scripting muscle commands, a neural controller can map propr
 </head>
 <body>
   <script type="module">
-    import algovivo from "https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@19117fa/build/algovivo.min.mjs";
+    import * as algovivo from "https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@d79f7d7/build/algovivo.min.js";
 
     async function loadWasm() {
-      const response = await fetch("https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@19117fa/build/algovivo.wasm");
+      const response = await fetch("https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@d79f7d7/build/algovivo.wasm");
       const wasm = await WebAssembly.instantiateStreaming(response);
       return wasm.instance;
     }
