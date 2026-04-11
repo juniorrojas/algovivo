@@ -25,7 +25,7 @@ for (let minified of [true, false]) {
   configs.push({
     input: "algovivo/index.js",
     output: {
-      file: `build/algovivo${minified ? ".min": ""}.js`,
+      file: `build/algovivo${minified ? ".min" : ""}.cjs`,
       format: "umd",
       name: "algovivo",
       sourcemap: false
@@ -42,7 +42,7 @@ for (let minified of [true, false]) {
   configs.push({
     input: "algovivo/index.js",
     output: {
-      file: `build/algovivo${minified ? ".min": ""}.mjs`,
+      file: `build/algovivo${minified ? ".min" : ""}.js`,
       format: "esm",
       sourcemap: false
     },

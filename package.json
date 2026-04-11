@@ -3,11 +3,11 @@
   "author": {
     "name": "Junior Rojas"
   },
-  "main": "./build/algovivo.js",
-  "module": "./build/algovivo.mjs",
+  "main": "./build/algovivo.cjs",
+  "module": "./build/algovivo.js",
   "exports": {
-    "import": "./build/algovivo.mjs",
-    "require": "./build/algovivo.js"
+    "import": "./build/algovivo.js",
+    "require": "./build/algovivo.cjs"
   },
   "scripts": {
     "build": "rollup -c rollup.config.js",
