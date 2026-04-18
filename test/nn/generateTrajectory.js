@@ -1,9 +1,11 @@
-const algovivo = require("algovivo");
-const fsp = require("fs/promises");
-const path = require("path");
-const { ArgumentParser } = require("argparse");
-const utils = require("../utils");
+import * as algovivo from "../../algovivo/index.js";
+import fsp from "fs/promises";
+import path from "path";
+import { fileURLToPath } from "url";
+import { ArgumentParser } from "argparse";
+import { loadWasm, cleandir } from "../utils.js";
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const dataDirname = path.join(__dirname, "data");
 
 async function main() {
@@ -17,7 +19,7 @@ async function main() {
   const loadJson = async (filename) => JSON.parse(await fsp.readFile(filename));
 
   const [wasmInstance, meshData, policyData] = await Promise.all([
-    utils.loadWasm(),
+    loadWasm(),
     loadJson(args.mesh_filename),
     loadJson(args.policy_filename)
   ]);
@@ -37,7 +39,7 @@ async function main() {
   });
   policy.loadData(policyData);
 
-  await utils.cleandir(args.output_dirname);
+  await cleandir(args.output_dirname);
 
   const n = args.steps;
   for (let i = 0; i < n; i++) {

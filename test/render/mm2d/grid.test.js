@@ -1,4 +1,4 @@
-const mm2d = require("algovivo").mm2d;
+import { mm2d } from "algovivo";
 
 test("grid", () => {
   const scene = new mm2d.Scene();

@@ -1,6 +1,6 @@
-const ppw = require("./ppw");
-const path = require("path");
-const fs = require("fs");
+import * as ppw from "./ppw/index.js";
+import path from "path";
+import fs from "fs";
 
 // minimal scene, camera and renderer example
 test("minimal scene, camera and renderer", async () => {

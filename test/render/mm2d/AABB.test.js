@@ -1,4 +1,4 @@
-const mm2d = require("algovivo").mm2d;
+import { mm2d } from "algovivo";
 
 test("aabb", () => {
   const aabb = new mm2d.math.AABB({

@@ -1,6 +1,6 @@
-const ppw = require("./ppw");
-const path = require("path");
-const fs = require("fs");
+import * as ppw from "./ppw/index.js";
+import path from "path";
+import fs from "fs";
 
 // a line shader is a function that gets executed per mesh edge
 test("line shader", async () => {

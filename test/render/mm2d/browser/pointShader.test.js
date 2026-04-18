@@ -1,6 +1,6 @@
-const ppw = require("./ppw");
-const path = require("path");
-const fs = require("fs");
+import * as ppw from "./ppw/index.js";
+import path from "path";
+import fs from "fs";
 
 // a point shader is like a vertex shader in GPU programming, but using the canvas 2d context,
 // it's a function that gets executed per mesh vertex
