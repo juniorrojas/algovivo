@@ -1,4 +1,4 @@
-import { mm2d } from "../../../algovivo/index.js";
+import { mm2d } from "algovivo";
 
 test("aabb", () => {
   const aabb = new mm2d.math.AABB({

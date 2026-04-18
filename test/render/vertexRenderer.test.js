@@ -1,4 +1,4 @@
-import * as algovivo from "../../algovivo/index.js";
+import * as algovivo from "algovivo";
 
 test("vertex renderer", () => {
   const system = { numVertices: 4 };

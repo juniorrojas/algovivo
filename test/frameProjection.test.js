@@ -1,4 +1,4 @@
-import * as algovivo from "../algovivo/index.js";
+import * as algovivo from "algovivo";
 import { loadWasm, loadTen, toBeCloseToArray } from "./utils.js";
 
 const mmgrten = algovivo.mmgrten;

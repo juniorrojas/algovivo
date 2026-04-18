@@ -1,4 +1,4 @@
-import * as algovivo from "../algovivo/index.js";
+import * as algovivo from "algovivo";
 import * as utils from "./utils.js";
 
 test("memory", async () => {

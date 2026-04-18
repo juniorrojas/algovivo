@@ -1,4 +1,4 @@
-import { mmgrten } from "../../algovivo/index.js";
+import { mmgrten } from "algovivo";
 import * as utils from "../utils.js";
 
 expect.extend({ toBeCloseToArray: utils.toBeCloseToArray });

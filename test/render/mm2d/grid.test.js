@@ -1,4 +1,4 @@
-import { mm2d } from "../../../algovivo/index.js";
+import { mm2d } from "algovivo";
 
 test("grid", () => {
   const scene = new mm2d.Scene();
