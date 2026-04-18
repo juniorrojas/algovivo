@@ -8,7 +8,8 @@ module.exports = {
   },
   transform: {
     "\\.[jt]sx?$": ["babel-jest", {
-      presets: [["@babel/preset-env", { targets: { node: "current" } }]]
+      presets: [["@babel/preset-env", { targets: { node: "current" } }]],
+      plugins: ["babel-plugin-transform-import-meta"]
     }]
   }
 };

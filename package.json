@@ -18,6 +18,7 @@
     "@rollup/plugin-node-resolve": "^15.0.2",
     "@rollup/plugin-terser": "^1.0.0",
     "argparse": "^2.0.1",
+    "babel-plugin-transform-import-meta": "^2.3.3",
     "express": "^4.22.1",
     "jest": "^29.5.0",
     "puppeteer": "^22.15.0",

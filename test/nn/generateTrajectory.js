@@ -1,23 +1,12 @@
-const algovivo = require("algovivo");
-const fsp = require("fs/promises");
-const fs = require("fs");
-const path = require("path");
-const { ArgumentParser } = require("argparse");
+import * as algovivo from "../../algovivo/index.js";
+import fsp from "fs/promises";
+import path from "path";
+import { fileURLToPath } from "url";
+import { ArgumentParser } from "argparse";
+import { loadWasm, cleandir } from "../utils.js";
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const dataDirname = path.join(__dirname, "data");
-
-async function loadWasm(args = {}) {
-  const wasm = await WebAssembly.compile(await fsp.readFile(path.join(__dirname, "../../build/algovivo.wasm")));
-  const wasmInstance = await WebAssembly.instantiate(wasm, args);
-  return wasmInstance;
-}
-
-async function cleandir(dirname) {
-  if (fs.existsSync(dirname)) {
-    fs.rmSync(dirname, { recursive: true });
-  }
-  await fsp.mkdir(dirname);
-}
 
 async function main() {
   const argParser = new ArgumentParser();
