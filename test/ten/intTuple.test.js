@@ -1,4 +1,4 @@
-const utils = require("../utils");
+import * as utils from "../utils.js";
 
 test("get/set", async () => {
   const ten = await utils.loadTen();

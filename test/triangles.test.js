@@ -1,5 +1,5 @@
-const algovivo = require("algovivo");
-const utils = require("./utils");
+import * as algovivo from "../algovivo/index.js";
+import * as utils from "./utils.js";
 
 expect.extend({ toBeCloseToArray: utils.toBeCloseToArray });
 

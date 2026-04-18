@@ -1,6 +1,6 @@
-const fsp = require("fs/promises");
-const fs = require("fs");
-const algovivo = require("algovivo");
+import fsp from "fs/promises";
+import fs from "fs";
+import * as algovivo from "../algovivo/index.js";
 
 function toBeCloseToArray(a, b, tolerance = 1e-3) {
   if ((typeof a == "number") && (typeof b == "number")) {
@@ -70,7 +70,7 @@ async function cleandir(dirname) {
   }
 }
 
-module.exports = {
+export {
   loadWasm,
   loadTen,
   toBeCloseToArray,

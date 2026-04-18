@@ -1,4 +1,4 @@
-const algovivo = require("algovivo");
+import * as algovivo from "../../algovivo/index.js";
 
 test("malloc free with non-numeric heapBase", () => {
   // simulate WebAssembly.Global which has valueOf() but is an object

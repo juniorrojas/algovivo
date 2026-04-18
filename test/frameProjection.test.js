@@ -1,9 +1,9 @@
-const algovivo = require("algovivo");
-const mmgrten = algovivo.mmgrten;
-const { loadWasm, loadTen } = require("./utils");
-const utils = require("./utils");
+import * as algovivo from "../algovivo/index.js";
+import { loadWasm, loadTen, toBeCloseToArray } from "./utils.js";
 
-expect.extend({ toBeCloseToArray: utils.toBeCloseToArray });
+const mmgrten = algovivo.mmgrten;
+
+expect.extend({ toBeCloseToArray });
 
 test("dot2d", async () => {
   const wasmInstance = await loadWasm();
@@ -19,7 +19,7 @@ test("frame_projection simple", async () => {
 
   const numVertices = 2;
   const spaceDim = 2;
-  
+
   const x = ten.tensor([
     [0, 0],
     [1, 0]
@@ -29,7 +29,7 @@ test("frame_projection simple", async () => {
 
   const centerId = 0;
   const forwardId = 1;
-  
+
   ten.wasmInstance.exports.frame_projection(
     numVertices,
     x.ptr,
@@ -84,7 +84,7 @@ test("frame_projection", async () => {
     [0, 0],
     [1.3601469993591309, 2.9802322387695312e-8]
   ]);
-  
+
   x.dispose();
   projectedX.dispose();
 });

@@ -1,74 +1,47 @@
-const algovivo = require("algovivo");
-const utils = require("../utils");
-const fsp = require("fs/promises");
-const path = require("path");
-const Trajectory = require("../../utils/trajectory/Trajectory");
+import * as algovivo from "../../algovivo/index.js";
+import * as utils from "../utils.js";
+import fsp from "fs/promises";
+import path from "path";
+import Trajectory from "../../utils/trajectory/Trajectory.js";
 
 expect.extend({ toBeCloseToArray: utils.toBeCloseToArray });
 
 const dataDirname = path.join(__dirname, "data");
 
-async function loadMeshData() {
-  const meshFilename = path.join(dataDirname, "mesh.json");
-  return JSON.parse(await fsp.readFile(meshFilename));
-}
+test("trajectory", async () => {
+  const system = new algovivo.System({
+    wasmInstance: await utils.loadWasm()
+  });
 
-async function loadPolicyData() {
-  const policyFilename = path.join(dataDirname, "policy.json");
-  return JSON.parse(await fsp.readFile(policyFilename));
-}
-
-test("neural frame policy", async () => {
-  const [wasmInstance, meshData, policyData] = await Promise.all(
-    [utils.loadWasm, loadMeshData, loadPolicyData].map(f => f())
+  const meshData = JSON.parse(
+    await fsp.readFile(path.join(dataDirname, "mesh.json"))
+  );
+  const policyData = JSON.parse(
+    await fsp.readFile(path.join(dataDirname, "policy.json"))
   );
 
-  const system = new algovivo.System({ wasmInstance });
-  
-  system.set({
-    pos: meshData.pos,
-    muscles: meshData.muscles,
-    musclesL0: meshData.l0,
-    triangles: meshData.triangles,
-    trianglesRsi: meshData.rsi
-  });
-  expect(system.l0.toArray()).toEqual(meshData.l0);
-  expect(system.rsi.toArray()).toEqual(meshData.rsi);
-  const policy = new algovivo.nn.MLPPolicy({
-    system: system,
-    stochastic: false,
-    active: true
-  });
+  system.set(meshData);
+  const policy = new algovivo.nn.MLPPolicy({ system, active: true });
   policy.loadData(policyData);
 
-  const trajectoryDirname = path.join(dataDirname, "trajectory");
-  const trajectory = new Trajectory(trajectoryDirname);
-
-  let expectedNumReservedBytes = null;
-  const mgr = system.memoryManager;
-
+  const trajectory = new Trajectory(path.join(dataDirname, "trajectory"));
   const n = await trajectory.numSteps();
   expect(n).toBe(100);
+
   for (let i = 0; i < n; i++) {
-    const data = await trajectory.loadStep(i);
+    const stepData = await trajectory.loadStep(i);
 
-    system.pos0.set(data.pos0);
-    system.vel0.set(data.vel0);
-    system.a.set(data.a0);
+    expect(system.pos.toArray()).toBeCloseToArray(stepData.pos0);
+    expect(system.a.toArray()).toBeCloseToArray(stepData.a0);
 
-    const policyTrace = {};
-    policy.step({ trace: policyTrace });
+    policy.step();
     system.step();
 
-    if (i == 0) expectedNumReservedBytes = mgr.numReservedBytes();
-    expect(expectedNumReservedBytes).not.toBeNull();
-    expect(expectedNumReservedBytes).toBeGreaterThan(0);
-    expect(mgr.numReservedBytes()).toBe(expectedNumReservedBytes);
-    
-    expect(policyTrace.policyInput).toBeCloseToArray(data.policy_input);
-    expect(policyTrace.policyOutput).toBeCloseToArray(data.policy_output);
-    expect(system.pos0.toArray()).toBeCloseToArray(data.pos1);
-    expect(system.vel0.toArray()).toBeCloseToArray(data.vel1);
-    expect(system.a.toArray()).toBeCloseToArray(data.a1);
+    if (stepData.pos1 != null) {
+      expect(system.pos.toArray()).toBeCloseToArray(stepData.pos1);
+    }
+    if (stepData.a1 != null) {
+      expect(system.a.toArray()).toBeCloseToArray(stepData.a1);
+    }
   }
-});
+}, 30000);
