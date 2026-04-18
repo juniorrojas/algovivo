@@ -3,16 +3,14 @@
   "author": {
     "name": "Junior Rojas"
   },
-  "main": "./build/algovivo.cjs",
-  "module": "./build/algovivo.js",
   "exports": {
-    "import": "./build/algovivo.js",
+    "import": "./algovivo/index.js",
     "require": "./build/algovivo.cjs"
   },
   "scripts": {
     "build": "rollup -c rollup.config.js",
     "watch": "rollup -c rollup.config.js --watch",
-    "test": "export NODE_PATH=. && jest"
+    "test": "jest"
   },
   "devDependencies": {
     "@babel/core": "^7.23.2",
