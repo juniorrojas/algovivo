@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=61", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "algovivo_codegen"
+dynamic = ["version"]
+dependencies = []
+
+[tool.setuptools.packages.find]
+include = ["algovivo_codegen*"]
+
+[tool.setuptools.package-data]
+algovivo_codegen = ["templates/**/*", "csrc/**/*"]
+
+[tool.setuptools_scm]
+root = ".."
+write_to = "codegen/algovivo_codegen/_version.py"
+local_scheme = "node-and-timestamp"
