@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css?family=Palanquin" rel="stylesheet">
+  <link rel="icon" type="image/png" href="icons/icon.png">
   <title>algovivo</title>
   <style>
     * {
@@ -57,12 +58,18 @@
 </head>
 <body>
   <script>
-    (function() {
+    (async () => {
+      let src = "main.build.js";
+      try {
+        const res = await fetch("release.build.json?t=" + Date.now());
+        if (res.ok) {
+          const { id } = await res.json();
+          if (id) src = "main.build.js?v=" + encodeURIComponent(id);
+        }
+      } catch (e) {}
       const script = document.createElement("script");
-      const now = new Date();
-      const nstr = now.getTime().toString();
       script.type = "module";
-      script.src = `main.build.js?t=${nstr}`;
+      script.src = src;
       document.body.appendChild(script);
     })();
   </script>
