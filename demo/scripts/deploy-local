@@ -35,7 +35,8 @@ def transfer_dir(src_dirname, dst_dirname):
         glob(os.path.join(src_dirname, "*.js")) +
         glob(os.path.join(src_dirname, "*.wasm")) +
         glob(os.path.join(src_dirname, "*.json")) +
-        glob(os.path.join(src_dirname, "*.svg")) 
+        glob(os.path.join(src_dirname, "*.svg")) +
+        glob(os.path.join(src_dirname, "*.png"))
     ):
         shutil.copy(
             filename,
