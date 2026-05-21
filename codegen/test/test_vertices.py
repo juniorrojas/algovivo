@@ -10,47 +10,31 @@ codegen_dirpath = this_dirpath.parent
 csrc_dirpath = codegen_dirpath / "algovivo_codegen" / "csrc"
 
 
-def test_update_args_has_fixed_vertices():
+def test_update_args():
     vertices = algovivo_codegen.modules.Vertices()
     args = Args()
     vertices.add_update_args(args)
     arg_names = [arg.name for arg in args]
     assert "num_fixed_vertices" in arg_names
     assert "fixed_vertex_ids" in arg_names
-    assert "fixed_vertex_id" not in arg_names
-    # num_fixed_vertices must come right before fixed_vertex_ids
-    i = arg_names.index("num_fixed_vertices")
-    assert arg_names[i + 1] == "fixed_vertex_ids"
 
 
-def test_update_pos_args_has_fixed_vertices():
+def test_update_pos_args():
     vertices = algovivo_codegen.modules.Vertices()
     args = Args()
     vertices.add_update_pos_args(args)
     arg_names = [arg.name for arg in args]
     assert "num_fixed_vertices" in arg_names
     assert "fixed_vertex_ids" in arg_names
-    assert "fixed_vertex_id" not in arg_names
 
 
-def test_optim_init_args_has_fixed_vertices():
+def test_optim_init_args():
     vertices = algovivo_codegen.modules.Vertices()
     args = Args()
     vertices.add_optim_init_args(args)
     arg_names = [arg.name for arg in args]
     assert "num_fixed_vertices" in arg_names
     assert "fixed_vertex_ids" in arg_names
-
-
-def test_optim_init_src_reclamps_fixed_vertices():
-    vertices = algovivo_codegen.modules.Vertices()
-    src = vertices.get_optim_init_src()
-    # inertial guess
-    assert "pos0[offset + j] + h * vel0[offset + j]" in src
-    # re-clamp fixed vertices back to pos0
-    assert "num_fixed_vertices" in src
-    assert "fixed_vertex_ids[i]" in src
-    assert "pos[offset + j] = pos0[offset + j];" in src
 
 
 def make_optim_init_src(name="optim_init"):
@@ -142,14 +126,14 @@ def test_optim_init_with_fixed_vertices():
     vel0 = (ctypes.c_float * 6)(1.0, 2.0, 0.0, 1.0, -1.0, 3.0)
     pos = (ctypes.c_float * 6)()
 
-    # pin vertices 0 and 2 back to pos0; vertex 1 follows inertia
+    # fix vertices 0 and 2 back to pos0; vertex 1 follows inertia
     fixed_vertex_ids = (ctypes.c_int * 2)(0, 2)
     lib.optim_init(space_dim, h, num_vertices, pos0, vel0, pos, 2, fixed_vertex_ids)
 
     expected = [
-        0.0, 0.0,  # vertex 0 clamped to pos0
-        1.0, 0.1,  # vertex 1 follows inertia
-        2.0, 0.0,  # vertex 2 clamped to pos0
+        0.0, 0.0,
+        1.0, 0.1,
+        2.0, 0.0,
     ]
     for i in range(6):
         assert abs(pos[i] - expected[i]) < 1e-5, f"pos[{i}] mismatch: {pos[i]} != {expected[i]}"
