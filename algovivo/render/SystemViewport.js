@@ -132,34 +132,38 @@ export default class SystemViewport {
       borderColor: borderColor
     });
 
+    // vertex currently being dragged, and whether it was already fixed
+    // before the drag started (so we don't free pre-pinned vertices on drop)
+    this.draggedVertexId = null;
+    this.draggedVertexWasFixed = false;
+
     const draggable = args.draggable ?? true;
     if (draggable) {
       const dragBehavior = this.dragBehavior = new mm2d.ui.DragBehavior({
         onDomCursorDown: (domCursor, event) => {
           if ("button" in event && event.button != 0) return;
-          const system = this.system;
           const worldCursor = camera.domToWorldSpace(domCursor);
           const vertexId = this.hitTestVertex(worldCursor);
           if (vertexId != null) {
             event.preventDefault();
-            this.fixVertex(vertexId);
+            this.beginVertexDrag(vertexId);
             dragBehavior.beginDrag();
             this.setVertexPos(
-              system.vertices.fixedVertexId,
+              vertexId,
               [worldCursor[0], Math.max(0, worldCursor[1])]
             );
           }
         },
         onDragProgress: (domCursor) => {
-          const system = this.system;
+          if (this.draggedVertexId == null) return;
           const worldCursor = camera.domToWorldSpace(domCursor);
           this.setVertexPos(
-            system.vertices.fixedVertexId,
+            this.draggedVertexId,
             [worldCursor[0], Math.max(0, worldCursor[1])]
           );
         },
         onDomCursorUp: () => {
-          this.freeVertex();
+          this.endVertexDrag();
         }
       });
       if (!headless) {
@@ -328,18 +332,24 @@ export default class SystemViewport {
     this.vertices.setVertexVel(i, p);
   }
 
-  fixVertex(vertexId) {
-    const system = this.system;
-    if (vertexId == null) {
-      system.vertices.freeVertices();
-      return;
-    }
+  beginVertexDrag(vertexId) {
+    if (vertexId == null) return;
+    const vertices = this.system.vertices;
+    this.draggedVertexId = vertexId;
+    this.draggedVertexWasFixed = vertices.isFixed(vertexId);
     this.setVertexVel(vertexId, [0, 0]);
-    system.vertices.fixVertex(vertexId);
+    vertices.addFixedVertex(vertexId);
   }
 
-  freeVertex() {
-    const system = this.system;
-    system.vertices.freeVertices();
+  endVertexDrag() {
+    const vertexId = this.draggedVertexId;
+    if (vertexId == null) return;
+    // only free the dragged vertex if it was not fixed before the drag,
+    // so vertices pinned programmatically stay pinned
+    if (!this.draggedVertexWasFixed) {
+      this.system.vertices.removeFixedVertex(vertexId);
+    }
+    this.draggedVertexId = null;
+    this.draggedVertexWasFixed = false;
   }
 }

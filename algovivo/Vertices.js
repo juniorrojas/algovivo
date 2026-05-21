@@ -70,6 +70,10 @@ export default class Vertices {
     return ids[0];
   }
 
+  isFixed(vertexId) {
+    return this.fixedVertexIds.includes(vertexId);
+  }
+
   fixVertices(vertexIds) {
     if (this._fixedVertexIds != null) {
       this._fixedVertexIds.dispose();
@@ -82,6 +86,18 @@ export default class Vertices {
 
   fixVertex(vertexId) {
     this.fixVertices([vertexId]);
+  }
+
+  addFixedVertex(vertexId) {
+    const ids = this.fixedVertexIds;
+    if (ids.includes(vertexId)) return;
+    ids.push(vertexId);
+    this.fixVertices(ids);
+  }
+
+  removeFixedVertex(vertexId) {
+    const ids = this.fixedVertexIds.filter((id) => id != vertexId);
+    this.fixVertices(ids);
   }
 
   freeVertices() {
