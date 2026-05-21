@@ -5,10 +5,6 @@ from pathlib import Path
 import algovivo_codegen
 from algovivo_codegen.codegen import Args
 
-this_dirpath = Path(__file__).parent
-codegen_dirpath = this_dirpath.parent
-csrc_dirpath = codegen_dirpath / "algovivo_codegen" / "csrc"
-
 
 def test_update_args():
     vertices = algovivo_codegen.modules.Vertices()
