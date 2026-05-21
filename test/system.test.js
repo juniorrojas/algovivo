@@ -51,6 +51,32 @@ test("step with fixed vertex", async () => {
   expect(p[1][1]).toBeLessThan(6);
 });
 
+test("step with multiple fixed vertices", async () => {
+  const ten = await utils.loadTen();
+  const system = new algovivo.System({ ten });
+  system.set({
+    pos: [
+      [0, 1],
+      [1, 1.5],
+      [3, 6]
+    ]
+  });
+  system.vertices.fixVertices([0, 1]);
+  expect(system.vertices.numFixedVertices).toBe(2);
+  expect(system.vertices.fixedVertexIds).toEqual([0, 1]);
+
+  // pinned vertices must hold position exactly over many steps,
+  // while the free vertex falls under gravity
+  for (let i = 0; i < 300; i++) {
+    system.step();
+  }
+
+  const p = system.pos.toArray();
+  expect(p[0]).toEqual([0, 1]);
+  expect(p[1]).toEqual([1, 1.5]);
+  expect(p[2][1]).toBeLessThan(6);
+});
+
 test("set l0 and rsi", async () => {
   const ten = await utils.loadTen();
   const system = new algovivo.System({ ten });

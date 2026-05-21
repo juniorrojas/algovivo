@@ -330,15 +330,16 @@ export default class SystemViewport {
 
   fixVertex(vertexId) {
     const system = this.system;
-    this.setVertexVel(vertexId, [0, 0]);
     if (vertexId == null) {
-      vertexId = -1;
+      system.vertices.freeVertices();
+      return;
     }
+    this.setVertexVel(vertexId, [0, 0]);
     system.vertices.fixVertex(vertexId);
   }
 
   freeVertex() {
     const system = this.system;
-    system.vertices.freeVertex();
+    system.vertices.freeVertices();
   }
 }

@@ -16,13 +16,13 @@ export default class Vertices {
     this.posGrad = null;
     this.posTmp = null;
 
-    this._fixedVertexId = null;
+    this._fixedVertexIds = null;
   }
 
   toStepArgs() {
     const numVertices = this.numVertices;
     const vertexMass = this.vertexMass;
-    const fixedVertexId = this.fixedVertexId;
+    const numFixedVertices = this.numFixedVertices;
 
     return [
       numVertices,
@@ -30,7 +30,8 @@ export default class Vertices {
       numVertices == 0 ? 0 : this.vel0.ptr,
       vertexMass,
 
-      fixedVertexId == -1 ? 0 : this._fixedVertexId.ptr,
+      numFixedVertices,
+      numFixedVertices == 0 ? 0 : this._fixedVertexIds.ptr,
 
       numVertices == 0 ? 0 : this.pos1.ptr,
       numVertices == 0 ? 0 : this.posGrad.ptr,
@@ -53,22 +54,42 @@ export default class Vertices {
     return pos;
   }
 
+  get numFixedVertices() {
+    if (this._fixedVertexIds == null) return 0;
+    return this._fixedVertexIds.shape.get(0);
+  }
+
+  get fixedVertexIds() {
+    if (this._fixedVertexIds == null) return [];
+    return Array.from(this._fixedVertexIds.typedArray());
+  }
+
   get fixedVertexId() {
-    if (this._fixedVertexId == null) return -1;
-    return this._fixedVertexId.typedArray()[0];
+    const ids = this.fixedVertexIds;
+    if (ids.length == 0) return -1;
+    return ids[0];
+  }
+
+  fixVertices(vertexIds) {
+    if (this._fixedVertexIds != null) {
+      this._fixedVertexIds.dispose();
+      this._fixedVertexIds = null;
+    }
+    if (vertexIds == null || vertexIds.length == 0) return;
+    this._fixedVertexIds = this.ten.zeros([vertexIds.length], "int32");
+    this._fixedVertexIds.typedArray().set(vertexIds);
   }
 
   fixVertex(vertexId) {
-    if (this._fixedVertexId == null) {
-      this._fixedVertexId = this.ten.zeros([1], "int32");
-    }
-    this._fixedVertexId.typedArray()[0] = vertexId;
+    this.fixVertices([vertexId]);
+  }
+
+  freeVertices() {
+    this.fixVertices([]);
   }
 
   freeVertex() {
-    if (this._fixedVertexId == null) return;
-    this._fixedVertexId.dispose();
-    this._fixedVertexId = null;
+    this.freeVertices();
   }
 
   get pos() {
@@ -181,9 +202,9 @@ export default class Vertices {
   }
 
   dispose() {
-    if (this._fixedVertexId != null) {
-      this._fixedVertexId.free();
-      this._fixedVertexId = null;
+    if (this._fixedVertexIds != null) {
+      this._fixedVertexIds.dispose();
+      this._fixedVertexIds = null;
     }
     if (this.pos0 != null) {
       this.pos0.dispose();

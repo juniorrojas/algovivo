@@ -15,7 +15,8 @@ class NativeInstance:
             ctypes.POINTER(ctypes.c_float),  # vel0
             ctypes.c_float,                  # vertex_mass
 
-            ctypes.POINTER(ctypes.c_int),    # fixed_vertex_id
+            ctypes.c_int,                    # num_fixed_vertices
+            ctypes.POINTER(ctypes.c_int),    # fixed_vertex_ids
             ctypes.POINTER(ctypes.c_float),  # pos1
             ctypes.POINTER(ctypes.c_float),  # pos_grad
             ctypes.POINTER(ctypes.c_float),  # pos_tmp
