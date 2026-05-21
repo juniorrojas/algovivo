@@ -3,7 +3,7 @@
  * (c) 2023 Junior Rojas
  * License: MIT
  *
- * Built from commit 763ea6771e6e4110dafeb86c7ceff0bbe27bebd8
+ * Built from commit 027e3349b3cec6efb24d37c8ad1669fde36bfbc8
  */
 class Node {
   constructor(list, data) {
@@ -1202,13 +1202,13 @@ class Vertices {
     this.posGrad = null;
     this.posTmp = null;
 
-    this._fixedVertexId = null;
+    this._fixedVertexIds = null;
   }
 
   toStepArgs() {
     const numVertices = this.numVertices;
     const vertexMass = this.vertexMass;
-    const fixedVertexId = this.fixedVertexId;
+    const numFixedVertices = this.numFixedVertices;
 
     return [
       numVertices,
@@ -1216,7 +1216,8 @@ class Vertices {
       numVertices == 0 ? 0 : this.vel0.ptr,
       vertexMass,
 
-      fixedVertexId == -1 ? 0 : this._fixedVertexId.ptr,
+      numFixedVertices,
+      numFixedVertices == 0 ? 0 : this._fixedVertexIds.ptr,
 
       numVertices == 0 ? 0 : this.pos1.ptr,
       numVertices == 0 ? 0 : this.posGrad.ptr,
@@ -1239,22 +1240,58 @@ class Vertices {
     return pos;
   }
 
+  get numFixedVertices() {
+    if (this._fixedVertexIds == null) return 0;
+    return this._fixedVertexIds.shape.get(0);
+  }
+
+  get fixedVertexIds() {
+    if (this._fixedVertexIds == null) return [];
+    return Array.from(this._fixedVertexIds.typedArray());
+  }
+
   get fixedVertexId() {
-    if (this._fixedVertexId == null) return -1;
-    return this._fixedVertexId.typedArray()[0];
+    const ids = this.fixedVertexIds;
+    if (ids.length == 0) return -1;
+    return ids[0];
+  }
+
+  isFixed(vertexId) {
+    return this.fixedVertexIds.includes(vertexId);
+  }
+
+  fixVertices(vertexIds) {
+    if (this._fixedVertexIds != null) {
+      this._fixedVertexIds.dispose();
+      this._fixedVertexIds = null;
+    }
+    if (vertexIds == null || vertexIds.length == 0) return;
+    this._fixedVertexIds = this.ten.zeros([vertexIds.length], "int32");
+    this._fixedVertexIds.typedArray().set(vertexIds);
   }
 
   fixVertex(vertexId) {
-    if (this._fixedVertexId == null) {
-      this._fixedVertexId = this.ten.zeros([1], "int32");
-    }
-    this._fixedVertexId.typedArray()[0] = vertexId;
+    this.fixVertices([vertexId]);
+  }
+
+  addFixedVertex(vertexId) {
+    const ids = this.fixedVertexIds;
+    if (ids.includes(vertexId)) return;
+    ids.push(vertexId);
+    this.fixVertices(ids);
+  }
+
+  removeFixedVertex(vertexId) {
+    const ids = this.fixedVertexIds.filter((id) => id != vertexId);
+    this.fixVertices(ids);
+  }
+
+  freeVertices() {
+    this.fixVertices([]);
   }
 
   freeVertex() {
-    if (this._fixedVertexId == null) return;
-    this._fixedVertexId.dispose();
-    this._fixedVertexId = null;
+    this.freeVertices();
   }
 
   get pos() {
@@ -1367,9 +1404,9 @@ class Vertices {
   }
 
   dispose() {
-    if (this._fixedVertexId != null) {
-      this._fixedVertexId.free();
-      this._fixedVertexId = null;
+    if (this._fixedVertexIds != null) {
+      this._fixedVertexIds.dispose();
+      this._fixedVertexIds = null;
     }
     if (this.pos0 != null) {
       this.pos0.dispose();
@@ -3557,34 +3594,38 @@ class SystemViewport$1 {
       borderColor: borderColor
     });
 
+    // vertex currently being dragged, and whether it was already fixed
+    // before the drag started (so we don't free pre-pinned vertices on drop)
+    this.draggedVertexId = null;
+    this.draggedVertexWasFixed = false;
+
     const draggable = args.draggable ?? true;
     if (draggable) {
       const dragBehavior = this.dragBehavior = new DragBehavior({
         onDomCursorDown: (domCursor, event) => {
           if ("button" in event && event.button != 0) return;
-          const system = this.system;
           const worldCursor = camera.domToWorldSpace(domCursor);
           const vertexId = this.hitTestVertex(worldCursor);
           if (vertexId != null) {
             event.preventDefault();
-            this.fixVertex(vertexId);
+            this.beginVertexDrag(vertexId);
             dragBehavior.beginDrag();
             this.setVertexPos(
-              system.vertices.fixedVertexId,
+              vertexId,
               [worldCursor[0], Math.max(0, worldCursor[1])]
             );
           }
         },
         onDragProgress: (domCursor) => {
-          const system = this.system;
+          if (this.draggedVertexId == null) return;
           const worldCursor = camera.domToWorldSpace(domCursor);
           this.setVertexPos(
-            system.vertices.fixedVertexId,
+            this.draggedVertexId,
             [worldCursor[0], Math.max(0, worldCursor[1])]
           );
         },
         onDomCursorUp: () => {
-          this.freeVertex();
+          this.endVertexDrag();
         }
       });
       if (!headless) {
@@ -3753,18 +3794,25 @@ class SystemViewport$1 {
     this.vertices.setVertexVel(i, p);
   }
 
-  fixVertex(vertexId) {
-    const system = this.system;
+  beginVertexDrag(vertexId) {
+    if (vertexId == null) return;
+    const vertices = this.system.vertices;
+    this.draggedVertexId = vertexId;
+    this.draggedVertexWasFixed = vertices.isFixed(vertexId);
     this.setVertexVel(vertexId, [0, 0]);
-    if (vertexId == null) {
-      vertexId = -1;
-    }
-    system.vertices.fixVertex(vertexId);
+    vertices.addFixedVertex(vertexId);
   }
 
-  freeVertex() {
-    const system = this.system;
-    system.vertices.freeVertex();
+  endVertexDrag() {
+    const vertexId = this.draggedVertexId;
+    if (vertexId == null) return;
+    // only free the dragged vertex if it was not fixed before the drag,
+    // so vertices pinned programmatically stay pinned
+    if (!this.draggedVertexWasFixed) {
+      this.system.vertices.removeFixedVertex(vertexId);
+    }
+    this.draggedVertexId = null;
+    this.draggedVertexWasFixed = false;
   }
 }
 
