@@ -17,7 +17,8 @@ class Vertices:
         args.add_arg("float*", "vel0")
         args.add_arg("float", "vertex_mass")
 
-        args.add_arg("int*", "fixed_vertex_id")
+        args.add_arg("int", "num_fixed_vertices")
+        args.add_arg("int*", "fixed_vertex_ids")
 
         inertial_arg_name = "pos"
         inertial_arg_t = "float*"
@@ -30,7 +31,8 @@ class Vertices:
         update_pos_args.add_arg("float*", "pos", mut=True)
         update_pos_args.add_arg("float*", "pos_grad", mut=True)
         update_pos_args.add_arg("float*", "pos_tmp", mut=True)
-        update_pos_args.add_arg("int*", "fixed_vertex_id")
+        update_pos_args.add_arg("int", "num_fixed_vertices")
+        update_pos_args.add_arg("int*", "fixed_vertex_ids")
 
     def add_update_vel_args(self, update_vel_args):
         update_vel_args.add_arg("int", "num_vertices")
@@ -48,6 +50,8 @@ class Vertices:
         args.add_arg("float*", "pos0")
         args.add_arg("float*", "vel0")
         args.add_arg("float*", "pos", mut=True)
+        args.add_arg("int", "num_fixed_vertices")
+        args.add_arg("int*", "fixed_vertex_ids")
 
     def get_inertia_src(self):
         return """for (int i = 0; i < num_vertices; i++) {
@@ -68,6 +72,12 @@ class Vertices:
     const auto offset = i * space_dim; \\
     for (int j = 0; j < space_dim; j++) { \\
       pos[offset + j] = pos0[offset + j] + h * vel0[offset + j]; \\
+    } \\
+  } \\
+  for (int i = 0; i < num_fixed_vertices; i++) { \\
+    const auto offset = fixed_vertex_ids[i] * space_dim; \\
+    for (int j = 0; j < space_dim; j++) { \\
+      pos[offset + j] = pos0[offset + j]; \\
     } \\
   }"""
 

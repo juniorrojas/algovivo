@@ -41,6 +41,37 @@ test("set system vertices", async () => {
   ]);
 });
 
+test("fix vertices", async () => {
+  const ten = await utils.loadTen();
+  const vertices = new algovivo.Vertices({ ten });
+  vertices.set([
+    [0, 0],
+    [1, 0],
+    [2, 0]
+  ]);
+
+  expect(vertices.numFixedVertices).toBe(0);
+  expect(vertices.fixedVertexIds).toEqual([]);
+  expect(vertices.fixedVertexId).toBe(-1);
+
+  vertices.fixVertex(1);
+  expect(vertices.numFixedVertices).toBe(1);
+  expect(vertices.fixedVertexIds).toEqual([1]);
+  expect(vertices.fixedVertexId).toBe(1);
+
+  vertices.fixVertices([0, 2]);
+  expect(vertices.numFixedVertices).toBe(2);
+  expect(vertices.fixedVertexIds).toEqual([0, 2]);
+  expect(vertices.fixedVertexId).toBe(0);
+
+  vertices.freeVertices();
+  expect(vertices.numFixedVertices).toBe(0);
+  expect(vertices.fixedVertexIds).toEqual([]);
+  expect(vertices.fixedVertexId).toBe(-1);
+
+  vertices.dispose();
+});
+
 test("add vertex", async () => {
   const ten = await utils.loadTen();
   const memoryManager = ten.mgr;

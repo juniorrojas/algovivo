@@ -67,9 +67,10 @@ class Vertices:
             as_float_ptr(self.pos0),
             as_float_ptr(self.vel0),
             self.vertex_mass,
-            
-            None, # fixed vertex
-            
+
+            0,    # num_fixed_vertices
+            None, # fixed_vertex_ids
+
             as_float_ptr(self.pos1),
             as_float_ptr(self.pos_grad),
             as_float_ptr(self.pos_tmp),

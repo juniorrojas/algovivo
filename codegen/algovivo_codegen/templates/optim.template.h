@@ -7,8 +7,8 @@
 #define loss_backward() { \
   /* {{optim_zero_grads}} */ \
   backward_euler_loss_grad(/* {{backward_euler_loss_grad_args_call}} */); \
-  if (fixed_vertex_id != 0) { \
-    const auto offset = fixed_vertex_id[0] * space_dim; \
+  for (int i = 0; i < num_fixed_vertices; i++) { \
+    const auto offset = fixed_vertex_ids[i] * space_dim; \
     for (int j = 0; j < space_dim; j++) { \
       pos_grad[offset + j] = 0.0; \
     } \
