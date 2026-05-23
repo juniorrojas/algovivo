@@ -49,4 +49,14 @@ if __name__ == "__main__":
     backward_euler.instantiate_templates(args.output_csrc_dirname)
 ```
 
-This generates the C++ source in `csrc`. Use the `build.sh` file from the algovivo repo as a reference for compiling it. The build script typically runs inside Docker, using an image provided by algovivo with the LLVM toolchain and Enzyme (for automatic differentiation) pre-installed.
+This generates the C++ source in `csrc`. To compile it, run the `build.sh` script from the algovivo repo via Docker:
+
+```sh
+python codegen_csrc.py && \
+docker run \
+  --user $(id -u):$(id -g) \
+  -v $(pwd):/workspace \
+  -w /workspace \
+  ghcr.io/juniorrojas/algovivo/llvm18-enzyme:latest \
+  ./build.sh
+```
