@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+</head>
+<body>
+  <script type="module">
+    import * as algovivo from "https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@a5e8c73/build/algovivo.js";
+
+    async function loadWasm() {
+      const response = await fetch("./build/algovivo.wasm");
+      const wasm = await WebAssembly.instantiateStreaming(response);
+      return wasm.instance;
+    }
+
+    async function main() {
+      const system = new algovivo.System({
+        wasmInstance: await loadWasm()
+      });
+      system.set({
+        pos: [
+          [0, 0],
+          [2, 0],
+          [1, 1]
+        ],
+        triangles: [
+          [0, 1, 2]
+        ],
+        muscles: [
+          [0, 2],
+          [1, 2]
+        ]
+      });
+
+      const viewport = new algovivo.SystemViewport({ system });
+      document.body.appendChild(viewport.domElement);
+      viewport.render();
+
+      setInterval(() => {
+        system.step();
+        viewport.render();
+      }, 1000 / 30);
+    }
+
+    main();
+  </script>
+</body>
+</html>

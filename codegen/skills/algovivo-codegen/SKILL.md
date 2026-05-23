@@ -1,6 +1,6 @@
 ---
 name: algovivo-codegen
-description: Use when the user wants to define or change algovivo's energy functions, generate the C++ source, or build the simulation library (WASM or native shared library).
+description: Use when the user wants to define or change algovivo's energy functions, generate the C++ source, or build the simulation library (WASM).
 ---
 
 algovivo's codegen library helps define energy functions in Python. From those Python definitions it generates C++ source, which you can compile and differentiate with Enzyme, producing either a WASM module or a native shared library.
@@ -49,7 +49,14 @@ if __name__ == "__main__":
     backward_euler.instantiate_templates(args.output_csrc_dirname)
 ```
 
-This generates the C++ source in `csrc`. To compile it, run the `build.sh` script from the algovivo repo via Docker:
+This generates the C++ source in `csrc`. To compile it, you need the `build.sh` script from the algovivo repo:
+
+```sh
+curl -sLO https://raw.githubusercontent.com/juniorrojas/algovivo/main/build.sh
+chmod +x build.sh
+```
+
+Then run it with Docker:
 
 ```sh
 python codegen_csrc.py && \
@@ -60,3 +67,5 @@ docker run \
   ghcr.io/juniorrojas/algovivo/llvm18-enzyme:latest \
   ./build.sh
 ```
+
+This will generate `build/algovivo.wasm`. For a minimal HTML page that loads the WASM and runs a simulation, see [demo/index.html](demo/index.html). Serve it over HTTP (e.g. `python3 -m http.server`) from the directory that contains both the HTML and the `build/` directory — `fetch` won't work via `file://`.
