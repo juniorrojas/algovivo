@@ -104,6 +104,9 @@ jobs:
           npm ci
           npm run build
 
+      - name: Install Chrome for Puppeteer
+        run: npx puppeteer browsers install chrome
+
       - name: Generate trajectory frames
         run: |
           node utils/trajectory/renderTrajectory.js \
