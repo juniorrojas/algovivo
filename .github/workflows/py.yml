@@ -15,6 +15,9 @@ env:
 jobs:
   test:
     runs-on: ubuntu-latest
+    env:
+      PUPPETEER_SKIP_DOWNLOAD: "true"
+      PUPPETEER_EXECUTABLE_PATH: /usr/bin/google-chrome
     steps:
       - name: Clone repo
         uses: actions/checkout@v6
