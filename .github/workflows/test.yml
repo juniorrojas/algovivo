@@ -37,6 +37,9 @@ jobs:
   test-js:
     runs-on: ubuntu-latest
     needs: build-wasm
+    env:
+      PUPPETEER_SKIP_DOWNLOAD: "true"
+      PUPPETEER_EXECUTABLE_PATH: /usr/bin/google-chrome
     steps:
       - name: Clone repo
         uses: actions/checkout@v6
