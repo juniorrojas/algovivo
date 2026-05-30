@@ -83,6 +83,9 @@ jobs:
   render-trajectory:
     runs-on: ubuntu-latest
     needs: build-wasm
+    env:
+      PUPPETEER_SKIP_DOWNLOAD: "true"
+      PUPPETEER_EXECUTABLE_PATH: /usr/bin/google-chrome
     steps:
       - name: Clone repo
         uses: actions/checkout@v6
@@ -103,6 +106,10 @@ jobs:
         run: |
           npm ci
           npm run build
+
+      - name: Verify system Chrome
+        run: |
+          "$PUPPETEER_EXECUTABLE_PATH" --version
 
       - name: Generate trajectory frames
         run: |

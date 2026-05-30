@@ -14,13 +14,17 @@ class Window {
     const width = this.width;
     const height = this.height;
     const deviceScaleFactor = this.deviceScaleFactor;
-    const browser = this.browser = await puppeteer.launch({
+    const launchOptions = {
       headless: this.headless,
       args: [
         `--window-size=${this.width},${this.height}`,
         "--no-sandbox"
       ]
-    });
+    };
+    if (process.env.PUPPETEER_EXECUTABLE_PATH) {
+      launchOptions.executablePath = process.env.PUPPETEER_EXECUTABLE_PATH;
+    }
+    const browser = this.browser = await puppeteer.launch(launchOptions);
     const page = await browser.newPage();
     await page.setViewport({ width: width, height: height, deviceScaleFactor: deviceScaleFactor });
     await page.goto(this.indexUrl);
