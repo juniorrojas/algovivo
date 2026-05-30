@@ -107,7 +107,9 @@ jobs:
           npm run build
 
       - name: Install Chrome for Puppeteer
-        run: npx puppeteer browsers install chrome
+        run: |
+          rm -rf "$PUPPETEER_CACHE_DIR"
+          npx puppeteer browsers install chrome
 
       - name: Generate trajectory frames
         run: |
