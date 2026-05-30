@@ -18,7 +18,9 @@ class Window {
       headless: this.headless,
       args: [
         `--window-size=${this.width},${this.height}`,
-        "--no-sandbox"
+        "--no-sandbox",
+        "--disable-setuid-sandbox",
+        "--disable-dev-shm-usage"
       ]
     };
     if (process.env.PUPPETEER_EXECUTABLE_PATH) {
