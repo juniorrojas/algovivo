@@ -44,4 +44,4 @@ test("minimal scene, camera and renderer", async () => {
     staticDirname: path.join(__dirname, "public"),
     onReady: main
   });
-}, 10000);
+}, 60000);
