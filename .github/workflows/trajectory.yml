@@ -83,6 +83,8 @@ jobs:
   render-trajectory:
     runs-on: ubuntu-latest
     needs: build-wasm
+    env:
+      PUPPETEER_CACHE_DIR: ${{ github.workspace }}/.cache/puppeteer
     steps:
       - name: Clone repo
         uses: actions/checkout@v6
@@ -105,9 +107,7 @@ jobs:
           npm run build
 
       - name: Install Chrome for Puppeteer
-        run: |
-          rm -rf ~/.cache/puppeteer
-          npx puppeteer browsers install chrome
+        run: npx puppeteer browsers install chrome
 
       - name: Generate trajectory frames
         run: |
