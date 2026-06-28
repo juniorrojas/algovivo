@@ -1,5 +1,5 @@
-const net = require("net");
-const express = require("express");
+import net from "net";
+import express from "express";
 
 function getFreePort() {
   return new Promise((resolve) => {
@@ -41,7 +41,7 @@ function runWebServer(args = {}) {
   });
 }
 
-module.exports = {
-  getFreePort: getFreePort,
-  runWebServer: runWebServer
-}
+export {
+  getFreePort,
+  runWebServer
+};

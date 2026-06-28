@@ -1,9 +1,12 @@
-const { ArgumentParser } = require("argparse");
-const { Window, runWebServer } = require("./ppw");
-const Trajectory = require("./Trajectory");
-const FrameRecorder = require("./FrameRecorder");
-const fs = require("fs");
-const path = require("path");
+import { ArgumentParser } from "argparse";
+import { Window, runWebServer } from "./ppw/index.js";
+import Trajectory from "./Trajectory.js";
+import FrameRecorder from "./FrameRecorder.js";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 async function renderState(recorder, window, pos, a) {
   await window.evaluate(async (state) => {

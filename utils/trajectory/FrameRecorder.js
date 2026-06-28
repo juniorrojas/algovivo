@@ -1,5 +1,5 @@
-const pathutils = require("./pathutils");
-const path = require("path");
+import * as pathutils from "./pathutils/index.js";
+import path from "path";
 
 class FrameRecorder {
   constructor(args = {}) {
@@ -23,4 +23,4 @@ class FrameRecorder {
   }
 }
 
-module.exports = FrameRecorder;
+export default FrameRecorder;
