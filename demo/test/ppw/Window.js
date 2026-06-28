@@ -28,6 +28,7 @@ export default class Window {
 
     // surface browser-side failures to node, otherwise tests hang until timeout
     this.pageError = null;
+    // keep the first error, don't overwrite if one is already recorded
     page.on("pageerror", (err) => { this.pageError ??= err; console.error("pageerror:", err.message); });
     page.on("error", (err) => { this.pageError ??= err; console.error("error:", err.message); });
     page.on("requestfailed", (req) => {
