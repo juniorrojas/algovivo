@@ -1,4 +1,4 @@
-const puppeteer = require("puppeteer");
+import puppeteer from "puppeteer";
 
 class Window {
   constructor(args = {}) {
@@ -48,4 +48,4 @@ class Window {
   }
 }
 
-module.exports = Window;
+export default Window;

@@ -1,5 +1,5 @@
-const fsp = require("fs").promises;
-const path = require("path");
+import fsp from "fs/promises";
+import path from "path";
 
 async function getNumFilesWithExtension(dirname, ext = ".json") {
   try {
@@ -27,4 +27,4 @@ class Trajectory {
   }
 }
 
-module.exports = Trajectory;
+export default Trajectory;

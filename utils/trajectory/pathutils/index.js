@@ -1,4 +1,5 @@
-const fs = require("fs");
+import fs from "fs";
+
 const fsp = fs.promises;
 
 function fileExists(filename) {
@@ -19,7 +20,7 @@ async function cleandir(dirname) {
   }
 }
 
-module.exports = {
+export {
   fileExists,
   cleandir
 };

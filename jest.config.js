@@ -1,4 +1,4 @@
-module.exports = {
+export default {
   testPathIgnorePatterns: [
     "/node_modules/",
     "<rootDir>/demo/"

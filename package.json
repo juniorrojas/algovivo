@@ -3,6 +3,7 @@
   "author": {
     "name": "Junior Rojas"
   },
+  "type": "module",
   "exports": {
     "import": "./algovivo/index.js",
     "require": "./build/algovivo.cjs"
