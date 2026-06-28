@@ -80,4 +80,7 @@ async function main() {
   window.system = system;
 }
 
+// TODO: REVERT, intentional browser error to verify CI fail-fast
+throw new Error("intentional browser error to verify CI fail-fast");
+
 main();
