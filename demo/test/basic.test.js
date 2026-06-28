@@ -10,26 +10,8 @@ test("main", async () => {
     });
     try {
       await window.launch();
-      const numVertices = await window.evaluate(async () => {
-        function waitInit() {
-          return new Promise((resolve, reject) => {
-            const timeout = setTimeout(() => {
-              clearInterval(interval);
-              reject(new Error("Timeout waiting for system initialization"));
-            }, 5000);
-            
-            const interval = setInterval(() => {
-              if (window.system != null) {
-                clearInterval(interval);
-                clearTimeout(timeout);
-                resolve();
-              }
-            }, 50);
-          });
-        }
-        await waitInit();
-        return system.numVertices;
-      });
+      await window.waitForReady(() => window.system != null);
+      const numVertices = await window.evaluate(() => system.numVertices);
       expect(numVertices).toBe(28);
       
       await window.waitForNetworkIdle();
