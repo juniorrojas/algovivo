@@ -7,7 +7,7 @@ export default class Tracker {
     this.targetCenterY = args.targetCenterY ?? 1;
     this.offsetX = args.offsetX ?? 0;
     this.fullGrid = false;
-    this.centeringSpeedFactor = 0.5 ?? args.centeringSpeedFactor;
+    this.centeringSpeedFactor = args.centeringSpeedFactor ?? 0.5;
   }
 
   step(args = {}) {
