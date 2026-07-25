@@ -4,6 +4,10 @@
 
 namespace algovivo {
 
+// neo-Hookean elasticity with quadratic approximation of log(J),
+// the quadratic approximation is used to avoid infinite or undefined energy
+// when J <= 0
+
 __attribute__((always_inline))
 void accumulate_triangle_energy(
   float &energy,
