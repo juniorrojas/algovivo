@@ -76,4 +76,4 @@ class Triangles:
         self.mu.fill_(500.0)
 
         self.lambd = torch.empty(self.num_triangles, dtype=torch.float32)
-        self.lambd.fill_(5.0)
+        self.lambd.fill_(50.0)
