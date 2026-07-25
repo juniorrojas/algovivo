@@ -3,7 +3,7 @@
  * (c) 2023 Junior Rojas
  * License: MIT
  *
- * Built from commit cf2cc2a74041efb4703c443fdc48a085c28a413d
+ * Built from commit 7adc3227bd9b9036ea8d08d223a6ae80b2894c45
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
@@ -3121,7 +3121,7 @@
       this.targetCenterY = args.targetCenterY ?? 1;
       this.offsetX = args.offsetX ?? 0;
       this.fullGrid = false;
-      this.centeringSpeedFactor = 0.5 ;
+      this.centeringSpeedFactor = args.centeringSpeedFactor ?? 0.5;
     }
 
     step(args = {}) {
