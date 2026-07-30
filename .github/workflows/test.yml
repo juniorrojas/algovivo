@@ -50,7 +50,7 @@ jobs:
           name: algovivo.wasm
           path: build/
 
-      - name: Set up node 22
+      - name: Set up node 24
         uses: actions/setup-node@v6
         with:
           node-version: 24

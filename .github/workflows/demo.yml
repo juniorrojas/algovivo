@@ -47,7 +47,7 @@ jobs:
       - name: Clone repo
         uses: actions/checkout@v6
 
-      - name: Set up node 22
+      - name: Set up node 24
         uses: actions/setup-node@v6
         with:
           node-version: 24
@@ -82,7 +82,7 @@ jobs:
           name: build
           path: ./build
 
-      - name: Set up node 22
+      - name: Set up node 24
         uses: actions/setup-node@v6
         with:
           node-version: 24
@@ -133,7 +133,7 @@ jobs:
       - name: List demo public dir after build
         run: ls -l ${{ env.DEMO_PUBLIC_DIRNAME }}
 
-      - name: Set up node 22
+      - name: Set up node 24
         uses: actions/setup-node@v6
         with:
           node-version: 24
