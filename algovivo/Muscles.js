@@ -61,7 +61,6 @@ export default class Muscles {
           throw new Error("pos.ptr not available");
         }
         this.wasmInstance.exports.l0_of_pos(
-          this.numVertices,
           pos.ptr,
           numMuscles,
           this.indices.ptr,

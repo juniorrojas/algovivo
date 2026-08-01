@@ -46,7 +46,6 @@ void accumulate_triangle_energy(
 
 extern "C"
 void rsi_of_pos(
-  int num_vertices,
   const float* pos,
   int num_triangles,
   const int* indices,

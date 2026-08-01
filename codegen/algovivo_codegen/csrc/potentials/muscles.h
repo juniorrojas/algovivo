@@ -25,7 +25,6 @@ void accumulate_muscle_energy(
 
 extern "C"
 void l0_of_pos(
-  int num_vertices,
   const float* pos,
   int num_edges,
   const int* indices,

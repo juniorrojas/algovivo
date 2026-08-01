@@ -55,8 +55,6 @@ class Triangles:
             assert rsi.shape == (self.num_triangles, self.simplex_order - 1, self.simplex_order - 1)
             self.rsi = rsi
         else:
-            num_vertices = len(pos)
-
             self.rsi = torch.zeros(
                 self.num_triangles,
                 self.simplex_order - 1,
@@ -65,7 +63,6 @@ class Triangles:
             )
             
             self.lib.rsi_of_pos(
-                num_vertices,
                 as_float_ptr(pos),
                 self.num_triangles,
                 as_int_ptr(self.indices),

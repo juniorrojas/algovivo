@@ -82,7 +82,6 @@ export default class Triangles {
       }
 
       this.wasmInstance.exports.rsi_of_pos(
-        this.numVertices,
         pos.ptr,
         numTriangles,
         this.indices.ptr,
