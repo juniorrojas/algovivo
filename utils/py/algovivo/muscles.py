@@ -9,7 +9,7 @@ class Muscles:
         self.a = None
         self.l0 = None
     
-    def l_of_pos(self, pos, num_edges, edges, l0):
+    def l0_of_pos(self, pos, num_edges, edges, l0):
         self.lib.l0_of_pos(
             as_float_ptr(pos),
             num_edges,
@@ -53,7 +53,7 @@ class Muscles:
 
         if l0 is None:
             self.l0 = torch.empty(num_muscles, dtype=torch.float32)
-            self.l_of_pos(pos, num_muscles, indices, self.l0)
+            self.l0_of_pos(pos, num_muscles, indices, self.l0)
         else:
             self.l0 = torch.tensor(l0, dtype=torch.float32)
 
