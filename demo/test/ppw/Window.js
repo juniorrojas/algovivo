@@ -1,4 +1,7 @@
-import puppeteer from "puppeteer";
+// puppeteer is ESM-only since v25 and jest transpiles this file to CJS, so load
+// it through node's own require, which handles ESM, instead of a static import
+const puppeteer = process.getBuiltinModule("node:module")
+  .createRequire(`${process.cwd()}/`)("puppeteer").default;
 
 export default class Window {
   constructor(args = {}) {
