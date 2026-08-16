@@ -22,7 +22,7 @@
     "babel-plugin-transform-import-meta": "^2.3.3",
     "express": "^4.22.2",
     "jest": "^29.5.0",
-    "puppeteer": "^22.15.0",
+    "puppeteer": "^25.7.0",
     "rollup": "^2.80.0"
   }
 }
