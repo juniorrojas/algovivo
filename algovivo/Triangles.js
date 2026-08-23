@@ -81,6 +81,8 @@ export default class Triangles {
         }
       }
 
+      if (pos == null) throw new Error("pos required to compute rsi");
+
       this.wasmInstance.exports.rsi_of_pos(
         pos.ptr,
         numTriangles,
