@@ -3,7 +3,7 @@
  * (c) 2023 Junior Rojas
  * License: MIT
  *
- * Built from commit 7adc3227bd9b9036ea8d08d223a6ae80b2894c45
+ * Built from commit cc5be2d7cc07a8f1fd3c6b701cca77f5244aff4e
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
@@ -1504,7 +1504,6 @@
             throw new Error("pos.ptr not available");
           }
           this.wasmInstance.exports.l0_of_pos(
-            this.numVertices,
             pos.ptr,
             numMuscles,
             this.indices.ptr,
@@ -1651,8 +1650,9 @@
           }
         }
 
+        if (pos == null) throw new Error("pos required to compute rsi");
+
         this.wasmInstance.exports.rsi_of_pos(
-          this.numVertices,
           pos.ptr,
           numTriangles,
           this.indices.ptr,
