@@ -4,9 +4,7 @@ import tempfile
 from pathlib import Path
 import algovivo_codegen
 
-this_dirpath = Path(__file__).parent
-codegen_dirpath = this_dirpath.parent
-csrc_dirpath = codegen_dirpath / "algovivo_codegen" / "csrc"
+csrc_dirpath = Path(__file__).parent.parent / "algovivo_codegen" / "csrc"
 
 
 def make_quadratic():
@@ -27,12 +25,13 @@ def make_quadratic():
 
 def test_optimizer_is_not_tied_to_backward_euler():
     f = make_quadratic()
-    optimizer = algovivo_codegen.GradientDescentWithBacktrackingLineSearch()
-    src = optimizer.codegen(args=f.args, loss_fn=f.name)
+    src = algovivo_codegen.GradientDescentWithBacktrackingLineSearch().codegen(
+        args=f.args, loss_fn=f.name
+    )
 
-    assert "backward_euler" not in src
     assert "quadratic_energy(" in src
     assert "quadratic_energy_grad(" in src
+    assert "backward_euler" not in src
     # nothing vertex specific survives when no module contributes a projection
     assert "fixed_vertex_ids" not in src
 
@@ -40,9 +39,7 @@ def test_optimizer_is_not_tied_to_backward_euler():
 def test_optimizer_tolerances_reach_generated_source():
     f = make_quadratic()
     optimizer = algovivo_codegen.GradientDescentWithBacktrackingLineSearch(
-        max_iters=7,
-        backtracking_scale="0.25",
-        grad_q_tol="1e-9"
+        max_iters=7, backtracking_scale="0.25", grad_q_tol="1e-9"
     )
     src = optimizer.codegen(args=f.args, loss_fn=f.name)
 
@@ -66,83 +63,53 @@ def test_backward_euler_driver_body_comes_from_optimizer():
 def compile_minimize() -> ctypes.CDLL:
     f = make_quadratic()
     optimizer = algovivo_codegen.GradientDescentWithBacktrackingLineSearch()
-    optim_src = optimizer.codegen(
-        args=f.args,
-        loss_fn=f.name
-    ).replace("#pragma once", "")
 
-    with open(csrc_dirpath / "arr.h") as f_arr:
-        arr_h = f_arr.read().replace("#pragma once", "")
-
-    # Enzyme is not available here, so the gradient is written by hand with the
-    # exact signature make_backward_pass() generates
-    grad_src = """extern "C"
+    cpp_src = "\n".join([
+        (csrc_dirpath / "arr.h").read_text().replace("#pragma once", ""),
+        "namespace algovivo {",
+        f.codegen(),
+        # Enzyme is not available here, so the gradient is written by hand with
+        # the exact signature make_backward_pass() generates
+        """extern "C"
 void quadratic_energy_grad(float k, int n, const float* t, const float* x, const float* x_grad) {
   float* g = const_cast<float*>(x_grad);
   for (int i = 0; i < n; i++) g[i] += k * (x[i] - t[i]);
-}"""
-
-    driver_src = f"""extern "C"
+}""",
+        optimizer.codegen(args=f.args, loss_fn=f.name).replace("#pragma once", ""),
+        f"""extern "C"
 int minimize(float k, int n, const float* t, float* x, float* x_grad, float* x_tmp) {{
   {algovivo_codegen.BackwardEuler().update_pos_body}
   return 0;
-}}"""
-
-    cpp_src = "\n".join([
-        arr_h,
-        "namespace algovivo {",
-        f.codegen(),
-        grad_src,
-        optim_src,
-        driver_src,
+}}""",
         "}"
     ])
 
     with tempfile.TemporaryDirectory() as tmp_dirname:
         cpp_path = Path(tmp_dirname) / "minimize.cpp"
         so_path = Path(tmp_dirname) / "minimize.so"
-        with open(cpp_path, "w") as out:
-            out.write(cpp_src)
+        cpp_path.write_text(cpp_src)
 
         result = subprocess.run(
-            [
-                "clang++",
-                "-shared", "-fPIC", "-nostdlib",
-                "-o", str(so_path),
-                str(cpp_path)
-            ],
+            ["clang++", "-shared", "-fPIC", "-nostdlib", "-o", str(so_path), str(cpp_path)],
             capture_output=True,
             text=True
         )
-
-        if result.returncode != 0:
-            print("compilation failed:")
-            print(result.stderr)
-            return None
+        assert result.returncode == 0, result.stderr
 
         lib = ctypes.CDLL(str(so_path))
         float_p = ctypes.POINTER(ctypes.c_float)
-        lib.minimize.argtypes = [
-            ctypes.c_float,  # k
-            ctypes.c_int,    # n
-            float_p,         # t
-            float_p,         # x
-            float_p,         # x_grad
-            float_p          # x_tmp
-        ]
+        # k, n, t, x, x_grad, x_tmp
+        lib.minimize.argtypes = [ctypes.c_float, ctypes.c_int] + [float_p] * 4
         lib.minimize.restype = ctypes.c_int
         return lib
 
 
 def test_generated_optimizer_minimizes_a_quadratic():
     lib = compile_minimize()
-    if lib is None:
-        raise RuntimeError("compilation failed")
 
     k = 2.0
     target = [1.5, -2.0, 0.25, 3.0]
     n = len(target)
-
     t = (ctypes.c_float * n)(*target)
     x = (ctypes.c_float * n)(*([0.0] * n))
     x_grad = (ctypes.c_float * n)()

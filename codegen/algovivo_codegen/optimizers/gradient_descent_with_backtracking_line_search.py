@@ -5,10 +5,9 @@ templates_dirpath = this_filepath.parent.parent.joinpath("templates")
 
 # yes, this is a first-order method, and you may be thinking that backward Euler
 # is normally solved with a Hessian approximation and a linear solve,
-# but that is just an implementation detail, the optimizer sits behind this
-# class precisely so it can be swapped;
+# but that is just an implementation detail;
 # what this project is about is getting the energy functions right,
-# and gradient descent with a backtracking line search is good enough to see the
+# and gradient descent with backtracking line search is good enough to see the
 # thing actually move without overcomplicating the loop
 
 class GradientDescentWithBacktrackingLineSearch:
