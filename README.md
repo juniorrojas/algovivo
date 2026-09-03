@@ -105,7 +105,7 @@ More details about this and other energy functions used in the simulation can be
 
 ## neural controller
 
-Instead of manually scripting muscle commands, a neural controller can map proprioceptive signals to muscle control signals to produce locomotion. The example below loads a mesh and a pretrained controller included in this repository. The controller used here is an MLP that takes as input vertex positions and velocities projected onto a local frame, as shown [here](http://youtube.com/watch?v=J36M0HfxWYg).
+Instead of manually scripting muscle commands, a neural controller can map proprioceptive signals to muscle control signals to produce locomotion. The example below loads a mesh and a pretrained controller included in this repository. The controller used here is an MLP that takes as input vertex positions and velocities projected onto a local frame, as described [here](https://juniorrojas.com/papers/2019-drl-sbl.pdf).
 
 <img src="media/locomotion.gif" width="250px">
 
