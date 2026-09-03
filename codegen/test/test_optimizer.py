@@ -31,8 +31,7 @@ def compile_minimize() -> ctypes.CDLL:
         (csrc_dirpath / "arr.h").read_text().replace("#pragma once", ""),
         "namespace algovivo {",
         f.codegen(),
-        # Enzyme is not available here, so the gradient is written by hand with
-        # the exact signature make_backward_pass() generates
+        # TODO: generate gradient automatically instead of hand-writing it
         """extern "C"
 void quadratic_energy_grad(float k, int n, const float* t, const float* x, const float* x_grad) {
   float* g = const_cast<float*>(x_grad);
