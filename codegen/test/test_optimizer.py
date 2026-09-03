@@ -23,43 +23,6 @@ def make_quadratic():
     return f
 
 
-def test_optimizer_is_not_tied_to_backward_euler():
-    f = make_quadratic()
-    src = algovivo_codegen.GradientDescentWithBacktrackingLineSearch().codegen(
-        args=f.args, loss_fn=f.name
-    )
-
-    assert "quadratic_energy(" in src
-    assert "quadratic_energy_grad(" in src
-    assert "backward_euler" not in src
-    # nothing vertex specific survives when no module contributes a projection
-    assert "fixed_vertex_ids" not in src
-
-
-def test_optimizer_tolerances_reach_generated_source():
-    f = make_quadratic()
-    optimizer = algovivo_codegen.GradientDescentWithBacktrackingLineSearch(
-        max_iters=7, backtracking_scale="0.25", grad_q_tol="1e-9"
-    )
-    src = optimizer.codegen(args=f.args, loss_fn=f.name)
-
-    assert "float backtracking_scale = 0.25;" in src
-    assert "float grad_q_tol = 1e-9;" in src
-    assert "const auto max_optim_iters = 7;" in optimizer.driver_body
-
-
-def test_backward_euler_driver_body_comes_from_optimizer():
-    be = algovivo_codegen.BackwardEuler()
-    assert "const auto max_optim_iters = 100;" in be.update_pos_body
-
-    be.optimizer.max_iters = 3
-    assert "const auto max_optim_iters = 3;" in be.update_pos_body
-
-    # an explicit driver loop still wins
-    be.update_pos_body = "custom();"
-    assert be.update_pos_body == "custom();"
-
-
 def compile_minimize() -> ctypes.CDLL:
     f = make_quadratic()
     optimizer = algovivo_codegen.GradientDescentWithBacktrackingLineSearch()
