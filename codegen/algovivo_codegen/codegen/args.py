@@ -94,7 +94,7 @@ class Args:
         return [arg for arg in self.args if arg.differentiable]
 
     # TODO the methods below are coupled with the optimization method,
-    # consider moving them to a separate optimizer codegen module in the future
+    # consider moving them into optimizers/ in the future
 
     def codegen_optim_zero_grads(self):
         lines = []

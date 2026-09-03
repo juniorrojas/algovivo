@@ -1,4 +1,5 @@
 from .codegen import Fun, Args, indent
+from .optimizers import GradientDescentWithBacktrackingLineSearch
 from pathlib import Path
 import shutil
 import os
@@ -12,13 +13,18 @@ class BackwardEuler:
         self.inertial_modules = []
         self.potentials = []
 
-        self.update_pos_body = """_optim_init();
-  const auto max_optim_iters = 100;
-  for (int i = 0; i < max_optim_iters; i++) {
-    loss_backward();
-    break_if_optim_converged();
-    optim_step();
-  }"""
+        self.optimizer = GradientDescentWithBacktrackingLineSearch()
+        self._update_pos_body = None
+
+    @property
+    def update_pos_body(self):
+        if self._update_pos_body is not None:
+            return self._update_pos_body
+        return self.optimizer.driver_body
+
+    @update_pos_body.setter
+    def update_pos_body(self, value):
+        self._update_pos_body = value
 
     @property
     def src_body(self):
@@ -116,6 +122,15 @@ float potential_energy = 0.0;"""
                     parts.append(src)
         return "\n".join(parts) if parts else ""
 
+    def make_grad_projection_body(self):
+        parts = []
+        for module in self.inertial_modules:
+            if hasattr(module, "get_grad_projection_src"):
+                src = module.get_grad_projection_src()
+                if src:
+                    parts.append(src)
+        return " \\\n".join(parts) if parts else ""
+
     def make_optim_init_args(self):
         optim_init_args = Args()
         for module in self.inertial_modules:
@@ -161,51 +176,12 @@ float potential_energy = 0.0;"""
 
         templates_dirpath = this_dirpath.joinpath("templates")
 
-        with open(templates_dirpath.joinpath("optim.template.h")) as f:
-            template = f.read()
-
-            src = template
-            src = src.replace(
-                "/* {{optim_zero_grads}} */",
-                self.loss.args.codegen_optim_zero_grads()
-            )
-            src = src.replace(
-                "/* {{backward_euler_loss_grad_args_call}} */",
-                loss_grad.args.codegen_call()
-            )
-            src = src.replace(
-                "/* {{backward_euler_loss_args_call}} */",
-                self.loss.args.codegen_call()
-            )
-            src = src.replace(
-                "/* {{optim_call_with_tmp}} */",
-                self.loss.args.codegen_optim_call_with_tmp()
-            )
-            src = src.replace(
-                "/* {{optim_line_search_update}} */",
-                self.loss.args.codegen_optim_line_search_update()
-            )
-            src = src.replace(
-                "/* {{optim_apply_step}} */",
-                self.loss.args.codegen_optim_apply_step()
-            )
-            src = src.replace(
-                "/* {{optim_converged_args}} */",
-                self.loss.args.codegen_optim_converged_args()
-            )
-            src = src.replace(
-                "/* {{optim_converged_signature}} */",
-                self.loss.args.codegen_optim_converged_signature()
-            )
-            src = src.replace(
-                "/* {{optim_converged_body}} */",
-                self.loss.args.codegen_optim_converged_body()
-            )
-            optim_init_body = self.make_optim_init_body()
-            src = src.replace(
-                "/* {{optim_init_body}} */",
-                optim_init_body
-            )
+        src = self.optimizer.codegen(
+            args=self.loss.args,
+            loss_fn=self.loss.name,
+            grad_projection_src=self.make_grad_projection_body(),
+            init_src=self.make_optim_init_body()
+        )
 
         output_filepath = csrc_dirpath.joinpath("dynamics", "optim.h")
         with open(output_filepath, "w") as f:

@@ -81,6 +81,14 @@ class Vertices:
     } \\
   }"""
 
+    def get_grad_projection_src(self):
+        return """for (int i = 0; i < num_fixed_vertices; i++) { \\
+    const auto offset = fixed_vertex_ids[i] * space_dim; \\
+    for (int j = 0; j < space_dim; j++) { \\
+      pos_grad[offset + j] = 0.0; \\
+    } \\
+  }"""
+
     def get_update_vel_src(self):
         return """// vel1 = (pos1 - pos0) / h
   add_scaled(num_vertices * space_dim, pos1, pos0, -1.0, vel1);
