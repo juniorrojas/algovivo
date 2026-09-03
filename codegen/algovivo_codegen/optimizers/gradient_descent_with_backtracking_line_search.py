@@ -4,11 +4,11 @@ this_filepath = Path(os.path.realpath(__file__))
 templates_dirpath = this_filepath.parent.parent.joinpath("templates")
 
 # yes, this is a first-order method, and you may be thinking that backward Euler
-# is normally solved with a Hessian approximation and a linear solve,
+# could converge in fewer iterations with a Hessian approximation and a linear solve,
 # but that is just an implementation detail;
 # what this project is about is getting the energy functions right,
-# and gradient descent with backtracking line search is good enough to see the
-# thing actually move without overcomplicating the loop
+# and gradient descent with backtracking line search is good enough to
+# run the simulation without overcomplicating the loop
 
 class GradientDescentWithBacktrackingLineSearch:
 
