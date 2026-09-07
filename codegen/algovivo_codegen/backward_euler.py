@@ -45,7 +45,7 @@ class BackwardEuler:
             if hasattr(module, "add_differentiable_args"):
                 module.add_differentiable_args(self.loss.args)
 
-        self.validate_inertial_args()
+        self.validate_inertial_modules()
 
         self.loss_body = """
 float inertial_energy = 0.0;
@@ -59,11 +59,10 @@ float potential_energy = 0.0;"""
         self.loss_body += "return 0.5 * inertial_energy + h * h * potential_energy;"
 
         self.loss_body = indent(self.loss_body)
-
-    # differentiable and inertial are equivalent in this context:
-    # a differentiable arg must be owned by an inertial module, and vice versa
-    # TODO revisit if we should consider differentiable args with no inertia (quasistatic sim)
-    def validate_inertial_args(self):
+    
+    # TODO revisit if we should consider differentiable args with no inertia (quasistatic),
+    # currently a differentiable arg must be owned by an inertial module
+    def validate_inertial_modules(self):
         inertial_arg_names = set()
         for module in self.inertial_modules:
             module_args = Args()
@@ -81,17 +80,14 @@ float potential_energy = 0.0;"""
 
         if len(differentiable_args) == 0:
             raise ValueError(
-                "backward Euler has no differentiable state to solve for because "
-                "inertial_modules is empty. set inertial_modules = "
-                "[modules.Vertices()] to solve for vertex positions"
+                "backward Euler needs at least one differentiable arg to solve for"
             )
 
         for arg in differentiable_args:
             if arg.name not in inertial_arg_names:
                 raise ValueError(
                     f"differentiable arg '{arg.name}' is not owned by any inertial "
-                    "module. only inertial modules may declare differentiable args, "
-                    f"since nothing else supplies {arg.name}_grad and {arg.name}_tmp"
+                    "module, only inertial modules can declare differentiable args."
                 )
 
     def make_update_args(self):
