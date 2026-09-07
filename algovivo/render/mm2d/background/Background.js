@@ -8,7 +8,7 @@ export default class Background {
     
     const color1 = (args.color1 == null) ? "#fcfcfc" : args.color1;
     const color2 = (args.color2 == null) ? "#d7d8d8" : args.color2;
-    mesh.pointShader.renderPoint = (args = {}) => {
+    mesh.vertexShader.renderVertex = (args = {}) => {
       const width = args.renderer.width;
       const height = args.renderer.height;
       const ctx = args.ctx;

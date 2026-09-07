@@ -18,7 +18,7 @@ export default class Floor {
       color: args.color
     });
 
-    mesh.pointShader.renderPoint = () => {};
+    mesh.vertexShader.renderVertex = () => {};
 
     mesh.setCustomAttribute("translation", [0, 0]);
   }

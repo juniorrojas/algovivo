@@ -47,7 +47,7 @@ export default class Renderer {
     }
   }
 
-  renderPoint(renderer, mesh, camera, id, customArgs) {
+  renderVertex(renderer, mesh, camera, id, customArgs) {
     const ctx = this.ctx;
     let xi;
     if (mesh instanceof Mesh) xi = mesh.pos[id];
@@ -56,7 +56,7 @@ export default class Renderer {
     }
     const p = camera.transform.apply(xi);
     ctx.save();
-    mesh.pointShader.renderPoint({
+    mesh.vertexShader.renderVertex({
       ctx: ctx,
       renderer: renderer,
       mesh: mesh,
@@ -140,7 +140,7 @@ export default class Renderer {
       }
 
       for (let i = 0; i < mesh.pos.length; i++) {
-        this.renderPoint(renderer, mesh, camera, i, customArgs);
+        this.renderVertex(renderer, mesh, camera, i, customArgs);
       }
     } else {
       sortedElements.forEach((element) => {
@@ -149,7 +149,7 @@ export default class Renderer {
         }
 
         if (element.order == 1) {
-          this.renderPoint(renderer, mesh, camera, element.id, customArgs);
+          this.renderVertex(renderer, mesh, camera, element.id, customArgs);
         } else
         if (element.order == 2) {
           this.renderLine(renderer, mesh, camera, element.id, customArgs);

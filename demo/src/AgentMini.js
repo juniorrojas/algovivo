@@ -38,7 +38,7 @@ export default class AgentMini {
   }
 
   initRenderers() {
-    this.mesh.pointShader.renderPoint = () => {};
+    this.mesh.vertexShader.renderVertex = () => {};
     
     this.mesh.triangleShader.renderTriangle = (args) => {
       this.renderTriangle(args);

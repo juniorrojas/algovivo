@@ -1,24 +1,20 @@
 import { AABB, Vec2 } from "../math/index.js";
-import { PointShader, LineShader, TriangleShader } from "../shaders/index.js";
+import { VertexShader, LineShader, TriangleShader } from "../shaders/index.js";
 
 export default class Mesh {
   constructor(args = {}) {
     this.scene = args.scene;
-    this.id = args.id;
 
-    this.x = [];
+    this.pos = [];
     this.triangles = [];
     this.lines = [];
 
-    this.pointShader = new PointShader({});
+    this.vertexShader = new VertexShader({});
     this.lineShader = new LineShader({});
     this.triangleShader = new TriangleShader({});
 
     this.customAttributes = {};
   }
-
-  get pos() { return this.x; }
-  set pos(x) { this.x = x; }
 
   numVertices() {
     return this.pos.length;

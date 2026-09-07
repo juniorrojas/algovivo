@@ -30,10 +30,10 @@
       [0.5, 1]
     ];
 
-    // a point shader is like a vertex shader in GPU programming, but using the canvas 2d context,
+    // like a vertex shader in GPU programming, but using the canvas 2d context,
     // it's a function that gets executed per mesh vertex
-    mesh.pointShader = {
-      renderPoint(args) {
+    mesh.vertexShader = {
+      renderVertex(args) {
         const { ctx, camera, id, p } = args;
 
         // use camera.inferScale() to convert world units to screen pixels,
