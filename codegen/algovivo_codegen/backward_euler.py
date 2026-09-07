@@ -44,7 +44,9 @@ class BackwardEuler:
         for module in self.inertial_modules:
             if hasattr(module, "add_differentiable_args"):
                 module.add_differentiable_args(self.loss.args)
-        
+
+        self.validate_inertial_args()
+
         self.loss_body = """
 float inertial_energy = 0.0;
 float potential_energy = 0.0;"""
@@ -57,6 +59,40 @@ float potential_energy = 0.0;"""
         self.loss_body += "return 0.5 * inertial_energy + h * h * potential_energy;"
 
         self.loss_body = indent(self.loss_body)
+
+    # differentiable and inertial are equivalent in this context:
+    # a differentiable arg must be owned by an inertial module, and vice versa
+    # TODO revisit if we should consider differentiable args with no inertia (quasistatic sim)
+    def validate_inertial_args(self):
+        inertial_arg_names = set()
+        for module in self.inertial_modules:
+            module_args = Args()
+            if hasattr(module, "add_differentiable_args"):
+                module.add_differentiable_args(module_args)
+            names = [arg.name for arg in module_args.get_differentiable_args()]
+            if len(names) == 0:
+                raise ValueError(
+                    f"inertial module {type(module).__name__} declares no differentiable "
+                    "arg, so it owns no state for backward Euler to solve for"
+                )
+            inertial_arg_names.update(names)
+
+        differentiable_args = self.loss.args.get_differentiable_args()
+
+        if len(differentiable_args) == 0:
+            raise ValueError(
+                "backward Euler has no differentiable state to solve for because "
+                "inertial_modules is empty. set inertial_modules = "
+                "[modules.Vertices()] to solve for vertex positions"
+            )
+
+        for arg in differentiable_args:
+            if arg.name not in inertial_arg_names:
+                raise ValueError(
+                    f"differentiable arg '{arg.name}' is not owned by any inertial "
+                    "module. only inertial modules may declare differentiable args, "
+                    f"since nothing else supplies {arg.name}_grad and {arg.name}_tmp"
+                )
 
     def make_update_args(self):
         update_args = Args()

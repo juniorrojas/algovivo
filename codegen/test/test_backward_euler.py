@@ -2,6 +2,7 @@ import subprocess
 import ctypes
 import tempfile
 from pathlib import Path
+import pytest
 import algovivo_codegen
 
 this_dirpath = Path(__file__).parent
@@ -182,3 +183,19 @@ def test_inertia_only_loss_minimized_at_predicted():
             nearby = (ctypes.c_float * 2)(0.1 + dx, 0.2 + dy)
             loss_nearby = lib.inertia_only_loss(space_dim, h, num_vertices, pos0, vel0, nearby, vertex_mass)
             assert loss_at_predicted <= loss_nearby, f"loss at predicted ({loss_at_predicted}) should be <= loss at ({0.1+dx}, {0.2+dy}) ({loss_nearby})"
+
+
+def test_make_loss_without_inertial_modules_raises():
+    # inertial modules are the only things that declare differentiable args, so
+    # with none there is nothing for backward Euler to solve for and the
+    # generated loss would reference an undeclared pos
+    backward_euler = algovivo_codegen.BackwardEuler()
+    backward_euler.modules = [
+        algovivo_codegen.modules.Vertices(),
+        algovivo_codegen.modules.Muscles()
+    ]
+    backward_euler.inertial_modules = []
+    backward_euler.potentials = [algovivo_codegen.potentials.Muscles()]
+
+    with pytest.raises(ValueError, match="inertial_modules is empty"):
+        backward_euler.make_loss()
