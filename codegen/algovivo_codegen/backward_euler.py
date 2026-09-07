@@ -44,7 +44,9 @@ class BackwardEuler:
         for module in self.inertial_modules:
             if hasattr(module, "add_differentiable_args"):
                 module.add_differentiable_args(self.loss.args)
-        
+
+        self.validate_inertial_modules()
+
         self.loss_body = """
 float inertial_energy = 0.0;
 float potential_energy = 0.0;"""
@@ -57,6 +59,36 @@ float potential_energy = 0.0;"""
         self.loss_body += "return 0.5 * inertial_energy + h * h * potential_energy;"
 
         self.loss_body = indent(self.loss_body)
+    
+    # TODO revisit if we should consider differentiable args with no inertia (quasistatic),
+    # currently a differentiable arg must be owned by an inertial module
+    def validate_inertial_modules(self):
+        inertial_arg_names = set()
+        for module in self.inertial_modules:
+            module_args = Args()
+            if hasattr(module, "add_differentiable_args"):
+                module.add_differentiable_args(module_args)
+            names = [arg.name for arg in module_args.get_differentiable_args()]
+            if len(names) == 0:
+                raise ValueError(
+                    f"inertial module {type(module).__name__} declares no differentiable "
+                    "arg, so it owns no state for backward Euler to solve for"
+                )
+            inertial_arg_names.update(names)
+
+        differentiable_args = self.loss.args.get_differentiable_args()
+
+        if len(differentiable_args) == 0:
+            raise ValueError(
+                "backward Euler needs at least one differentiable arg to solve for"
+            )
+
+        for arg in differentiable_args:
+            if arg.name not in inertial_arg_names:
+                raise ValueError(
+                    f"differentiable arg '{arg.name}' is not owned by any inertial "
+                    "module, only inertial modules can declare differentiable args."
+                )
 
     def make_update_args(self):
         update_args = Args()
