@@ -16,8 +16,7 @@ export default class Scene {
   addMesh() {
     const id = this.meshes.size;
     const mesh = new Mesh({
-      scene: this,
-      id: id
+      scene: this
     });
     this.meshes.set(id, mesh);
     return mesh;

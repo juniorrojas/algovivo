@@ -69,7 +69,7 @@ export default class Grid {
 
     mesh.setCustomAttribute("translation", [0, 0]);
 
-    mesh.pointShader.renderPoint = () => {}
+    mesh.vertexShader.renderVertex = () => {}
 
     mesh.lineShader.renderLine = Grid.makeGridLineShader({
       color: color
@@ -77,7 +77,7 @@ export default class Grid {
   }
 
   get numVertices() {
-    return this.mesh.x.length;
+    return this.mesh.pos.length;
   }
 
   get numLines() {

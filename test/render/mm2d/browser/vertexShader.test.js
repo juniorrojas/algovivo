@@ -2,13 +2,13 @@ import * as ppw from "./ppw/index.js";
 import path from "path";
 import fs from "fs";
 
-// a point shader is like a vertex shader in GPU programming, but using the canvas 2d context,
+// like a vertex shader in GPU programming, but using the canvas 2d context,
 // it's a function that gets executed per mesh vertex
-test("point shader", async () => {
+test("vertex shader", async () => {
   const main = async (port) => {
     const window = new ppw.Window({
       headless: true,
-      indexUrl: `http://localhost:${port}/pointShader.html`,
+      indexUrl: `http://localhost:${port}/vertexShader.html`,
       width: 200,
       height: 200
     });
@@ -32,7 +32,7 @@ test("point shader", async () => {
         });
       });
 
-      const screenshotPath = path.join(__dirname, "pointShader.out.png");
+      const screenshotPath = path.join(__dirname, "vertexShader.out.png");
       await window.screenshot({ path: screenshotPath });
 
       expect(fs.existsSync(screenshotPath)).toBe(true);

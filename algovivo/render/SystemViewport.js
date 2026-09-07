@@ -121,7 +121,7 @@ export default class SystemViewport {
     const mesh = scene.addMesh();
     this.mesh = mesh;
 
-    mesh.pointShader.renderPoint = (args) => { this.vertices.renderVertex(args); };
+    mesh.vertexShader.renderVertex = (args) => { this.vertices.renderVertex(args); };
 
     this.triangleRenderer = new TriangleRenderer({ fillColor });
     mesh.triangleShader.renderTriangle = (args = {}) => { this.triangleRenderer.renderTriangle(args) };
