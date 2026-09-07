@@ -186,9 +186,6 @@ def test_inertia_only_loss_minimized_at_predicted():
 
 
 def test_make_loss_without_inertial_modules_raises():
-    # inertial modules are the only things that declare differentiable args, so
-    # with none there is nothing for backward Euler to solve for and the
-    # generated loss would reference an undeclared variable
     backward_euler = algovivo_codegen.BackwardEuler()
     backward_euler.modules = [
         algovivo_codegen.modules.Vertices(),
@@ -197,5 +194,5 @@ def test_make_loss_without_inertial_modules_raises():
     backward_euler.inertial_modules = []
     backward_euler.potentials = [algovivo_codegen.potentials.Gravity()]
 
-    with pytest.raises(ValueError, match="inertial_modules is empty"):
+    with pytest.raises(ValueError, match="at least one differentiable arg"):
         backward_euler.make_loss()
