@@ -3,7 +3,7 @@
  * (c) 2023 Junior Rojas
  * License: MIT
  *
- * Built from commit f50d96de36cf6de6798d6c6ee5c64a97eb226610
+ * Built from commit 2302702dbfcc7835ef23ca877e73e3e19c52dafd
  */
 class Node {
   constructor(list, data) {
@@ -2288,14 +2288,14 @@ var index$5 = /*#__PURE__*/Object.freeze({
   DragBehavior: DragBehavior
 });
 
-class PointShader {
+class VertexShader {
   constructor() {
   }
 
-  renderPoint(args = {}) {
+  renderVertex(args = {}) {
     const ctx = args.ctx;
     const p = args.p;
-    
+
     const radius = 3;
     ctx.beginPath();
     ctx.arc(p[0], p[1], radius, 0, 2 * Math.PI);
@@ -2346,7 +2346,7 @@ class TriangleShader {
 
 var index$4 = /*#__PURE__*/Object.freeze({
   __proto__: null,
-  PointShader: PointShader,
+  VertexShader: VertexShader,
   LineShader: LineShader,
   TriangleShader: TriangleShader
 });
@@ -2422,7 +2422,7 @@ class Grid {
 
     mesh.setCustomAttribute("translation", [0, 0]);
 
-    mesh.pointShader.renderPoint = () => {};
+    mesh.vertexShader.renderVertex = () => {};
 
     mesh.lineShader.renderLine = Grid.makeGridLineShader({
       color: color
@@ -2430,7 +2430,7 @@ class Grid {
   }
 
   get numVertices() {
-    return this.mesh.x.length;
+    return this.mesh.pos.length;
   }
 
   get numLines() {
@@ -2501,7 +2501,7 @@ class Background {
     
     const color1 = (args.color1 == null) ? "#fcfcfc" : args.color1;
     const color2 = (args.color2 == null) ? "#d7d8d8" : args.color2;
-    mesh.pointShader.renderPoint = (args = {}) => {
+    mesh.vertexShader.renderVertex = (args = {}) => {
       const width = args.renderer.width;
       const height = args.renderer.height;
       const ctx = args.ctx;
@@ -2808,21 +2808,17 @@ class Camera$1 {
 class Mesh {
   constructor(args = {}) {
     this.scene = args.scene;
-    this.id = args.id;
 
-    this.x = [];
+    this.pos = [];
     this.triangles = [];
     this.lines = [];
 
-    this.pointShader = new PointShader({});
+    this.vertexShader = new VertexShader({});
     this.lineShader = new LineShader({});
     this.triangleShader = new TriangleShader({});
 
     this.customAttributes = {};
   }
-
-  get pos() { return this.x; }
-  set pos(x) { this.x = x; }
 
   numVertices() {
     return this.pos.length;
@@ -2928,7 +2924,7 @@ class Renderer$1 {
     }
   }
 
-  renderPoint(renderer, mesh, camera, id, customArgs) {
+  renderVertex(renderer, mesh, camera, id, customArgs) {
     const ctx = this.ctx;
     let xi;
     if (mesh instanceof Mesh) xi = mesh.pos[id];
@@ -2937,7 +2933,7 @@ class Renderer$1 {
     }
     const p = camera.transform.apply(xi);
     ctx.save();
-    mesh.pointShader.renderPoint({
+    mesh.vertexShader.renderVertex({
       ctx: ctx,
       renderer: renderer,
       mesh: mesh,
@@ -3021,7 +3017,7 @@ class Renderer$1 {
       }
 
       for (let i = 0; i < mesh.pos.length; i++) {
-        this.renderPoint(renderer, mesh, camera, i, customArgs);
+        this.renderVertex(renderer, mesh, camera, i, customArgs);
       }
     } else {
       sortedElements.forEach((element) => {
@@ -3030,7 +3026,7 @@ class Renderer$1 {
         }
 
         if (element.order == 1) {
-          this.renderPoint(renderer, mesh, camera, element.id, customArgs);
+          this.renderVertex(renderer, mesh, camera, element.id, customArgs);
         } else
         if (element.order == 2) {
           this.renderLine(renderer, mesh, camera, element.id, customArgs);
@@ -3075,8 +3071,7 @@ class Scene$1 {
   addMesh() {
     const id = this.meshes.size;
     const mesh = new Mesh({
-      scene: this,
-      id: id
+      scene: this
     });
     this.meshes.set(id, mesh);
     return mesh;
@@ -3207,7 +3202,7 @@ class Floor {
       color: args.color
     });
 
-    mesh.pointShader.renderPoint = () => {};
+    mesh.vertexShader.renderVertex = () => {};
 
     mesh.setCustomAttribute("translation", [0, 0]);
   }
@@ -3583,7 +3578,7 @@ class SystemViewport$1 {
     const mesh = scene.addMesh();
     this.mesh = mesh;
 
-    mesh.pointShader.renderPoint = (args) => { this.vertices.renderVertex(args); };
+    mesh.vertexShader.renderVertex = (args) => { this.vertices.renderVertex(args); };
 
     this.triangleRenderer = new TriangleRenderer({ fillColor });
     mesh.triangleShader.renderTriangle = (args = {}) => { this.triangleRenderer.renderTriangle(args); };
