@@ -3,7 +3,7 @@
  * (c) 2023 Junior Rojas
  * License: MIT
  *
- * Built from commit 2302702dbfcc7835ef23ca877e73e3e19c52dafd
+ * Built from commit 2e2f386b4ea6c6720e9172cbe98e9a616574371d
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
@@ -1729,6 +1729,28 @@
     dispose() {}
   }
 
+  class Optimizer {
+    constructor(args = {}) {
+      this.maxIters = args.maxIters ?? 100;
+      this.initialStepSize = args.initialStepSize ?? Math.fround(1);
+      this.backtrackingScale = args.backtrackingScale ?? Math.fround(0.3);
+      this.maxLineSearchIters = args.maxLineSearchIters ?? 20;
+      this.gradQTol = args.gradQTol ?? Math.fround(0.5 * 1e-5);
+    }
+
+    toStepArgs() {
+      return [
+        this.maxIters,
+        this.initialStepSize,
+        this.backtrackingScale,
+        this.maxLineSearchIters,
+        this.gradQTol
+      ];
+    }
+
+    dispose() {}
+  }
+
   class System {
     constructor(args = {}) {
       let ten;
@@ -1766,6 +1788,7 @@
 
       this.friction = new Friction();
       this.collision = new Collision();
+      this.optimizer = new Optimizer(args.optimizer);
     }
 
     set fixedVertexId(value) {
@@ -1908,7 +1931,9 @@
 
         ...this.gravity.toStepArgs(),
         ...this.friction.toStepArgs(),
-        ...this.collision.toStepArgs()
+        ...this.collision.toStepArgs(),
+
+        ...this.optimizer.toStepArgs()
       ]
     }
 
@@ -1929,6 +1954,7 @@
       this.gravity.dispose();
       this.friction.dispose();
       this.collision.dispose();
+      this.optimizer.dispose();
     }
   }
 
@@ -3963,6 +3989,7 @@
 
   const { SystemViewport } = render;
 
+  exports.Optimizer = Optimizer;
   exports.System = System;
   exports.SystemViewport = SystemViewport;
   exports.Vertices = Vertices;

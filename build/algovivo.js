@@ -3,7 +3,7 @@
  * (c) 2023 Junior Rojas
  * License: MIT
  *
- * Built from commit 2302702dbfcc7835ef23ca877e73e3e19c52dafd
+ * Built from commit 2e2f386b4ea6c6720e9172cbe98e9a616574371d
  */
 class Node {
   constructor(list, data) {
@@ -1723,6 +1723,28 @@ class Collision {
   dispose() {}
 }
 
+class Optimizer {
+  constructor(args = {}) {
+    this.maxIters = args.maxIters ?? 100;
+    this.initialStepSize = args.initialStepSize ?? Math.fround(1);
+    this.backtrackingScale = args.backtrackingScale ?? Math.fround(0.3);
+    this.maxLineSearchIters = args.maxLineSearchIters ?? 20;
+    this.gradQTol = args.gradQTol ?? Math.fround(0.5 * 1e-5);
+  }
+
+  toStepArgs() {
+    return [
+      this.maxIters,
+      this.initialStepSize,
+      this.backtrackingScale,
+      this.maxLineSearchIters,
+      this.gradQTol
+    ];
+  }
+
+  dispose() {}
+}
+
 class System {
   constructor(args = {}) {
     let ten;
@@ -1760,6 +1782,7 @@ class System {
 
     this.friction = new Friction();
     this.collision = new Collision();
+    this.optimizer = new Optimizer(args.optimizer);
   }
 
   set fixedVertexId(value) {
@@ -1902,7 +1925,9 @@ class System {
 
       ...this.gravity.toStepArgs(),
       ...this.friction.toStepArgs(),
-      ...this.collision.toStepArgs()
+      ...this.collision.toStepArgs(),
+
+      ...this.optimizer.toStepArgs()
     ]
   }
 
@@ -1923,6 +1948,7 @@ class System {
     this.gravity.dispose();
     this.friction.dispose();
     this.collision.dispose();
+    this.optimizer.dispose();
   }
 }
 
@@ -3957,4 +3983,4 @@ var index = /*#__PURE__*/Object.freeze({
 
 const { SystemViewport } = render;
 
-export { System, SystemViewport, Vertices, index$1 as mm2d, index$7 as mmgrten, index as nn, render };
+export { Optimizer, System, SystemViewport, Vertices, index$1 as mm2d, index$7 as mmgrten, index as nn, render };
