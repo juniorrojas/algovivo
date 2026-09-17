@@ -1,5 +1,6 @@
 import System from "./System.js";
 import Vertices from "./Vertices.js";
+import Optimizer from "./Optimizer.js";
 
 import * as mmgrten from "./mmgrten/index.js";
 import * as render from "./render/index.js";
@@ -11,6 +12,7 @@ const { SystemViewport } = render;
 export {
   System,
   Vertices,
+  Optimizer,
   mmgrten,
   SystemViewport,
   mm2d,

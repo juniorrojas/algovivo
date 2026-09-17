@@ -11,20 +11,17 @@
 }
 
 #define break_if_optim_converged() { \
-  if (optim_converged(/* {{optim_converged_args}} */)) break; \
+  if (optim_converged(grad_q_tol, /* {{optim_converged_args}} */)) break; \
 }
 
-bool optim_converged(/* {{optim_converged_signature}} */) {
+bool optim_converged(float grad_q_tol, /* {{optim_converged_signature}} */) {
   float grad_max_q = 0.0;
-  float grad_q_tol = /* {{grad_q_tol}} */;
   /* {{optim_converged_body}} */
   return grad_max_q < grad_q_tol;
 }
 
 #define optim_step() { \
-  float step_size = /* {{initial_step_size}} */; \
-  const auto max_line_search_iters = /* {{max_line_search_iters}} */; \
-  float backtracking_scale = /* {{backtracking_scale}} */; \
+  float step_size = initial_step_size; \
   const auto loss0 = /* {{loss_fn}} */(/* {{loss_args_call}} */); \
   for (int i = 0; i < max_line_search_iters; i++) { \
     /* write trial values to _tmp buffers for line search evaluation */ \

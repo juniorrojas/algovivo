@@ -103,6 +103,8 @@ float potential_energy = 0.0;"""
         for module in self.modules:
             module.add_update_args(update_args)
 
+        self.optimizer.add_update_args(update_args)
+
         update_pos_args = Args()
 
         for arg in self.loss.args:
@@ -111,6 +113,8 @@ float potential_energy = 0.0;"""
 
         for module in self.inertial_modules:
             module.add_update_pos_args(update_pos_args)
+
+        self.optimizer.add_update_args(update_pos_args)
         
         update_vel_args = Args()
         for module in self.inertial_modules:
