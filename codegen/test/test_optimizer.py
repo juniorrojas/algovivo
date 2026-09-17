@@ -39,7 +39,11 @@ void quadratic_energy_grad(float k, int n, const float* t, const float* x, const
 }""",
         optimizer.codegen(args=f.args, loss_fn=f.name).replace("#pragma once", ""),
         f"""extern "C"
-int minimize(float k, int n, const float* t, float* x, float* x_grad, float* x_tmp) {{
+int minimize(
+  float k, int n, const float* t, float* x, float* x_grad, float* x_tmp,
+  int max_optim_iters, float initial_step_size, float backtracking_scale,
+  int max_line_search_iters, float grad_q_tol
+) {{
   {algovivo_codegen.BackwardEuler().update_pos_body}
   return 0;
 }}""",
@@ -60,10 +64,26 @@ int minimize(float k, int n, const float* t, float* x, float* x_grad, float* x_t
 
         lib = ctypes.CDLL(str(so_path))
         float_p = ctypes.POINTER(ctypes.c_float)
-        # k, n, t, x, x_grad, x_tmp
-        lib.minimize.argtypes = [ctypes.c_float, ctypes.c_int] + [float_p] * 4
+        lib.minimize.argtypes = (
+            [ctypes.c_float, ctypes.c_int] + [float_p] * 4 +
+            [ctypes.c_int, ctypes.c_float, ctypes.c_float, ctypes.c_int, ctypes.c_float]
+        )
         lib.minimize.restype = ctypes.c_int
         return lib
+
+
+def run_minimize(lib, target, k=2.0, grad_q_tol=0.5 * 1e-5):
+    n = len(target)
+    t = (ctypes.c_float * n)(*target)
+    x = (ctypes.c_float * n)(*([0.0] * n))
+    x_grad = (ctypes.c_float * n)()
+    x_tmp = (ctypes.c_float * n)()
+
+    lib.minimize(
+        ctypes.c_float(k), n, t, x, x_grad, x_tmp,
+        100, ctypes.c_float(1.0), ctypes.c_float(0.3), 20, ctypes.c_float(grad_q_tol)
+    )
+    return list(x)
 
 
 def test_generated_optimizer_minimizes_a_quadratic():
@@ -71,16 +91,61 @@ def test_generated_optimizer_minimizes_a_quadratic():
 
     k = 2.0
     target = [1.5, -2.0, 0.25, 3.0]
-    n = len(target)
-    t = (ctypes.c_float * n)(*target)
-    x = (ctypes.c_float * n)(*([0.0] * n))
-    x_grad = (ctypes.c_float * n)()
-    x_tmp = (ctypes.c_float * n)()
+    got = run_minimize(lib, target, k=k)
 
-    lib.minimize(ctypes.c_float(k), n, t, x, x_grad, x_tmp)
-
-    # optim_converged stops at max squared grad component < 0.5e-5, and
-    # grad = k * (x - t), which bounds how close x can be required to get
     tol = (0.5e-5) ** 0.5 / k
-    for got, want in zip(list(x), target):
-        assert abs(got - want) < tol, (list(x), target, tol)
+    for g, want in zip(got, target):
+        assert abs(g - want) < tol, (got, target, tol)
+
+
+def test_grad_q_tol_is_a_runtime_argument():
+    lib = compile_minimize()
+
+    target = [1.5, -2.0, 0.25, 3.0]
+
+    loose = run_minimize(lib, target, grad_q_tol=0.5 * 1e-5)
+    tight = run_minimize(lib, target, grad_q_tol=1e-12)
+
+    loose_residual = max(abs(g - w) for g, w in zip(loose, target))
+    tight_residual = max(abs(g - w) for g, w in zip(tight, target))
+
+    assert tight_residual < loose_residual, (tight_residual, loose_residual)
+
+
+def make_backward_euler():
+    be = algovivo_codegen.BackwardEuler()
+    be.modules = [
+        algovivo_codegen.modules.Vertices(),
+        algovivo_codegen.modules.Muscles(),
+        algovivo_codegen.modules.Triangles(),
+        algovivo_codegen.modules.Gravity(),
+        algovivo_codegen.modules.Friction(),
+        algovivo_codegen.modules.Collision()
+    ]
+    be.inertial_modules = [algovivo_codegen.modules.Vertices()]
+    be.potentials = [
+        algovivo_codegen.potentials.Muscles(),
+        algovivo_codegen.potentials.Triangles(),
+        algovivo_codegen.potentials.Gravity(),
+        algovivo_codegen.potentials.Collision(),
+        algovivo_codegen.potentials.Friction()
+    ]
+    return be
+
+
+optimizer_arg_names = [
+    "max_optim_iters",
+    "initial_step_size",
+    "backtracking_scale",
+    "max_line_search_iters",
+    "grad_q_tol"
+]
+
+
+def test_optimizer_args_come_last_in_the_generated_update():
+    be = make_backward_euler()
+    be.make_loss()
+    update_args, update_pos_args, _ = be.make_update_args()
+
+    assert [arg.name for arg in update_args][-5:] == optimizer_arg_names
+    assert [arg.name for arg in update_pos_args][-5:] == optimizer_arg_names

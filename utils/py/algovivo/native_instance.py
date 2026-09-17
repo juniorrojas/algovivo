@@ -36,7 +36,13 @@ class NativeInstance:
 
             ctypes.c_float,                  # g
             ctypes.c_float,                  # k_friction
-            ctypes.c_float                   # k_collision
+            ctypes.c_float,                  # k_collision
+
+            ctypes.c_int,                    # max_optim_iters
+            ctypes.c_float,                  # initial_step_size
+            ctypes.c_float,                  # backtracking_scale
+            ctypes.c_int,                    # max_line_search_iters
+            ctypes.c_float                   # grad_q_tol
         ]
 
     @staticmethod

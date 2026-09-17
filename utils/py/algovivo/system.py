@@ -1,6 +1,7 @@
 from .vertices import Vertices
 from .muscles import Muscles
 from .triangles import Triangles
+from .optimizer import Optimizer
 
 class System:
     def __init__(self, native_instance):
@@ -15,6 +16,8 @@ class System:
 
         self.k_friction = float(300)
         self.k_collision = float(14000)
+
+        self.optimizer = Optimizer()
 
     @property
     def space_dim(self):
@@ -50,7 +53,9 @@ class System:
 
             self.g,
             self.k_friction,
-            self.k_collision
+            self.k_collision,
+
+            *self.optimizer.to_step_args()
         )
 
         if self.num_vertices != 0:

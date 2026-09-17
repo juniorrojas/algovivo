@@ -14,31 +14,21 @@ class GradientDescentWithBacktrackingLineSearch:
 
     template_filename = "gradient_descent.template.h"
 
-    def __init__(
-        self,
-        max_iters=100,
-        initial_step_size="1.0",
-        backtracking_scale="0.3",
-        max_line_search_iters=20,
-        grad_q_tol="0.5 * 1e-5"
-    ):
-        # tolerances are C expressions, not python numbers, so they can be
-        # written the way they read in the generated source
-        self.max_iters = max_iters
-        self.initial_step_size = initial_step_size
-        self.backtracking_scale = backtracking_scale
-        self.max_line_search_iters = max_line_search_iters
-        self.grad_q_tol = grad_q_tol
+    def add_update_args(self, args):
+        args.add_arg("int", "max_optim_iters")
+        args.add_arg("float", "initial_step_size")
+        args.add_arg("float", "backtracking_scale")
+        args.add_arg("int", "max_line_search_iters")
+        args.add_arg("float", "grad_q_tol")
 
     @property
     def driver_body(self):
-        return f"""_optim_init();
-  const auto max_optim_iters = {self.max_iters};
-  for (int i = 0; i < max_optim_iters; i++) {{
+        return """_optim_init();
+  for (int i = 0; i < max_optim_iters; i++) {
     loss_backward();
     break_if_optim_converged();
     optim_step();
-  }}"""
+  }"""
 
     def codegen(self, args, loss_fn, grad_projection_src="", init_src=""):
         with open(templates_dirpath.joinpath(self.template_filename)) as f:
@@ -55,10 +45,6 @@ class GradientDescentWithBacktrackingLineSearch:
             .replace("/* {{optim_converged_args}} */", args.codegen_optim_converged_args())
             .replace("/* {{optim_converged_signature}} */", args.codegen_optim_converged_signature())
             .replace("/* {{optim_converged_body}} */", args.codegen_optim_converged_body())
-            .replace("/* {{grad_q_tol}} */", str(self.grad_q_tol))
-            .replace("/* {{initial_step_size}} */", str(self.initial_step_size))
-            .replace("/* {{max_line_search_iters}} */", str(self.max_line_search_iters))
-            .replace("/* {{backtracking_scale}} */", str(self.backtracking_scale))
             .replace("/* {{loss_fn}} */", loss_fn)
             .replace("/* {{loss_args_call}} */", args.codegen_call())
             .replace("/* {{optim_call_with_tmp}} */", args.codegen_optim_call_with_tmp())

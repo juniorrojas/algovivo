@@ -5,6 +5,7 @@ import Triangles from "./Triangles.js";
 import Gravity from "./Gravity.js";
 import Friction from "./Friction.js";
 import Collision from "./Collision.js";
+import Optimizer from "./Optimizer.js";
 
 export default class System {
   constructor(args = {}) {
@@ -43,6 +44,7 @@ export default class System {
 
     this.friction = new Friction();
     this.collision = new Collision();
+    this.optimizer = new Optimizer(args.optimizer);
   }
 
   set fixedVertexId(value) {
@@ -185,7 +187,9 @@ export default class System {
 
       ...this.gravity.toStepArgs(),
       ...this.friction.toStepArgs(),
-      ...this.collision.toStepArgs()
+      ...this.collision.toStepArgs(),
+
+      ...this.optimizer.toStepArgs()
     ]
   }
 
@@ -206,5 +210,6 @@ export default class System {
     this.gravity.dispose();
     this.friction.dispose();
     this.collision.dispose();
+    this.optimizer.dispose();
   }
 }
