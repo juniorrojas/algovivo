@@ -105,7 +105,9 @@ async function main() {
     snippetElement.style.position = "absolute";
     snippetElement.style.top = "14px";
     snippetElement.style.right = `${inset}px`;
-    snippetElement.style.bottom = codeSnippet.collapsed ? "" : "14px";
+    snippetElement.style.bottom = codeSnippet.collapsed
+      ? ""
+      : `${14 + btnFullscreen.domElement.offsetHeight + 14}px`;
     snippetElement.style.width = `${panelWidth}px`;
 
     agentViewport.miniContainer.style.left = `${inset}px`;
