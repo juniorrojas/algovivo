@@ -181,6 +181,23 @@ jobs:
           ref: ${{ env.BUILD_BRANCH }}
           path: ${{ env.BUILD_BRANCH_REPO_DIRNAME }}
 
+      - name: Write package.json
+        run: |
+          cat > ${{ env.BUILD_BRANCH_REPO_DIRNAME }}/package.json <<'EOF'
+          {
+            "name": "${{ env.LIB_NAME }}",
+            "type": "module",
+            "exports": {
+              ".": {
+                "import": "./${{ env.BUILD_DIRNAME }}/${{ env.LIB_NAME }}.js",
+                "require": "./${{ env.BUILD_DIRNAME }}/${{ env.LIB_NAME }}.cjs"
+              },
+              "./wasm": "./${{ env.BUILD_DIRNAME }}/${{ env.LIB_NAME }}.wasm"
+            }
+          }
+          EOF
+          cat ${{ env.BUILD_BRANCH_REPO_DIRNAME }}/package.json
+
       - name: Push to build branch
         run: |
           rm -rf ${{ env.BUILD_BRANCH_REPO_DIRNAME }}/${{ env.BUILD_DIRNAME }}
@@ -190,7 +207,7 @@ jobs:
           ls -la ${{ env.BUILD_DIRNAME }}
           git config --global user.name "GitHub Actions"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add build
+          git add build package.json
           
           # check if there are any changes to commit
           if git diff --cached --quiet; then
