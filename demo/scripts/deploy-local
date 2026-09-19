@@ -3,19 +3,19 @@ from pathlib import Path
 import os
 this_filepath = Path(os.path.abspath(__file__))
 this_dirpath = this_filepath.parent
-import sys
-sys.path.insert(0, str(this_dirpath))
 import shutil
 import argparse
 from datetime import datetime
 from glob import glob
 
-def clean_deploy_dir(deploy_path):
-    # remove all existing files in deploy_path (from last deployment), except .git
-    for filename in os.listdir(deploy_path):
+asset_extensions = ("html", "css", "js", "wasm", "json", "svg", "png", "jpg", "jpeg", "gif", "webp", "ico")
+
+def clean_deploy_dir(deploy_dirpath):
+    # remove all existing files in deploy_dirpath (from last deployment), except .git
+    for filename in os.listdir(deploy_dirpath):
         if filename == ".git":
             continue
-        full_filename = deploy_path.joinpath(filename)
+        full_filename = deploy_dirpath.joinpath(filename)
         if os.path.isdir(full_filename):
             shutil.rmtree(full_filename)
         else:
@@ -29,19 +29,12 @@ def transfer_dir(src_dirname, dst_dirname):
             os.path.join(dst_dirname, ".gitignore")
         )
 
-    for filename in (
-        glob(os.path.join(src_dirname, "*.html")) +
-        glob(os.path.join(src_dirname, "*.css")) +
-        glob(os.path.join(src_dirname, "*.js")) +
-        glob(os.path.join(src_dirname, "*.wasm")) +
-        glob(os.path.join(src_dirname, "*.json")) +
-        glob(os.path.join(src_dirname, "*.svg")) +
-        glob(os.path.join(src_dirname, "*.png"))
-    ):
-        shutil.copy(
-            filename,
-            os.path.join(dst_dirname, os.path.basename(filename))
-        )
+    for extension in asset_extensions:
+        for filename in glob(os.path.join(src_dirname, f"*.{extension}")):
+            shutil.copy(
+                filename,
+                os.path.join(dst_dirname, os.path.basename(filename))
+            )
 
     for dirname in os.listdir(src_dirname):
         if os.path.isdir(os.path.join(src_dirname, dirname)):
@@ -52,11 +45,11 @@ def transfer_dir(src_dirname, dst_dirname):
             )
 
 
-def populate_deploy_path(deploy_dirname):
+def populate_deploy_path(deploy_dirpath):
     public_dirname = str(this_dirpath.parent.joinpath("public"))
-    transfer_dir(public_dirname, str(deploy_dirname))
-    
-    with open(deploy_path.joinpath("deploy_info.txt"), "w") as f:
+    transfer_dir(public_dirname, str(deploy_dirpath))
+
+    with open(deploy_dirpath.joinpath("deploy_info.txt"), "w") as f:
         f.write(str(datetime.now().timestamp()))
 
 if __name__ == "__main__":
@@ -65,7 +58,7 @@ if __name__ == "__main__":
     args = arg_parser.parse_args()
 
     os.makedirs(args.deploy_dirname, exist_ok=True)
-    deploy_path = Path(args.deploy_dirname)
-    clean_deploy_dir(deploy_path)
-    populate_deploy_path(deploy_path)
+    deploy_dirpath = Path(args.deploy_dirname)
+    clean_deploy_dir(deploy_dirpath)
+    populate_deploy_path(deploy_dirpath)
     print(args.deploy_dirname)
