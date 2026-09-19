@@ -1,0 +1,11 @@
+{
+  "name": "algovivo",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./build/algovivo.js",
+      "require": "./build/algovivo.cjs"
+    },
+    "./wasm": "./build/algovivo.wasm"
+  }
+}
