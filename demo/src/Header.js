@@ -12,7 +12,6 @@ export default class Header {
       style.width = "100%";
       style.backgroundColor = "#000000";
       style.paddingBottom = "20px";
-      style.marginBottom = "30px";
       style.boxShadow = "0 0 10px rgba(0, 0, 0, 0.3)";
     })(divTitle.style);
 

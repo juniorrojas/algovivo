@@ -3,7 +3,6 @@ import Section from "./Section";
 export default class Sections {
   constructor() {
     this.domElement = document.createElement("div");
-    this.domElement.style.marginTop = "16px";
     this.domElement.style.textAlign = "left";
     this.domElement.style.color = "#666";
     this.domElement.style.fontSize = "14px";
@@ -87,7 +86,7 @@ However, what we actually implement in practice to solve the resulting non-linea
 The velocity is then updated with a simple update rule:
 </p>
 
-<span class="code2">vel1 = (pos1 - pos0) / dt</span>
+<span class="code2">vel1 = (pos1 - pos0) / h</span>
 
 <p>
 Many other implicit numerical integration methods share a similar form, where the next state is found by minimizing an energy function.

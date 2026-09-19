@@ -7,6 +7,8 @@ export default class AgentViewport {
     this.agentManager = new AgentManager(system, algovivo, dataRoot, agentNames);
     this.viewport = null;
     this.algovivo = algovivo;
+    this.overlayFractionRight = 0;
+    this.reservedBottom = 0;
     
     this.headless = headless;
     if (!headless) {
@@ -18,25 +20,58 @@ export default class AgentViewport {
   initContainer() {
     this.domElement = document.createElement("div");
     this.domElement.style.position = "relative";
-    this.domElement.style.display = "inline-block";
-    this.domElement.style.borderRadius = "10px";
-    this.domElement.style.border = "2px solid #c9c9c9";
-    this.domElement.style.boxShadow = "0 0 10px rgba(0, 0, 0, 0.1)";
+    this.domElement.style.display = "block";
+    this.domElement.style.width = "100%";
     this.domElement.style.overflow = "hidden";
     this.initResponsiveSize();
   }
 
   initResponsiveSize() {
-    const mq = window.matchMedia("(max-width: 410px)");
-    const updateSize = () => {
-      const size = mq.matches ? { width: 300, height: 350 } : { width: 400, height: 400 };
-      this.domElement.style.width = `${size.width}px`;
-      this.domElement.style.height = `${size.height}px`;
+    const pxPerWorldUnit = 400 / 3.8;
+    const minWorldHeight = 3.8;
+    let lastWidth = null;
+    let lastHeight = null;
+
+    const updateSize = (force = false) => {
+      const width = this.domElement.clientWidth;
+      if (width === 0) return;
+      const height = Math.max(300, Math.min(460, Math.round(width * 0.55)));
+
+      if (height !== lastHeight) this.domElement.style.height = `${height}px`;
+      const changed = width !== lastWidth || height !== lastHeight;
+      lastWidth = width;
+      lastHeight = height;
+      if (!changed && !force) return;
+
+      if (this.onResize != null) this.onResize({ width, height });
+
       if (this.viewport) {
-        this.viewport.setSize(size);
+        this.viewport.setSize({ width, height });
+
+        // the camera only takes a visible width, so a short viewport is widened
+        // until minWorldHeight fits, rather than cropping the world vertically
+        const worldWidth = Math.max(
+          width / pxPerWorldUnit,
+          minWorldHeight * width / height
+        );
+        const scale = width / worldWidth;
+        const worldHeight = height / scale;
+
+        this.viewport.tracker.visibleWorldWidth = worldWidth;
+        this.viewport.tracker.offsetX = 0.5 * this.overlayFractionRight * worldWidth;
+        this.viewport.tracker.targetCenterY = Math.min(
+          1.1,
+          worldHeight / 2 - this.reservedBottom / scale
+        );
+        this.viewport.render();
       }
     };
-    mq.addEventListener("change", updateSize);
+
+    this.updateSize = updateSize;
+    if (this.resizeObserver == null) {
+      this.resizeObserver = new ResizeObserver(() => updateSize());
+      this.resizeObserver.observe(this.domElement);
+    }
     updateSize();
   }
 
@@ -44,7 +79,7 @@ export default class AgentViewport {
     this.miniContainer = document.createElement("div");
     this.miniContainer.style.position = "absolute";
     this.miniContainer.style.top = "14px";
-    this.miniContainer.style.right = "14px";
+    this.miniContainer.style.left = "14px";
     this.miniContainer.style.zIndex = "10";
     this.miniContainer.style.display = "flex";
     this.miniContainer.style.flexDirection = "column";
@@ -114,6 +149,8 @@ export default class AgentViewport {
       }
 
       this.updateMiniButtonStates(agentName);
+
+      if (this.onAgentChange != null) this.onAgentChange(agentName);
       
     } catch (error) {
       console.error(`Failed to switch to agent ${agentName}:`, error);
