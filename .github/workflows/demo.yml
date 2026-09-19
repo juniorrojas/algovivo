@@ -20,7 +20,7 @@ permissions:
 
 jobs:
   build-wasm:
-    if: github.event_name != 'push' || github.ref == 'refs/heads/main' || contains(github.event.head_commit.message, '#deploy-demo')
+    if: github.event_name != 'push' || github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - name: Clone repo
@@ -41,7 +41,7 @@ jobs:
           name: algovivo.wasm
           path: build/algovivo.wasm
   build-js:
-    if: github.event_name != 'push' || github.ref == 'refs/heads/main' || contains(github.event.head_commit.message, '#deploy-demo')
+    if: github.event_name != 'push' || github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - name: Clone repo
@@ -151,7 +151,7 @@ jobs:
           path: ./demo/test/screenshot.out.png
 
   init-deploy-branch:
-    if: github.event_name != 'push' || github.ref == 'refs/heads/main' || contains(github.event.head_commit.message, '#deploy-demo')
+    if: github.event_name != 'push' || github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     steps:
       - name: Clone repo
@@ -213,7 +213,7 @@ jobs:
           path: ${{ env.DEPLOY_DIRNAME }}
 
       - name: Push deployment
-        if: ${{ github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '#deploy-demo') }}
+        if: ${{ github.event_name == 'workflow_dispatch' }}
         run: |
           cd ${{ env.DEPLOY_DIRNAME }}
           git config --global user.name "GitHub Actions"

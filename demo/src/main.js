@@ -3,6 +3,7 @@ import BrainButton from "./BrainButton.js";
 import { initStyle } from "./ui.js";
 import AgentViewport from "./AgentViewport.js";
 import CodeSnippet from "./CodeSnippet.js";
+import FullscreenButton from "./FullscreenButton.js";
 import Header from "./Header.js";
 import Sections from "./Sections.js";
 import Footer from "./Footer.js";
@@ -50,7 +51,7 @@ async function main() {
     agentNames: agentNames
   });
 
-  const codeSnippet = new CodeSnippet({ collapsed: window.innerWidth < 640 });
+  const codeSnippet = new CodeSnippet({ collapsed: true });
 
   const divSim = document.createElement("div");
   divSim.style.width = "100%";
@@ -60,6 +61,17 @@ async function main() {
   const snippetElement = codeSnippet.domElement;
   snippetElement.style.zIndex = "5";
   agentViewport.domElement.appendChild(snippetElement);
+
+  const btnFullscreen = new FullscreenButton({ target: agentViewport.domElement });
+  btnFullscreen.domElement.style.position = "absolute";
+  btnFullscreen.domElement.style.zIndex = "10";
+  btnFullscreen.onChange = (fullscreen) => {
+    agentViewport.fullscreen = fullscreen;
+    agentViewport.updateSize(true);
+  };
+  if (FullscreenButton.supported()) {
+    agentViewport.domElement.appendChild(btnFullscreen.domElement);
+  }
 
   await agentViewport.preloadMiniButtonData();
   await agentViewport.switchToAgent("biped");
@@ -80,10 +92,11 @@ async function main() {
   agentViewport.domElement.appendChild(btnBrain.domElement);
 
   agentViewport.onResize = ({ width, height }) => {
+    const contentWidth = Math.min(width, maxContentWidth);
     // keep the overlaid controls inside the same column the header uses,
     // instead of letting them drift to the edges of a wide screen
-    const contentWidth = Math.min(width, maxContentWidth);
-    const inset = Math.max(14, Math.round((width - maxContentWidth) / 2));
+    const columnInset = Math.max(14, Math.round((width - maxContentWidth) / 2));
+    const inset = agentViewport.fullscreen ? 14 : columnInset;
 
     const panelWidth = codeSnippet.collapsed
       ? 74
@@ -96,6 +109,9 @@ async function main() {
     snippetElement.style.width = `${panelWidth}px`;
 
     agentViewport.miniContainer.style.left = `${inset}px`;
+
+    btnFullscreen.domElement.style.right = `${inset}px`;
+    btnFullscreen.domElement.style.bottom = "14px";
 
     const occupiedWidth = codeSnippet.collapsed ? 0 : panelWidth + 14;
     const simWidth = width - occupiedWidth;
