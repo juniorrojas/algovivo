@@ -9,7 +9,8 @@ export default class AgentViewport {
     this.algovivo = algovivo;
     this.overlayFractionRight = 0;
     this.reservedBottom = 0;
-    
+    this.fullscreen = false;
+
     this.headless = headless;
     if (!headless) {
       this.initContainer();
@@ -29,13 +30,16 @@ export default class AgentViewport {
   initResponsiveSize() {
     const pxPerWorldUnit = 400 / 3.8;
     const minWorldHeight = 3.8;
+    const minWorldWidth = 4;
     let lastWidth = null;
     let lastHeight = null;
 
     const updateSize = (force = false) => {
       const width = this.domElement.clientWidth;
       if (width === 0) return;
-      const height = Math.max(300, Math.min(460, Math.round(width * 0.55)));
+      const height = this.fullscreen
+        ? window.innerHeight
+        : Math.max(300, Math.min(460, Math.round(width * 0.55)));
 
       if (height !== lastHeight) this.domElement.style.height = `${height}px`;
       const changed = width !== lastWidth || height !== lastHeight;
@@ -50,10 +54,9 @@ export default class AgentViewport {
 
         // the camera only takes a visible width, so a short viewport is widened
         // until minWorldHeight fits, rather than cropping the world vertically
-        const worldWidth = Math.max(
-          width / pxPerWorldUnit,
-          minWorldHeight * width / height
-        );
+        const worldWidth = this.fullscreen
+          ? Math.max(minWorldWidth, minWorldHeight * width / height)
+          : Math.max(width / pxPerWorldUnit, minWorldHeight * width / height);
         const scale = width / worldWidth;
         const worldHeight = height / scale;
 
