@@ -20,13 +20,13 @@ test("update vel", async () => {
     [1, 16]
   ]);
   const vel1 = ten.zeros([numVertices, spaceDim]);
-  const dt = 2;
+  const h = 2;
 
   ten.wasmInstance.exports.backward_euler_update_vel(
     numVertices, spaceDim,
     pos0.ptr, 0,
     pos1.ptr, vel1.ptr,
-    dt
+    h
   );
   expect(vel1.toArray()).toBeCloseToArray([
     [0.5, 4],
@@ -52,10 +52,10 @@ test("optim init", async () => {
     [-2, 5]
   ]);
   const pos = ten.zeros([numVertices, spaceDim]);
-  const dt = 2;
+  const h = 2;
 
   ten.wasmInstance.exports.optim_init(
-    spaceDim, dt, numVertices,
+    spaceDim, h, numVertices,
     pos0.ptr, vel0.ptr,
     pos.ptr,
     0, 0
@@ -84,14 +84,14 @@ test("optim init with fixed vertices", async () => {
     [-2, 5]
   ]);
   const pos = ten.zeros([numVertices, spaceDim]);
-  const dt = 2;
+  const h = 2;
 
   // pin vertices 0 and 2: they must stay at pos0, vertex 1 follows inertia
   const fixedVertexIds = ten.zeros([2], "int32");
   fixedVertexIds.typedArray().set([0, 2]);
 
   ten.wasmInstance.exports.optim_init(
-    spaceDim, dt, numVertices,
+    spaceDim, h, numVertices,
     pos0.ptr, vel0.ptr,
     pos.ptr,
     2, fixedVertexIds.ptr

@@ -6,7 +6,15 @@ test("malloc free with non-numeric heapBase", () => {
   const buffer = new ArrayBuffer(1024);
   const mgr = new algovivo.mmgrten.mmgr.MemoryManager(buffer, heapBase);
 
+  expect(mgr.numFreeBytes()).toBe(buffer.byteLength - 16);
+
   const ptr = mgr.malloc(32);
-  const numericPtr = Number(ptr);
-  mgr.free(numericPtr);
+  expect(typeof ptr).toBe("number");
+  expect(ptr).toBeGreaterThanOrEqual(16);
+  expect(mgr.numReservedSlots()).toBe(1);
+  expect(mgr.numFreeBytes()).toBe(buffer.byteLength - 16 - 32);
+
+  mgr.free(Number(ptr));
+  expect(mgr.numReservedSlots()).toBe(0);
+  expect(mgr.numFreeBytes()).toBe(buffer.byteLength - 16);
 });
