@@ -12,21 +12,27 @@ function check(name, ok, detail = "") {
   if (!ok) failed = true;
 }
 
-async function attempt(fn) {
+async function tryLoad(name, fn) {
   try {
-    return { value: await fn() };
+    const value = await fn();
+    check(name, true);
+    return value;
   } catch (err) {
-    return { error: err.message };
+    check(name, false, err.message);
+    return null;
   }
 }
 
-// walk up from a resolvable subpath, since exports need not expose package.json
-const wasmUrl = await attempt(() => import.meta.resolve("algovivo/wasm"));
-if (wasmUrl.error != null) {
-  check("wasm subpath resolves", false, wasmUrl.error);
+let wasmUrl = null;
+try {
+  wasmUrl = import.meta.resolve("algovivo/wasm");
+} catch (err) {
+  check("wasm subpath resolves", false, err.message);
   process.exit(1);
 }
-let pkgDirname = path.dirname(fileURLToPath(wasmUrl.value));
+
+// package.json is not in exports, so walk up from the resolved wasm path
+let pkgDirname = path.dirname(fileURLToPath(wasmUrl));
 while (!existsSync(path.join(pkgDirname, "package.json"))) {
   const parent = path.dirname(pkgDirname);
   if (parent == pkgDirname) throw new Error("package.json not found");
@@ -53,26 +59,30 @@ for (const target of targets) {
   check(`exports target exists ${target}`, exists);
 }
 
-const esm = await attempt(() => import("algovivo"));
-check("esm import", typeof esm.value?.System == "function", esm.error ?? "");
+const esm = await tryLoad("esm import", async () => {
+  const lib = await import("algovivo");
+  if (typeof lib.System != "function") throw new Error("System not exported");
+  return lib;
+});
 
-const cjs = await attempt(() => require("algovivo"));
-check("cjs require", typeof cjs.value?.System == "function", cjs.error ?? "");
+await tryLoad("cjs require", () => {
+  const lib = require("algovivo");
+  if (typeof lib.System != "function") throw new Error("System not exported");
+  return lib;
+});
 
-const wasmBytes = await attempt(() => readFile(fileURLToPath(wasmUrl.value)));
+const wasmBytes = await readFile(fileURLToPath(wasmUrl));
 check(
   "wasm subpath is wasm",
-  wasmBytes.value != null &&
-    wasmBytes.value[0] == 0x00 && wasmBytes.value[1] == 0x61 &&
-    wasmBytes.value[2] == 0x73 && wasmBytes.value[3] == 0x6d,
-  wasmBytes.error ?? `${wasmBytes.value.length} bytes`
+  wasmBytes[0] == 0x00 && wasmBytes[1] == 0x61 && wasmBytes[2] == 0x73 && wasmBytes[3] == 0x6d,
+  `${wasmBytes.length} bytes`
 );
 
-const binding = await attempt(async () => {
-  if (esm.value == null || wasmBytes.value == null) throw new Error("skipped, prior check failed");
-  const wasmInstance = await WebAssembly.instantiate(await WebAssembly.compile(wasmBytes.value), {});
-  return new esm.value.System({ wasmInstance }).numVertices;
+await tryLoad("js binds to wasm", async () => {
+  const wasmInstance = await WebAssembly.instantiate(await WebAssembly.compile(wasmBytes), {});
+  const system = new esm.System({ wasmInstance });
+  if (system.numVertices != 0) throw new Error(`numVertices ${system.numVertices}`);
+  return system;
 });
-check("js binds to wasm", binding.value === 0, binding.error ?? "");
 
 if (failed) process.exit(1);
