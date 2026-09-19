@@ -13,9 +13,8 @@ def test_collision_energy_codegen():
     collision = algovivo_codegen.potentials.Collision()
     fn = collision.make_energy_fn("collision_energy")
 
-    assert len(fn.args) == 4
+    assert len(fn.args) == 3
     arg_names = [arg.name for arg in fn.args]
-    assert "space_dim" in arg_names
     assert "k_collision" in arg_names
     assert "num_vertices" in arg_names
     assert "pos" in arg_names
@@ -38,9 +37,14 @@ def compile_collision_energy() -> ctypes.CDLL:
     with open(csrc_dirpath / "potentials" / "collision.h") as f:
         collision_h = f.read()
 
-    cpp_src = collision_h + "\nnamespace algovivo {\n" + generated_fn + "\n}"
+    cpp_src = "#include \"dim.h\"\n" + collision_h + "\nnamespace algovivo {\n" + generated_fn + "\n}"
 
     with tempfile.TemporaryDirectory() as tmp_dirname:
+        with open(csrc_dirpath / "dim.h") as f:
+            dim_h = f.read()
+        with open(Path(tmp_dirname) / "dim.h", "w") as f:
+            f.write(dim_h)
+
         cpp_path = Path(tmp_dirname) / "collision_energy.cpp"
         so_path = Path(tmp_dirname) / "collision_energy.so"
 
@@ -65,7 +69,6 @@ def compile_collision_energy() -> ctypes.CDLL:
 
         lib = ctypes.CDLL(str(so_path))
         lib.collision_energy.argtypes = [
-            ctypes.c_int,      # space_dim
             ctypes.c_float,    # k_collision
             ctypes.c_int,      # num_vertices
             ctypes.POINTER(ctypes.c_float),  # pos
@@ -81,7 +84,6 @@ def test_collision_energy_forward():
         raise RuntimeError("compilation failed")
 
     # test case: 3 vertices in 2D
-    space_dim = 2
     k_collision = 100.0
     num_vertices = 3
 
@@ -94,7 +96,7 @@ def test_collision_energy_forward():
         0.0, -0.2
     )
 
-    energy = lib.collision_energy(space_dim, k_collision, num_vertices, pos)
+    energy = lib.collision_energy(k_collision, num_vertices, pos)
 
     # expected: k * py^2 for vertices below ground (py < 0)
     # vertex 0: y = 0.5 >= 0, no contribution

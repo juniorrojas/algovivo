@@ -5,6 +5,10 @@ from pathlib import Path
 import algovivo_codegen
 from algovivo_codegen.codegen import Args
 
+this_dirpath = Path(__file__).parent
+codegen_dirpath = this_dirpath.parent
+csrc_dirpath = codegen_dirpath / "algovivo_codegen" / "csrc"
+
 
 def test_update_args():
     vertices = algovivo_codegen.modules.Vertices()
@@ -48,9 +52,14 @@ void {name}({signature}) {{
 def compile_optim_init() -> ctypes.CDLL:
     generated_fn = make_optim_init_src()
 
-    cpp_src = "namespace algovivo {\n" + generated_fn + "\n}"
+    cpp_src = "#include \"dim.h\"\nnamespace algovivo {\n" + generated_fn + "\n}"
 
     with tempfile.TemporaryDirectory() as tmp_dirname:
+        with open(csrc_dirpath / "dim.h") as f:
+            dim_h = f.read()
+        with open(Path(tmp_dirname) / "dim.h", "w") as f:
+            f.write(dim_h)
+
         cpp_path = Path(tmp_dirname) / "optim_init.cpp"
         so_path = Path(tmp_dirname) / "optim_init.so"
 
@@ -75,7 +84,6 @@ def compile_optim_init() -> ctypes.CDLL:
 
         lib = ctypes.CDLL(str(so_path))
         lib.optim_init.argtypes = [
-            ctypes.c_int,                    # space_dim
             ctypes.c_float,                  # h
             ctypes.c_int,                    # num_vertices
             ctypes.POINTER(ctypes.c_float),  # pos0
@@ -93,7 +101,6 @@ def test_optim_init_no_fixed_vertices():
     if lib is None:
         raise RuntimeError("compilation failed")
 
-    space_dim = 2
     h = 0.1
     num_vertices = 3
 
@@ -101,7 +108,7 @@ def test_optim_init_no_fixed_vertices():
     vel0 = (ctypes.c_float * 6)(1.0, 2.0, 0.0, 1.0, -1.0, 3.0)
     pos = (ctypes.c_float * 6)()
 
-    lib.optim_init(space_dim, h, num_vertices, pos0, vel0, pos, 0, None)
+    lib.optim_init(h, num_vertices, pos0, vel0, pos, 0, None)
 
     # all vertices follow the inertial guess pos0 + h * vel0
     expected = [0.1, 0.2, 1.0, 0.1, 1.9, 0.3]
@@ -114,7 +121,6 @@ def test_optim_init_with_fixed_vertices():
     if lib is None:
         raise RuntimeError("compilation failed")
 
-    space_dim = 2
     h = 0.1
     num_vertices = 3
 
@@ -124,7 +130,7 @@ def test_optim_init_with_fixed_vertices():
 
     # fix vertices 0 and 2 back to pos0; vertex 1 follows inertia
     fixed_vertex_ids = (ctypes.c_int * 2)(0, 2)
-    lib.optim_init(space_dim, h, num_vertices, pos0, vel0, pos, 2, fixed_vertex_ids)
+    lib.optim_init(h, num_vertices, pos0, vel0, pos, 2, fixed_vertex_ids)
 
     expected = [
         0.0, 0.0,

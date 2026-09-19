@@ -19,8 +19,7 @@ for (int i = 0; i < num_vertices; i++) {
     vel0,
     pos0,
     h,
-    vertex_mass,
-    space_dim
+    vertex_mass
   );
 }
 """
@@ -28,7 +27,6 @@ for (int i = 0; i < num_vertices; i++) {
 
 def make_inertial_energy_fn(name="inertial_energy"):
     f = algovivo_codegen.Fun(name)
-    f.args.add_arg("int", "space_dim")
     f.args.add_arg("float", "h")
     f.args.add_arg("int", "num_vertices")
     f.args.add_arg("float*", "pos0")
@@ -42,9 +40,8 @@ def make_inertial_energy_fn(name="inertial_energy"):
 def test_inertial_energy_codegen():
     fn = make_inertial_energy_fn("inertial_energy")
 
-    assert len(fn.args) == 7
+    assert len(fn.args) == 6
     arg_names = [arg.name for arg in fn.args]
-    assert "space_dim" in arg_names
     assert "h" in arg_names
     assert "num_vertices" in arg_names
     assert "pos0" in arg_names
@@ -72,7 +69,16 @@ def compile_inertial_energy() -> ctypes.CDLL:
     cpp_src = inertia_h + "\nnamespace algovivo {\n" + generated_fn + "\n}"
 
     with tempfile.TemporaryDirectory() as tmp_dirname:
-        cpp_path = Path(tmp_dirname) / "inertial_energy.cpp"
+        # inertia.h includes "../dim.h", so compile from a dynamics/ subdir
+        dynamics_dirpath = Path(tmp_dirname) / "dynamics"
+        dynamics_dirpath.mkdir()
+
+        with open(csrc_dirpath / "dim.h") as f:
+            dim_h = f.read()
+        with open(Path(tmp_dirname) / "dim.h", "w") as f:
+            f.write(dim_h)
+
+        cpp_path = dynamics_dirpath / "inertial_energy.cpp"
         so_path = Path(tmp_dirname) / "inertial_energy.so"
 
         with open(cpp_path, "w") as f:
@@ -96,7 +102,6 @@ def compile_inertial_energy() -> ctypes.CDLL:
 
         lib = ctypes.CDLL(str(so_path))
         lib.inertial_energy.argtypes = [
-            ctypes.c_int,      # space_dim
             ctypes.c_float,    # h
             ctypes.c_int,      # num_vertices
             ctypes.POINTER(ctypes.c_float),  # pos0
@@ -115,7 +120,6 @@ def test_inertial_energy_forward():
         raise RuntimeError("compilation failed")
 
     # test case: 2 vertices in 2D
-    space_dim = 2
     h = 0.1
     num_vertices = 2
     vertex_mass = 1.0
@@ -138,7 +142,7 @@ def test_inertial_energy_forward():
         1.2, 0.2
     )
 
-    energy = lib.inertial_energy(space_dim, h, num_vertices, pos0, vel0, pos, vertex_mass)
+    energy = lib.inertial_energy(h, num_vertices, pos0, vel0, pos, vertex_mass)
 
     # expected: m * ||d||^2 for each vertex
     # vertex 0: 1.0 * 0.01 = 0.01

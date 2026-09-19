@@ -176,7 +176,6 @@ export default class System {
 
   toStepArgs() {
     return [
-      this.spaceDim,
       this.h,
 
       ...this.vertices.toStepArgs(),

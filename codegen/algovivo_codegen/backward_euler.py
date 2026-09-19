@@ -31,7 +31,6 @@ class BackwardEuler:
         return self.loss_body
 
     def make_loss(self):
-        self.loss.args.add_arg("int", "space_dim")
         self.loss.args.add_arg("float", "h")
 
         for potential in self.potentials:
@@ -93,7 +92,6 @@ float potential_energy = 0.0;"""
     def make_update_args(self):
         update_args = Args()
 
-        update_args.add_arg("int", "space_dim")
         update_args.add_arg("float", "h")
 
         for potential in self.potentials:

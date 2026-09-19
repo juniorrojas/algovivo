@@ -13,9 +13,8 @@ def test_friction_energy_codegen():
     friction = algovivo_codegen.potentials.Friction()
     fn = friction.make_energy_fn("friction_energy")
 
-    assert len(fn.args) == 6
+    assert len(fn.args) == 5
     arg_names = [arg.name for arg in fn.args]
-    assert "space_dim" in arg_names
     assert "h" in arg_names
     assert "k_friction" in arg_names
     assert "num_vertices" in arg_names
@@ -43,7 +42,16 @@ def compile_friction_energy() -> ctypes.CDLL:
     cpp_src = friction_h + "\nnamespace algovivo {\n" + generated_fn + "\n}"
 
     with tempfile.TemporaryDirectory() as tmp_dirname:
-        cpp_path = Path(tmp_dirname) / "friction_energy.cpp"
+        # friction.h includes "../dim.h", so compile from a potentials/ subdir
+        potentials_dirpath = Path(tmp_dirname) / "potentials"
+        potentials_dirpath.mkdir()
+
+        with open(csrc_dirpath / "dim.h") as f:
+            dim_h = f.read()
+        with open(Path(tmp_dirname) / "dim.h", "w") as f:
+            f.write(dim_h)
+
+        cpp_path = potentials_dirpath / "friction_energy.cpp"
         so_path = Path(tmp_dirname) / "friction_energy.so"
 
         with open(cpp_path, "w") as f:
@@ -67,7 +75,6 @@ def compile_friction_energy() -> ctypes.CDLL:
 
         lib = ctypes.CDLL(str(so_path))
         lib.friction_energy.argtypes = [
-            ctypes.c_int,      # space_dim
             ctypes.c_float,    # h
             ctypes.c_float,    # k_friction
             ctypes.c_int,      # num_vertices
@@ -85,7 +92,6 @@ def test_friction_energy_forward():
         raise RuntimeError("compilation failed")
 
     # test case: 3 vertices in 2D
-    space_dim = 2
     h = 0.1
     k_friction = 100.0
     num_vertices = 3
@@ -108,7 +114,7 @@ def test_friction_energy_forward():
         0.2, 0.005
     )
 
-    energy = lib.friction_energy(space_dim, h, k_friction, num_vertices, pos0, pos)
+    energy = lib.friction_energy(h, k_friction, num_vertices, pos0, pos)
 
     # expected: k_friction * vx^2 * (-height) for vertices below eps
     # eps = 0.01

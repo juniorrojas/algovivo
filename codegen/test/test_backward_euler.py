@@ -21,8 +21,7 @@ for (int i = 0; i < num_vertices; i++) {
     vel0,
     pos0,
     h,
-    vertex_mass,
-    space_dim
+    vertex_mass
   );
 }
 return 0.5 * inertial_energy;
@@ -31,7 +30,6 @@ return 0.5 * inertial_energy;
 
 def make_inertia_only_loss_fn(name="inertia_only_loss"):
     f = algovivo_codegen.Fun(name)
-    f.args.add_arg("int", "space_dim")
     f.args.add_arg("float", "h")
     f.args.add_arg("int", "num_vertices")
     f.args.add_arg("float*", "pos0")
@@ -45,9 +43,8 @@ def make_inertia_only_loss_fn(name="inertia_only_loss"):
 def test_inertia_only_loss_codegen():
     fn = make_inertia_only_loss_fn()
 
-    assert len(fn.args) == 7
+    assert len(fn.args) == 6
     arg_names = [arg.name for arg in fn.args]
-    assert "space_dim" in arg_names
     assert "h" in arg_names
     assert "num_vertices" in arg_names
     assert "pos0" in arg_names
@@ -74,7 +71,16 @@ def compile_inertia_only_loss() -> ctypes.CDLL:
     cpp_src = inertia_h + "\nnamespace algovivo {\n" + generated_fn + "\n}"
 
     with tempfile.TemporaryDirectory() as tmp_dirname:
-        cpp_path = Path(tmp_dirname) / "inertia_only_loss.cpp"
+        # inertia.h includes "../dim.h", so compile from a dynamics/ subdir
+        dynamics_dirpath = Path(tmp_dirname) / "dynamics"
+        dynamics_dirpath.mkdir()
+
+        with open(csrc_dirpath / "dim.h") as f:
+            dim_h = f.read()
+        with open(Path(tmp_dirname) / "dim.h", "w") as f:
+            f.write(dim_h)
+
+        cpp_path = dynamics_dirpath / "inertia_only_loss.cpp"
         so_path = Path(tmp_dirname) / "inertia_only_loss.so"
 
         with open(cpp_path, "w") as f:
@@ -98,7 +104,6 @@ def compile_inertia_only_loss() -> ctypes.CDLL:
 
         lib = ctypes.CDLL(str(so_path))
         lib.inertia_only_loss.argtypes = [
-            ctypes.c_int,      # space_dim
             ctypes.c_float,    # h
             ctypes.c_int,      # num_vertices
             ctypes.POINTER(ctypes.c_float),  # pos0
@@ -117,7 +122,6 @@ def test_inertia_only_loss_forward():
         raise RuntimeError("compilation failed")
 
     # test case: 2 vertices in 2D
-    space_dim = 2
     h = 0.1
     num_vertices = 2
     vertex_mass = 1.0
@@ -140,7 +144,7 @@ def test_inertia_only_loss_forward():
         0.1, 0.0,
         1.0, 0.1
     )
-    loss = lib.inertia_only_loss(space_dim, h, num_vertices, pos0, vel0, pos_at_predicted, vertex_mass)
+    loss = lib.inertia_only_loss(h, num_vertices, pos0, vel0, pos_at_predicted, vertex_mass)
     assert abs(loss) < 1e-5, f"loss at predicted should be 0, got {loss}"
 
     # case 2: pos != predicted
@@ -152,7 +156,7 @@ def test_inertia_only_loss_forward():
     # vertex 1: d = (0.2, 0.1), ||d||^2 = 0.05
     # inertial_energy = m * (0.01 + 0.05) = 0.06
     # loss = 0.5 * 0.06 = 0.03
-    loss = lib.inertia_only_loss(space_dim, h, num_vertices, pos0, vel0, pos_displaced, vertex_mass)
+    loss = lib.inertia_only_loss(h, num_vertices, pos0, vel0, pos_displaced, vertex_mass)
     expected = 0.03
     assert abs(loss - expected) < 1e-5, f"loss mismatch: {loss} != {expected}"
 
@@ -163,7 +167,6 @@ def test_inertia_only_loss_minimized_at_predicted():
         raise RuntimeError("compilation failed")
 
     # test case: 1 vertex in 2D
-    space_dim = 2
     h = 0.1
     num_vertices = 1
     vertex_mass = 1.0
@@ -174,14 +177,14 @@ def test_inertia_only_loss_minimized_at_predicted():
     # predicted: (0.1, 0.2)
     predicted = (ctypes.c_float * 2)(0.1, 0.2)
 
-    loss_at_predicted = lib.inertia_only_loss(space_dim, h, num_vertices, pos0, vel0, predicted, vertex_mass)
+    loss_at_predicted = lib.inertia_only_loss(h, num_vertices, pos0, vel0, predicted, vertex_mass)
 
     # test that loss at predicted is less than loss at nearby points
     offsets = [0.01, -0.01, 0.05, -0.05]
     for dx in offsets:
         for dy in offsets:
             nearby = (ctypes.c_float * 2)(0.1 + dx, 0.2 + dy)
-            loss_nearby = lib.inertia_only_loss(space_dim, h, num_vertices, pos0, vel0, nearby, vertex_mass)
+            loss_nearby = lib.inertia_only_loss(h, num_vertices, pos0, vel0, nearby, vertex_mass)
             assert loss_at_predicted <= loss_nearby, f"loss at predicted ({loss_at_predicted}) should be <= loss at ({0.1+dx}, {0.2+dy}) ({loss_nearby})"
 
 

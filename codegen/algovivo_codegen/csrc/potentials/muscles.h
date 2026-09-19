@@ -12,11 +12,7 @@ void accumulate_muscle_energy(
   float a, float l0,
   float k
 ) {
-  vec2_get(p1, pos, i1);
-  vec2_get(p2, pos, i2);
-
-  vec2_sub(d, p1, p2);
-  const auto q = dx * dx + dy * dy;
+  const auto q = vec2_q(pos, i1, i2);
   const float l = __builtin_sqrt(q + 1e-6);
   const auto al0 = a * l0;
   const auto dl = (l - al0) / al0;
@@ -34,13 +30,8 @@ void l0_of_pos(
     const auto offset = 2 * i;
     const auto i1 = indices[offset    ];
     const auto i2 = indices[offset + 1];
-    
-    vec2_get(p1, pos, i1);
-    vec2_get(p2, pos, i2);
 
-    vec2_sub(d, p1, p2);
-    const auto q = dx * dx + dy * dy;
-    l0[i] = __builtin_sqrt(q);
+    l0[i] = __builtin_sqrt(vec2_q(pos, i1, i2));
   }
 }
 

@@ -7,10 +7,7 @@ class Gravity:
     def get_src(self):
         return """
 for (int i = 0; i < num_vertices; i++) {
-  const auto offset = space_dim * i;
-
-  const auto px = pos[offset    ];
-  const auto py = pos[offset + 1];
+  const auto py = pos[space_dim * i + 1];
 
   accumulate_gravity_energy(
     potential_energy,
@@ -23,7 +20,6 @@ for (int i = 0; i < num_vertices; i++) {
 
     def make_energy_fn(self, name="gravity_energy"):
         f = Fun(name)
-        f.args.add_arg("int", "space_dim")
         f.args.add_arg("float", "g")
         f.args.add_arg("int", "num_vertices")
         f.args.add_arg("float*", "pos", differentiable=True, size="num_vertices * space_dim")
