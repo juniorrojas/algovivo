@@ -23,7 +23,7 @@ test("update vel", async () => {
   const h = 2;
 
   ten.wasmInstance.exports.backward_euler_update_vel(
-    numVertices, spaceDim,
+    numVertices,
     pos0.ptr, 0,
     pos1.ptr, vel1.ptr,
     h
@@ -55,7 +55,7 @@ test("optim init", async () => {
   const h = 2;
 
   ten.wasmInstance.exports.optim_init(
-    spaceDim, h, numVertices,
+    h, numVertices,
     pos0.ptr, vel0.ptr,
     pos.ptr,
     0, 0
@@ -91,7 +91,7 @@ test("optim init with fixed vertices", async () => {
   fixedVertexIds.typedArray().set([0, 2]);
 
   ten.wasmInstance.exports.optim_init(
-    spaceDim, h, numVertices,
+    h, numVertices,
     pos0.ptr, vel0.ptr,
     pos.ptr,
     2, fixedVertexIds.ptr

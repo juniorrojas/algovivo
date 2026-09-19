@@ -2,6 +2,8 @@
 
 #include "../arr.h"
 
+#include "../dim.h"
+
 #include "../vec2.h"
 
 #include "../dynamics/inertia.h"

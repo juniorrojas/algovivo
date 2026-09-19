@@ -36,7 +36,6 @@ class Vertices:
 
     def add_update_vel_args(self, update_vel_args):
         update_vel_args.add_arg("int", "num_vertices")
-        update_vel_args.add_arg("int", "space_dim")
         update_vel_args.add_arg("float*", "pos0")
         update_vel_args.add_arg("float*", "vel0")
         update_vel_args.add_arg("float*", "pos1", mut=True)
@@ -44,7 +43,6 @@ class Vertices:
         update_vel_args.add_arg("float", "h")
 
     def add_optim_init_args(self, args):
-        args.add_arg("int", "space_dim")
         args.add_arg("float", "h")
         args.add_arg("int", "num_vertices")
         args.add_arg("float*", "pos0")
@@ -62,8 +60,7 @@ class Vertices:
     vel0,
     pos0,
     h,
-    vertex_mass,
-    space_dim
+    vertex_mass
   );
 }"""
 

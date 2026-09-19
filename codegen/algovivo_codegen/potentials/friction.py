@@ -7,18 +7,11 @@ class Friction:
     def get_src(self):
         return """
 for (int i = 0; i < num_vertices; i++) {
-  const auto offset = space_dim * i;
-
-  const auto px = pos[offset    ];
-  const auto py = pos[offset + 1];
-
-  const auto p0x = pos0[offset    ];
-  const auto p0y = pos0[offset + 1];
-
   accumulate_friction_energy(
     potential_energy,
-    px,
-    p0x, p0y,
+    pos,
+    pos0,
+    i,
     h,
     k_friction
   );
@@ -27,7 +20,6 @@ for (int i = 0; i < num_vertices; i++) {
 
     def make_energy_fn(self, name="friction_energy"):
         f = Fun(name)
-        f.args.add_arg("int", "space_dim")
         f.args.add_arg("float", "h")
         f.args.add_arg("float", "k_friction")
         f.args.add_arg("int", "num_vertices")

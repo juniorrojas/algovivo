@@ -7,8 +7,7 @@ class Collision:
     def get_src(self):
         return """
 for (int i = 0; i < num_vertices; i++) {
-  const auto offset = space_dim * i;
-  const auto py = pos[offset + 1];
+  const auto py = pos[space_dim * i + 1];
 
   accumulate_collision_energy(
     potential_energy,
@@ -20,7 +19,6 @@ for (int i = 0; i < num_vertices; i++) {
 
     def make_energy_fn(self, name="collision_energy"):
         f = Fun(name)
-        f.args.add_arg("int", "space_dim")
         f.args.add_arg("float", "k_collision")
         f.args.add_arg("int", "num_vertices")
         f.args.add_arg("float*", "pos")

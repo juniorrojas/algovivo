@@ -7,7 +7,6 @@ class NativeInstance:
 
         lib.backward_euler_update.restype = None
         lib.backward_euler_update.argtypes = [
-            ctypes.c_int,                    # space_dim
             ctypes.c_float,                  # h
 
             ctypes.c_int,                    # num_vertices

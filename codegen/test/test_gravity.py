@@ -13,9 +13,8 @@ def test_gravity_energy_codegen():
     gravity = algovivo_codegen.potentials.Gravity()
     fn = gravity.make_energy_fn("gravity_energy")
 
-    assert len(fn.args) == 5
+    assert len(fn.args) == 4
     arg_names = [arg.name for arg in fn.args]
-    assert "space_dim" in arg_names
     assert "g" in arg_names
     assert "num_vertices" in arg_names
     assert "pos" in arg_names
@@ -39,9 +38,14 @@ def compile_gravity_energy() -> ctypes.CDLL:
     with open(csrc_dirpath / "potentials" / "gravity.h") as f:
         gravity_h = f.read()
 
-    cpp_src = gravity_h + "\nnamespace algovivo {\n" + generated_fn + "\n}"
+    cpp_src = "#include \"dim.h\"\n" + gravity_h + "\nnamespace algovivo {\n" + generated_fn + "\n}"
 
     with tempfile.TemporaryDirectory() as tmp_dirname:
+        with open(csrc_dirpath / "dim.h") as f:
+            dim_h = f.read()
+        with open(Path(tmp_dirname) / "dim.h", "w") as f:
+            f.write(dim_h)
+
         cpp_path = Path(tmp_dirname) / "gravity_energy.cpp"
         so_path = Path(tmp_dirname) / "gravity_energy.so"
 
@@ -66,7 +70,6 @@ def compile_gravity_energy() -> ctypes.CDLL:
 
         lib = ctypes.CDLL(str(so_path))
         lib.gravity_energy.argtypes = [
-            ctypes.c_int,      # space_dim
             ctypes.c_float,    # g
             ctypes.c_int,      # num_vertices
             ctypes.POINTER(ctypes.c_float),  # pos
@@ -83,7 +86,6 @@ def test_gravity_energy_forward():
         raise RuntimeError("compilation failed")
 
     # test case: 2 vertices in 2D
-    space_dim = 2
     g = 9.8
     num_vertices = 2
     vertex_mass = 1.0
@@ -93,7 +95,7 @@ def test_gravity_energy_forward():
         0.0, 2.0
     )
 
-    energy = lib.gravity_energy(space_dim, g, num_vertices, pos, vertex_mass)
+    energy = lib.gravity_energy(g, num_vertices, pos, vertex_mass)
 
     # expected: m * g * y for each vertex
     # vertex 0: 1.0 * 9.8 * 1.0 = 9.8

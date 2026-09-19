@@ -42,7 +42,6 @@ class System:
 
     def step(self):
         self.native_instance.lib.backward_euler_update(
-            self.space_dim,
             self.h,
 
             *self.vertices.to_step_args(),
