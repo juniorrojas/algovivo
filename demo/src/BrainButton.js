@@ -27,6 +27,7 @@ export default class BrainButton {
     div.style.width = `${size}px`;
     div.style.height = `${size}px`;
     div.style.minHeight = `${size}px`;
+    div.style.padding = `${Math.round(size * 0.5)}px`;
   }
 
   initSvg() {

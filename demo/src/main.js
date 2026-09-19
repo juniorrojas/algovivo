@@ -2,6 +2,7 @@ import * as algovivo from "../../build/algovivo.js";
 import BrainButton from "./BrainButton.js";
 import { initStyle } from "./ui.js";
 import AgentViewport from "./AgentViewport.js";
+import CodeSnippet from "./CodeSnippet.js";
 import Header from "./Header.js";
 import Sections from "./Sections.js";
 import Footer from "./Footer.js";
@@ -14,6 +15,7 @@ async function loadWasm() {
 
 const dataRoot = "data";
 const agentNames = ["biped", "quadruped"];
+const maxContentWidth = 1200;
 
 async function main() {
   initStyle();
@@ -47,20 +49,66 @@ async function main() {
     dataRoot: dataRoot,
     agentNames: agentNames
   });
-  divContent.appendChild(agentViewport.domElement);
+
+  const codeSnippet = new CodeSnippet({ collapsed: window.innerWidth < 640 });
+
+  const divSim = document.createElement("div");
+  divSim.style.width = "100%";
+  divContent.appendChild(divSim);
+  divSim.appendChild(agentViewport.domElement);
+
+  const snippetElement = codeSnippet.domElement;
+  snippetElement.style.zIndex = "5";
+  agentViewport.domElement.appendChild(snippetElement);
 
   await agentViewport.preloadMiniButtonData();
   await agentViewport.switchToAgent("biped");
+  codeSnippet.setAgent(agentViewport.getCurrentAgent());
+
+  agentViewport.onAgentChange = (agentName) => codeSnippet.setAgent(agentName);
 
   const btnBrain = new BrainButton();
-  btnBrain.domElement.style.marginTop = "8px";
-  btnBrain.domElement.style.marginBottom = "16px";
+  btnBrain.domElement.style.position = "absolute";
+  btnBrain.domElement.style.bottom = "14px";
+  btnBrain.domElement.style.transform = "translateX(-50%)";
+  btnBrain.domElement.style.zIndex = "10";
   btnBrain.domElement.addEventListener("click", () => {
     const isActive = agentViewport.togglePolicy();
     if (isActive) btnBrain.setActiveStyle();
     else btnBrain.setInactiveStyle();
   });
-  divContent.appendChild(btnBrain.domElement);
+  agentViewport.domElement.appendChild(btnBrain.domElement);
+
+  agentViewport.onResize = ({ width, height }) => {
+    // keep the overlaid controls inside the same column the header uses,
+    // instead of letting them drift to the edges of a wide screen
+    const contentWidth = Math.min(width, maxContentWidth);
+    const inset = Math.max(14, Math.round((width - maxContentWidth) / 2));
+
+    const panelWidth = codeSnippet.collapsed
+      ? 74
+      : Math.min(480, Math.max(240, Math.round(contentWidth * 0.46)));
+
+    snippetElement.style.position = "absolute";
+    snippetElement.style.top = "14px";
+    snippetElement.style.right = `${inset}px`;
+    snippetElement.style.bottom = codeSnippet.collapsed ? "" : "14px";
+    snippetElement.style.width = `${panelWidth}px`;
+
+    agentViewport.miniContainer.style.left = `${inset}px`;
+
+    const occupiedWidth = codeSnippet.collapsed ? 0 : panelWidth + 14;
+    const simWidth = width - occupiedWidth;
+    agentViewport.overlayFractionRight = occupiedWidth / width;
+    btnBrain.domElement.style.left = `${simWidth / 2}px`;
+
+    const brainSize = Math.round(Math.max(22, Math.min(34, height * 0.072)));
+    btnBrain.setSize(brainSize);
+    agentViewport.reservedBottom = 2 * brainSize + 28;
+  };
+  codeSnippet.onToggle = () => agentViewport.updateSize(true);
+
+  agentViewport.updateSize(true);
 
   const sections = new Sections();
   divContent.appendChild(sections.domElement);
