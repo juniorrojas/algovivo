@@ -144,6 +144,16 @@ jobs:
     needs: [init-build-branch, build-wasm, build-native-lib, build-js]
     if: github.event_name == 'workflow_dispatch' && inputs.push_to_build_branch == true
     steps:
+      - name: Clone src branch
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ env.SRC_BRANCH }}
+
+      - name: Set up node 24
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
       - name: Download WASM build
         uses: actions/download-artifact@v7
         with:
@@ -198,7 +208,8 @@ jobs:
           EOF
           cat ${{ env.BUILD_BRANCH_REPO_DIRNAME }}/package.json
 
-      - name: Push to build branch
+      - name: Commit build
+        id: commit
         run: |
           rm -rf ${{ env.BUILD_BRANCH_REPO_DIRNAME }}/${{ env.BUILD_DIRNAME }}
           cp -r build ${{ env.BUILD_BRANCH_REPO_DIRNAME }}
@@ -208,21 +219,40 @@ jobs:
           git config --global user.name "GitHub Actions"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add build package.json
-          
+
           # check if there are any changes to commit
           if git diff --cached --quiet; then
             echo "No changes to commit. Build artifacts are already up to date."
+            echo "changed=false" >> $GITHUB_OUTPUT
           else
-            echo "Changes detected. Committing and pushing..."
+            echo "Changes detected. Committing..."
             git commit -m "Update build"
-            
-            # check if the push is needed by comparing with remote
-            if git diff --quiet HEAD origin/${{ env.BUILD_BRANCH }}; then
-              echo "Local branch is already up to date with remote. No push needed."
-            else
-              git push origin ${{ env.BUILD_BRANCH }}
-              echo "Successfully pushed changes to ${{ env.BUILD_BRANCH }} branch."
-            fi
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      # installs the committed build branch the same way a consumer would, so a
+      # broken package.json fails the job before anything is pushed
+      - name: Verify package
+        run: |
+          mkdir -p ${{ runner.temp }}/verify-package
+          cd ${{ runner.temp }}/verify-package
+          npm init -y > /dev/null
+          npm pkg set type=module
+          npm install "git+file://${{ github.workspace }}/${{ env.BUILD_BRANCH_REPO_DIRNAME }}#${{ env.BUILD_BRANCH }}"
+          # run from here so import.meta.resolve anchors at the install, not the repo
+          cp ${{ github.workspace }}/utils/package/verifyPackage.js .
+          node verifyPackage.js
+
+      - name: Push to build branch
+        if: steps.commit.outputs.changed == 'true'
+        run: |
+          cd ${{ env.BUILD_BRANCH_REPO_DIRNAME }}
+          # check if the push is needed by comparing with remote
+          if git diff --quiet HEAD origin/${{ env.BUILD_BRANCH }}; then
+            echo "Local branch is already up to date with remote. No push needed."
+          else
+            git push origin ${{ env.BUILD_BRANCH }}
+            echo "Successfully pushed changes to ${{ env.BUILD_BRANCH }} branch."
           fi
 
   summary:
