@@ -139,9 +139,51 @@ jobs:
           name: build-js
           path: ${{ env.BUILD_DIRNAME }}/
 
+  verify-package:
+    runs-on: ubuntu-latest
+    needs: [build-wasm, build-js]
+    steps:
+      - name: Clone src branch
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ env.SRC_BRANCH }}
+
+      - name: Set up node 24
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+
+      - name: Download WASM build
+        uses: actions/download-artifact@v7
+        with:
+          name: ${{ env.LIB_NAME }}.wasm
+          path: ${{ env.BUILD_DIRNAME }}/
+
+      - name: Download JS build
+        uses: actions/download-artifact@v7
+        with:
+          name: build-js
+          path: ${{ env.BUILD_DIRNAME }}/
+
+      - name: Assemble package
+        run: |
+          node utils/package/writePackageJson.js ${{ runner.temp }}/pkg/package.json
+          cp -r ${{ env.BUILD_DIRNAME }} ${{ runner.temp }}/pkg/
+          ls -l ${{ runner.temp }}/pkg/${{ env.BUILD_DIRNAME }}
+          # npm installs this package from git, so verify it through a git ref too
+          cd ${{ runner.temp }}/pkg
+          git init -q .
+          git config user.name "GitHub Actions"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -q -m "Build"
+
+      - name: Verify package
+        run: utils/package/verifyPackage.sh "git+file://${{ runner.temp }}/pkg"
+
   push-build:
     runs-on: ubuntu-latest
-    needs: [init-build-branch, build-wasm, build-native-lib, build-js]
+    needs: [init-build-branch, build-wasm, build-native-lib, build-js, verify-package]
     if: github.event_name == 'workflow_dispatch' && inputs.push_to_build_branch == true
     steps:
       - name: Clone src branch
@@ -192,21 +234,7 @@ jobs:
           path: ${{ env.BUILD_BRANCH_REPO_DIRNAME }}
 
       - name: Write package.json
-        run: |
-          cat > ${{ env.BUILD_BRANCH_REPO_DIRNAME }}/package.json <<'EOF'
-          {
-            "name": "${{ env.LIB_NAME }}",
-            "type": "module",
-            "exports": {
-              ".": {
-                "import": "./${{ env.BUILD_DIRNAME }}/${{ env.LIB_NAME }}.js",
-                "require": "./${{ env.BUILD_DIRNAME }}/${{ env.LIB_NAME }}.cjs"
-              },
-              "./wasm": "./${{ env.BUILD_DIRNAME }}/${{ env.LIB_NAME }}.wasm"
-            }
-          }
-          EOF
-          cat ${{ env.BUILD_BRANCH_REPO_DIRNAME }}/package.json
+        run: node utils/package/writePackageJson.js ${{ env.BUILD_BRANCH_REPO_DIRNAME }}/package.json
 
       - name: Commit build
         id: commit
@@ -230,18 +258,9 @@ jobs:
             echo "changed=true" >> $GITHUB_OUTPUT
           fi
 
-      # installs the committed build branch the same way a consumer would, so a
-      # broken package.json fails the job before anything is pushed
-      - name: Verify package
-        run: |
-          mkdir -p ${{ runner.temp }}/verify-package
-          cd ${{ runner.temp }}/verify-package
-          npm init -y > /dev/null
-          npm pkg set type=module
-          npm install "git+file://${{ github.workspace }}/${{ env.BUILD_BRANCH_REPO_DIRNAME }}#${{ env.BUILD_BRANCH }}"
-          # run from here so import.meta.resolve anchors at the install, not the repo
-          cp ${{ github.workspace }}/utils/package/verifyPackage.js .
-          node verifyPackage.js
+      # verify-package checks the artifacts, this checks the committed git tree
+      - name: Verify committed build branch
+        run: utils/package/verifyPackage.sh "git+file://${{ github.workspace }}/${{ env.BUILD_BRANCH_REPO_DIRNAME }}#${{ env.BUILD_BRANCH }}"
 
       - name: Push to build branch
         if: steps.commit.outputs.changed == 'true'
