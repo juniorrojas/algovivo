@@ -28,8 +28,8 @@ export default class AgentViewport {
   }
 
   initResponsiveSize() {
-    const pxPerWorldUnit = 400 / 3.8;
-    const minWorldHeight = 3.8;
+    const pxPerWorldUnit = 400 / 3.4;
+    const minWorldHeight = 3.4;
     const minWorldWidth = 4;
     let lastWidth = null;
     let lastHeight = null;
@@ -63,7 +63,7 @@ export default class AgentViewport {
         this.viewport.tracker.visibleWorldWidth = worldWidth;
         this.viewport.tracker.offsetX = 0.5 * this.overlayFractionRight * worldWidth;
         this.viewport.tracker.targetCenterY = Math.min(
-          1.1,
+          0.75,
           worldHeight / 2 - this.reservedBottom / scale
         );
         this.viewport.render();
@@ -146,7 +146,7 @@ export default class AgentViewport {
           vertexDepths: meshData.depth,
           domElementForMoveEvents: this.domElement
         });
-        this.viewport.tracker.targetCenterY = 1.1;
+        this.viewport.tracker.targetCenterY = 0.75;
         this.domElement.insertBefore(this.viewport.domElement, this.miniContainer);
         this.initResponsiveSize();
       }
