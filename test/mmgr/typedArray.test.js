@@ -1,13 +1,11 @@
-import { mmgrten } from "algovivo";
-
-const mmgr = mmgrten.mmgr;
+import * as algovivo from "algovivo";
 
 test("typed array", () => {
   const totalBytes = 100;
-  const arr = new ArrayBuffer(totalBytes);
-  const manager = new mmgr.MemoryManager(arr);
+  const buffer = new ArrayBuffer(totalBytes);
+  const memoryManager = new algovivo.mmgrten.mmgr.MemoryManager(buffer);
 
-  const a = manager.malloc32(20);
+  const a = memoryManager.malloc32(20);
 
   const f32a = a.f32();
   expect(f32a).toBeInstanceOf(Float32Array);
@@ -20,4 +18,12 @@ test("typed array", () => {
   const u32a = a.u32();
   expect(u32a).toBeInstanceOf(Uint32Array);
   expect(u32a.length).toBe(20);
+});
+
+test("typed array with misaligned size", () => {
+  const buffer = new ArrayBuffer(100);
+  const memoryManager = new algovivo.mmgrten.mmgr.MemoryManager(buffer);
+
+  const a = memoryManager.mallocBytes(3);
+  expect(() => { a.f32(); }).toThrow();
 });

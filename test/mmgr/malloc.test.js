@@ -1,63 +1,54 @@
-import { mmgrten } from "algovivo";
-
-const mmgr = mmgrten.mmgr;
+import * as algovivo from "algovivo";
 
 test("mallocBytes", () => {
   const totalBytes = 100;
-  const arr = new ArrayBuffer(totalBytes);
-  const manager = new mmgr.MemoryManager(arr);
+  const buffer = new ArrayBuffer(totalBytes);
+  const memoryManager = new algovivo.mmgrten.mmgr.MemoryManager(buffer);
 
-  expect(manager.numFreeSlots()).toBe(1);
-  expect(manager.numReservedSlots()).toBe(0);
-  expect(manager.numFreeBytes()).toBe(100);
-  expect(manager.numReservedBytes()).toBe(0);
+  expect(memoryManager.numFreeSlots()).toBe(1);
+  expect(memoryManager.numReservedSlots()).toBe(0);
+  expect(memoryManager.numFreeBytes()).toBe(100);
+  expect(memoryManager.numReservedBytes()).toBe(0);
 
-  const a = manager.mallocBytes(10);
+  const a = memoryManager.mallocBytes(10);
   expect(a.ptr).toBe(0);
 
-  expect(manager.numFreeSlots()).toBe(1);
-  expect(manager.numReservedSlots()).toBe(1);
-  expect(manager.numFreeBytes()).toBe(90);
-  expect(manager.numReservedBytes()).toBe(10);
+  expect(memoryManager.numFreeSlots()).toBe(1);
+  expect(memoryManager.numReservedSlots()).toBe(1);
+  expect(memoryManager.numFreeBytes()).toBe(90);
+  expect(memoryManager.numReservedBytes()).toBe(10);
 
-  const b = manager.mallocBytes(30);
+  const b = memoryManager.mallocBytes(30);
   expect(b.ptr).toBe(10);
 
-  expect(manager.numFreeSlots()).toBe(1);
-  expect(manager.numReservedSlots()).toBe(2);
-  expect(manager.numFreeBytes()).toBe(60);
-  expect(manager.numReservedBytes()).toBe(40);
+  expect(memoryManager.numFreeSlots()).toBe(1);
+  expect(memoryManager.numReservedSlots()).toBe(2);
+  expect(memoryManager.numFreeBytes()).toBe(60);
+  expect(memoryManager.numReservedBytes()).toBe(40);
 });
 
 test("malloc32", () => {
   const totalBytes = 100;
-  const arr = new ArrayBuffer(totalBytes);
-  const manager = new mmgr.MemoryManager(arr);
+  const buffer = new ArrayBuffer(totalBytes);
+  const memoryManager = new algovivo.mmgrten.mmgr.MemoryManager(buffer);
 
-  expect(manager.numFreeSlots()).toBe(1);
-  expect(manager.numReservedSlots()).toBe(0);
-  expect(manager.numFreeBytes()).toBe(100);
-  expect(manager.numReservedBytes()).toBe(0);
-
-  const a = manager.malloc32(10);
+  const a = memoryManager.malloc32(10);
   expect(a.ptr).toBe(0);
 
-  expect(manager.numFreeSlots()).toBe(1);
-  expect(manager.numReservedSlots()).toBe(1);
-  expect(manager.numFreeBytes()).toBe(60);
-  expect(manager.numReservedBytes()).toBe(40);
+  expect(memoryManager.numFreeSlots()).toBe(1);
+  expect(memoryManager.numReservedSlots()).toBe(1);
+  expect(memoryManager.numFreeBytes()).toBe(60);
+  expect(memoryManager.numReservedBytes()).toBe(40);
 });
 
-test("OOM", () => {
-  const arr = new ArrayBuffer(3);
-  const manager = new mmgr.MemoryManager(arr);
-  expect(() => { manager.malloc32(1); }).toThrow();
+test("malloc out of memory", () => {
+  const buffer = new ArrayBuffer(3);
+  const memoryManager = new algovivo.mmgrten.mmgr.MemoryManager(buffer);
+  expect(() => { memoryManager.malloc32(1); }).toThrow();
 });
 
-test("malloc undefined", () => {
-  const totalBytes = 100;
-  const arr = new ArrayBuffer(totalBytes);
-  const manager = new mmgr.MemoryManager(arr);
-
-  expect(() => { manager.mallocBytes(undefined) }).toThrow();
+test("malloc non-integer size", () => {
+  const buffer = new ArrayBuffer(100);
+  const memoryManager = new algovivo.mmgrten.mmgr.MemoryManager(buffer);
+  expect(() => { memoryManager.mallocBytes(undefined); }).toThrow();
 });

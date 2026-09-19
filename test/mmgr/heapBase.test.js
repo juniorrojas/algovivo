@@ -1,6 +1,4 @@
-import { mmgrten } from "algovivo";
-
-const mmgr = mmgrten.mmgr;
+import * as algovivo from "algovivo";
 
 function setData(slot, data) {
   const arr = slot.u32();
@@ -11,21 +9,23 @@ function setData(slot, data) {
 
 test("heap base", () => {
   const totalBytes = 15 * 4;
-  const arr = new ArrayBuffer(totalBytes);
-  const memoryManager = new mmgr.MemoryManager(arr, 2 * 4);
+  const buffer = new ArrayBuffer(totalBytes);
+  const memoryManager = new algovivo.mmgrten.mmgr.MemoryManager(buffer, 2 * 4);
 
   expect(memoryManager.numFreeBytes()).toBe(13 * 4);
   expect(memoryManager.numReservedBytes()).toBe(0);
 
-  const arrU32 = new Uint32Array(arr, 0, totalBytes / 4);
+  const bufferU32 = new Uint32Array(buffer, 0, totalBytes / 4);
 
   const a = memoryManager.malloc32(3);
 
   expect(memoryManager.numFreeBytes()).toBe(10 * 4);
   expect(memoryManager.numReservedBytes()).toBe(3 * 4);
 
+  // allocations start at the heap base,
+  // leaving the memory before it untouched
   setData(a, [1, 2, 3]);
-  expect(Array.from(arrU32)).toEqual([
+  expect(Array.from(bufferU32)).toEqual([
     0, 0, 1, 2, 3,
     0, 0, 0, 0, 0,
     0, 0, 0, 0, 0
@@ -40,7 +40,7 @@ test("heap base", () => {
   b = memoryManager.malloc32(2);
 
   setData(b, [11, 12]);
-  expect(Array.from(arrU32)).toEqual([
+  expect(Array.from(bufferU32)).toEqual([
     0, 0, 1, 2, 3,
     11, 12, 0, 0, 0,
     0, 0, 0, 0, 0

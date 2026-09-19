@@ -1,13 +1,29 @@
-import { mmgrten } from "algovivo";
-
-const mmgr = mmgrten.mmgr;
+import * as algovivo from "algovivo";
 
 test("malloc and free with pointers", () => {
-  const arr = new ArrayBuffer(200);
-  const mgr = new mmgr.MemoryManager(arr, 1);
-  const ptr = mgr.malloc(3);
+  const buffer = new ArrayBuffer(200);
+  const memoryManager = new algovivo.mmgrten.mmgr.MemoryManager(buffer, 1);
+
+  const ptr = memoryManager.malloc(3);
   expect(ptr).toBe(1);
-  expect(mgr.numReservedBytes()).toBe(3);
-  mgr.free(ptr);
-  expect(mgr.numReservedBytes()).toBe(0);
+  expect(memoryManager.numReservedBytes()).toBe(3);
+
+  memoryManager.free(ptr);
+  expect(memoryManager.numReservedBytes()).toBe(0);
+});
+
+test("free unknown pointer", () => {
+  const buffer = new ArrayBuffer(200);
+  const memoryManager = new algovivo.mmgrten.mmgr.MemoryManager(buffer);
+
+  expect(() => { memoryManager.free(123); }).toThrow();
+});
+
+test("free pointer twice", () => {
+  const buffer = new ArrayBuffer(200);
+  const memoryManager = new algovivo.mmgrten.mmgr.MemoryManager(buffer);
+
+  const ptr = memoryManager.malloc(8);
+  memoryManager.free(ptr);
+  expect(() => { memoryManager.free(ptr); }).toThrow();
 });
