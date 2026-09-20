@@ -15,7 +15,10 @@ export default class FreeSlot extends Slot {
       throw new Error(`cannot reserve ${bytes} bytes, only ${availableBytes} bytes are available`);
     }
     const reserved = this.appendReserved(this.ptr, bytes);
-    reserved.appendFree(this.ptr + bytes, availableBytes - bytes);
+    const remainingBytes = availableBytes - bytes;
+    if (remainingBytes > 0) {
+      reserved.appendFree(this.ptr + bytes, remainingBytes);
+    }
     this.remove();
     return reserved;
   }
