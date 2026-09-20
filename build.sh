@@ -4,11 +4,13 @@ set -e
 clang=${LLVM_BIN_DIR}/clang++
 opt=${LLVM_BIN_DIR}/opt
 
-lib_name="algovivo"
-
 this_dirname=$(dirname "$0")
-src_filename="${this_dirname}/csrc/main.cpp"
+
+lib_name=${LIB_NAME:-algovivo}
+csrc_dirname=${CSRC_DIRNAME:-${this_dirname}/csrc}
 build_dirname="${this_dirname}/build"
+
+src_filename="${csrc_dirname}/main.cpp"
 
 ll_filename="${build_dirname}/${lib_name}.out.ll"
 ll_diff_filename="${build_dirname}/${lib_name}.diff.out.ll"
