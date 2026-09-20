@@ -5,7 +5,7 @@ test("memory", async () => {
   const system = new algovivo.System({
     wasmInstance: await utils.loadWasm()
   });
-  const memoryManager = system.ten.mgr;
+  const memoryManager = system.ten.memoryManager;
 
   expect(system.numVertices).toBe(0);
   expect(system.numMuscles).toBe(0);

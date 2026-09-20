@@ -14,10 +14,6 @@ export default class Muscles {
     return this.ten.wasmInstance;
   }
 
-  get memoryManager() {
-    return this.ten.mgr;
-  }
-
   get numMuscles() {
     if (this.indices == null) return 0;
     return this.indices.shape.get(0);

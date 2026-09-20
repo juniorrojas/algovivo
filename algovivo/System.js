@@ -59,10 +59,6 @@ export default class System {
     return this.ten.wasmInstance;
   }
 
-  get memoryManager() {
-    return this.ten.mgr;
-  }
-
   get g() {
     return this.gravity.g;
   }

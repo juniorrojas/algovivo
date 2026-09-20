@@ -143,10 +143,6 @@ export default class Vertices {
     return this.ten.wasmInstance;
   }
 
-  get memoryManager() {
-    return this.ten.mgr;
-  }
-
   set(pos) {
     const ten = this.ten;
 

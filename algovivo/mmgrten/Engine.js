@@ -16,8 +16,8 @@ export default class Engine {
     }
     this.wasmInstance = args.wasmInstance;
     const arr = args.wasmInstance.exports.memory.buffer;
-    const mgr = new MemoryManager(arr, Number(args.wasmInstance.exports.__heap_base));
-    this.mgr = mgr;
+    const memoryManager = new MemoryManager(arr, Number(args.wasmInstance.exports.__heap_base));
+    this.memoryManager = memoryManager;
 
     this.functional = this.F = new Functional({
       engine: this
@@ -40,7 +40,7 @@ export default class Engine {
     const shapeArr = utils.inferShape(data);
     const shape = this.intTuple(shapeArr);
     const numel = utils.numelOfShape(shapeArr);
-    const slot = this.mgr.malloc32(numel);
+    const slot = this.memoryManager.malloc32(numel);
     const tensor = new Tensor({
       engine: this,
       shape: shape,
@@ -55,7 +55,7 @@ export default class Engine {
       throw new Error(`expected array, found ${typeof data}: ${data}`);
     }
     const length = data.length;
-    const slot = this.mgr.malloc32(length);
+    const slot = this.memoryManager.malloc32(length);
     const intTuple = new IntTuple({
       engine: this,
       length: length,
@@ -85,7 +85,7 @@ export default class Engine {
       shape = this.intTuple(_shape);
     }
     const numel = utils.numelOfShape(shape);
-    const slot = this.mgr.malloc32(numel);
+    const slot = this.memoryManager.malloc32(numel);
     const x = new Tensor({
       engine: this,
       shape: shape,

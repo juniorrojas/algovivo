@@ -3,9 +3,9 @@ import * as utils from "../../utils.js";
 test("sequential", async () => {
   const ten = await utils.loadTen();
   const nn = ten.nn;
-  const mgr = ten.mgr;
+  const memoryManager = ten.memoryManager;
 
-  const bytes0 = ten.mgr.numReservedBytes();
+  const bytes0 = ten.memoryManager.numReservedBytes();
 
   const inputSize = 3;
   const outputSize = 2;
@@ -26,8 +26,8 @@ test("sequential", async () => {
   const output = model.forward(input);
   expect(output.toArray().length).toBe(2);
 
-  expect(mgr.numReservedBytes()).not.toBe(bytes0);
+  expect(memoryManager.numReservedBytes()).not.toBe(bytes0);
   model.dispose();
   input.dispose();
-  expect(mgr.numReservedBytes()).toBe(bytes0);
+  expect(memoryManager.numReservedBytes()).toBe(bytes0);
 });
