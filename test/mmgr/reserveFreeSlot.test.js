@@ -31,3 +31,16 @@ test("reserve more bytes than available", () => {
   const freeSlot = memoryManager.slots.first.data;
   expect(() => { freeSlot.reserve(101); }).toThrow();
 });
+
+test("removed slot releases its nodes", () => {
+  const buffer = new ArrayBuffer(100);
+  const memoryManager = new algovivo.mmgrten.mmgr.MemoryManager(buffer);
+
+  const a = memoryManager.mallocBytes(10);
+  expect(a.node).not.toBeNull();
+  expect(a.reservedNode).not.toBeNull();
+
+  a.free();
+  expect(a.node).toBeNull();
+  expect(a.reservedNode).toBeNull();
+});

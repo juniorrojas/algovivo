@@ -60,7 +60,7 @@ export default class System {
   }
 
   get memoryManager() {
-    return this.ten.mgr;
+    return this.ten.memoryManager;
   }
 
   get g() {

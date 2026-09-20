@@ -2,9 +2,9 @@ import * as utils from "../../utils.js";
 
 test("linear", async () => {
   const ten = await utils.loadTen();
-  const mgr = ten.mgr;
+  const memoryManager = ten.memoryManager;
 
-  const bytes0 = ten.mgr.numReservedBytes();
+  const bytes0 = ten.memoryManager.numReservedBytes();
 
   const inputSize = 3;
   const outputSize = 2;
@@ -29,8 +29,8 @@ test("linear", async () => {
     72
   ]);
 
-  expect(mgr.numReservedBytes()).not.toBe(bytes0);
+  expect(memoryManager.numReservedBytes()).not.toBe(bytes0);
   linear.dispose();
   input.dispose();
-  expect(mgr.numReservedBytes()).toBe(bytes0);
+  expect(memoryManager.numReservedBytes()).toBe(bytes0);
 });

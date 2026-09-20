@@ -44,11 +44,23 @@ test("malloc32", () => {
 test("malloc out of memory", () => {
   const buffer = new ArrayBuffer(3);
   const memoryManager = new algovivo.mmgrten.mmgr.MemoryManager(buffer);
-  expect(() => { memoryManager.malloc32(1); }).toThrow();
+  expect(() => {
+    memoryManager.malloc32(1);
+  }).toThrow("no free slot available for 4 bytes, largest free slot has 3 bytes");
 });
 
 test("malloc non-integer size", () => {
   const buffer = new ArrayBuffer(100);
   const memoryManager = new algovivo.mmgrten.mmgr.MemoryManager(buffer);
   expect(() => { memoryManager.mallocBytes(undefined); }).toThrow();
+  expect(() => { memoryManager.mallocBytes(1.5); }).toThrow();
+});
+
+test("malloc negative size", () => {
+  const buffer = new ArrayBuffer(100);
+  const memoryManager = new algovivo.mmgrten.mmgr.MemoryManager(buffer);
+
+  expect(() => { memoryManager.mallocBytes(-4); }).toThrow();
+  expect(memoryManager.numReservedSlots()).toBe(0);
+  expect(memoryManager.numReservedBytes()).toBe(0);
 });

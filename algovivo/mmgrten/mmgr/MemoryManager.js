@@ -1,5 +1,6 @@
 import * as linked from "./linked/index.js";
 import FreeSlot from "./FreeSlot.js";
+import ReservedSlot from "./ReservedSlot.js";
 
 export default class MemoryManager {
   constructor(array, heapBase) {
@@ -15,7 +16,7 @@ export default class MemoryManager {
     this.reservedSlots = new linked.List();
 
     const slot = new FreeSlot({
-      manager: this,
+      memoryManager: this,
       ptr: heapBase,
       size: array.byteLength - heapBase
     });
@@ -69,6 +70,32 @@ export default class MemoryManager {
     return this.mallocBytes(n * 4);
   }
 
+  _appendReservedSlot(prevSlot, ptr, size) {
+    const node = prevSlot.node.append(null);
+    const slot = new ReservedSlot({
+      memoryManager: this,
+      ptr: ptr,
+      size: size,
+      node: node
+    });
+    node.data = slot;
+    this._addReservedSlot(slot);
+    return slot;
+  }
+
+  _appendFreeSlot(prevSlot, ptr, size) {
+    const node = prevSlot.node.append(null);
+    const slot = new FreeSlot({
+      memoryManager: this,
+      ptr: ptr,
+      size: size,
+      node: node
+    });
+    node.data = slot;
+    this._addFreeSlot(slot);
+    return slot;
+  }
+
   _addReservedSlot(slot) {
     const node = this.reservedSlots.append(slot);
     slot.reservedNode = node;
@@ -95,9 +122,13 @@ export default class MemoryManager {
 
   _malloc(size) {
     if (!Number.isInteger(size)) {
-      throw new Error(`expected integer, found ${size}`);
+      throw new Error(`expected integer size, found ${size}`);
+    }
+    if (size < 0) {
+      throw new Error(`expected non-negative size, found ${size}`);
     }
     let validFreeSlot = null;
+    let largestFreeSlotSize = 0;
     const it = this.freeSlots.iter();
     let r = it.next();
     while (!r.done) {
@@ -106,10 +137,16 @@ export default class MemoryManager {
         validFreeSlot = freeSlot;
         break;
       }
+      if (freeSlot.size > largestFreeSlotSize) {
+        largestFreeSlotSize = freeSlot.size;
+      }
       r = it.next();
     }
     if (validFreeSlot == null) {
-      throw new Error("no valid free slot available");
+      throw new Error(
+        `no free slot available for ${size} bytes, ` +
+        `largest free slot has ${largestFreeSlotSize} bytes`
+      );
     }
     return validFreeSlot.reserve(size);
   }

@@ -74,7 +74,7 @@ test("fix vertices", async () => {
 
 test("add vertex", async () => {
   const ten = await utils.loadTen();
-  const memoryManager = ten.mgr;
+  const memoryManager = ten.memoryManager;
 
   const vertices = new algovivo.Vertices({ ten, spaceDim: 2 });
   expect(vertices.numVertices).toBe(0);

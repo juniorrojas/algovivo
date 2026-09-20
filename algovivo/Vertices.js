@@ -144,7 +144,7 @@ export default class Vertices {
   }
 
   get memoryManager() {
-    return this.ten.mgr;
+    return this.ten.memoryManager;
   }
 
   set(pos) {

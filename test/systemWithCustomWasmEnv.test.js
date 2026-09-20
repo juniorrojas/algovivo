@@ -8,10 +8,10 @@ async function loadTen() {
   const wasmInstance = await utils.loadWasm({
     env: {
       malloc: (x) => {
-        return ten.mgr.malloc(Number(x));
+        return ten.memoryManager.malloc(Number(x));
       },
       free: (x) => {
-        return ten.mgr.free(Number(x));
+        return ten.memoryManager.free(Number(x));
       }
     }
   });

@@ -16,7 +16,7 @@ export default class Triangles {
   }
 
   get memoryManager() {
-    return this.ten.mgr;
+    return this.ten.memoryManager;
   }
 
   get numElements() {
