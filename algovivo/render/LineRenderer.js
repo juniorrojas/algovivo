@@ -50,6 +50,8 @@ function renderMuscle(ctx, scale, a, b, t, width, borderWidth, borderColor, colo
 export default class LineRenderer {
   constructor(args = {}) {
     this.system = args.system;
+    this.lineIdToMuscleId = null;
+    this.muscleIntensity = null;
   }
 
   makeEdgesFromTriangles(triangles) {
@@ -80,7 +82,7 @@ export default class LineRenderer {
       const camera = args.camera;
       const scale = camera.inferScale();
 
-      const lineIdToMuscleId = args.mesh.getCustomAttribute("lineIdToMuscleId");
+      const lineIdToMuscleId = this.lineIdToMuscleId;
       let muscleId = null;
       if (lineIdToMuscleId != null) {
         muscleId = lineIdToMuscleId[args.id];
@@ -94,14 +96,13 @@ export default class LineRenderer {
 
         const width = 0.065;
         const borderWidth = 0.017;
-        const muscleIntensityAttributeName = "muscleIntensity";
 
-        const muscleIntensity = args.mesh.getCustomAttribute(muscleIntensityAttributeName);
+        const muscleIntensity = this.muscleIntensity;
         if (muscleIntensity == null) {
-          throw new Error(`muscle intensity attribute (${muscleIntensityAttributeName}) not found, call setCustomAttribute("${muscleIntensityAttributeName}", value) before rendering.`);
+          throw new Error("muscle intensity not found, set muscleIntensity before rendering.");
         }
         if (!Array.isArray(muscleIntensity)) {
-          throw new Error(`muscle intensity attribute must be an array with values for each fiber, found ${typeof muscleIntensity}`);
+          throw new Error(`muscle intensity must be an array with values for each fiber, found ${typeof muscleIntensity}`);
         }
 
         const t = muscleIntensity[muscleId];

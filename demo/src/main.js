@@ -1,6 +1,9 @@
 import * as algovivo from "../../build/algovivo.js";
 import BrainButton from "./BrainButton.js";
 import { initStyle } from "./ui.js";
+import AgentData from "./AgentData.js";
+import AgentPicker from "./AgentPicker.js";
+import AgentSystem from "./AgentSystem.js";
 import AgentViewport from "./AgentViewport.js";
 import CodeSnippet from "./CodeSnippet.js";
 import FullscreenButton from "./FullscreenButton.js";
@@ -44,11 +47,16 @@ async function main() {
     wasmInstance: wasmInstance
   });
 
-  const agentViewport = new AgentViewport({
-    system: system,
+  const agentData = new AgentData({ dataRoot: dataRoot });
+
+  const agentSystem = new AgentSystem({
     algovivo: algovivo,
-    dataRoot: dataRoot,
-    agentNames: agentNames
+    system: system
+  });
+
+  const agentViewport = new AgentViewport({
+    algovivo: algovivo,
+    system: system
   });
 
   const codeSnippet = new CodeSnippet({ collapsed: true });
@@ -57,6 +65,16 @@ async function main() {
   divSim.style.width = "100%";
   divContent.appendChild(divSim);
   divSim.appendChild(agentViewport.domElement);
+
+  const agentPicker = new AgentPicker({
+    mm2d: algovivo.mm2d,
+    agentNames: agentNames
+  });
+  agentPicker.domElement.style.position = "absolute";
+  agentPicker.domElement.style.top = "14px";
+  agentPicker.domElement.style.left = "14px";
+  agentPicker.domElement.style.zIndex = "10";
+  agentViewport.domElement.appendChild(agentPicker.domElement);
 
   const snippetElement = codeSnippet.domElement;
   snippetElement.style.zIndex = "5";
@@ -73,11 +91,26 @@ async function main() {
     agentViewport.domElement.appendChild(btnFullscreen.domElement);
   }
 
-  await agentViewport.preloadMiniButtonData();
-  await agentViewport.switchToAgent("biped");
-  codeSnippet.setAgent(agentViewport.getCurrentAgent());
+  async function setAgent(agentName) {
+    if (agentName == agentSystem.agentName) return;
+    const data = await agentData.load(agentName);
+    agentSystem.setAgent(agentName, data);
+    agentViewport.setMesh(data.mesh);
+    agentPicker.setActive(agentName);
+    codeSnippet.setAgent(agentName);
+  }
 
-  agentViewport.onAgentChange = (agentName) => codeSnippet.setAgent(agentName);
+  agentPicker.onSelect = (agentName) => {
+    setAgent(agentName).catch((error) => {
+      console.error(`failed to set agent ${agentName}`, error);
+    });
+  };
+
+  await Promise.all(agentNames.map(async (agentName) => {
+    const data = await agentData.load(agentName);
+    agentPicker.setMesh(agentName, data.mesh);
+  }));
+  await setAgent("biped");
 
   const btnBrain = new BrainButton();
   btnBrain.domElement.style.position = "absolute";
@@ -85,8 +118,8 @@ async function main() {
   btnBrain.domElement.style.transform = "translateX(-50%)";
   btnBrain.domElement.style.zIndex = "10";
   btnBrain.domElement.addEventListener("click", () => {
-    const isActive = agentViewport.togglePolicy();
-    if (isActive) btnBrain.setActiveStyle();
+    agentSystem.policyActive = !agentSystem.policyActive;
+    if (agentSystem.policyActive) btnBrain.setActiveStyle();
     else btnBrain.setInactiveStyle();
   });
   agentViewport.domElement.appendChild(btnBrain.domElement);
@@ -110,7 +143,7 @@ async function main() {
       : `${14 + btnFullscreen.domElement.offsetHeight + 14}px`;
     snippetElement.style.width = `${panelWidth}px`;
 
-    agentViewport.miniContainer.style.left = `${inset}px`;
+    agentPicker.domElement.style.left = `${inset}px`;
 
     btnFullscreen.domElement.style.right = `${inset}px`;
     btnFullscreen.domElement.style.bottom = "14px";
@@ -120,7 +153,8 @@ async function main() {
     agentViewport.overlayFractionRight = occupiedWidth / width;
     btnBrain.domElement.style.left = `${simWidth / 2}px`;
 
-    const brainSize = Math.round(Math.max(22, Math.min(34, height * 0.072)));
+    const brainScale = agentViewport.fullscreen ? 1 : 0.85;
+    const brainSize = Math.round(brainScale * Math.max(22, Math.min(34, height * 0.072)));
     btnBrain.setSize(brainSize);
     agentViewport.reservedBottom = 2 * brainSize + 28;
   };
@@ -136,10 +170,7 @@ async function main() {
 
   agentViewport.render();
   setInterval(() => {
-    if (agentViewport.agentManager.policy != null) {
-      agentViewport.agentManager.policy.step();
-    }
-    system.step();
+    agentSystem.step();
     agentViewport.render();
   }, 1000 / 30);
 

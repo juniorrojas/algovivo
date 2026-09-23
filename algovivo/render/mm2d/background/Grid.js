@@ -67,11 +67,10 @@ export default class Grid {
 
     this.set(args);
 
-    mesh.setCustomAttribute("translation", [0, 0]);
-
     mesh.vertexShader.renderVertex = () => {}
 
     mesh.lineShader.renderLine = Grid.makeGridLineShader({
+      grid: this,
       color: color
     });
   }
@@ -105,33 +104,29 @@ export default class Grid {
     });
     mesh.pos = x;
     mesh.lines = lineIndices;
-    mesh.setCustomAttribute("lineWidths", lineWidths);
+    this.lineWidths = lineWidths;
   }
 
   static makeGridLineShader(args = {}) {
+    if (args.grid == null) {
+      throw new Error("grid required");
+    }
+    const grid = args.grid;
     const color = (args.color == null) ? "black" : args.color;
     return (args) => {
       const ctx = args.ctx;
       const a = args.a;
       const b = args.b;
       const camera = args.camera;
-      const mesh = args.mesh;
       const scale = camera.inferScale();
 
       ctx.beginPath();
       ctx.strokeStyle = color;
-      const lineWidths = mesh.getCustomAttribute("lineWidths");
-      if (lineWidths == null) {
-        throw new Error("custom attribute lineWidths missing");
-      }
-      const lineWidth = lineWidths[args.id];
-
-      const _translation = mesh.getCustomAttribute("translation");
-      const translation = [scale * _translation[0], scale * _translation[1]];
+      const lineWidth = grid.lineWidths[args.id];
 
       ctx.lineWidth = lineWidth * scale;
-      ctx.moveTo(a[0] + translation[0], a[1] + translation[1]);
-      ctx.lineTo(b[0] + translation[0], b[1] + translation[1]);
+      ctx.moveTo(a[0], a[1]);
+      ctx.lineTo(b[0], b[1]);
       ctx.closePath();
       ctx.stroke();
     }

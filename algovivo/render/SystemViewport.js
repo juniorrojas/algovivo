@@ -246,7 +246,7 @@ export default class SystemViewport {
     });
 
     const lineIdToMuscleId = [];
-    mesh.setCustomAttribute("lineIdToMuscleId", lineIdToMuscleId);
+    lineRenderer.lineIdToMuscleId = lineIdToMuscleId;
     mesh.lines.forEach(line => {
       const h = hashSimplex(line);
       const muscleId = muscleHashToId.get(h);
@@ -275,7 +275,7 @@ export default class SystemViewport {
     for (let i = 0; i < numMuscles; i++) {
       muscleIntensity.push(1);
     }
-    mesh.setCustomAttribute("muscleIntensity", muscleIntensity);
+    lineRenderer.muscleIntensity = muscleIntensity;
   }
 
   _updateFromSystem() {
@@ -296,7 +296,6 @@ export default class SystemViewport {
   }
 
   _updateMuscleIntensityFromSystem() {
-    const mesh = this.mesh;
     const system = this.system;
     const numMuscles = system.numMuscles;
 
@@ -317,7 +316,7 @@ export default class SystemViewport {
       }
     }
 
-    mesh.setCustomAttribute("muscleIntensity", muscleIntensity);
+    this.lines.muscleIntensity = muscleIntensity;
   }
 
   hitTestVertex(p, hitTestRadius = 0.31) {

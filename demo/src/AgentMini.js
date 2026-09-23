@@ -33,8 +33,8 @@ export default class AgentMini {
 
   initMesh(args) {
     this.mesh = this.scene.addMesh();
-    this.mesh.pos = args.pos || [];
-    this.mesh.triangles = args.triangles || [];
+    this.mesh.pos = args.pos ?? [];
+    this.mesh.triangles = args.triangles ?? [];
   }
 
   initRenderers() {
@@ -71,9 +71,9 @@ export default class AgentMini {
     ctx.fill();
   }
 
-  updateMesh({ pos, triangles }) {
-    if (pos) this.mesh.pos = pos;
-    if (triangles) this.mesh.triangles = triangles;
+  setMesh(args = {}) {
+    if (args.pos != null) this.mesh.pos = args.pos;
+    if (args.triangles != null) this.mesh.triangles = args.triangles;
     this.render();
   }
 
@@ -85,13 +85,8 @@ export default class AgentMini {
     }
   }
 
-  setColor(color) {
-    this.shapeColor = color;
-    this.render();
-  }
-
   render() {
-    if (this.mesh.pos && this.mesh.pos.length > 0) {
+    if (this.mesh.pos.length > 0) {
       const center = this.mesh.computeCenter();
       this.camera.center({
         worldCenter: center,

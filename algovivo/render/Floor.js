@@ -19,8 +19,6 @@ export default class Floor {
     });
 
     mesh.vertexShader.renderVertex = () => {};
-
-    mesh.setCustomAttribute("translation", [0, 0]);
   }
 
   static makeFloorLineShaderFunction(args = {}) {
@@ -31,17 +29,13 @@ export default class Floor {
       const a = args.a;
       const b = args.b;
       const camera = args.camera;
-      const mesh = args.mesh;
       const scale = camera.inferScale();
-
-      const _translation = mesh.getCustomAttribute("translation");
-      const translation = [scale * _translation[0], scale * _translation[1]];
 
       ctx.strokeStyle = color;
       ctx.lineWidth = scale * width;
       ctx.beginPath();
-      ctx.moveTo(a[0] + translation[0], a[1] + translation[1]);
-      ctx.lineTo(b[0] + translation[0], b[1] + translation[1]);
+      ctx.moveTo(a[0], a[1]);
+      ctx.lineTo(b[0], b[1]);
       ctx.stroke();
     }
   }
