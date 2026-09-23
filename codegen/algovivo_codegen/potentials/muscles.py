@@ -27,7 +27,7 @@ for (int i = 0; i < num_muscles; i++) {
         f.args.add_arg("int*", "muscles")
         f.args.add_arg("float*", "a")
         f.args.add_arg("float*", "l0")
-        f.args.add_arg("float*", "pos", differentiable=True, size="num_vertices * space_dim")
+        f.args.add_differentiable_arg("float*", "pos", num_elements="num_vertices", element_size="space_dim")
         f.src_body = "float potential_energy = 0.0;" + self.get_src() + "return potential_energy;"
         return f
 

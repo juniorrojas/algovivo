@@ -13,7 +13,7 @@ def make_quadratic():
     f.args.add_arg("float", "k")
     f.args.add_arg("int", "n")
     f.args.add_arg("float*", "t")
-    f.args.add_arg("float*", "x", differentiable=True, size="n")
+    f.args.add_differentiable_arg("float*", "x", num_elements="n")
     f.src_body = """float energy = 0.0;
   for (int i = 0; i < n; i++) {
     const auto d = x[i] - t[i];
