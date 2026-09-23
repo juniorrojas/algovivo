@@ -9,8 +9,8 @@ class Arg:
 class DifferentiableArg(Arg):
     differentiable = True
 
-    def __init__(self, t, name, num_elements, element_size=1, mut=False):
-        super().__init__(t, name, mut=mut)
+    def __init__(self, t, name, num_elements, element_size=1):
+        super().__init__(t, name)
         self.num_elements = num_elements
         self.element_size = element_size
 
@@ -33,8 +33,8 @@ class Args:
     def add_arg(self, t, name, mut=False):
         self.args.append(Arg(t, name, mut))
 
-    def add_differentiable_arg(self, t, name, num_elements, element_size=1, mut=False):
-        self.args.append(DifferentiableArg(t, name, num_elements, element_size, mut))
+    def add_differentiable_arg(self, t, name, num_elements, element_size=1):
+        self.args.append(DifferentiableArg(t, name, num_elements, element_size))
 
     def codegen_fun_signature(self):
         s = ""
