@@ -19,7 +19,7 @@ jobs:
       - name: Clone repo
         uses: actions/checkout@v6
 
-      - name: Build WASM
+      - name: Build WebAssembly
         run: |
           python codegen/codegen_csrc.py
           docker run \
@@ -28,7 +28,7 @@ jobs:
             ${{ env.ENZYME_IMAGE }} \
             ./build.sh
 
-      - name: Upload WASM
+      - name: Upload .wasm
         uses: actions/upload-artifact@v6
         with:
           name: algovivo.wasm
@@ -43,7 +43,7 @@ jobs:
       - name: Clone repo
         uses: actions/checkout@v6
 
-      - name: Download WASM build
+      - name: Download .wasm
         uses: actions/download-artifact@v7
         with:
           name: algovivo.wasm
@@ -90,7 +90,7 @@ jobs:
       - name: Clone repo
         uses: actions/checkout@v6
 
-      - name: Download WASM build
+      - name: Download .wasm
         uses: actions/download-artifact@v7
         with:
           name: algovivo.wasm

@@ -63,7 +63,7 @@ jobs:
         run: |
           python utils/py/test/trajectory/test_trajectory.py
 
-      - name: Build WASM
+      - name: Build WebAssembly
         run: |
           python codegen/codegen_csrc.py
           docker run \

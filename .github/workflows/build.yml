@@ -76,7 +76,7 @@ jobs:
             ${{ env.ENZYME_IMAGE }} \
             ./build.sh
 
-      - name: Upload WASM
+      - name: Upload .wasm
         uses: actions/upload-artifact@v6
         with:
           name: ${{ env.LIB_NAME }}.wasm
@@ -153,7 +153,7 @@ jobs:
         with:
           node-version: 24
 
-      - name: Download WASM build
+      - name: Download .wasm
         uses: actions/download-artifact@v7
         with:
           name: ${{ env.LIB_NAME }}.wasm
@@ -196,7 +196,7 @@ jobs:
         with:
           node-version: 24
 
-      - name: Download WASM build
+      - name: Download .wasm
         uses: actions/download-artifact@v7
         with:
           name: ${{ env.LIB_NAME }}.wasm

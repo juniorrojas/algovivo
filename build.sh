@@ -53,7 +53,7 @@ if [ "$build_native" = "true" ]; then
     $clang -shared -o ${so_filename} ${ll_diff_opt_filename}
     echo "saved to ${so_filename}"
 else
-    echo "compiling LLVM IR to WASM..."
+    echo "compiling LLVM IR to WebAssembly..."
 
     llc=${LLVM_BIN_DIR}/llc
     ld=${LLVM_BIN_DIR}/wasm-ld

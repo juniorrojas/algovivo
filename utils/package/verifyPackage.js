@@ -27,11 +27,11 @@ let wasmUrl = null;
 try {
   wasmUrl = import.meta.resolve("algovivo/wasm");
 } catch (err) {
-  check("wasm subpath resolves", false, err.message);
+  check("algovivo/wasm resolves", false, err.message);
   process.exit(1);
 }
 
-// package.json is not in exports, so walk up from the resolved wasm path
+// package.json is not in exports, so walk up from the resolved .wasm path
 let pkgDirname = path.dirname(fileURLToPath(wasmUrl));
 while (!existsSync(path.join(pkgDirname, "package.json"))) {
   const parent = path.dirname(pkgDirname);
@@ -73,12 +73,12 @@ await tryLoad("cjs require", () => {
 
 const wasmBytes = await readFile(fileURLToPath(wasmUrl));
 check(
-  "wasm subpath is wasm",
+  "algovivo/wasm is a .wasm file",
   wasmBytes[0] == 0x00 && wasmBytes[1] == 0x61 && wasmBytes[2] == 0x73 && wasmBytes[3] == 0x6d,
   `${wasmBytes.length} bytes`
 );
 
-await tryLoad("js binds to wasm", async () => {
+await tryLoad("js binds to .wasm", async () => {
   const wasmInstance = await WebAssembly.instantiate(await WebAssembly.compile(wasmBytes), {});
   const system = new esm.System({ wasmInstance });
   if (system.numVertices != 0) throw new Error(`numVertices ${system.numVertices}`);

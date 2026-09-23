@@ -85,7 +85,7 @@ You can create a simple simulation with one triangle and two muscles, where one 
 </html>
 ```
 
-The code above imports the ES6 module `algovivo.min.js` and loads the compiled WASM `algovivo.wasm` from [jsDelivr](https://www.jsdelivr.com/). To serve these files from your own server, you can download them from the [build](https://github.com/juniorrojas/algovivo/tree/build/build) branch.
+The code above imports the ES6 module `algovivo.min.js` and loads the compiled WebAssembly module `algovivo.wasm` from [jsDelivr](https://www.jsdelivr.com/). To serve these files from your own server, you can download them from the [build](https://github.com/juniorrojas/algovivo/tree/build/build) branch.
 
 ### muscle commands
 
@@ -168,7 +168,7 @@ npm ci
 npm run build
 ```
 
-### build WASM
+### build WebAssembly
 
 ```sh
 python codegen/codegen_csrc.py && \
