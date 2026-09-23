@@ -11,8 +11,10 @@ import Header from "./Header.js";
 import Sections from "./Sections.js";
 import Footer from "./Footer.js";
 
+const version = new URL(import.meta.url).searchParams.get("v");
+
 async function loadWasm() {
-  const response = await fetch("algovivo.wasm");
+  const response = await fetch(version == null ? "algovivo.wasm" : `algovivo.wasm?v=${version}`);
   const wasm = await WebAssembly.instantiateStreaming(response);
   return wasm.instance;
 }
@@ -47,7 +49,10 @@ async function main() {
     wasmInstance: wasmInstance
   });
 
-  const agentData = new AgentData({ dataRoot: dataRoot });
+  const agentData = new AgentData({
+    dataRoot: dataRoot,
+    version: version
+  });
 
   const agentSystem = new AgentSystem({
     algovivo: algovivo,
