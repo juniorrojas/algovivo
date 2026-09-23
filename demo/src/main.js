@@ -72,6 +72,7 @@ async function main() {
   });
   agentPicker.domElement.style.position = "absolute";
   agentPicker.domElement.style.top = "14px";
+  agentPicker.domElement.style.left = "14px";
   agentPicker.domElement.style.zIndex = "10";
   agentViewport.domElement.appendChild(agentPicker.domElement);
 
