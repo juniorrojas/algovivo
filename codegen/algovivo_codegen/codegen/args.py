@@ -20,12 +20,6 @@ class DifferentiableArg(Arg):
             return self.num_elements
         return f"{self.num_elements} * {self.element_size}"
 
-    @property
-    def convergence_stride(self):
-        if self.element_size == 1:
-            return None
-        return str(self.element_size)
-
 class Args:
     def __init__(self):
         self.args = []
@@ -154,29 +148,34 @@ class Args:
         # generate args for optim_converged function
         parts = []
         for arg in self.get_differentiable_args():
-            if arg.convergence_stride is not None:
-                # need both total size and stride
-                parts.append(f"{arg.total_size}, {arg.convergence_stride}, {arg.name}_grad")
-            else:
+            if arg.element_size == 1:
                 parts.append(f"{arg.total_size}, {arg.name}_grad")
+            else:
+                parts.append(f"{arg.total_size}, {arg.element_size}, {arg.name}_grad")
         return ", ".join(parts)
 
     def codegen_optim_converged_signature(self):
         # generate function signature for optim_converged
         parts = []
         for arg in self.get_differentiable_args():
-            if arg.convergence_stride is not None:
-                parts.append(f"int {arg.name}_total_size, int {arg.name}_stride, const float* {arg.name}_grad")
-            else:
+            if arg.element_size == 1:
                 parts.append(f"int {arg.name}_size, const float* {arg.name}_grad")
+            else:
+                parts.append(f"int {arg.name}_total_size, int {arg.name}_stride, const float* {arg.name}_grad")
         return ", ".join(parts)
 
     def codegen_optim_converged_body(self):
         # generate body of optim_converged that checks all differentiable grads
         lines = []
         for arg in self.get_differentiable_args():
-            if arg.convergence_stride is not None:
-                # per-entity magnitude check (sum over stride components)
+            if arg.element_size == 1:
+                # flat check (each float individually)
+                lines.append(f"""for (int k = 0; k < {arg.name}_size; k++) {{
+    float q = {arg.name}_grad[k] * {arg.name}_grad[k];
+    if (q > grad_max_q) grad_max_q = q;
+  }}""")
+            else:
+                # per-entity magnitude check (sum over element components)
                 lines.append(f"""{{
     int {arg.name}_num = {arg.name}_total_size / {arg.name}_stride;
     for (int k = 0; k < {arg.name}_num; k++) {{
@@ -187,11 +186,5 @@ class Args:
       }}
       if (q > grad_max_q) grad_max_q = q;
     }}
-  }}""")
-            else:
-                # flat check (each float individually)
-                lines.append(f"""for (int k = 0; k < {arg.name}_size; k++) {{
-    float q = {arg.name}_grad[k] * {arg.name}_grad[k];
-    if (q > grad_max_q) grad_max_q = q;
   }}""")
         return "\n  ".join(lines)
