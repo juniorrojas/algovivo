@@ -28,9 +28,10 @@ export default class AgentViewport {
   }
 
   initResponsiveSize() {
-    const pxPerWorldUnit = 400 / 3.4;
-    const minWorldHeight = 3.4;
-    const minWorldWidth = 4;
+    const maxInPageHeight = 460;
+    // world height visible in both in-page and fullscreen mode, matching the
+    // largest in-page viewport at 400 / 3.4 px per world unit
+    const visibleWorldHeight = maxInPageHeight * 3.4 / 400;
     let lastWidth = null;
     let lastHeight = null;
 
@@ -39,7 +40,7 @@ export default class AgentViewport {
       if (width === 0) return;
       const height = this.fullscreen
         ? window.innerHeight
-        : Math.max(300, Math.min(460, Math.round(width * 0.55)));
+        : Math.max(300, Math.min(maxInPageHeight, Math.round(width * 0.55)));
 
       if (height !== lastHeight) this.domElement.style.height = `${height}px`;
       const changed = width !== lastWidth || height !== lastHeight;
@@ -52,18 +53,17 @@ export default class AgentViewport {
       if (this.viewport) {
         this.viewport.setSize({ width, height });
 
-        // the camera only takes a visible width, so a short viewport is widened
-        // until minWorldHeight fits, rather than cropping the world vertically
-        const worldWidth = this.fullscreen
-          ? Math.max(minWorldWidth, minWorldHeight * width / height)
-          : Math.max(width / pxPerWorldUnit, minWorldHeight * width / height);
+        // the camera only takes a visible width, so it is derived from the visible
+        // height; a narrow viewport (width < height) keeps visibleWorldHeight as
+        // its width instead, and shows more world height
+        const worldWidth = visibleWorldHeight * Math.max(1, width / height);
         const scale = width / worldWidth;
         const worldHeight = height / scale;
 
         this.viewport.tracker.visibleWorldWidth = worldWidth;
         this.viewport.tracker.offsetX = 0.5 * this.overlayFractionRight * worldWidth;
         this.viewport.tracker.targetCenterY = Math.min(
-          0.75,
+          1,
           worldHeight / 2 - this.reservedBottom / scale
         );
         this.viewport.render();
@@ -146,7 +146,7 @@ export default class AgentViewport {
           vertexDepths: meshData.depth,
           domElementForMoveEvents: this.domElement
         });
-        this.viewport.tracker.targetCenterY = 0.75;
+        this.viewport.tracker.targetCenterY = 1;
         this.domElement.insertBefore(this.viewport.domElement, this.miniContainer);
         this.initResponsiveSize();
       }
