@@ -3,7 +3,7 @@
  * (c) 2023 Junior Rojas
  * License: MIT
  *
- * Built from commit 2baabaf8fd5a4343c923cb70b8e1528adf3c7676
+ * Built from commit a49bec9147cde61921e957f672853db8735271f0
  */
 class Node {
   constructor(list, data) {
@@ -140,17 +140,9 @@ var index$9 = /*#__PURE__*/Object.freeze({
   Node: Node
 });
 
-let _ReservedSlot = null;
-let _FreeSlot = null;
-
-function _registerSlotTypes(ReservedSlot, FreeSlot) {
-  _ReservedSlot = ReservedSlot;
-  _FreeSlot = FreeSlot;
-}
-
 class Slot {
   constructor(args = {}) {
-    this.manager = args.manager;
+    this.memoryManager = args.memoryManager;
     this.ptr = args.ptr;
     this.size = args.size;
     this.node = args.node;
@@ -173,37 +165,24 @@ class Slot {
   }
 
   appendReserved(ptr, size) {
-    const node = this.node.append(null);
-    const slot = new _ReservedSlot({
-      manager: this.manager,
-      ptr: ptr,
-      size: size,
-      node: node
-    });
-    node.data = slot;
-    this.manager._addReservedSlot(slot);
-    return slot;
+    return this.memoryManager._appendReservedSlot(this, ptr, size);
   }
 
   appendFree(ptr, size) {
-    const node = this.node.append(null);
-    const slot = new _FreeSlot({
-      manager: this.manager,
-      ptr: ptr,
-      size: size,
-      node: node
-    });
-    node.data = slot;
-    this.manager._addFreeSlot(slot);
-    return slot;
+    return this.memoryManager._appendFreeSlot(this, ptr, size);
   }
 
   remove() {
     this.node.remove();
     this.node.data = null;
     this.node = null;
-    if (this.isFree()) this.manager._removeFreeSlot(this);
-    else this.manager._removeReservedSlot(this);
+    if (this.isFree()) {
+      this.memoryManager._removeFreeSlot(this);
+      this.freeNode = null;
+    } else {
+      this.memoryManager._removeReservedSlot(this);
+      this.reservedNode = null;
+    }
   }
 
   toTypedArray(ArrayClass) {
@@ -214,7 +193,7 @@ class Slot {
     }
     const start = this.ptr;
     return new ArrayClass(
-      this.manager.array,
+      this.memoryManager.array,
       start,
       bytes / bytesPerElement
     );
@@ -230,6 +209,46 @@ class Slot {
 
   u32() {
     return this.toTypedArray(Uint32Array);
+  }
+}
+
+class FreeSlot extends Slot {
+  constructor(args = {}) {
+    super(args);
+  }
+
+  isFree() {
+    return true;
+  }
+
+  reserve(bytes) {
+    const availableBytes = this.numBytes();
+    if (bytes > availableBytes) {
+      throw new Error(`cannot reserve ${bytes} bytes, only ${availableBytes} bytes are available`);
+    }
+    const reserved = this.appendReserved(this.ptr, bytes);
+    const remainingBytes = availableBytes - bytes;
+    if (remainingBytes > 0) {
+      reserved.appendFree(this.ptr + bytes, remainingBytes);
+    }
+    this.remove();
+    return reserved;
+  }
+
+  merge(slot) {
+    if (!this.isFree() || !slot.isFree()) {
+      throw new Error("only free slots can be merged");
+    }
+    if (this.next() != slot) {
+      throw new Error("only adjacent slots can be merged");
+    }
+    const merged = slot.appendFree(
+      this.ptr,
+      this.size + slot.size
+    );
+    this.remove();
+    slot.remove();
+    return merged;
   }
 }
 
@@ -260,43 +279,6 @@ class ReservedSlot extends Slot {
   }
 }
 
-class FreeSlot extends Slot {
-  constructor(args = {}) {
-    super(args);
-  }
-
-  isFree() {
-    return true;
-  }
-
-  reserve(bytes) {
-    const availableBytes = this.numBytes();
-    if (bytes > availableBytes) {
-      throw new Error(`cannot reserve ${bytes} bytes, only ${availableBytes} bytes are available`);
-    }
-    const reserved = this.appendReserved(this.ptr, bytes);
-    reserved.appendFree(this.ptr + bytes, availableBytes - bytes);
-    this.remove();
-    return reserved;
-  }
-
-  merge(slot) {
-    if (!this.isFree() || !slot.isFree()) {
-      throw new Error("only free slots can be merged");
-    }
-    if (this.next() != slot) {
-      throw new Error("only adjacent slots can be merged");
-    }
-    const merged = slot.appendFree(
-      this.ptr,
-      this.size + slot.size
-    );
-    this.remove();
-    slot.remove();
-    return merged;
-  }
-}
-
 class MemoryManager {
   constructor(array, heapBase) {
     this.array = array;
@@ -311,7 +293,7 @@ class MemoryManager {
     this.reservedSlots = new List();
 
     const slot = new FreeSlot({
-      manager: this,
+      memoryManager: this,
       ptr: heapBase,
       size: array.byteLength - heapBase
     });
@@ -365,6 +347,32 @@ class MemoryManager {
     return this.mallocBytes(n * 4);
   }
 
+  _appendReservedSlot(prevSlot, ptr, size) {
+    const node = prevSlot.node.append(null);
+    const slot = new ReservedSlot({
+      memoryManager: this,
+      ptr: ptr,
+      size: size,
+      node: node
+    });
+    node.data = slot;
+    this._addReservedSlot(slot);
+    return slot;
+  }
+
+  _appendFreeSlot(prevSlot, ptr, size) {
+    const node = prevSlot.node.append(null);
+    const slot = new FreeSlot({
+      memoryManager: this,
+      ptr: ptr,
+      size: size,
+      node: node
+    });
+    node.data = slot;
+    this._addFreeSlot(slot);
+    return slot;
+  }
+
   _addReservedSlot(slot) {
     const node = this.reservedSlots.append(slot);
     slot.reservedNode = node;
@@ -391,9 +399,13 @@ class MemoryManager {
 
   _malloc(size) {
     if (!Number.isInteger(size)) {
-      throw new Error(`expected integer, found ${size}`);
+      throw new Error(`expected integer size, found ${size}`);
+    }
+    if (size < 0) {
+      throw new Error(`expected non-negative size, found ${size}`);
     }
     let validFreeSlot = null;
+    let largestFreeSlotSize = 0;
     const it = this.freeSlots.iter();
     let r = it.next();
     while (!r.done) {
@@ -402,10 +414,16 @@ class MemoryManager {
         validFreeSlot = freeSlot;
         break;
       }
+      if (freeSlot.size > largestFreeSlotSize) {
+        largestFreeSlotSize = freeSlot.size;
+      }
       r = it.next();
     }
     if (validFreeSlot == null) {
-      throw new Error("no valid free slot available");
+      throw new Error(
+        `no free slot available for ${size} bytes, ` +
+        `largest free slot has ${largestFreeSlotSize} bytes`
+      );
     }
     return validFreeSlot.reserve(size);
   }
@@ -426,14 +444,13 @@ class MemoryManager {
   }
 }
 
-_registerSlotTypes(ReservedSlot, FreeSlot);
-
 var index$8 = /*#__PURE__*/Object.freeze({
   __proto__: null,
   linked: index$9,
+  MemoryManager: MemoryManager,
+  Slot: Slot,
   FreeSlot: FreeSlot,
-  ReservedSlot: ReservedSlot,
-  MemoryManager: MemoryManager
+  ReservedSlot: ReservedSlot
 });
 
 class IntTuple {
@@ -1076,8 +1093,8 @@ class Engine {
     }
     this.wasmInstance = args.wasmInstance;
     const arr = args.wasmInstance.exports.memory.buffer;
-    const mgr = new MemoryManager(arr, Number(args.wasmInstance.exports.__heap_base));
-    this.mgr = mgr;
+    const memoryManager = new MemoryManager(arr, Number(args.wasmInstance.exports.__heap_base));
+    this.memoryManager = memoryManager;
 
     this.functional = this.F = new Functional({
       engine: this
@@ -1100,7 +1117,7 @@ class Engine {
     const shapeArr = inferShape(data);
     const shape = this.intTuple(shapeArr);
     const numel = numelOfShape(shapeArr);
-    const slot = this.mgr.malloc32(numel);
+    const slot = this.memoryManager.malloc32(numel);
     const tensor = new Tensor({
       engine: this,
       shape: shape,
@@ -1115,7 +1132,7 @@ class Engine {
       throw new Error(`expected array, found ${typeof data}: ${data}`);
     }
     const length = data.length;
-    const slot = this.mgr.malloc32(length);
+    const slot = this.memoryManager.malloc32(length);
     const intTuple = new IntTuple({
       engine: this,
       length: length,
@@ -1145,7 +1162,7 @@ class Engine {
       shape = this.intTuple(_shape);
     }
     const numel = numelOfShape(shape);
-    const slot = this.mgr.malloc32(numel);
+    const slot = this.memoryManager.malloc32(numel);
     const x = new Tensor({
       engine: this,
       shape: shape,
@@ -1329,10 +1346,6 @@ class Vertices {
     return this.ten.wasmInstance;
   }
 
-  get memoryManager() {
-    return this.ten.mgr;
-  }
-
   set(pos) {
     const ten = this.ten;
 
@@ -1449,10 +1462,6 @@ class Muscles {
 
   get wasmInstance() {
     return this.ten.wasmInstance;
-  }
-
-  get memoryManager() {
-    return this.ten.mgr;
   }
 
   get numMuscles() {
@@ -1576,10 +1585,6 @@ class Triangles {
 
   get wasmInstance() {
     return this.ten.wasmInstance;
-  }
-
-  get memoryManager() {
-    return this.ten.mgr;
   }
 
   get numElements() {
@@ -1797,10 +1802,6 @@ class System {
     return this.ten.wasmInstance;
   }
 
-  get memoryManager() {
-    return this.ten.mgr;
-  }
-
   get g() {
     return this.gravity.g;
   }
@@ -1914,7 +1915,6 @@ class System {
 
   toStepArgs() {
     return [
-      this.spaceDim,
       this.h,
 
       ...this.vertices.toStepArgs(),
@@ -2446,11 +2446,10 @@ class Grid {
 
     this.set(args);
 
-    mesh.setCustomAttribute("translation", [0, 0]);
-
     mesh.vertexShader.renderVertex = () => {};
 
     mesh.lineShader.renderLine = Grid.makeGridLineShader({
+      grid: this,
       color: color
     });
   }
@@ -2484,33 +2483,29 @@ class Grid {
     });
     mesh.pos = x;
     mesh.lines = lineIndices;
-    mesh.setCustomAttribute("lineWidths", lineWidths);
+    this.lineWidths = lineWidths;
   }
 
   static makeGridLineShader(args = {}) {
+    if (args.grid == null) {
+      throw new Error("grid required");
+    }
+    const grid = args.grid;
     const color = (args.color == null) ? "black" : args.color;
     return (args) => {
       const ctx = args.ctx;
       const a = args.a;
       const b = args.b;
       const camera = args.camera;
-      const mesh = args.mesh;
       const scale = camera.inferScale();
 
       ctx.beginPath();
       ctx.strokeStyle = color;
-      const lineWidths = mesh.getCustomAttribute("lineWidths");
-      if (lineWidths == null) {
-        throw new Error("custom attribute lineWidths missing");
-      }
-      const lineWidth = lineWidths[args.id];
-
-      const _translation = mesh.getCustomAttribute("translation");
-      const translation = [scale * _translation[0], scale * _translation[1]];
+      const lineWidth = grid.lineWidths[args.id];
 
       ctx.lineWidth = lineWidth * scale;
-      ctx.moveTo(a[0] + translation[0], a[1] + translation[1]);
-      ctx.lineTo(b[0] + translation[0], b[1] + translation[1]);
+      ctx.moveTo(a[0], a[1]);
+      ctx.lineTo(b[0], b[1]);
       ctx.closePath();
       ctx.stroke();
     }
@@ -2842,8 +2837,6 @@ class Mesh {
     this.vertexShader = new VertexShader({});
     this.lineShader = new LineShader({});
     this.triangleShader = new TriangleShader({});
-
-    this.customAttributes = {};
   }
 
   numVertices() {
@@ -2856,14 +2849,6 @@ class Mesh {
 
   numLines() {
     return this.lines.length;
-  }
-
-  setCustomAttribute(key, value) {
-    this.customAttributes[key] = value;
-  }
-
-  getCustomAttribute(key) {
-    return this.customAttributes[key];
   }
 
   computeAABB() {
@@ -3083,23 +3068,22 @@ class Renderer$1 {
 
 class Scene$1 {
   constructor() {
-    this.meshes = new Map();
+    this.meshes = [];
   }
 
   clean() {
-    this.meshes = new Map();
+    this.meshes = [];
   }
 
   numMeshes() {
-    return this.meshes.size;
+    return this.meshes.length;
   }
 
   addMesh() {
-    const id = this.meshes.size;
     const mesh = new Mesh({
       scene: this
     });
-    this.meshes.set(id, mesh);
+    this.meshes.push(mesh);
     return mesh;
   }
 }
@@ -3229,8 +3213,6 @@ class Floor {
     });
 
     mesh.vertexShader.renderVertex = () => {};
-
-    mesh.setCustomAttribute("translation", [0, 0]);
   }
 
   static makeFloorLineShaderFunction(args = {}) {
@@ -3241,17 +3223,13 @@ class Floor {
       const a = args.a;
       const b = args.b;
       const camera = args.camera;
-      const mesh = args.mesh;
       const scale = camera.inferScale();
-
-      const _translation = mesh.getCustomAttribute("translation");
-      const translation = [scale * _translation[0], scale * _translation[1]];
 
       ctx.strokeStyle = color;
       ctx.lineWidth = scale * width;
       ctx.beginPath();
-      ctx.moveTo(a[0] + translation[0], a[1] + translation[1]);
-      ctx.lineTo(b[0] + translation[0], b[1] + translation[1]);
+      ctx.moveTo(a[0], a[1]);
+      ctx.lineTo(b[0], b[1]);
       ctx.stroke();
     }
   }
@@ -3406,6 +3384,8 @@ function renderMuscle(ctx, scale, a, b, t, width, borderWidth, borderColor, colo
 class LineRenderer {
   constructor(args = {}) {
     this.system = args.system;
+    this.lineIdToMuscleId = null;
+    this.muscleIntensity = null;
   }
 
   makeEdgesFromTriangles(triangles) {
@@ -3436,7 +3416,7 @@ class LineRenderer {
       const camera = args.camera;
       const scale = camera.inferScale();
 
-      const lineIdToMuscleId = args.mesh.getCustomAttribute("lineIdToMuscleId");
+      const lineIdToMuscleId = this.lineIdToMuscleId;
       let muscleId = null;
       if (lineIdToMuscleId != null) {
         muscleId = lineIdToMuscleId[args.id];
@@ -3450,14 +3430,13 @@ class LineRenderer {
 
         const width = 0.065;
         const borderWidth = 0.017;
-        const muscleIntensityAttributeName = "muscleIntensity";
 
-        const muscleIntensity = args.mesh.getCustomAttribute(muscleIntensityAttributeName);
+        const muscleIntensity = this.muscleIntensity;
         if (muscleIntensity == null) {
-          throw new Error(`muscle intensity attribute (${muscleIntensityAttributeName}) not found, call setCustomAttribute("${muscleIntensityAttributeName}", value) before rendering.`);
+          throw new Error("muscle intensity not found, set muscleIntensity before rendering.");
         }
         if (!Array.isArray(muscleIntensity)) {
-          throw new Error(`muscle intensity attribute must be an array with values for each fiber, found ${typeof muscleIntensity}`);
+          throw new Error(`muscle intensity must be an array with values for each fiber, found ${typeof muscleIntensity}`);
         }
 
         const t = muscleIntensity[muscleId];
@@ -3729,7 +3708,7 @@ class SystemViewport$1 {
     });
 
     const lineIdToMuscleId = [];
-    mesh.setCustomAttribute("lineIdToMuscleId", lineIdToMuscleId);
+    lineRenderer.lineIdToMuscleId = lineIdToMuscleId;
     mesh.lines.forEach(line => {
       const h = hashSimplex(line);
       const muscleId = muscleHashToId.get(h);
@@ -3758,7 +3737,7 @@ class SystemViewport$1 {
     for (let i = 0; i < numMuscles; i++) {
       muscleIntensity.push(1);
     }
-    mesh.setCustomAttribute("muscleIntensity", muscleIntensity);
+    lineRenderer.muscleIntensity = muscleIntensity;
   }
 
   _updateFromSystem() {
@@ -3779,7 +3758,6 @@ class SystemViewport$1 {
   }
 
   _updateMuscleIntensityFromSystem() {
-    const mesh = this.mesh;
     const system = this.system;
     const numMuscles = system.numMuscles;
 
@@ -3800,7 +3778,7 @@ class SystemViewport$1 {
       }
     }
 
-    mesh.setCustomAttribute("muscleIntensity", muscleIntensity);
+    this.lines.muscleIntensity = muscleIntensity;
   }
 
   hitTestVertex(p, hitTestRadius = 0.31) {
