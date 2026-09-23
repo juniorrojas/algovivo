@@ -1,6 +1,8 @@
 const minInPageHeight = 300;
 const maxInPageHeight = 460;
 const visibleWorldHeight = maxInPageHeight * 3.4 / 400;
+const inPageCenterY = 0.75;
+const fullscreenCenterY = 1;
 
 export default class AgentViewport {
   constructor(args = {}) {
@@ -66,7 +68,7 @@ export default class AgentViewport {
     tracker.visibleWorldWidth = worldWidth;
     tracker.offsetX = 0.5 * this.overlayFractionRight * worldWidth;
     tracker.targetCenterY = Math.min(
-      1,
+      this.fullscreen ? fullscreenCenterY : inPageCenterY,
       worldHeight / 2 - this.reservedBottom / scale
     );
 

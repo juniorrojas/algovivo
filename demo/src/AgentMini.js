@@ -21,6 +21,8 @@ export default class AgentMini {
     this.domElement.style.width = `${this.size}px`;
     this.domElement.style.height = `${this.size}px`;
     this.domElement.style.pointerEvents = "auto";
+    this.domElement.style.userSelect = "none";
+    this.domElement.style.webkitTapHighlightColor = "transparent";
   }
 
   initRenderer() {

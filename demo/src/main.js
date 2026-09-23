@@ -153,8 +153,7 @@ async function main() {
     agentViewport.overlayFractionRight = occupiedWidth / width;
     btnBrain.domElement.style.left = `${simWidth / 2}px`;
 
-    const brainScale = agentViewport.fullscreen ? 1 : 0.85;
-    const brainSize = Math.round(brainScale * Math.max(22, Math.min(34, height * 0.072)));
+    const brainSize = Math.round(Math.max(22, Math.min(34, height * 0.072)));
     btnBrain.setSize(brainSize);
     agentViewport.reservedBottom = 2 * brainSize + 28;
   };
