@@ -1,11 +1,24 @@
 class Arg:
-    def __init__(self, t, name, differentiable=False, mut=False, size=None, convergence_stride=None):
+    differentiable = False
+
+    def __init__(self, t, name, mut=False):
         self.t = t
         self.name = name
-        self.differentiable = differentiable
         self.mut = mut
-        self.size = size # size expression for differentiable arrays
-        self.convergence_stride = convergence_stride # if set, use per-entity magnitude check with this stride
+
+class DifferentiableArg(Arg):
+    differentiable = True
+
+    def __init__(self, t, name, num_elements, element_size=1):
+        super().__init__(t, name)
+        self.num_elements = num_elements
+        self.element_size = element_size
+
+    @property
+    def total_size(self):
+        if self.element_size == 1:
+            return self.num_elements
+        return f"{self.num_elements} * {self.element_size}"
 
 class Args:
     def __init__(self):
@@ -17,9 +30,11 @@ class Args:
     def __getitem__(self, i):
         return self.args[i]
 
-    def add_arg(self, t, name, differentiable=False, mut=False, size=None, convergence_stride=None):
-        arg = Arg(t, name, differentiable, mut, size, convergence_stride)
-        self.args.append(arg)
+    def add_arg(self, t, name, mut=False):
+        self.args.append(Arg(t, name, mut))
+
+    def add_differentiable_arg(self, t, name, num_elements, element_size=1):
+        self.args.append(DifferentiableArg(t, name, num_elements, element_size))
 
     def codegen_fun_signature(self):
         s = ""
@@ -99,26 +114,20 @@ class Args:
     def codegen_optim_zero_grads(self):
         lines = []
         for arg in self.get_differentiable_args():
-            if arg.size is None:
-                raise ValueError(f"differentiable arg '{arg.name}' must have a size")
-            lines.append(f"zero_({arg.size}, {arg.name}_grad);")
+            lines.append(f"zero_({arg.total_size}, {arg.name}_grad);")
         return " \\\n  ".join(lines)
 
     def codegen_optim_line_search_update(self):
         # write trial values to _tmp buffers for line search evaluation
         lines = []
         for arg in self.get_differentiable_args():
-            if arg.size is None:
-                raise ValueError(f"differentiable arg '{arg.name}' must have a size")
-            lines.append(f"add_scaled({arg.size}, {arg.name}, {arg.name}_grad, -step_size, {arg.name}_tmp);")
+            lines.append(f"add_scaled({arg.total_size}, {arg.name}, {arg.name}_grad, -step_size, {arg.name}_tmp);")
         return " \\\n  ".join(lines)
 
     def codegen_optim_apply_step(self):
         lines = []
         for arg in self.get_differentiable_args():
-            if arg.size is None:
-                raise ValueError(f"differentiable arg '{arg.name}' must have a size")
-            lines.append(f"add_scaled({arg.size}, {arg.name}, {arg.name}_grad, -step_size, {arg.name});")
+            lines.append(f"add_scaled({arg.total_size}, {arg.name}, {arg.name}_grad, -step_size, {arg.name});")
         return " \\\n  ".join(lines)
 
     def codegen_optim_call_with_tmp(self):
@@ -139,33 +148,34 @@ class Args:
         # generate args for optim_converged function
         parts = []
         for arg in self.get_differentiable_args():
-            if arg.size is None:
-                raise ValueError(f"differentiable arg '{arg.name}' must have a size")
-            if arg.convergence_stride is not None:
-                # need both total size and stride
-                parts.append(f"{arg.size}, {arg.convergence_stride}, {arg.name}_grad")
+            if arg.element_size == 1:
+                parts.append(f"{arg.total_size}, {arg.name}_grad")
             else:
-                parts.append(f"{arg.size}, {arg.name}_grad")
+                parts.append(f"{arg.total_size}, {arg.element_size}, {arg.name}_grad")
         return ", ".join(parts)
 
     def codegen_optim_converged_signature(self):
         # generate function signature for optim_converged
         parts = []
         for arg in self.get_differentiable_args():
-            if arg.size is None:
-                raise ValueError(f"differentiable arg '{arg.name}' must have a size")
-            if arg.convergence_stride is not None:
-                parts.append(f"int {arg.name}_total_size, int {arg.name}_stride, const float* {arg.name}_grad")
-            else:
+            if arg.element_size == 1:
                 parts.append(f"int {arg.name}_size, const float* {arg.name}_grad")
+            else:
+                parts.append(f"int {arg.name}_total_size, int {arg.name}_stride, const float* {arg.name}_grad")
         return ", ".join(parts)
 
     def codegen_optim_converged_body(self):
         # generate body of optim_converged that checks all differentiable grads
         lines = []
         for arg in self.get_differentiable_args():
-            if arg.convergence_stride is not None:
-                # per-entity magnitude check (sum over stride components)
+            if arg.element_size == 1:
+                # flat check (each float individually)
+                lines.append(f"""for (int k = 0; k < {arg.name}_size; k++) {{
+    float q = {arg.name}_grad[k] * {arg.name}_grad[k];
+    if (q > grad_max_q) grad_max_q = q;
+  }}""")
+            else:
+                # per-entity magnitude check (sum over element components)
                 lines.append(f"""{{
     int {arg.name}_num = {arg.name}_total_size / {arg.name}_stride;
     for (int k = 0; k < {arg.name}_num; k++) {{
@@ -176,11 +186,5 @@ class Args:
       }}
       if (q > grad_max_q) grad_max_q = q;
     }}
-  }}""")
-            else:
-                # flat check (each element individually)
-                lines.append(f"""for (int k = 0; k < {arg.name}_size; k++) {{
-    float q = {arg.name}_grad[k] * {arg.name}_grad[k];
-    if (q > grad_max_q) grad_max_q = q;
   }}""")
         return "\n  ".join(lines)

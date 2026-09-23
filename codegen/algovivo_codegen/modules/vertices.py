@@ -9,7 +9,7 @@ class Vertices:
         args.add_arg("float", "vertex_mass")
 
     def add_differentiable_args(self, args):
-        args.add_arg("float*", "pos", differentiable=True, size="num_vertices * space_dim", convergence_stride="space_dim")
+        args.add_differentiable_arg("float*", "pos", num_elements="num_vertices", element_size="space_dim")
 
     def add_update_args(self, args):
         args.add_arg("int", "num_vertices")
