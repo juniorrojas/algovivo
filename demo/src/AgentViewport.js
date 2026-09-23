@@ -1,191 +1,80 @@
-import AgentMini from "./AgentMini.js";
-import AgentManager from "./AgentManager.js";
+const minInPageHeight = 300;
+const maxInPageHeight = 460;
+const visibleWorldHeight = maxInPageHeight * 3.4 / 400;
 
 export default class AgentViewport {
-  constructor({ system, algovivo, dataRoot = "data", agentNames = [], headless = false }) {
-    this.system = system;
-    this.agentManager = new AgentManager(system, algovivo, dataRoot, agentNames);
-    this.viewport = null;
-    this.algovivo = algovivo;
+  constructor(args = {}) {
+    if (args.algovivo == null) throw new Error("algovivo required");
+    if (args.system == null) throw new Error("system required");
+    this.system = args.system;
+
+    this.fullscreen = false;
     this.overlayFractionRight = 0;
     this.reservedBottom = 0;
-    this.fullscreen = false;
+    this.onResize = null;
+    this.width = null;
+    this.height = null;
 
-    this.headless = headless;
-    if (!headless) {
-      this.initContainer();
-      this.initMiniButtons(algovivo);
-    }
-  }
+    const div = this.domElement = document.createElement("div");
+    div.style.position = "relative";
+    div.style.display = "block";
+    div.style.width = "100%";
+    div.style.overflow = "hidden";
 
-  initContainer() {
-    this.domElement = document.createElement("div");
-    this.domElement.style.position = "relative";
-    this.domElement.style.display = "block";
-    this.domElement.style.width = "100%";
-    this.domElement.style.overflow = "hidden";
-    this.initResponsiveSize();
-  }
-
-  initResponsiveSize() {
-    const maxInPageHeight = 460;
-    // world height visible in both in-page and fullscreen mode, matching the
-    // largest in-page viewport at 400 / 3.4 px per world unit
-    const visibleWorldHeight = maxInPageHeight * 3.4 / 400;
-    let lastWidth = null;
-    let lastHeight = null;
-
-    const updateSize = (force = false) => {
-      const width = this.domElement.clientWidth;
-      if (width === 0) return;
-      const height = this.fullscreen
-        ? window.innerHeight
-        : Math.max(300, Math.min(maxInPageHeight, Math.round(width * 0.55)));
-
-      if (height !== lastHeight) this.domElement.style.height = `${height}px`;
-      const changed = width !== lastWidth || height !== lastHeight;
-      lastWidth = width;
-      lastHeight = height;
-      if (!changed && !force) return;
-
-      if (this.onResize != null) this.onResize({ width, height });
-
-      if (this.viewport) {
-        this.viewport.setSize({ width, height });
-
-        // the camera only takes a visible width, so it is derived from the visible
-        // height; a narrow viewport (width < height) keeps visibleWorldHeight as
-        // its width instead, and shows more world height
-        const worldWidth = visibleWorldHeight * Math.max(1, width / height);
-        const scale = width / worldWidth;
-        const worldHeight = height / scale;
-
-        this.viewport.tracker.visibleWorldWidth = worldWidth;
-        this.viewport.tracker.offsetX = 0.5 * this.overlayFractionRight * worldWidth;
-        this.viewport.tracker.targetCenterY = Math.min(
-          1,
-          worldHeight / 2 - this.reservedBottom / scale
-        );
-        this.viewport.render();
-      }
-    };
-
-    this.updateSize = updateSize;
-    if (this.resizeObserver == null) {
-      this.resizeObserver = new ResizeObserver(() => updateSize());
-      this.resizeObserver.observe(this.domElement);
-    }
-    updateSize();
-  }
-
-  initMiniButtons(algovivo) {
-    this.miniContainer = document.createElement("div");
-    this.miniContainer.style.position = "absolute";
-    this.miniContainer.style.top = "14px";
-    this.miniContainer.style.left = "14px";
-    this.miniContainer.style.zIndex = "10";
-    this.miniContainer.style.display = "flex";
-    this.miniContainer.style.flexDirection = "column";
-    this.miniContainer.style.gap = "8px";
-    
-    this.miniButtons = {};
-    
-    this.agentManager.agents.forEach(agentName => {
-      this.miniButtons[agentName] = new AgentMini({
-        mm2d: algovivo.mm2d,
-        pos: [],
-        triangles: [],
-        muscles: [],
-        size: 40
-      });
-      this.miniButtons[agentName].domElement.style.cursor = "pointer";
-      this.miniButtons[agentName].domElement.addEventListener("click", () => {
-        this.switchToAgent(agentName);
-      });
-      this.miniContainer.appendChild(this.miniButtons[agentName].domElement);
+    this.viewport = new args.algovivo.render.SystemViewport({
+      system: this.system,
+      domElementForMoveEvents: div
     });
-    
-    this.domElement.appendChild(this.miniContainer);
+    div.appendChild(this.viewport.domElement);
+
+    this.resizeObserver = new ResizeObserver(() => this.updateSize());
+    this.resizeObserver.observe(div);
   }
 
-  async preloadMiniButtonData() {
-    await this.agentManager.preloadAllData();
-    
-    for (const agentName of this.agentManager.agents) {
-      try {
-        const meshData = this.agentManager.meshCache.get(agentName);
-        if (this.miniButtons[agentName] && meshData) {
-          this.miniButtons[agentName].updateMesh({
-            pos: meshData.pos,
-            triangles: meshData.triangles
-          });
-        }
-      } catch (error) {
-        console.warn(`Failed to preload mesh data for ${agentName}:`, error);
-      }
+  setMesh(mesh) {
+    const viewport = this.viewport;
+    viewport.needsMeshUpdate = true;
+    if (mesh.depth != null) {
+      viewport.setSortedVertexIdsFromVertexDepths(mesh.depth);
+    } else {
+      viewport.sortedVertexIds = mesh.sorted_vertex_ids ?? null;
     }
   }
 
-  async switchToAgent(agentName) {
-    if (this.agentManager.getCurrentAgent() === agentName) return;
+  updateSize(force = false) {
+    const width = this.domElement.clientWidth;
+    if (width == 0) return;
+    const height = this.fullscreen
+      ? window.innerHeight
+      : Math.max(minInPageHeight, Math.min(maxInPageHeight, Math.round(width * 0.55)));
 
-    try {
-      const { meshData } = await this.agentManager.switchToAgent(agentName);
-      
-      if (this.viewport) {
-        this.viewport.needsMeshUpdate = true;
-        if (meshData.depth != null) {
-          this.viewport.setSortedVertexIdsFromVertexDepths(meshData.depth);
-        } else if (meshData.sorted_vertex_ids != null) {
-          this.viewport.sortedVertexIds = meshData.sorted_vertex_ids;
-        }
-      } else {
-        this.viewport = new this.algovivo.render.SystemViewport({
-          system: this.system,
-          sortedVertexIds: meshData.sorted_vertex_ids,
-          vertexDepths: meshData.depth,
-          domElementForMoveEvents: this.domElement
-        });
-        this.viewport.tracker.targetCenterY = 1;
-        this.domElement.insertBefore(this.viewport.domElement, this.miniContainer);
-        this.initResponsiveSize();
-      }
+    if (height != this.height) this.domElement.style.height = `${height}px`;
+    const changed = width != this.width || height != this.height;
+    this.width = width;
+    this.height = height;
+    if (!changed && !force) return;
 
-      this.updateMiniButtonStates(agentName);
+    if (this.onResize != null) this.onResize({ width, height });
 
-      if (this.onAgentChange != null) this.onAgentChange(agentName);
-      
-    } catch (error) {
-      console.error(`Failed to switch to agent ${agentName}:`, error);
-    }
-  }
+    this.viewport.setSize({ width, height });
 
-  updateMiniButtonStates(activeAgent) {
-    Object.keys(this.miniButtons).forEach(agentName => {
-      const button = this.miniButtons[agentName];
-      button.setActive(agentName === activeAgent);
-    });
-  }
+    const worldWidth = visibleWorldHeight * Math.max(1, width / height);
+    const scale = width / worldWidth;
+    const worldHeight = height / scale;
 
-  togglePolicy() {
-    return this.agentManager.togglePolicy();
+    const tracker = this.viewport.tracker;
+    tracker.visibleWorldWidth = worldWidth;
+    tracker.offsetX = 0.5 * this.overlayFractionRight * worldWidth;
+    tracker.targetCenterY = Math.min(
+      1,
+      worldHeight / 2 - this.reservedBottom / scale
+    );
+
+    this.render();
   }
 
   render() {
-    if (this.viewport) {
-      this.viewport.render();
-    }
-  }
-
-  dispose() {
-    this.agentManager.dispose();
-  }
-
-  getCurrentAgent() {
-    return this.agentManager.getCurrentAgent();
-  }
-
-  isActive() {
-    return this.agentManager.isActive();
+    if (this.system.numVertices == 0) return;
+    this.viewport.render();
   }
 }
