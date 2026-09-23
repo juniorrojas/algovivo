@@ -2,23 +2,22 @@ import Mesh from "./Mesh.js";
 
 export default class Scene {
   constructor() {
-    this.meshes = new Map();
+    this.meshes = [];
   }
 
   clean() {
-    this.meshes = new Map();
+    this.meshes = [];
   }
 
   numMeshes() {
-    return this.meshes.size;
+    return this.meshes.length;
   }
 
   addMesh() {
-    const id = this.meshes.size;
     const mesh = new Mesh({
       scene: this
     });
-    this.meshes.set(id, mesh);
+    this.meshes.push(mesh);
     return mesh;
   }
 }

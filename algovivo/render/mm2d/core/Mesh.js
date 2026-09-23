@@ -12,8 +12,6 @@ export default class Mesh {
     this.vertexShader = new VertexShader({});
     this.lineShader = new LineShader({});
     this.triangleShader = new TriangleShader({});
-
-    this.customAttributes = {};
   }
 
   numVertices() {
@@ -26,14 +24,6 @@ export default class Mesh {
 
   numLines() {
     return this.lines.length;
-  }
-
-  setCustomAttribute(key, value) {
-    this.customAttributes[key] = value;
-  }
-
-  getCustomAttribute(key) {
-    return this.customAttributes[key];
   }
 
   computeAABB() {
