@@ -167,3 +167,36 @@ test("set triangles with pos", async () => {
   ];
   expect(system.rsi.toArray()).toBeCloseToArray(expectedRsi);
 });
+test("triangle energy", async () => {
+  const ten = await utils.loadTen();
+  const system = new algovivo.System({ ten });
+  system.set({
+    pos: [
+      [0, 0],
+      [1, 0],
+      [0, 1]
+    ],
+    triangles: [
+      [0, 1, 2]
+    ]
+  });
+
+  const triangleEnergy = (pos) => ten.wasmInstance.exports.triangle_energy(
+    system.numTriangles,
+    system.triangles.indices.ptr,
+    system.rsi.ptr,
+    system.triangles.mu.ptr,
+    system.triangles.lambda.ptr,
+    pos.ptr
+  );
+
+  expect(Math.abs(triangleEnergy(system.pos))).toBeLessThan(1e-5);
+
+  const stretchedPos = ten.tensor([
+    [0, 0],
+    [2, 0],
+    [0, 1]
+  ]);
+  expect(triangleEnergy(stretchedPos)).toBeGreaterThan(1e-3);
+  stretchedPos.dispose();
+});
