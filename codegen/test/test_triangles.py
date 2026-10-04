@@ -9,32 +9,37 @@ codegen_dirpath = this_dirpath.parent
 csrc_dirpath = codegen_dirpath / "algovivo_codegen" / "csrc"
 
 
-def make_energy_fn():
-    fn = algovivo_codegen.Fun("triangle_energy")
-    fn.args.add_arg("int", "num_triangles")
-    fn.args.add_arg("int*", "triangles")
-    fn.args.add_arg("float*", "rsi")
-    fn.args.add_arg("float*", "mu")
-    fn.args.add_arg("float*", "lambda")
-    fn.args.add_arg("float*", "pos")
+def test_triangle_energy_codegen():
+    triangles = algovivo_codegen.potentials.Triangles()
+    fn = triangles.make_energy_fn("triangle_energy")
 
-    neohookean = algovivo_codegen.Neohookean(
-        simplex_order=3,
-        simplex_name_singular="triangle"
-    )
-    fn.src_body = (
-        "float potential_energy = 0.0;"
-        + neohookean.codegen_accumulate_simplices_energy()
-        + "return potential_energy;"
-    )
-    return fn
+    assert len(fn.args) == 6
+    arg_names = [arg.name for arg in fn.args]
+    assert "num_triangles" in arg_names
+    assert "triangles" in arg_names
+    assert "rsi" in arg_names
+    assert "mu" in arg_names
+    assert "lambda" in arg_names
+    assert "pos" in arg_names
+
+    src = fn.codegen()
+
+    assert "extern \"C\"" in src
+    assert "float triangle_energy(" in src
+
+    assert "float potential_energy = 0.0;" in src
+    assert "accumulate_triangle_energy(" in src
+    assert "return potential_energy;" in src
 
 
 def compile_triangle_energy() -> ctypes.CDLL:
+    triangles = algovivo_codegen.potentials.Triangles()
+    fn = triangles.make_energy_fn("triangle_energy")
+
     with open(csrc_dirpath / "potentials" / "triangles.h") as f:
         triangles_h = f.read()
 
-    cpp_src = triangles_h + "\nnamespace algovivo {\n" + make_energy_fn().codegen() + "\n}"
+    cpp_src = triangles_h + "\nnamespace algovivo {\n" + fn.codegen() + "\n}"
 
     with tempfile.TemporaryDirectory() as tmp_dirname:
         tmp_dirpath = Path(tmp_dirname)
