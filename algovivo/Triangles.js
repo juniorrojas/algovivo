@@ -102,7 +102,7 @@ export default class Triangles {
 
   setMaterialParam(tensor, value, name) {
     if (typeof value == "number") {
-      tensor.fill_(Math.fround(value));
+      tensor.fill_(value);
       return;
     }
     if (value.length != this.numTriangles) {
