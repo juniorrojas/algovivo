@@ -91,13 +91,19 @@ export default class Triangles {
       this.rsi.set(rsi);
     }
 
-    if (this.mu != null) this.mu.dispose();
-    this.mu = ten.zeros([numTriangles]);
-    this.setMaterialParam(this.mu, args.mu ?? 500, "mu");
+    if (indices != null || this.mu == null) {
+      if (this.mu != null) this.mu.dispose();
+      this.mu = ten.zeros([numTriangles]);
+      this.mu.fill_(500);
+    }
+    if (args.mu != null) this.setMaterialParam(this.mu, args.mu, "mu");
 
-    if (this.lambda != null) this.lambda.dispose();
-    this.lambda = ten.zeros([numTriangles]);
-    this.setMaterialParam(this.lambda, args.lambda ?? 50, "lambda");
+    if (indices != null || this.lambda == null) {
+      if (this.lambda != null) this.lambda.dispose();
+      this.lambda = ten.zeros([numTriangles]);
+      this.lambda.fill_(50);
+    }
+    if (args.lambda != null) this.setMaterialParam(this.lambda, args.lambda, "lambda");
   }
 
   setMaterialParam(tensor, value, name) {
