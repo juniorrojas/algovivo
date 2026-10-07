@@ -200,3 +200,32 @@ test("triangle energy", async () => {
   expect(triangleEnergy(stretchedPos)).toBeGreaterThan(1e-3);
   stretchedPos.dispose();
 });
+
+test("per-triangle mu and lambda", async () => {
+  const ten = await utils.loadTen();
+  const system = new algovivo.System({ ten });
+  const pos = [[0, 0], [1, 0], [0, 1], [1, 1]];
+  const triangles = [[0, 1, 2], [1, 3, 2]];
+
+  system.set({ pos, triangles });
+  expect(system.triangles.mu.toArray()).toBeCloseToArray([500, 500]);
+  expect(system.triangles.lambda.toArray()).toBeCloseToArray([50, 50]);
+
+  system.set({ pos, triangles, mu: [500, 5000], lambda: 70 });
+  expect(system.triangles.mu.toArray()).toBeCloseToArray([500, 5000]);
+  expect(system.triangles.lambda.toArray()).toBeCloseToArray([70, 70]);
+
+  system.setTriangles({ rsi: system.triangles.rsi.toArray() });
+  expect(system.triangles.mu.toArray()).toBeCloseToArray([500, 5000]);
+  expect(system.triangles.lambda.toArray()).toBeCloseToArray([70, 70]);
+
+  system.setTriangles({ rsi: system.triangles.rsi.toArray(), lambda: [80, 90] });
+  expect(system.triangles.mu.toArray()).toBeCloseToArray([500, 5000]);
+  expect(system.triangles.lambda.toArray()).toBeCloseToArray([80, 90]);
+
+  system.set({ pos, triangles });
+  expect(system.triangles.mu.toArray()).toBeCloseToArray([500, 500]);
+  expect(system.triangles.lambda.toArray()).toBeCloseToArray([50, 50]);
+
+  expect(() => system.setTriangles({ indices: [[0, 1, 2]], mu: [1, 2] })).toThrow(/one value per triangle/);
+});

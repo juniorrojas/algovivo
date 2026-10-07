@@ -91,13 +91,30 @@ export default class Triangles {
       this.rsi.set(rsi);
     }
 
-    if (this.mu != null) this.mu.dispose();
-    this.mu = ten.zeros([numTriangles]);
-    this.mu.fill_(Math.fround(500));
+    if (indices != null || this.mu == null) {
+      if (this.mu != null) this.mu.dispose();
+      this.mu = ten.zeros([numTriangles]);
+      this.mu.fill_(500);
+    }
+    if (args.mu != null) this.setMaterialParam(this.mu, args.mu, "mu");
 
-    if (this.lambda != null) this.lambda.dispose();
-    this.lambda = ten.zeros([numTriangles]);
-    this.lambda.fill_(Math.fround(50));
+    if (indices != null || this.lambda == null) {
+      if (this.lambda != null) this.lambda.dispose();
+      this.lambda = ten.zeros([numTriangles]);
+      this.lambda.fill_(50);
+    }
+    if (args.lambda != null) this.setMaterialParam(this.lambda, args.lambda, "lambda");
+  }
+
+  setMaterialParam(tensor, value, name) {
+    if (typeof value == "number") {
+      tensor.fill_(value);
+      return;
+    }
+    if (value.length != this.numTriangles) {
+      throw new Error(`${name} must be a number or an array with one value per triangle, found ${value.length} values for ${this.numTriangles} triangles`);
+    }
+    tensor.typedArray().set(value);
   }
 
   dispose() {

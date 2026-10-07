@@ -166,7 +166,9 @@ export default class System {
 
     this.setTriangles({
       indices: args.triangles ?? [],
-      rsi: args.trianglesRsi ?? args.rsi
+      rsi: args.trianglesRsi ?? args.rsi,
+      mu: args.trianglesMu ?? args.mu,
+      lambda: args.trianglesLambda ?? args.lambda
     });
   }
 
