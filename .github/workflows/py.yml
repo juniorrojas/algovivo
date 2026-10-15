@@ -27,6 +27,9 @@ jobs:
         with:
           node-version: 24
 
+      - name: Codegen
+        run: python codegen/codegen.py
+
       - name: Build JS
         run: |
           npm ci

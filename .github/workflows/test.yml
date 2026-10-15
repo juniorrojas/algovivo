@@ -55,6 +55,9 @@ jobs:
         with:
           node-version: 24
 
+      - name: Codegen
+        run: python codegen/codegen.py
+
       - name: Install dependencies
         run: npm ci
 

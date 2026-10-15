@@ -15,3 +15,4 @@ node_modules
 /csrc
 *.ignore
 *.egg-info
+/algovivo/backwardEulerUpdateArgs.js
