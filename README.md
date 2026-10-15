@@ -158,6 +158,12 @@ Instead of manually scripting muscle commands, a neural controller can map propr
 
 ## build from source
 
+### codegen
+
+```sh
+python codegen/codegen.py
+```
+
 ### build JS
 
 ```sh
@@ -168,7 +174,6 @@ npm run build
 ### build WebAssembly
 
 ```sh
-python codegen/codegen.py && \
 docker run \
   --user $(id -u):$(id -g) \
   -v $(pwd):/workspace \
