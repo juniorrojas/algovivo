@@ -206,6 +206,7 @@ float potential_energy = 0.0;"""
         energy_fns_src = self.make_energy_functions()
         loss_grad = self.loss.make_backward_pass()
         update_args, update_pos_args, update_vel_args = self.make_update_args()
+        self.update_args = update_args
         forward_non_differentiable_args = self.make_forward_non_differentiable_args()
 
         templates_dirpath = this_dirpath.joinpath("templates")
@@ -278,6 +279,14 @@ float potential_energy = 0.0;"""
             f.write(src)
         print(f"instantiated backward Euler to {output_filepath}")
 
+
+    def write_update_args_js(self, filepath):
+        with open(filepath, "w") as f:
+            f.write("export default [\n")
+            for arg in self.update_args:
+                f.write(f"  \"{arg.name}\",\n")
+            f.write("];\n")
+        print(f"update args saved to {filepath}")
 
     def init_csrc(self, csrc_dirname):
         os.makedirs(csrc_dirname, exist_ok=True)

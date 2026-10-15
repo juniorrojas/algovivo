@@ -24,15 +24,15 @@ export default class Triangles {
     return this.numElements;
   }
 
-  toStepArgs() {
+  stepArgs() {
     const numElements = this.numElements;
-    return [
-      numElements,
-      numElements == 0 ? 0 : this.indices.ptr,
-      numElements == 0 ? 0 : this.rsi.ptr,
-      numElements == 0 ? 0 : this.mu.ptr,
-      numElements == 0 ? 0 : this.lambda.ptr
-    ];
+    return {
+      num_triangles: numElements,
+      triangles: numElements == 0 ? 0 : this.indices.ptr,
+      rsi: numElements == 0 ? 0 : this.rsi.ptr,
+      mu: numElements == 0 ? 0 : this.mu.ptr,
+      lambda: numElements == 0 ? 0 : this.lambda.ptr
+    };
   }
 
   set(args = {}) {

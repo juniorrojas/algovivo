@@ -1,4 +1,5 @@
 import { Engine } from "./mmgrten/index.js";
+import backwardEulerUpdateArgs from "./backwardEulerUpdateArgs.js";
 import Vertices from "./Vertices.js";
 import Muscles from "./Muscles.js";
 import Triangles from "./Triangles.js";
@@ -172,22 +173,28 @@ export default class System {
     });
   }
 
+  stepArgs() {
+    return {
+      h: this.h,
+      ...this.vertices.stepArgs(),
+      ...this.muscles.stepArgs(),
+      ...this.triangles.stepArgs(),
+      ...this.gravity.stepArgs(),
+      ...this.friction.stepArgs(),
+      ...this.collision.stepArgs(),
+      ...this.optimizer.stepArgs()
+    };
+  }
+
   toStepArgs() {
-    return [
-      this.h,
-
-      ...this.vertices.toStepArgs(),
-
-      ...this.muscles.toStepArgs(),
-
-      ...this.triangles.toStepArgs(),
-
-      ...this.gravity.toStepArgs(),
-      ...this.friction.toStepArgs(),
-      ...this.collision.toStepArgs(),
-
-      ...this.optimizer.toStepArgs()
-    ]
+    const values = this.stepArgs();
+    return backwardEulerUpdateArgs.map(name => {
+      const value = values[name];
+      if (value === undefined) {
+        throw new Error(`no value for backward_euler_update arg ${name}`);
+      }
+      return value;
+    });
   }
 
   step() {

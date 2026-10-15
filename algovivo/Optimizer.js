@@ -7,14 +7,14 @@ export default class Optimizer {
     this.gradQTol = args.gradQTol ?? Math.fround(0.5 * 1e-5);
   }
 
-  toStepArgs() {
-    return [
-      this.maxIters,
-      this.initialStepSize,
-      this.backtrackingScale,
-      this.maxLineSearchIters,
-      this.gradQTol
-    ];
+  stepArgs() {
+    return {
+      max_optim_iters: this.maxIters,
+      initial_step_size: this.initialStepSize,
+      backtracking_scale: this.backtrackingScale,
+      max_line_search_iters: this.maxLineSearchIters,
+      grad_q_tol: this.gradQTol
+    };
   }
 
   dispose() {}

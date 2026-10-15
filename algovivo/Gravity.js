@@ -3,8 +3,8 @@ export default class Gravity {
     this.g = args.g ?? 9.8;
   }
 
-  toStepArgs() {
-    return [this.g];
+  stepArgs() {
+    return { g: this.g };
   }
 
   dispose() {}

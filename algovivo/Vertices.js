@@ -19,25 +19,24 @@ export default class Vertices {
     this._fixedVertexIds = null;
   }
 
-  toStepArgs() {
+  stepArgs() {
     const numVertices = this.numVertices;
-    const vertexMass = this.vertexMass;
     const numFixedVertices = this.numFixedVertices;
 
-    return [
-      numVertices,
-      numVertices == 0 ? 0 : this.pos0.ptr,
-      numVertices == 0 ? 0 : this.vel0.ptr,
-      vertexMass,
+    return {
+      num_vertices: numVertices,
+      pos0: numVertices == 0 ? 0 : this.pos0.ptr,
+      vel0: numVertices == 0 ? 0 : this.vel0.ptr,
+      vertex_mass: this.vertexMass,
 
-      numFixedVertices,
-      numFixedVertices == 0 ? 0 : this._fixedVertexIds.ptr,
+      num_fixed_vertices: numFixedVertices,
+      fixed_vertex_ids: numFixedVertices == 0 ? 0 : this._fixedVertexIds.ptr,
 
-      numVertices == 0 ? 0 : this.pos1.ptr,
-      numVertices == 0 ? 0 : this.posGrad.ptr,
-      numVertices == 0 ? 0 : this.posTmp.ptr,
-      numVertices == 0 ? 0 : this.vel1.ptr,
-    ];
+      pos1: numVertices == 0 ? 0 : this.pos1.ptr,
+      pos_grad: numVertices == 0 ? 0 : this.posGrad.ptr,
+      pos_tmp: numVertices == 0 ? 0 : this.posTmp.ptr,
+      vel1: numVertices == 0 ? 0 : this.vel1.ptr,
+    };
   }
 
   setVertexPos(i, pos) {

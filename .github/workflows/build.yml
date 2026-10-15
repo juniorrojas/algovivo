@@ -69,7 +69,7 @@ jobs:
 
       - name: Build
         run: |
-          python codegen/codegen_csrc.py
+          python codegen/codegen.py
           docker run \
             -v $(pwd):/workspace \
             -w /workspace \
@@ -99,7 +99,7 @@ jobs:
 
       - name: Build
         run: |
-          python codegen/codegen_csrc.py
+          python codegen/codegen.py
           mkdir -p ${{ env.BUILD_DIRNAME }}
           docker run \
             -e NATIVE=true \
