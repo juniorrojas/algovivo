@@ -4,7 +4,7 @@ import argparse
 if __name__ == "__main__":
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument("-o", "--output-csrc-dirname", type=str, default="csrc")
-    arg_parser.add_argument("--js-args", type=str, default="algovivo/backwardEulerUpdateArgs.js")
+    arg_parser.add_argument("--js-args", type=str, default="algovivo/backwardEulerUpdateArgs.out.js")
     args = arg_parser.parse_args()
 
     backward_euler = codegen.BackwardEuler()
