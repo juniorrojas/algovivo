@@ -28,7 +28,7 @@ jobs:
 
       - name: Build WebAssembly
         run: |
-          python codegen/codegen_csrc.py
+          python codegen/codegen.py
           docker run \
             -v $(pwd):/workspace \
             -w /workspace \

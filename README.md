@@ -168,7 +168,7 @@ npm run build
 ### build WebAssembly
 
 ```sh
-python codegen/codegen_csrc.py && \
+python codegen/codegen.py && \
 docker run \
   --user $(id -u):$(id -g) \
   -v $(pwd):/workspace \

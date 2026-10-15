@@ -93,15 +93,15 @@ export default class Muscles {
     }
   }
 
-  toStepArgs() {
+  stepArgs() {
     const numMuscles = this.numMuscles;
-    return [
-      numMuscles,
-      numMuscles == 0 ? 0 : this.indices.ptr,
-      this.k,
-      numMuscles == 0 ? 0 : this.a.ptr,
-      numMuscles == 0 ? 0 : this.l0.ptr
-    ];
+    return {
+      num_muscles: numMuscles,
+      muscles: numMuscles == 0 ? 0 : this.indices.ptr,
+      k: this.k,
+      a: numMuscles == 0 ? 0 : this.a.ptr,
+      l0: numMuscles == 0 ? 0 : this.l0.ptr
+    };
   }
 
   dispose() {

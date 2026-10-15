@@ -3,8 +3,8 @@ export default class Collision {
     this.k = args.k ?? Math.fround(14000);
   }
 
-  toStepArgs() {
-    return [this.k];
+  stepArgs() {
+    return { k_collision: this.k };
   }
 
   dispose() {}

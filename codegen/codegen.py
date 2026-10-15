@@ -4,6 +4,7 @@ import argparse
 if __name__ == "__main__":
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument("-o", "--output-csrc-dirname", type=str, default="csrc")
+    arg_parser.add_argument("--js-args", type=str, default=None)
     args = arg_parser.parse_args()
 
     backward_euler = codegen.BackwardEuler()
@@ -31,3 +32,5 @@ if __name__ == "__main__":
 
     backward_euler.init_csrc(args.output_csrc_dirname)
     backward_euler.instantiate_templates(args.output_csrc_dirname)
+    if args.js_args is not None:
+        backward_euler.write_update_args_js(args.js_args)

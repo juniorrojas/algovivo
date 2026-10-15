@@ -3,8 +3,8 @@ export default class Friction {
     this.k = args.k ?? Math.fround(300);
   }
 
-  toStepArgs() {
-    return [this.k];
+  stepArgs() {
+    return { k_friction: this.k };
   }
 
   dispose() {}
