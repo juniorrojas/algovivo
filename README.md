@@ -4,9 +4,6 @@
   <a href="https://github.com/juniorrojas/algovivo/actions/workflows/test.yml">
     <img src="https://github.com/juniorrojas/algovivo/actions/workflows/test.yml/badge.svg" alt="Test">
   </a>
-  <a href="https://deepwiki.com/juniorrojas/algovivo">
-    <img src="https://deepwiki.com/badge.svg" alt="Ask DeepWiki">
-  </a>
 </p>
 
 An energy-based formulation for soft-bodied [virtual creatures](https://direct.mit.edu/isal/proceedings/isal2024/36/30/123447).
