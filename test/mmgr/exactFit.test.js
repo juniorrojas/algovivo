@@ -1,3 +1,5 @@
+import { test } from "node:test";
+import assert from "node:assert";
 import * as algovivo from "algovivo";
 
 test("exact fit leaves no empty free slot", () => {
@@ -6,8 +8,8 @@ test("exact fit leaves no empty free slot", () => {
 
   memoryManager.mallocBytes(100);
 
-  expect(memoryManager.numFreeBytes()).toBe(0);
-  expect(memoryManager.numFreeSlots()).toBe(0);
+  assert.strictEqual(memoryManager.numFreeBytes(), 0);
+  assert.strictEqual(memoryManager.numFreeSlots(), 0);
 });
 
 test("refilling holes leaves no empty free slots", () => {
@@ -19,9 +21,9 @@ test("refilling holes leaves no empty free slots", () => {
   for (let i = 0; i < 10; i += 2) slots[i].free();
   for (let i = 0; i < 10; i += 2) memoryManager.mallocBytes(20);
 
-  expect(memoryManager.numFreeBytes()).toBe(0);
-  expect(memoryManager.numFreeSlots()).toBe(0);
-  expect(memoryManager.slots.size).toBe(10);
+  assert.strictEqual(memoryManager.numFreeBytes(), 0);
+  assert.strictEqual(memoryManager.numFreeSlots(), 0);
+  assert.strictEqual(memoryManager.slots.size, 10);
 });
 
 test("nothing is reserved past the end of the buffer", () => {
@@ -31,5 +33,5 @@ test("nothing is reserved past the end of the buffer", () => {
   memoryManager.mallocBytes(100);
 
   // with no empty free slot left, a 0-byte request has nothing to match
-  expect(() => { memoryManager.mallocBytes(0); }).toThrow();
+  assert.throws(() => { memoryManager.mallocBytes(0); });
 });

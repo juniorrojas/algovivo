@@ -1,14 +1,14 @@
+import { test } from "node:test";
+import assert from "node:assert";
 import * as algovivo from "algovivo";
 import * as utils from "../utils.js";
 import fsp from "fs/promises";
 import path from "path";
 import Trajectory from "../../utils/trajectory/Trajectory.js";
 
-expect.extend({ toBeCloseToArray: utils.toBeCloseToArray });
+const dataDirname = path.join(import.meta.dirname, "data");
 
-const dataDirname = path.join(__dirname, "data");
-
-test("trajectory", async () => {
+test("trajectory", { timeout: 30000 }, async () => {
   const system = new algovivo.System({
     wasmInstance: await utils.loadWasm()
   });
@@ -26,22 +26,22 @@ test("trajectory", async () => {
 
   const trajectory = new Trajectory(path.join(dataDirname, "trajectory"));
   const n = await trajectory.numSteps();
-  expect(n).toBe(100);
+  assert.strictEqual(n, 100);
 
   for (let i = 0; i < n; i++) {
     const stepData = await trajectory.loadStep(i);
 
-    expect(system.pos.toArray()).toBeCloseToArray(stepData.pos0);
-    expect(system.a.toArray()).toBeCloseToArray(stepData.a0);
+    utils.assertCloseToArray(system.pos.toArray(), stepData.pos0);
+    utils.assertCloseToArray(system.a.toArray(), stepData.a0);
 
     policy.step();
     system.step();
 
     if (stepData.pos1 != null) {
-      expect(system.pos.toArray()).toBeCloseToArray(stepData.pos1);
+      utils.assertCloseToArray(system.pos.toArray(), stepData.pos1);
     }
     if (stepData.a1 != null) {
-      expect(system.a.toArray()).toBeCloseToArray(stepData.a1);
+      utils.assertCloseToArray(system.a.toArray(), stepData.a1);
     }
   }
-}, 30000);
+});

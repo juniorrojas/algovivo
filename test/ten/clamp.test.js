@@ -1,7 +1,6 @@
+import { test } from "node:test";
 import { mmgrten } from "algovivo";
 import * as utils from "../utils.js";
-
-expect.extend({ toBeCloseToArray: utils.toBeCloseToArray });
 
 test("clamp min max", async () => {
   const ten = await utils.loadTen();
@@ -12,7 +11,7 @@ test("clamp min max", async () => {
   ]);
 
   a.clamp_({ min: 0.1, max: 0.4 });
-  expect(a.toArray()).toBeCloseToArray([
+  utils.assertCloseToArray(a.toArray(), [
     [0.4, 0.1, 0.4],
     [0.4, 0.2, 0.3]
   ]);
@@ -26,7 +25,7 @@ test("clamp min", async () => {
     [0.5, 0.2, 0.3]
   ]);
   a.clamp_({ min: 0.1 });
-  expect(a.toArray()).toBeCloseToArray([
+  utils.assertCloseToArray(a.toArray(), [
     [1, 0.1, 0.9],
     [0.5, 0.2, 0.3]
   ]);
@@ -40,7 +39,7 @@ test("clamp max", async () => {
     [0.5, 0.2, 0.3]
   ]);
   a.clamp_({ max: 0.4 });
-  expect(a.toArray()).toBeCloseToArray([
+  utils.assertCloseToArray(a.toArray(), [
     [0.4, -3, 0.4],
     [0.4, 0.2, 0.3]
   ]);

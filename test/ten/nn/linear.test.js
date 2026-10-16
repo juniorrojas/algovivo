@@ -1,3 +1,5 @@
+import { test } from "node:test";
+import assert from "node:assert";
 import * as utils from "../../utils.js";
 
 test("linear", async () => {
@@ -24,13 +26,13 @@ test("linear", async () => {
   ]);
 
   const output = linear.forward(input);
-  expect(output.toArray()).toEqual([
+  assert.deepStrictEqual(output.toArray(), [
     28,
     72
   ]);
 
-  expect(memoryManager.numReservedBytes()).not.toBe(bytes0);
+  assert.notStrictEqual(memoryManager.numReservedBytes(), bytes0);
   linear.dispose();
   input.dispose();
-  expect(memoryManager.numReservedBytes()).toBe(bytes0);
+  assert.strictEqual(memoryManager.numReservedBytes(), bytes0);
 });

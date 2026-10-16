@@ -1,3 +1,5 @@
+import { test } from "node:test";
+import assert from "node:assert";
 import * as algovivo from "algovivo";
 import * as utils from "./utils.js";
 
@@ -7,9 +9,9 @@ test("memory", async () => {
   });
   const memoryManager = system.ten.memoryManager;
 
-  expect(system.numVertices).toBe(0);
-  expect(system.numMuscles).toBe(0);
-  expect(system.numTriangles).toBe(0);
+  assert.strictEqual(system.numVertices, 0);
+  assert.strictEqual(system.numMuscles, 0);
+  assert.strictEqual(system.numTriangles, 0);
 
   const meshData = {
     pos: [
@@ -26,33 +28,33 @@ test("memory", async () => {
     ]
   };
 
-  expect(memoryManager.numReservedBytes()).toBe(0);
+  assert.strictEqual(memoryManager.numReservedBytes(), 0);
   system.set(meshData);
-  expect(memoryManager.numReservedBytes()).not.toBe(0);
+  assert.notStrictEqual(memoryManager.numReservedBytes(), 0);
   const reservedBytes = memoryManager.numReservedBytes();
-  expect(system.numVertices).toBe(3);
-  expect(system.numTriangles).toBe(1);
-  expect(system.numMuscles).toBe(2);
+  assert.strictEqual(system.numVertices, 3);
+  assert.strictEqual(system.numTriangles, 1);
+  assert.strictEqual(system.numMuscles, 2);
   
   // updating the mesh again with the same data
   // should not allocate any new memory
   system.set(meshData);
-  expect(memoryManager.numReservedBytes()).toBe(reservedBytes);
-  expect(system.numVertices).toBe(3);
-  expect(system.numTriangles).toBe(1);
-  expect(system.numMuscles).toBe(2);
+  assert.strictEqual(memoryManager.numReservedBytes(), reservedBytes);
+  assert.strictEqual(system.numVertices, 3);
+  assert.strictEqual(system.numTriangles, 1);
+  assert.strictEqual(system.numMuscles, 2);
 
   // free memory
   system.dispose();
-  expect(memoryManager.numReservedBytes()).toBe(0);
-  expect(system.numVertices).toBe(0);
-  expect(system.numTriangles).toBe(0);
-  expect(system.numMuscles).toBe(0);
+  assert.strictEqual(memoryManager.numReservedBytes(), 0);
+  assert.strictEqual(system.numVertices, 0);
+  assert.strictEqual(system.numTriangles, 0);
+  assert.strictEqual(system.numMuscles, 0);
   
   // reset data
   system.set(meshData);
-  expect(memoryManager.numReservedBytes()).toBe(reservedBytes);
-  expect(system.numVertices).toBe(3);
-  expect(system.numTriangles).toBe(1);
-  expect(system.numMuscles).toBe(2);
+  assert.strictEqual(memoryManager.numReservedBytes(), reservedBytes);
+  assert.strictEqual(system.numVertices, 3);
+  assert.strictEqual(system.numTriangles, 1);
+  assert.strictEqual(system.numMuscles, 2);
 });

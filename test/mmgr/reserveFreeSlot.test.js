@@ -1,3 +1,5 @@
+import { test } from "node:test";
+import assert from "node:assert";
 import * as algovivo from "algovivo";
 
 test("reserve free slot", () => {
@@ -5,23 +7,23 @@ test("reserve free slot", () => {
   const buffer = new ArrayBuffer(totalBytes);
   const memoryManager = new algovivo.mmgrten.mmgr.MemoryManager(buffer);
 
-  expect(memoryManager.numReservedSlots()).toBe(0);
-  expect(memoryManager.numFreeSlots()).toBe(1);
-  expect(memoryManager.numReservedBytes()).toBe(0);
-  expect(memoryManager.numFreeBytes()).toBe(100);
+  assert.strictEqual(memoryManager.numReservedSlots(), 0);
+  assert.strictEqual(memoryManager.numFreeSlots(), 1);
+  assert.strictEqual(memoryManager.numReservedBytes(), 0);
+  assert.strictEqual(memoryManager.numFreeBytes(), 100);
 
   const freeSlot = memoryManager.slots.first.data;
-  expect(freeSlot).toBeInstanceOf(algovivo.mmgrten.mmgr.FreeSlot);
-  expect(freeSlot.freeNode).not.toBeNull();
+  assert.ok(freeSlot instanceof algovivo.mmgrten.mmgr.FreeSlot);
+  assert.notStrictEqual(freeSlot.freeNode, null);
 
   const reservedSlot = freeSlot.reserve(10);
-  expect(reservedSlot).toBeInstanceOf(algovivo.mmgrten.mmgr.ReservedSlot);
+  assert.ok(reservedSlot instanceof algovivo.mmgrten.mmgr.ReservedSlot);
 
-  expect(memoryManager.numReservedSlots()).toBe(1);
-  expect(memoryManager.numFreeSlots()).toBe(1);
-  expect(memoryManager.slots.first.data).toBe(reservedSlot);
-  expect(memoryManager.numReservedBytes()).toBe(10);
-  expect(memoryManager.numFreeBytes()).toBe(90);
+  assert.strictEqual(memoryManager.numReservedSlots(), 1);
+  assert.strictEqual(memoryManager.numFreeSlots(), 1);
+  assert.strictEqual(memoryManager.slots.first.data, reservedSlot);
+  assert.strictEqual(memoryManager.numReservedBytes(), 10);
+  assert.strictEqual(memoryManager.numFreeBytes(), 90);
 });
 
 test("reserve more bytes than available", () => {
@@ -29,7 +31,7 @@ test("reserve more bytes than available", () => {
   const memoryManager = new algovivo.mmgrten.mmgr.MemoryManager(buffer);
 
   const freeSlot = memoryManager.slots.first.data;
-  expect(() => { freeSlot.reserve(101); }).toThrow();
+  assert.throws(() => { freeSlot.reserve(101); });
 });
 
 test("removed slot releases its nodes", () => {
@@ -37,10 +39,10 @@ test("removed slot releases its nodes", () => {
   const memoryManager = new algovivo.mmgrten.mmgr.MemoryManager(buffer);
 
   const a = memoryManager.mallocBytes(10);
-  expect(a.node).not.toBeNull();
-  expect(a.reservedNode).not.toBeNull();
+  assert.notStrictEqual(a.node, null);
+  assert.notStrictEqual(a.reservedNode, null);
 
   a.free();
-  expect(a.node).toBeNull();
-  expect(a.reservedNode).toBeNull();
+  assert.strictEqual(a.node, null);
+  assert.strictEqual(a.reservedNode, null);
 });

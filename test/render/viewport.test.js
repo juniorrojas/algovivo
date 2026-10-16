@@ -1,7 +1,7 @@
+import { test } from "node:test";
+import assert from "node:assert";
 import * as algovivo from "algovivo";
 import * as utils from "../utils.js";
-
-expect.extend({ toBeCloseToArray: utils.toBeCloseToArray });
 
 test("hit test", async () => {
   const wasmInstance = await utils.loadWasm();
@@ -15,10 +15,10 @@ test("hit test", async () => {
   });
 
   const viewport = new algovivo.SystemViewport({ system, headless: true });
-  expect(viewport.hitTestVertex([0, 0])).toBe(0);
-  expect(viewport.hitTestVertex([1, 2])).toBe(1);
-  expect(viewport.hitTestVertex([10, 20])).toBeNull();
-  expect(viewport.hitTestVertex([1, 2], 100)).toBe(1);
+  assert.strictEqual(viewport.hitTestVertex([0, 0]), 0);
+  assert.strictEqual(viewport.hitTestVertex([1, 2]), 1);
+  assert.strictEqual(viewport.hitTestVertex([10, 20]), null);
+  assert.strictEqual(viewport.hitTestVertex([1, 2], 100), 1);
 });
 
 test("vertex drag fixes and frees a vertex", async () => {
@@ -38,17 +38,17 @@ test("vertex drag fixes and frees a vertex", async () => {
   ]);
 
   const viewport = new algovivo.SystemViewport({ system, headless: true });
-  expect(system.vertices.fixedVertexIds).toEqual([]);
+  assert.deepStrictEqual(system.vertices.fixedVertexIds, []);
 
   // dragging a free vertex pins it and zeroes its velocity
   viewport.beginVertexDrag(1);
-  expect(system.vertices.fixedVertexIds).toEqual([1]);
-  expect(system.pos.toArray()).toBeCloseToArray([[5, 6], [11, 12]]);
-  expect(system.vel.toArray()).toBeCloseToArray([[1, 2], [0, 0]]);
+  assert.deepStrictEqual(system.vertices.fixedVertexIds, [1]);
+  utils.assertCloseToArray(system.pos.toArray(), [[5, 6], [11, 12]]);
+  utils.assertCloseToArray(system.vel.toArray(), [[1, 2], [0, 0]]);
 
   // releasing the drag frees it again
   viewport.endVertexDrag();
-  expect(system.vertices.fixedVertexIds).toEqual([]);
+  assert.deepStrictEqual(system.vertices.fixedVertexIds, []);
 });
 
 test("vertex drag preserves pre-fixed vertices", async () => {
@@ -70,15 +70,15 @@ test("vertex drag preserves pre-fixed vertices", async () => {
 
   // dragging a free vertex adds it without disturbing the pinned ones
   viewport.beginVertexDrag(1);
-  expect(system.vertices.fixedVertexIds.sort()).toEqual([0, 1, 2]);
+  assert.deepStrictEqual(system.vertices.fixedVertexIds.sort(), [0, 1, 2]);
 
   // releasing frees only the dragged vertex; pre-pinned ones stay
   viewport.endVertexDrag();
-  expect(system.vertices.fixedVertexIds.sort()).toEqual([0, 2]);
+  assert.deepStrictEqual(system.vertices.fixedVertexIds.sort(), [0, 2]);
 
   // dragging an already-pinned vertex leaves it pinned after release
   viewport.beginVertexDrag(0);
-  expect(system.vertices.fixedVertexIds.sort()).toEqual([0, 2]);
+  assert.deepStrictEqual(system.vertices.fixedVertexIds.sort(), [0, 2]);
   viewport.endVertexDrag();
-  expect(system.vertices.fixedVertexIds.sort()).toEqual([0, 2]);
+  assert.deepStrictEqual(system.vertices.fixedVertexIds.sort(), [0, 2]);
 });

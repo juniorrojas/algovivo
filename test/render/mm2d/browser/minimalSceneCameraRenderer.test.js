@@ -1,9 +1,11 @@
+import { test } from "node:test";
+import assert from "node:assert";
 import * as ppw from "./ppw/index.js";
 import path from "path";
 import fs from "fs";
 
 // minimal scene, camera and renderer example
-test("minimal scene, camera and renderer", async () => {
+test("minimal scene, camera and renderer", { timeout: 60000 }, async () => {
   const main = async (port) => {
     const window = new ppw.Window({
       headless: true,
@@ -31,17 +33,17 @@ test("minimal scene, camera and renderer", async () => {
         });
       });
 
-      const screenshotPath = path.join(__dirname, "minimalSceneCameraRenderer.out.png");
+      const screenshotPath = path.join(import.meta.dirname, "minimalSceneCameraRenderer.out.png");
       await window.screenshot({ path: screenshotPath });
 
-      expect(fs.existsSync(screenshotPath)).toBe(true);
+      assert.strictEqual(fs.existsSync(screenshotPath), true);
     } finally {
       await window.close();
     }
   };
 
   await ppw.runWebServer({
-    staticDirname: path.join(__dirname, "public"),
+    staticDirname: path.join(import.meta.dirname, "public"),
     onReady: main
   });
-}, 60000);
+});

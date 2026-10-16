@@ -1,9 +1,9 @@
+import { test } from "node:test";
+import assert from "node:assert";
 import * as algovivo from "algovivo";
-import { loadWasm, loadTen, toBeCloseToArray } from "./utils.js";
+import { loadWasm, loadTen, assertCloseToArray } from "./utils.js";
 
 const mmgrten = algovivo.mmgrten;
-
-expect.extend({ toBeCloseToArray });
 
 test("dot2d", async () => {
   const wasmInstance = await loadWasm();
@@ -11,7 +11,7 @@ test("dot2d", async () => {
     1, 2,
     3, 4
   );
-  expect(r).toBe(11);
+  assert.strictEqual(r, 11);
 });
 
 test("frame_projection simple", async () => {
@@ -40,7 +40,7 @@ test("frame_projection simple", async () => {
     false
   );
 
-  expect(projectedX.toArray()).toEqual([
+  assert.deepStrictEqual(projectedX.toArray(), [
     [0, 0],
     [1, 0]
   ]);
@@ -79,7 +79,7 @@ test("frame_projection", async () => {
 
   const result = projectedX.toArray();
 
-  expect(result).toBeCloseToArray([
+  assertCloseToArray(result, [
     [3.9701590538024902, 0.6616933345794678],
     [0, 0],
     [1.3601469993591309, 2.9802322387695312e-8]
@@ -118,7 +118,7 @@ test("make_policy_input", async () => {
     policyInput.ptr
   );
 
-  expect(policyInput.toArray()).toEqual([
+  assert.deepStrictEqual(policyInput.toArray(), [
     1, 2, 3, 4, 5, 6,
     7, 8, 9, 10, 11, 12
   ]);

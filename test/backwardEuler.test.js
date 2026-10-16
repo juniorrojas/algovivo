@@ -1,7 +1,6 @@
+import { test } from "node:test";
 import * as algovivo from "algovivo";
 import * as utils from "./utils.js";
-
-expect.extend({ toBeCloseToArray: utils.toBeCloseToArray });
 
 test("update vel", async () => {
   const ten = await utils.loadTen();
@@ -28,7 +27,7 @@ test("update vel", async () => {
     pos1.ptr, vel1.ptr,
     h
   );
-  expect(vel1.toArray()).toBeCloseToArray([
+  utils.assertCloseToArray(vel1.toArray(), [
     [0.5, 4],
     [1, -0.5],
     [-2, 5]
@@ -60,7 +59,7 @@ test("optim init", async () => {
     pos.ptr,
     0, 0
   );
-  expect(pos.toArray()).toBeCloseToArray([
+  utils.assertCloseToArray(pos.toArray(), [
     [2, 10],
     [5, 3],
     [1, 16]
@@ -96,7 +95,7 @@ test("optim init with fixed vertices", async () => {
     pos.ptr,
     2, fixedVertexIds.ptr
   );
-  expect(pos.toArray()).toBeCloseToArray([
+  utils.assertCloseToArray(pos.toArray(), [
     [1, 2],
     [5, 3],
     [5, 6]
