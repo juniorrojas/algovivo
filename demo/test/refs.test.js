@@ -1,3 +1,5 @@
+import { test } from "node:test";
+import assert from "node:assert";
 import fs from "fs";
 import { buildRef, dataRef } from "../src/refs.js";
 import snippetForAgent from "../src/snippet.js";
@@ -7,19 +9,19 @@ function uniqueRefs(readme, pattern) {
 }
 
 test("refs match the ones pinned in the README", () => {
-  const readme = fs.readFileSync(`${__dirname}/../../README.md`, "utf8");
+  const readme = fs.readFileSync(`${import.meta.dirname}/../../README.md`, "utf8");
 
   const buildRefs = uniqueRefs(readme, /algovivo@([0-9a-f]+)\/build\//g);
   const dataRefs = uniqueRefs(readme, /algovivo@([0-9a-f]+)\/demo\/public\/data\//g);
 
-  expect(buildRefs).toEqual([buildRef]);
-  expect(dataRefs).toEqual([dataRef]);
+  assert.deepStrictEqual(buildRefs, [buildRef]);
+  assert.deepStrictEqual(dataRefs, [dataRef]);
 });
 
 test("snippet targets the given agent", () => {
   const snippet = snippetForAgent("quadruped");
 
-  expect(snippet).toContain(`/data/quadruped/mesh.json`);
-  expect(snippet).toContain(`/data/quadruped/policy.json`);
-  expect(snippet).toContain("</script>");
+  assert.ok(snippet.includes(`/data/quadruped/mesh.json`));
+  assert.ok(snippet.includes(`/data/quadruped/policy.json`));
+  assert.ok(snippet.includes("</script>"));
 });

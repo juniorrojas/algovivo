@@ -1,7 +1,7 @@
+import { test } from "node:test";
+import assert from "node:assert";
 import * as algovivo from "algovivo";
 import * as utils from "./utils.js";
-
-expect.extend({ toBeCloseToArray: utils.toBeCloseToArray });
 
 test("set pos and muscles", async () => {
   const ten = await utils.loadTen();
@@ -20,11 +20,11 @@ test("set pos and muscles", async () => {
       [3, 4]
     ]
   });
-  expect(system.numMuscles).toBe(3);
+  assert.strictEqual(system.numMuscles, 3);
   const expectedL0 = [1.4142135381698608, 1.4142135381698608, 2];
-  expect(system.l0.toArray()).toBeCloseToArray(expectedL0);
+  utils.assertCloseToArray(system.l0.toArray(), expectedL0);
 
-  expect(system.muscles.indices.toArray()).toEqual([
+  assert.deepStrictEqual(system.muscles.indices.toArray(), [
     [0, 2],
     [1, 2],
     [3, 4]
@@ -43,9 +43,9 @@ test("set muscles", async () => {
       [5, 7]
     ]
   });
-  expect(system.numMuscles).toBe(0);
-  expect(system.l0).toBeNull();
-  expect(system.a).toBeNull();
+  assert.strictEqual(system.numMuscles, 0);
+  assert.strictEqual(system.l0, null);
+  assert.strictEqual(system.a, null);
   
   system.setMuscles({
     indices: [
@@ -54,10 +54,10 @@ test("set muscles", async () => {
       [3, 4]
     ]
   });
-  expect(system.numMuscles).toBe(3);
+  assert.strictEqual(system.numMuscles, 3);
   const expectedL0 = [1.4142135381698608, 1.4142135381698608, 2];
-  expect(system.l0.toArray()).toBeCloseToArray(expectedL0);
-  expect(system.a.toArray()).toBeCloseToArray([1, 1, 1]);
+  utils.assertCloseToArray(system.l0.toArray(), expectedL0);
+  utils.assertCloseToArray(system.a.toArray(), [1, 1, 1]);
 
   system.setMuscles({
     indices: [
@@ -66,9 +66,9 @@ test("set muscles", async () => {
     ],
     l0: [10, 15]
   });
-  expect(system.numMuscles).toBe(2);
-  expect(system.l0.toArray()).toBeCloseToArray([10, 15]);
-  expect(system.a.toArray()).toBeCloseToArray([1, 1]);
+  assert.strictEqual(system.numMuscles, 2);
+  utils.assertCloseToArray(system.l0.toArray(), [10, 15]);
+  utils.assertCloseToArray(system.a.toArray(), [1, 1]);
 });
 
 test("update l0, keep a", async () => {
@@ -86,9 +86,9 @@ test("update l0, keep a", async () => {
       1.0
     ]
   });
-  expect(system.a.toArray()).toBeCloseToArray([1.0]);
+  utils.assertCloseToArray(system.a.toArray(), [1.0]);
   system.a.set([0.3]);
-  expect(system.a.toArray()).toBeCloseToArray([0.3]);
+  utils.assertCloseToArray(system.a.toArray(), [0.3]);
   system.setMuscles({
     indices: [
       [0, 1]
@@ -98,7 +98,7 @@ test("update l0, keep a", async () => {
     ],
     keepA: true
   });
-  expect(system.a.toArray()).toBeCloseToArray([0.3]);
+  utils.assertCloseToArray(system.a.toArray(), [0.3]);
   system.setMuscles({
     indices: [
       [0, 1]
@@ -107,7 +107,7 @@ test("update l0, keep a", async () => {
       2.0
     ]
   });
-  expect(system.a.toArray()).toBeCloseToArray([1]);
+  utils.assertCloseToArray(system.a.toArray(), [1]);
 });
 
 test("add and remove muscles", async () => {
@@ -118,32 +118,32 @@ test("add and remove muscles", async () => {
     [2, 0]
   ]);
   
-  expect(system.numMuscles).toBe(0);
+  assert.strictEqual(system.numMuscles, 0);
   system.setMuscles({
     indices: [
       [0, 1]
     ]
   });
-  expect(system.numMuscles).toBe(1);
+  assert.strictEqual(system.numMuscles, 1);
   system.setMuscles({
     indices: []
   });
-  expect(system.numMuscles).toBe(0);
+  assert.strictEqual(system.numMuscles, 0);
   system.setMuscles({
     indices: [
       [0, 1]
     ]
   });
-  expect(system.numMuscles).toBe(1);
+  assert.strictEqual(system.numMuscles, 1);
 });
 
 test("set indices only", async () => {
   const ten = await utils.loadTen();
   const system = new algovivo.System({ ten });
   
-  expect(() => {
+  assert.throws(() => {
     system.muscles.set({
       indices: [[0, 1]]
     });
-  }).toThrow("pos required to compute l0");
+  }, { message: "pos required to compute l0" });
 })

@@ -1,3 +1,5 @@
+import { test } from "node:test";
+import assert from "node:assert";
 import { mmgrten } from "algovivo";
 import * as utils from "../utils.js";
 
@@ -7,13 +9,13 @@ test("fill", async () => {
   const a = ten.zeros([2, 3]);
 
   a.fill_(2);
-  expect(a.toArray()).toEqual([
+  assert.deepStrictEqual(a.toArray(), [
     [2, 2, 2],
     [2, 2, 2]
   ]);
 
   a.zero_();
-  expect(a.toArray()).toEqual([
+  assert.deepStrictEqual(a.toArray(), [
     [0, 0, 0],
     [0, 0, 0]
   ]);

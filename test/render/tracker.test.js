@@ -1,11 +1,13 @@
+import { test } from "node:test";
+import assert from "node:assert";
 import * as algovivo from "algovivo";
 
 test("tracker default args", () => {
   const tracker = new algovivo.render.Tracker();
-  expect(tracker.visibleWorldWidth).toBe(3.8);
-  expect(tracker.targetCenterY).toBe(1);
-  expect(tracker.offsetX).toBe(0);
-  expect(tracker.centeringSpeedFactor).toBe(0.5);
+  assert.strictEqual(tracker.visibleWorldWidth, 3.8);
+  assert.strictEqual(tracker.targetCenterY, 1);
+  assert.strictEqual(tracker.offsetX, 0);
+  assert.strictEqual(tracker.centeringSpeedFactor, 0.5);
 });
 
 test("tracker custom args", () => {
@@ -15,8 +17,8 @@ test("tracker custom args", () => {
     offsetX: 0.5,
     centeringSpeedFactor: 0.1
   });
-  expect(tracker.visibleWorldWidth).toBe(5);
-  expect(tracker.targetCenterY).toBe(2);
-  expect(tracker.offsetX).toBe(0.5);
-  expect(tracker.centeringSpeedFactor).toBe(0.1);
+  assert.strictEqual(tracker.visibleWorldWidth, 5);
+  assert.strictEqual(tracker.targetCenterY, 2);
+  assert.strictEqual(tracker.offsetX, 0.5);
+  assert.strictEqual(tracker.centeringSpeedFactor, 0.1);
 });

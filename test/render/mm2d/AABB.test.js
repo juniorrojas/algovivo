@@ -1,3 +1,5 @@
+import { test } from "node:test";
+import assert from "node:assert";
 import { mm2d } from "algovivo";
 
 test("aabb", () => {
@@ -7,11 +9,11 @@ test("aabb", () => {
     width: 10,
     height: 40,
   });
-  expect(aabb.x0).toEqual(20);
-  expect(aabb.x1).toEqual(30);
-  expect(aabb.width).toEqual(10);
-  expect(aabb.height).toEqual(40);
-  expect(aabb.y0).toEqual(15);
-  expect(aabb.y1).toEqual(55);
-  expect(aabb.center).toEqual([25, 35]);
+  assert.deepStrictEqual(aabb.x0, 20);
+  assert.deepStrictEqual(aabb.x1, 30);
+  assert.deepStrictEqual(aabb.width, 10);
+  assert.deepStrictEqual(aabb.height, 40);
+  assert.deepStrictEqual(aabb.y0, 15);
+  assert.deepStrictEqual(aabb.y1, 55);
+  assert.deepStrictEqual(aabb.center, [25, 35]);
 });

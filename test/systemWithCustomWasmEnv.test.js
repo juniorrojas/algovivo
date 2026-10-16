@@ -1,7 +1,7 @@
+import { test } from "node:test";
+import assert from "node:assert";
 import * as algovivo from "algovivo";
 import * as utils from "./utils.js";
-
-expect.extend({ toBeCloseToArray: utils.toBeCloseToArray });
 
 async function loadTen() {
   const ten = new algovivo.mmgrten.Engine();
@@ -22,9 +22,9 @@ async function loadTen() {
 test("system", async () => {
   const ten = await loadTen();
   const system = new algovivo.System({ ten });
-  expect(system.numVertices).toBe(0);
-  expect(system.numMuscles).toBe(0);
-  expect(system.numTriangles).toBe(0);
+  assert.strictEqual(system.numVertices, 0);
+  assert.strictEqual(system.numMuscles, 0);
+  assert.strictEqual(system.numTriangles, 0);
 
   system.set({
     pos: [
@@ -32,7 +32,7 @@ test("system", async () => {
     ]
   });
 
-  expect(system.numVertices).toBe(1);
-  expect(system.pos.toArray()).toBeCloseToArray([[1, 2]]);
-  expect(system.vel.toArray()).toBeCloseToArray([[0, 0]]);
+  assert.strictEqual(system.numVertices, 1);
+  utils.assertCloseToArray(system.pos.toArray(), [[1, 2]]);
+  utils.assertCloseToArray(system.vel.toArray(), [[0, 0]]);
 });

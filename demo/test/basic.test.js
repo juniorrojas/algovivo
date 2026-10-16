@@ -1,6 +1,8 @@
+import { test } from "node:test";
+import assert from "node:assert";
 import ppw from "./ppw/index.js";
 
-test("main", async () => {
+test("main", { timeout: 60000 }, async () => {
   const main = async (port) => {
     const window = new ppw.Window({
       headless: true,
@@ -12,18 +14,18 @@ test("main", async () => {
       await window.launch();
       await window.waitForReady(() => window.system != null);
       const numVertices = await window.evaluate(() => system.numVertices);
-      expect(numVertices).toBe(28);
+      assert.strictEqual(numVertices, 28);
       
       await window.waitForNetworkIdle();
 
-      await window.screenshot({ path: `${__dirname}/screenshot.out.png` });
+      await window.screenshot({ path: `${import.meta.dirname}/screenshot.out.png` });
     } finally {
       await window.close();
     }
   }
 
   await ppw.runWebServer({
-    staticDirname: `${__dirname}/../public`,
+    staticDirname: `${import.meta.dirname}/../public`,
     onReady: main
   });
-}, 60000);
+});

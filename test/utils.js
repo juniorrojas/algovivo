@@ -1,46 +1,24 @@
 import fsp from "fs/promises";
 import fs from "fs";
 import path from "path";
+import assert from "node:assert";
 import { fileURLToPath } from "url";
 import * as algovivo from "algovivo";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-function toBeCloseToArray(a, b, tolerance = 1e-3) {
+function assertCloseToArray(a, b, tolerance = 1e-3) {
   if ((typeof a == "number") && (typeof b == "number")) {
-    if (Math.abs(a - b) <= tolerance) {
-      return {
-        pass: true,
-      };
-    }
-    return {
-      pass: false,
-      message: () => `not close enough, ${a} != ${b}`
-    };
+    assert.ok(Math.abs(a - b) <= tolerance, `not close enough, ${a} != ${b}`);
+    return;
   }
 
-  if (!Array.isArray(a) || !Array.isArray(b)) {
-    return {
-      pass: false,
-      message: () => `expected two arrays, found ${typeof a} and ${typeof b}`
-    };
-  }
-
-  if (a.length != b.length) {
-    return {
-      pass: false,
-      message: () => `length mismatch, ${a.length} != ${b.length}`
-    };
-  }
+  assert.ok(Array.isArray(a) && Array.isArray(b), `expected two arrays, found ${typeof a} and ${typeof b}`);
+  assert.strictEqual(a.length, b.length, `length mismatch, ${a.length} != ${b.length}`);
 
   for (let i = 0; i < a.length; i++) {
-    const r = toBeCloseToArray(a[i], b[i], tolerance);
-    if (!r.pass) return r;
+    assertCloseToArray(a[i], b[i], tolerance);
   }
-
-  return {
-    pass: true
-  };
 }
 
 async function loadWasm(args = {}) {
@@ -77,6 +55,6 @@ async function cleandir(dirname) {
 export {
   loadWasm,
   loadTen,
-  toBeCloseToArray,
+  assertCloseToArray,
   cleandir
 };

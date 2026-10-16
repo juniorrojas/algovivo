@@ -1,10 +1,12 @@
+import { test } from "node:test";
+import assert from "node:assert";
 import * as ppw from "./ppw/index.js";
 import path from "path";
 import fs from "fs";
 
 // like a vertex shader in GPU programming, but using the canvas 2d context,
 // it's a function that gets executed per mesh vertex
-test("vertex shader", async () => {
+test("vertex shader", { timeout: 60000 }, async () => {
   const main = async (port) => {
     const window = new ppw.Window({
       headless: true,
@@ -32,17 +34,17 @@ test("vertex shader", async () => {
         });
       });
 
-      const screenshotPath = path.join(__dirname, "vertexShader.out.png");
+      const screenshotPath = path.join(import.meta.dirname, "vertexShader.out.png");
       await window.screenshot({ path: screenshotPath });
 
-      expect(fs.existsSync(screenshotPath)).toBe(true);
+      assert.strictEqual(fs.existsSync(screenshotPath), true);
     } finally {
       await window.close();
     }
   };
 
   await ppw.runWebServer({
-    staticDirname: path.join(__dirname, "public"),
+    staticDirname: path.join(import.meta.dirname, "public"),
     onReady: main
   });
-}, 60000);
+});

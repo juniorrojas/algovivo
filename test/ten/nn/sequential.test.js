@@ -1,3 +1,5 @@
+import { test } from "node:test";
+import assert from "node:assert";
 import * as utils from "../../utils.js";
 
 test("sequential", async () => {
@@ -24,10 +26,10 @@ test("sequential", async () => {
   ]);
   
   const output = model.forward(input);
-  expect(output.toArray().length).toBe(2);
+  assert.strictEqual(output.toArray().length, 2);
 
-  expect(memoryManager.numReservedBytes()).not.toBe(bytes0);
+  assert.notStrictEqual(memoryManager.numReservedBytes(), bytes0);
   model.dispose();
   input.dispose();
-  expect(memoryManager.numReservedBytes()).toBe(bytes0);
+  assert.strictEqual(memoryManager.numReservedBytes(), bytes0);
 });
