@@ -117,6 +117,14 @@ export default class Triangles {
     tensor.typedArray().set(value);
   }
 
+  setMu(mu) {
+    this.setMaterialParam(this.mu, mu, "mu");
+  }
+
+  setLambda(lambda) {
+    this.setMaterialParam(this.lambda, lambda, "lambda");
+  }
+
   dispose() {
     if (this.indices != null) {
       this.indices.dispose();

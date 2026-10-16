@@ -10,6 +10,7 @@ import FullscreenButton from "./FullscreenButton.js";
 import Header from "./Header.js";
 import Sections from "./Sections.js";
 import Footer from "./Footer.js";
+import ActuationDemo from "./ActuationDemo.js";
 
 const version = new URL(import.meta.url).searchParams.get("v");
 
@@ -172,13 +173,43 @@ async function main() {
   const sections = new Sections();
   divContent.appendChild(sections.domElement);
 
+  const actuationDemo = new ActuationDemo({
+    algovivo: algovivo,
+    wasmInstance: await loadWasm()
+  });
+  sections.actuationSlot.appendChild(actuationDemo.domElement);
+  actuationDemo.updateSize();
+
   const footer = new Footer();
   app.appendChild(footer.domElement);
 
   agentViewport.render();
+  const sims = [
+    {
+      domElement: agentViewport.domElement,
+      step: () => {
+        agentSystem.step();
+        agentViewport.render();
+      }
+    },
+    {
+      domElement: actuationDemo.domElement,
+      step: () => actuationDemo.step()
+    }
+  ];
+  const visibleSims = new Set();
+  const visibilityObserver = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      const sim = sims.find((s) => s.domElement == entry.target);
+      if (entry.isIntersecting) visibleSims.add(sim);
+      else visibleSims.delete(sim);
+    }
+  });
+  sims.forEach((sim) => visibilityObserver.observe(sim.domElement));
+
   setInterval(() => {
-    agentSystem.step();
-    agentViewport.render();
+    if (document.hidden) return;
+    visibleSims.forEach((sim) => sim.step());
   }, 1000 / 30);
 
   window.system = system;

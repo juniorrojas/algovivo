@@ -109,6 +109,45 @@ We also want to reserve the word &ldquo;action&rdquo; to refer to actuation mech
 Whatever variable or function names you prefer to use in your code, the important thing is to have a <a href="https://github.com/juniorrojas/algovivo">working implementation</a> that goes beyond just words and mathematical formulas that may not even be computable.
 </p>`);
     s.setStyle1();
+
+    s = this.addSection(
+      "reshaping the energy landscape",
+`<p>
+Actions do not move vertices directly. Each muscle has a rest length, and its control signal <span class="code2">a</span> scales that rest length. This defines the length at which the muscle's energy is minimized, but the muscle does not necessarily reach it. The system minimizes the combined energy of all its terms.
+</p>
+<div class="actuation-demo"></div>
+<p>
+A controller chooses muscle control signals over time to achieve a goal, such as locomotion, and it can be obtained in many different ways, for example through <a class="a2" href="https://www.youtube.com/watch?v=J36M0HfxWYg">reinforcement learning</a>. Regardless of how the controller is obtained, its role is to reshape the energy landscape, not to move vertices arbitrarily or apply forces in arbitrary directions.
+</p>`);
+    this.actuationSlot = s.domElement.querySelector(".actuation-demo");
+
+    const related = [
+      {
+        title: "algovivo in 3D",
+        text: "locomotion with tetrahedral meshes",
+        href: "https://x.com/junior_rojas_d/status/2088870900578074922",
+        image: "more/algovivo3d.webp"
+      },
+      {
+        title: "morphology-adaptive muscle driven locomotion via attention mechanisms",
+        text: "GECCO 2025 EvoSelf Workshop",
+        href: "https://github.com/juniorrojas/morphology-adaptive",
+        image: "more/morphology-adaptive.webp"
+      }
+    ];
+
+    s = this.addSection(
+      "more",
+      `<div class="more-grid">
+${related.map((r) => `<a class="more-card" href="${r.href}">
+  <img src="${r.image}" alt="${r.title}" loading="lazy">
+  <div class="more-body">
+    <div class="more-title">${r.title}</div>
+    <div class="more-text">${r.text}</div>
+  </div>
+</a>`).join("\n")}
+</div>`);
+    s.setStyle1();
   }
 
   addSection(title, content) {
