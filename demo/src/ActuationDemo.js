@@ -35,6 +35,7 @@ export default class ActuationDemo {
     div.style.marginTop = "18px";
     div.style.borderRadius = "8px";
     div.style.overflow = "hidden";
+    div.style.textAlign = "center";
     viewport.domElement.style.display = "block";
     viewport.domElement.style.maxWidth = "100%";
     div.appendChild(viewport.domElement);
