@@ -1,50 +1,28 @@
-import { makeGitHubLink } from "./ui.js";
+import { githubIcon } from "./ui.js";
+
+const repoUrl = "https://github.com/juniorrojas/algovivo";
 
 export default class Header {
   constructor() {
-    const divTitle = document.createElement("div");
-    this.domElement = divTitle;
-    (style => {
-      style.display = "flex";
-      style.flexDirection = "column";
-      style.alignItems = "center";
-      style.color = "white";
-      style.width = "100%";
-      style.backgroundColor = "#000000";
-      style.paddingBottom = "20px";
-      style.boxShadow = "0 0 10px rgba(0, 0, 0, 0.3)";
-    })(divTitle.style);
+    const nav = document.createElement("nav");
+    nav.className = "header-nav";
+    this.nav = nav;
+    nav.innerHTML = `
+<div class="header-nav-inner">
+  <a class="nav-title" href="./">algovivo</a>
+  <a class="header-github" href="${repoUrl}">${githubIcon(16)}<span>GitHub</span></a>
+</div>`;
 
-    const divContent = document.createElement("div");
-    divTitle.appendChild(divContent);
-    (style => {
-      style.maxWidth = "1200px";
-      style.width = "100%";
-      style.paddingTop = "20px";
-      style.position = "relative";
-      style.textAlign = "center";
-      style.paddingRight = "50px";
-      style.paddingLeft = "50px";
-    })(divContent.style);
+    const header = document.createElement("header");
+    header.className = "site-header";
+    this.domElement = header;
+    header.innerHTML = `
+<h1>algovivo</h1>
+<p>an energy-based formulation for soft-bodied virtual creatures</p>`;
 
-    const h1 = document.createElement("h1");
-    h1.textContent = "algovivo";
-    divContent.appendChild(h1);
-    ((style) => {
-      style.fontSize = "33px";
-      style.color = "white";
-    })(h1.style);
-
-    const a = makeGitHubLink();
-    divContent.appendChild(a);
-
-    const h2 = document.createElement("h2");
-    h2.textContent = "an energy-based formulation for soft-bodied virtual creatures";
-    divContent.appendChild(h2);
-    ((style) => {
-      style.textAlign = "center";
-      style.fontSize = "18px";
-      style.color = "#c7c7c7";
-    })(h2.style);
+    const title = header.querySelector("h1");
+    new IntersectionObserver((entries) => {
+      nav.classList.toggle("scrolled", !entries[entries.length - 1].isIntersecting);
+    }, { rootMargin: "-60px 0px 0px 0px" }).observe(title);
   }
 }

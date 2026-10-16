@@ -26,18 +26,21 @@ const maxContentWidth = 1200;
 async function main() {
   initStyle();
   
+  const app = document.getElementById("app");
+
   const header = new Header();
-  document.body.appendChild(header.domElement);
+  app.appendChild(header.nav);
+  app.appendChild(header.domElement);
 
   const divContent = document.createElement("div");
   divContent.style.display = "flex";
   divContent.style.flexDirection = "column";
   divContent.style.alignItems = "center";
   divContent.style.width = "100%";
-  document.body.appendChild(divContent);
+  app.appendChild(divContent);
 
   document.documentElement.style.height = "100%";
-  document.body.style.height = "100%";
+  document.body.style.minHeight = "100%";
   document.body.style.display = "flex";
   document.body.style.flexDirection = "column";
   document.body.style.margin = 0;
@@ -170,7 +173,7 @@ async function main() {
   divContent.appendChild(sections.domElement);
 
   const footer = new Footer();
-  document.body.appendChild(footer.domElement);
+  app.appendChild(footer.domElement);
 
   agentViewport.render();
   setInterval(() => {

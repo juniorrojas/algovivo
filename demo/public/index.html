@@ -26,6 +26,7 @@
 
     html, body {
       width: 100%;
+      background: #000;
     }
 
     p {
@@ -63,9 +64,136 @@
     a {
       color: white;
     }
+
+    #app {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .site-header {
+      width: 100%;
+      background: #000;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+      padding: 0 26px 44px;
+      text-align: center;
+    }
+
+    .header-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      width: 100%;
+      background: #000;
+      border-bottom: 1px solid transparent;
+      transition: border-color 0.2s;
+    }
+
+    .header-nav.scrolled {
+      border-bottom-color: #222;
+    }
+
+    .header-nav-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px 26px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .nav-title {
+      color: white;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 16px;
+      margin-right: auto;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+
+    .header-nav.scrolled .nav-title {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .header-github {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: white;
+      text-decoration: none;
+      border: 1px solid #3a3a3a;
+      border-radius: 999px;
+      padding: 5px 14px;
+    }
+
+    .header-github span {
+      font-size: 14px;
+    }
+
+    .site-header h1 {
+      font-size: 33px;
+      color: white;
+    }
+
+    .site-header p {
+      font-size: 18px;
+      color: #c7c7c7;
+      margin: 0;
+      text-wrap: balance;
+    }
+
+    .site-footer {
+      width: 100%;
+      background: #000;
+      border-top: 1px solid #222;
+    }
+
+    .footer-bar {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px 26px;
+      display: flex;
+      align-items: center;
+    }
+
+    .footer-brand {
+      color: white;
+      font-weight: 600;
+      font-size: 14px;
+      margin-right: auto;
+    }
+
+    .footer-link {
+      color: #9a9a9a;
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .footer-link:hover {
+      color: white;
+    }
+
+    @media (max-width: 640px) {
+      .header-nav-inner {
+        padding: 14px 16px;
+      }
+
+      .site-header {
+        padding: 0 16px 28px;
+      }
+
+      .footer-bar {
+        padding: 18px 16px;
+      }
+    }
   </style>
 </head>
 <body>
+  <div id="app"></div>
   <script>
     (async () => {
       let src = "main.build.js";

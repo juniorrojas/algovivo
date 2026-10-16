@@ -2,6 +2,7 @@ export default class Section {
   constructor(title, content) {
     this.domElement = document.createElement("div");
     this.domElement.style.textAlign = "left";
+    this.domElement.style.backgroundColor = "rgb(248, 248, 248)";
     this.domElement.style.color = "#666";
     this.domElement.style.fontSize = "14px";
     this.domElement.style.padding = "22px";
