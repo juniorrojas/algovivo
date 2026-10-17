@@ -1,5 +1,4 @@
 import { test } from "node:test";
-import { mmgrten } from "algovivo";
 import * as utils from "../utils.js";
 
 test("clamp min max", async () => {

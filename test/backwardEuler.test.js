@@ -1,5 +1,4 @@
 import { test } from "node:test";
-import * as algovivo from "algovivo";
 import * as utils from "./utils.js";
 
 test("update vel", async () => {

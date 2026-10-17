@@ -1,6 +1,5 @@
 import { test } from "node:test";
 import assert from "node:assert";
-import { mmgrten } from "algovivo";
 import * as utils from "../utils.js";
 
 test("tensor", async () => {
