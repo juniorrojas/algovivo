@@ -117,7 +117,7 @@ Actions do not move vertices directly. Each muscle has a rest length, and its co
 </p>
 <div class="actuation-demo"></div>
 <p>
-A controller chooses muscle control signals over time to achieve a goal, such as locomotion, and it can be obtained in many different ways, for example through <a class="a2" href="https://www.youtube.com/watch?v=J36M0HfxWYg">reinforcement learning</a>. Regardless of how the controller is obtained, its role is to reshape the energy landscape, not to move vertices arbitrarily or apply forces in arbitrary directions.
+A controller chooses muscle control signals over time to achieve a goal, such as locomotion. It could be obtained through <a class="a2" href="https://www.youtube.com/watch?v=J36M0HfxWYg">reinforcement learning</a>, through <a class="a2" href="https://arxiv.org/abs/2102.05791">differentiable simulation</a>, or by any other method, but that is beside the point. Before any talk of learning or differentiable simulation, the key idea here is that the system naturally settles into configurations defined by energy minimization. Rather than thinking of a controller as something that applies forces or runs some explicit update rule, it is more useful to think of it as reshaping the energy landscape that determines those configurations.
 </p>`);
     this.actuationSlot = s.domElement.querySelector(".actuation-demo");
 
