@@ -113,7 +113,7 @@ Whatever variable or function names you prefer to use in your code, the importan
     s = this.addSection(
       "reshaping the energy landscape",
 `<p>
-Actions do not move vertices directly. Each muscle has a rest length, and its control signal <span class="code2">a</span> scales that rest length. This defines the length at which the muscle's energy is minimized, but the muscle does not necessarily reach it. The system minimizes the combined energy of all its terms.
+Actions do not move vertices directly. Each muscle has a rest length, and its control signal <span class="code2">a</span> scales that rest length. This defines the length at which the muscle's energy is minimized, but the muscle does not necessarily reach it. A contracting muscle may conflict with a triangle trying to preserve its shape to minimize its elastic potential energy or a vertex trying to fall to minimize its gravitational energy, so the system finds a compromise at a local minimum of the total energy, accounting for contributions from all energy terms.
 </p>
 <div class="actuation-demo"></div>
 <p>
