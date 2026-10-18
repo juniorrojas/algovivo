@@ -1,6 +1,8 @@
+import { defaultStyle } from "./style.js";
+
 export default class TriangleRenderer {
   constructor(args = {}) {
-    this.fillColor = args.fillColor ?? "white";
+    this.fillColor = args.fillColor ?? defaultStyle.fillColor;
   }
 
   renderTriangle(args = {}) {

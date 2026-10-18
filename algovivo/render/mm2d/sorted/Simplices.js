@@ -1,8 +1,7 @@
 import Simplex from "./Simplex.js";
 
 function hashSimplex(vids) {
-  vids.sort();
-  return vids.join("_");
+  return [...vids].sort().join("_");
 }
 
 export default class Simplices {

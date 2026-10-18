@@ -1,10 +1,12 @@
+import { defaultStyle } from "./style.js";
+
 export default class Tracker {
   constructor(args = {}) {
     this.targetCenterX = null;
     this.currentCenterX = null;
     this.active = true;
-    this.visibleWorldWidth = args.visibleWorldWidth ?? 3.8;
-    this.targetCenterY = args.targetCenterY ?? 1;
+    this.visibleWorldWidth = args.visibleWorldWidth ?? defaultStyle.camera.visibleWorldWidth;
+    this.targetCenterY = args.targetCenterY ?? defaultStyle.camera.targetCenterY;
     this.offsetX = args.offsetX ?? 0;
     this.fullGrid = false;
     this.centeringSpeedFactor = args.centeringSpeedFactor ?? 0.5;
