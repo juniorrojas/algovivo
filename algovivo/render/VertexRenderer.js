@@ -1,4 +1,5 @@
 import * as mm2d from "./mm2d/index.js";
+import { defaultStyle } from "./style.js";
 
 function renderCircle(ctx, scale, p, radius, borderWidth, borderColor, fillColor) {
   const radius1 = (radius + borderWidth * 0.5) * scale;
@@ -17,10 +18,10 @@ export default class VertexRenderer {
   constructor(args = {}) {
     this.system = args.system;
     this.renderVertexIds = args.renderVertexIds ?? false;
-    this.radius = args.radius ?? 0.028;
-    this.borderColor = args.borderColor ?? "black";
-    this.fillColor = args.fillColor ?? "white";
-    this.borderWidth = args.borderWidth ?? 0.023;
+    this.radius = args.radius ?? defaultStyle.vertex.radius;
+    this.borderColor = args.borderColor ?? defaultStyle.borderColor;
+    this.fillColor = args.fillColor ?? defaultStyle.fillColor;
+    this.borderWidth = args.borderWidth ?? defaultStyle.vertex.borderWidth;
   }
 
   renderVertex(args = {}) {

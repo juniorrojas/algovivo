@@ -1,3 +1,5 @@
+import { defaultStyle } from "./style.js";
+
 export default class Floor {
   constructor(args = {}) {
     if (args.scene == null) {
@@ -22,8 +24,8 @@ export default class Floor {
   }
 
   static makeFloorLineShaderFunction(args = {}) {
-    const width = args.width ?? 0.055;
-    const color = args.color ?? "black";
+    const width = args.width ?? defaultStyle.floor.width;
+    const color = args.color ?? defaultStyle.borderColor;
     return (args) => {
       const ctx = args.ctx;
       const a = args.a;

@@ -1,6 +1,7 @@
+import { defaultStyle } from "./style.js";
+
 function hashSimplex(vids) {
-  vids.sort();
-  return vids.join("_");
+  return [...vids].sort().join("_");
 }
 
 function renderLine(ctx, scale, a, b, borderWidth, borderColor) {
@@ -71,9 +72,12 @@ export default class LineRenderer {
   }
 
   makeLineShaderFunction(args = {}) {
-    const activeMuscleColor = args.activeMuscleColor ?? [255, 0, 0];
-    const inactiveMuscleColor = args.inactiveMuscleColor ?? [0, 0, 255];
-    const borderColor = args.borderColor ?? "black";
+    const activeMuscleColor = args.activeMuscleColor ?? defaultStyle.muscle.activeColor;
+    const inactiveMuscleColor = args.inactiveMuscleColor ?? defaultStyle.muscle.inactiveColor;
+    const borderColor = args.borderColor ?? defaultStyle.borderColor;
+    const edgeWidth = args.edgeWidth ?? defaultStyle.edge.width;
+    const muscleWidth = args.muscleWidth ?? defaultStyle.muscle.width;
+    const muscleBorderWidth = args.muscleBorderWidth ?? defaultStyle.muscle.borderWidth;
 
     return (args = {}) => {
       const ctx = args.ctx;
@@ -88,14 +92,10 @@ export default class LineRenderer {
         muscleId = lineIdToMuscleId[args.id];
       }
       if (muscleId == null) {
-        const borderWidth = 0.029;
-        renderLine(ctx, scale, a, b, borderWidth, borderColor);
+        renderLine(ctx, scale, a, b, edgeWidth, borderColor);
       } else {
         const color0 = activeMuscleColor;
         const color1 = inactiveMuscleColor;
-
-        const width = 0.065;
-        const borderWidth = 0.017;
 
         const muscleIntensity = this.muscleIntensity;
         if (muscleIntensity == null) {
@@ -106,7 +106,7 @@ export default class LineRenderer {
         }
 
         const t = muscleIntensity[muscleId];
-        renderMuscle(ctx, scale, a, b, t, width, borderWidth, borderColor, color0, color1);
+        renderMuscle(ctx, scale, a, b, t, muscleWidth, muscleBorderWidth, borderColor, color0, color1);
       }
     }
   }

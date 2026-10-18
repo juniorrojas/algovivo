@@ -4,10 +4,10 @@ import Floor from "./Floor.js";
 import VertexRenderer from "./VertexRenderer.js";
 import LineRenderer from "./LineRenderer.js";
 import TriangleRenderer from "./TriangleRenderer.js";
+import { makeStyle } from "./style.js";
 
 function hashSimplex(vids) {
-  vids.sort();
-  return vids.join("_");
+  return [...vids].sort().join("_");
 }
 
 function hexToRgb(hex) {
@@ -38,16 +38,19 @@ export default class SystemViewport {
 
     const headless = args.headless ?? false;
 
-    const borderColor = args.borderColor ?? "black";
+    const style = this.style = makeStyle(args.style);
+    const borderColor = args.borderColor ?? style.borderColor;
     const floorColor = borderColor;
-    const fillColor = args.fillColor ?? "white";
-    const gridColor = args.gridColor ?? "#acadad";
+    const fillColor = args.fillColor ?? style.fillColor;
+    const gridColor = args.gridColor ?? style.grid.color;
 
     this.vertices = new VertexRenderer({
       system: this.system,
       renderVertexIds: args.renderVertexIds ?? false,
       borderColor: borderColor,
-      fillColor: fillColor
+      fillColor: fillColor,
+      radius: style.vertex.radius,
+      borderWidth: style.vertex.borderWidth
     });
     const lineRenderer = this.lines = new LineRenderer({
       system: this.system
@@ -67,8 +70,8 @@ export default class SystemViewport {
     const camera = new mm2d.Camera();
     this.camera = camera;
 
-    let activeMuscleColor = args.activeMuscleColor ?? [255, 0, 0];
-    let inactiveMuscleColor = args.inactiveMuscleColor ?? [250, 190, 190];
+    let activeMuscleColor = args.activeMuscleColor ?? style.muscle.activeColor;
+    let inactiveMuscleColor = args.inactiveMuscleColor ?? style.muscle.inactiveColor;
     if (typeof activeMuscleColor === "string") {
       activeMuscleColor = hexToRgb(activeMuscleColor);
     }
@@ -81,8 +84,8 @@ export default class SystemViewport {
       backgroundCenterColor = args.backgroundColor;
       backgroundOuterColor = args.backgroundColor;
     } else {
-      backgroundCenterColor = args.backgroundCenterColor ?? "#fcfcfc";
-      backgroundOuterColor = args.backgroundOuterColor ?? "#d7d8d8";
+      backgroundCenterColor = args.backgroundCenterColor ?? style.background.centerColor;
+      backgroundOuterColor = args.backgroundOuterColor ?? style.background.outerColor;
     }
 
     const background = new mm2d.background.Background({
@@ -91,9 +94,9 @@ export default class SystemViewport {
       color2: backgroundOuterColor
     });
 
-    const gridInnerCells = 2;
-    const gridPrimaryLineWidth = 0.022;
-    const gridSecondaryLineWidth = 0.005;
+    const gridInnerCells = style.grid.innerCells;
+    const gridPrimaryLineWidth = style.grid.primaryLineWidth;
+    const gridSecondaryLineWidth = style.grid.secondaryLineWidth;
     const grid = this.grid = new mm2d.background.Grid({
       scene: scene,
       x0: -3,
@@ -115,7 +118,8 @@ export default class SystemViewport {
 
     const floor = this.floor = new Floor({
       scene: scene,
-      color: floorColor
+      color: floorColor,
+      width: style.floor.width
     });
 
     const mesh = scene.addMesh();
@@ -129,7 +133,10 @@ export default class SystemViewport {
     mesh.lineShader.renderLine = this.lines.makeLineShaderFunction({
       activeMuscleColor: activeMuscleColor,
       inactiveMuscleColor: inactiveMuscleColor,
-      borderColor: borderColor
+      borderColor: borderColor,
+      edgeWidth: style.edge.width,
+      muscleWidth: style.muscle.width,
+      muscleBorderWidth: style.muscle.borderWidth
     });
 
     // vertex currently being dragged, and whether it was already fixed
@@ -172,7 +179,7 @@ export default class SystemViewport {
       }
     }
 
-    this.tracker = new Tracker();
+    this.tracker = new Tracker(style.camera);
   }
 
   setSortedVertexIdsFromVertexDepths(depths) {
