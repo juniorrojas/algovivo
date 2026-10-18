@@ -186,7 +186,7 @@ jobs:
           ${{ env.DEPLOY_LOCAL_SCRIPT }} --deploy-dirname ${{ env.DEPLOY_DIRNAME }}
 
       - name: Upload deployment
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v5
         with:
           name: page
           path: ${{ env.DEPLOY_DIRNAME }}
@@ -204,6 +204,6 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
         with:
           artifact_name: page
