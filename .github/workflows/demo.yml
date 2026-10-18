@@ -2,21 +2,24 @@ name: demo
 
 on:
   workflow_dispatch:
+    inputs:
+      publish:
+        type: boolean
+        default: false
   push:
   pull_request:
     branches:
       - main
 
 env:
-  DEPLOY_DIRNAME: gh-pages-repo
-  DEPLOY_BRANCH: gh-pages
+  DEPLOY_DIRNAME: page.out
   DEMO_SRC_DIRNAME: ./demo
   DEMO_PUBLIC_DIRNAME: ./demo/public
   DEPLOY_LOCAL_SCRIPT: ./demo/scripts/deploy-local
   ENZYME_IMAGE: ghcr.io/juniorrojas/algovivo/llvm18-enzyme:latest
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   build-wasm:
@@ -153,30 +156,9 @@ jobs:
           name: screenshot
           path: ./demo/test/screenshot.out.png
 
-  init-deploy-branch:
-    if: github.event_name != 'push' || github.ref == 'refs/heads/main'
+  make-page:
     runs-on: ubuntu-latest
-    steps:
-      - name: Clone repo
-        uses: actions/checkout@v6
-
-      - name: Create branch if it does not exist
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          if ! git ls-remote --exit-code --heads origin ${{ env.DEPLOY_BRANCH }}; then
-            echo "Branch does not exist, creating and pushing..."
-            git checkout --orphan ${{ env.DEPLOY_BRANCH }}
-            git rm -rf .
-            git commit --allow-empty -m "First commit"
-            git push origin ${{ env.DEPLOY_BRANCH }}
-          else
-            echo "Branch already exists, skipping push."
-          fi
-
-  deploy-demo:
-    runs-on: ubuntu-latest
-    needs: [init-deploy-branch, build-demo]
+    needs: [build-demo]
     steps:
       - name: Clone repo
         uses: actions/checkout@v6
@@ -199,28 +181,29 @@ jobs:
       - name: List demo public dir
         run: ls -l ${{ env.DEMO_PUBLIC_DIRNAME }}
 
-      - name: Clone deploy branch
-        uses: actions/checkout@v6
-        with:
-          ref: ${{ env.DEPLOY_BRANCH }}
-          path: ${{ env.DEPLOY_DIRNAME }}
-
       - name: Deploy to local directory
         run: |
           ${{ env.DEPLOY_LOCAL_SCRIPT }} --deploy-dirname ${{ env.DEPLOY_DIRNAME }}
 
       - name: Upload deployment
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-pages-artifact@v4
         with:
-          name: deployment
+          name: page
           path: ${{ env.DEPLOY_DIRNAME }}
 
-      - name: Push deployment
-        if: ${{ github.event_name == 'workflow_dispatch' }}
-        run: |
-          cd ${{ env.DEPLOY_DIRNAME }}
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git add .
-          git commit -m "Deploy"
-          git push origin ${{ env.DEPLOY_BRANCH }}
+  deploy-demo:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.publish }}
+    runs-on: ubuntu-latest
+    needs: [make-page, test-demo]
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+        with:
+          artifact_name: page

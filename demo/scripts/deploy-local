@@ -11,10 +11,8 @@ from glob import glob
 asset_extensions = ("html", "css", "js", "wasm", "json", "svg", "png", "jpg", "jpeg", "gif", "webp", "ico")
 
 def clean_deploy_dir(deploy_dirpath):
-    # remove all existing files in deploy_dirpath (from last deployment), except .git
+    # remove all existing files in deploy_dirpath (from last deployment)
     for filename in os.listdir(deploy_dirpath):
-        if filename == ".git":
-            continue
         full_filename = deploy_dirpath.joinpath(filename)
         if os.path.isdir(full_filename):
             shutil.rmtree(full_filename)
