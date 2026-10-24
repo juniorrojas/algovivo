@@ -32,10 +32,10 @@ You can create a simple simulation with one triangle and two muscles, where one 
 </head>
 <body>
   <script type="module">
-    import * as algovivo from "https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@bea663b/build/algovivo.min.js";
+    import * as algovivo from "https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@f0546b1/build/algovivo.min.js";
 
     async function loadWasm() {
-      const response = await fetch("https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@bea663b/build/algovivo.wasm");
+      const response = await fetch("https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@f0546b1/build/algovivo.wasm");
       const wasm = await WebAssembly.instantiateStreaming(response);
       return wasm.instance;
     }
@@ -114,10 +114,10 @@ Instead of manually scripting muscle commands, a neural controller can map propr
 </head>
 <body>
   <script type="module">
-    import * as algovivo from "https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@bea663b/build/algovivo.min.js";
+    import * as algovivo from "https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@f0546b1/build/algovivo.min.js";
 
     async function loadWasm() {
-      const response = await fetch("https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@bea663b/build/algovivo.wasm");
+      const response = await fetch("https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@f0546b1/build/algovivo.wasm");
       const wasm = await WebAssembly.instantiateStreaming(response);
       return wasm.instance;
     }

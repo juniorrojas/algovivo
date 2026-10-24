@@ -1,4 +1,4 @@
-export const buildRef = "bea663b";
+export const buildRef = "f0546b1";
 export const dataRef = "a5e8c73";
 
 export const buildUrl = `https://cdn.jsdelivr.net/gh/juniorrojas/algovivo@${buildRef}/build`;
