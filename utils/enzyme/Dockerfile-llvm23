@@ -1,0 +1,28 @@
+FROM ubuntu:24.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && \
+    apt-get install -y ca-certificates curl gnupg && \
+    curl -fsSL https://apt.llvm.org/llvm-snapshot.gpg.key | gpg --dearmor -o /usr/share/keyrings/llvm.gpg && \
+    echo "deb [signed-by=/usr/share/keyrings/llvm.gpg] https://apt.llvm.org/noble/ llvm-toolchain-noble-23 main" > /etc/apt/sources.list.d/llvm.list && \
+    apt-get update && \
+    apt-get install -y \
+    llvm-23 clang-23 lld-23 llvm-23-dev \
+    ninja-build build-essential cmake \
+    git \
+    zlib1g-dev libzstd-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN git clone https://github.com/EnzymeAD/Enzyme.git /Enzyme && \
+    cd /Enzyme && \
+    git checkout v0.0.303
+
+RUN cd /Enzyme/enzyme && \
+    mkdir build && \
+    cd build && \
+    cmake -G Ninja .. -DLLVM_DIR=/usr/lib/llvm-23/ && \
+    ninja
+
+ENV ENZYME=/Enzyme/enzyme/build/Enzyme/LLVMEnzyme-23.so
+ENV LLVM_BIN_DIR=/usr/lib/llvm-23/bin
