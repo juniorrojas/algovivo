@@ -11,6 +11,7 @@ on:
         options:
           - '11'
           - '18'
+          - '23'
       latest:
         description: 'Tag as latest'
         type: boolean
