@@ -3,7 +3,7 @@
  * (c) 2023 Junior Rojas
  * License: MIT
  *
- * Built from commit a49bec9147cde61921e957f672853db8735271f0
+ * Built from commit 1c0a70aa550cc85442f645cb6c212af447647f9f
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
@@ -1207,6 +1207,38 @@
     Tensor: Tensor
   });
 
+  var backwardEulerUpdateArgs = [
+    "h",
+    "num_vertices",
+    "pos0",
+    "vel0",
+    "vertex_mass",
+    "num_fixed_vertices",
+    "fixed_vertex_ids",
+    "pos1",
+    "pos_grad",
+    "pos_tmp",
+    "vel1",
+    "num_muscles",
+    "muscles",
+    "k",
+    "a",
+    "l0",
+    "num_triangles",
+    "triangles",
+    "rsi",
+    "mu",
+    "lambda",
+    "g",
+    "k_friction",
+    "k_collision",
+    "max_optim_iters",
+    "initial_step_size",
+    "backtracking_scale",
+    "max_line_search_iters",
+    "grad_q_tol",
+  ];
+
   class Vertices {
     constructor(args = {}) {
       const ten = args.ten;
@@ -1228,25 +1260,24 @@
       this._fixedVertexIds = null;
     }
 
-    toStepArgs() {
+    stepArgs() {
       const numVertices = this.numVertices;
-      const vertexMass = this.vertexMass;
       const numFixedVertices = this.numFixedVertices;
 
-      return [
-        numVertices,
-        numVertices == 0 ? 0 : this.pos0.ptr,
-        numVertices == 0 ? 0 : this.vel0.ptr,
-        vertexMass,
+      return {
+        num_vertices: numVertices,
+        pos0: numVertices == 0 ? 0 : this.pos0.ptr,
+        vel0: numVertices == 0 ? 0 : this.vel0.ptr,
+        vertex_mass: this.vertexMass,
 
-        numFixedVertices,
-        numFixedVertices == 0 ? 0 : this._fixedVertexIds.ptr,
+        num_fixed_vertices: numFixedVertices,
+        fixed_vertex_ids: numFixedVertices == 0 ? 0 : this._fixedVertexIds.ptr,
 
-        numVertices == 0 ? 0 : this.pos1.ptr,
-        numVertices == 0 ? 0 : this.posGrad.ptr,
-        numVertices == 0 ? 0 : this.posTmp.ptr,
-        numVertices == 0 ? 0 : this.vel1.ptr,
-      ];
+        pos1: numVertices == 0 ? 0 : this.pos1.ptr,
+        pos_grad: numVertices == 0 ? 0 : this.posGrad.ptr,
+        pos_tmp: numVertices == 0 ? 0 : this.posTmp.ptr,
+        vel1: numVertices == 0 ? 0 : this.vel1.ptr,
+      };
     }
 
     setVertexPos(i, pos) {
@@ -1549,15 +1580,15 @@
       }
     }
 
-    toStepArgs() {
+    stepArgs() {
       const numMuscles = this.numMuscles;
-      return [
-        numMuscles,
-        numMuscles == 0 ? 0 : this.indices.ptr,
-        this.k,
-        numMuscles == 0 ? 0 : this.a.ptr,
-        numMuscles == 0 ? 0 : this.l0.ptr
-      ];
+      return {
+        num_muscles: numMuscles,
+        muscles: numMuscles == 0 ? 0 : this.indices.ptr,
+        k: this.k,
+        a: numMuscles == 0 ? 0 : this.a.ptr,
+        l0: numMuscles == 0 ? 0 : this.l0.ptr
+      };
     }
 
     dispose() {
@@ -1602,15 +1633,15 @@
       return this.numElements;
     }
 
-    toStepArgs() {
+    stepArgs() {
       const numElements = this.numElements;
-      return [
-        numElements,
-        numElements == 0 ? 0 : this.indices.ptr,
-        numElements == 0 ? 0 : this.rsi.ptr,
-        numElements == 0 ? 0 : this.mu.ptr,
-        numElements == 0 ? 0 : this.lambda.ptr
-      ];
+      return {
+        num_triangles: numElements,
+        triangles: numElements == 0 ? 0 : this.indices.ptr,
+        rsi: numElements == 0 ? 0 : this.rsi.ptr,
+        mu: numElements == 0 ? 0 : this.mu.ptr,
+        lambda: numElements == 0 ? 0 : this.lambda.ptr
+      };
     }
 
     set(args = {}) {
@@ -1669,13 +1700,38 @@
         this.rsi.set(rsi);
       }
 
-      if (this.mu != null) this.mu.dispose();
-      this.mu = ten.zeros([numTriangles]);
-      this.mu.fill_(Math.fround(500));
+      if (indices != null || this.mu == null) {
+        if (this.mu != null) this.mu.dispose();
+        this.mu = ten.zeros([numTriangles]);
+        this.mu.fill_(500);
+      }
+      if (args.mu != null) this.setMaterialParam(this.mu, args.mu, "mu");
 
-      if (this.lambda != null) this.lambda.dispose();
-      this.lambda = ten.zeros([numTriangles]);
-      this.lambda.fill_(Math.fround(50));
+      if (indices != null || this.lambda == null) {
+        if (this.lambda != null) this.lambda.dispose();
+        this.lambda = ten.zeros([numTriangles]);
+        this.lambda.fill_(50);
+      }
+      if (args.lambda != null) this.setMaterialParam(this.lambda, args.lambda, "lambda");
+    }
+
+    setMaterialParam(tensor, value, name) {
+      if (typeof value == "number") {
+        tensor.fill_(value);
+        return;
+      }
+      if (value.length != this.numTriangles) {
+        throw new Error(`${name} must be a number or an array with one value per triangle, found ${value.length} values for ${this.numTriangles} triangles`);
+      }
+      tensor.typedArray().set(value);
+    }
+
+    setMu(mu) {
+      this.setMaterialParam(this.mu, mu, "mu");
+    }
+
+    setLambda(lambda) {
+      this.setMaterialParam(this.lambda, lambda, "lambda");
     }
 
     dispose() {
@@ -1703,8 +1759,8 @@
       this.g = args.g ?? 9.8;
     }
 
-    toStepArgs() {
-      return [this.g];
+    stepArgs() {
+      return { g: this.g };
     }
 
     dispose() {}
@@ -1715,8 +1771,8 @@
       this.k = args.k ?? Math.fround(300);
     }
 
-    toStepArgs() {
-      return [this.k];
+    stepArgs() {
+      return { k_friction: this.k };
     }
 
     dispose() {}
@@ -1727,8 +1783,8 @@
       this.k = args.k ?? Math.fround(14000);
     }
 
-    toStepArgs() {
-      return [this.k];
+    stepArgs() {
+      return { k_collision: this.k };
     }
 
     dispose() {}
@@ -1743,14 +1799,14 @@
       this.gradQTol = args.gradQTol ?? Math.fround(0.5 * 1e-5);
     }
 
-    toStepArgs() {
-      return [
-        this.maxIters,
-        this.initialStepSize,
-        this.backtrackingScale,
-        this.maxLineSearchIters,
-        this.gradQTol
-      ];
+    stepArgs() {
+      return {
+        max_optim_iters: this.maxIters,
+        initial_step_size: this.initialStepSize,
+        backtracking_scale: this.backtrackingScale,
+        max_line_search_iters: this.maxLineSearchIters,
+        grad_q_tol: this.gradQTol
+      };
     }
 
     dispose() {}
@@ -1915,26 +1971,34 @@
 
       this.setTriangles({
         indices: args.triangles ?? [],
-        rsi: args.trianglesRsi ?? args.rsi
+        rsi: args.trianglesRsi ?? args.rsi,
+        mu: args.trianglesMu ?? args.mu,
+        lambda: args.trianglesLambda ?? args.lambda
       });
     }
 
+    stepArgs() {
+      return {
+        h: this.h,
+        ...this.vertices.stepArgs(),
+        ...this.muscles.stepArgs(),
+        ...this.triangles.stepArgs(),
+        ...this.gravity.stepArgs(),
+        ...this.friction.stepArgs(),
+        ...this.collision.stepArgs(),
+        ...this.optimizer.stepArgs()
+      };
+    }
+
     toStepArgs() {
-      return [
-        this.h,
-
-        ...this.vertices.toStepArgs(),
-
-        ...this.muscles.toStepArgs(),
-
-        ...this.triangles.toStepArgs(),
-
-        ...this.gravity.toStepArgs(),
-        ...this.friction.toStepArgs(),
-        ...this.collision.toStepArgs(),
-
-        ...this.optimizer.toStepArgs()
-      ]
+      const values = this.stepArgs();
+      return backwardEulerUpdateArgs.map(name => {
+        const value = values[name];
+        if (value === undefined) {
+          throw new Error(`no value for backward_euler_update arg ${name}`);
+        }
+        return value;
+      });
     }
 
     step() {
@@ -2563,8 +2627,7 @@
   }
 
   function hashSimplex$2(vids) {
-    vids.sort();
-    return vids.join("_");
+    return [...vids].sort().join("_");
   }
 
   class Simplices {
@@ -3117,13 +3180,62 @@
     Scene: Scene
   });
 
+  // lengths in world units
+  const defaultStyle = {
+    borderColor: "black",
+    fillColor: "white",
+    vertex: {
+      radius: 0.028,
+      borderWidth: 0.023
+    },
+    edge: {
+      width: 0.029
+    },
+    muscle: {
+      width: 0.065,
+      borderWidth: 0.017,
+      activeColor: [255, 0, 0],
+      inactiveColor: [250, 190, 190]
+    },
+    floor: {
+      width: 0.055
+    },
+    grid: {
+      color: "#acadad",
+      innerCells: 2,
+      primaryLineWidth: 0.022,
+      secondaryLineWidth: 0.005
+    },
+    background: {
+      centerColor: "#fcfcfc",
+      outerColor: "#d7d8d8"
+    },
+    camera: {
+      visibleWorldWidth: 3.8,
+      targetCenterY: 1
+    }
+  };
+
+  function makeStyle(overrides = {}) {
+    const style = {};
+    for (const [key, value] of Object.entries(defaultStyle)) {
+      const override = overrides[key];
+      if (value !== null && typeof value === "object" && !Array.isArray(value)) {
+        style[key] = { ...value, ...override };
+      } else {
+        style[key] = override ?? value;
+      }
+    }
+    return style;
+  }
+
   class Tracker {
     constructor(args = {}) {
       this.targetCenterX = null;
       this.currentCenterX = null;
       this.active = true;
-      this.visibleWorldWidth = args.visibleWorldWidth ?? 3.8;
-      this.targetCenterY = args.targetCenterY ?? 1;
+      this.visibleWorldWidth = args.visibleWorldWidth ?? defaultStyle.camera.visibleWorldWidth;
+      this.targetCenterY = args.targetCenterY ?? defaultStyle.camera.targetCenterY;
       this.offsetX = args.offsetX ?? 0;
       this.fullGrid = false;
       this.centeringSpeedFactor = args.centeringSpeedFactor ?? 0.5;
@@ -3222,8 +3334,8 @@
     }
 
     static makeFloorLineShaderFunction(args = {}) {
-      const width = args.width ?? 0.055;
-      const color = args.color ?? "black";
+      const width = args.width ?? defaultStyle.floor.width;
+      const color = args.color ?? defaultStyle.borderColor;
       return (args) => {
         const ctx = args.ctx;
         const a = args.a;
@@ -3258,10 +3370,10 @@
     constructor(args = {}) {
       this.system = args.system;
       this.renderVertexIds = args.renderVertexIds ?? false;
-      this.radius = args.radius ?? 0.028;
-      this.borderColor = args.borderColor ?? "black";
-      this.fillColor = args.fillColor ?? "white";
-      this.borderWidth = args.borderWidth ?? 0.023;
+      this.radius = args.radius ?? defaultStyle.vertex.radius;
+      this.borderColor = args.borderColor ?? defaultStyle.borderColor;
+      this.fillColor = args.fillColor ?? defaultStyle.fillColor;
+      this.borderWidth = args.borderWidth ?? defaultStyle.vertex.borderWidth;
     }
 
     renderVertex(args = {}) {
@@ -3339,8 +3451,7 @@
   }
 
   function hashSimplex$1(vids) {
-    vids.sort();
-    return vids.join("_");
+    return [...vids].sort().join("_");
   }
 
   function renderLine(ctx, scale, a, b, borderWidth, borderColor) {
@@ -3411,9 +3522,12 @@
     }
 
     makeLineShaderFunction(args = {}) {
-      const activeMuscleColor = args.activeMuscleColor ?? [255, 0, 0];
-      const inactiveMuscleColor = args.inactiveMuscleColor ?? [0, 0, 255];
-      const borderColor = args.borderColor ?? "black";
+      const activeMuscleColor = args.activeMuscleColor ?? defaultStyle.muscle.activeColor;
+      const inactiveMuscleColor = args.inactiveMuscleColor ?? defaultStyle.muscle.inactiveColor;
+      const borderColor = args.borderColor ?? defaultStyle.borderColor;
+      const edgeWidth = args.edgeWidth ?? defaultStyle.edge.width;
+      const muscleWidth = args.muscleWidth ?? defaultStyle.muscle.width;
+      const muscleBorderWidth = args.muscleBorderWidth ?? defaultStyle.muscle.borderWidth;
 
       return (args = {}) => {
         const ctx = args.ctx;
@@ -3428,14 +3542,10 @@
           muscleId = lineIdToMuscleId[args.id];
         }
         if (muscleId == null) {
-          const borderWidth = 0.029;
-          renderLine(ctx, scale, a, b, borderWidth, borderColor);
+          renderLine(ctx, scale, a, b, edgeWidth, borderColor);
         } else {
           const color0 = activeMuscleColor;
           const color1 = inactiveMuscleColor;
-
-          const width = 0.065;
-          const borderWidth = 0.017;
 
           const muscleIntensity = this.muscleIntensity;
           if (muscleIntensity == null) {
@@ -3446,7 +3556,7 @@
           }
 
           const t = muscleIntensity[muscleId];
-          renderMuscle(ctx, scale, a, b, t, width, borderWidth, borderColor, color0, color1);
+          renderMuscle(ctx, scale, a, b, t, muscleWidth, muscleBorderWidth, borderColor, color0, color1);
         }
       }
     }
@@ -3454,7 +3564,7 @@
 
   class TriangleRenderer {
     constructor(args = {}) {
-      this.fillColor = args.fillColor ?? "white";
+      this.fillColor = args.fillColor ?? defaultStyle.fillColor;
     }
 
     renderTriangle(args = {}) {
@@ -3474,8 +3584,7 @@
   }
 
   function hashSimplex(vids) {
-    vids.sort();
-    return vids.join("_");
+    return [...vids].sort().join("_");
   }
 
   function hexToRgb(hex) {
@@ -3506,16 +3615,19 @@
 
       const headless = args.headless ?? false;
 
-      const borderColor = args.borderColor ?? "black";
+      const style = this.style = makeStyle(args.style);
+      const borderColor = args.borderColor ?? style.borderColor;
       const floorColor = borderColor;
-      const fillColor = args.fillColor ?? "white";
-      const gridColor = args.gridColor ?? "#acadad";
+      const fillColor = args.fillColor ?? style.fillColor;
+      const gridColor = args.gridColor ?? style.grid.color;
 
       this.vertices = new VertexRenderer({
         system: this.system,
         renderVertexIds: args.renderVertexIds ?? false,
         borderColor: borderColor,
-        fillColor: fillColor
+        fillColor: fillColor,
+        radius: style.vertex.radius,
+        borderWidth: style.vertex.borderWidth
       });
       this.lines = new LineRenderer({
         system: this.system
@@ -3535,8 +3647,8 @@
       const camera = new Camera();
       this.camera = camera;
 
-      let activeMuscleColor = args.activeMuscleColor ?? [255, 0, 0];
-      let inactiveMuscleColor = args.inactiveMuscleColor ?? [250, 190, 190];
+      let activeMuscleColor = args.activeMuscleColor ?? style.muscle.activeColor;
+      let inactiveMuscleColor = args.inactiveMuscleColor ?? style.muscle.inactiveColor;
       if (typeof activeMuscleColor === "string") {
         activeMuscleColor = hexToRgb(activeMuscleColor);
       }
@@ -3549,8 +3661,8 @@
         backgroundCenterColor = args.backgroundColor;
         backgroundOuterColor = args.backgroundColor;
       } else {
-        backgroundCenterColor = args.backgroundCenterColor ?? "#fcfcfc";
-        backgroundOuterColor = args.backgroundOuterColor ?? "#d7d8d8";
+        backgroundCenterColor = args.backgroundCenterColor ?? style.background.centerColor;
+        backgroundOuterColor = args.backgroundOuterColor ?? style.background.outerColor;
       }
 
       new Background({
@@ -3559,9 +3671,9 @@
         color2: backgroundOuterColor
       });
 
-      const gridInnerCells = 2;
-      const gridPrimaryLineWidth = 0.022;
-      const gridSecondaryLineWidth = 0.005;
+      const gridInnerCells = style.grid.innerCells;
+      const gridPrimaryLineWidth = style.grid.primaryLineWidth;
+      const gridSecondaryLineWidth = style.grid.secondaryLineWidth;
       const grid = this.grid = new Grid({
         scene: scene,
         x0: -3,
@@ -3583,7 +3695,8 @@
 
       this.floor = new Floor({
         scene: scene,
-        color: floorColor
+        color: floorColor,
+        width: style.floor.width
       });
 
       const mesh = scene.addMesh();
@@ -3597,7 +3710,10 @@
       mesh.lineShader.renderLine = this.lines.makeLineShaderFunction({
         activeMuscleColor: activeMuscleColor,
         inactiveMuscleColor: inactiveMuscleColor,
-        borderColor: borderColor
+        borderColor: borderColor,
+        edgeWidth: style.edge.width,
+        muscleWidth: style.muscle.width,
+        muscleBorderWidth: style.muscle.borderWidth
       });
 
       // vertex currently being dragged, and whether it was already fixed
@@ -3640,7 +3756,7 @@
         }
       }
 
-      this.tracker = new Tracker();
+      this.tracker = new Tracker(style.camera);
     }
 
     setSortedVertexIdsFromVertexDepths(depths) {
@@ -3827,7 +3943,9 @@
     VertexRenderer: VertexRenderer,
     LineRenderer: LineRenderer,
     TriangleRenderer: TriangleRenderer,
-    Tracker: Tracker
+    Tracker: Tracker,
+    defaultStyle: defaultStyle,
+    makeStyle: makeStyle
   });
 
   function sampleNormal(mean, stdDev) {
