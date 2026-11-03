@@ -3,7 +3,7 @@ export default {
   dark: true,
   content: `<div style="display: flex; flex-direction: column">
 <a href="https://direct.mit.edu/isal/proceedings/isal2024/36/30/123447" style="padding-top: 25px; display: flex; flex-direction: column; align-items: center">
-  <img src="icons/doc.svg" style="width: 30px"></img>
+  <img src="icons/doc.svg" style="width: 30px">
   <div>paper [ALIFE 2024]</div>
 </a>
 <p>
