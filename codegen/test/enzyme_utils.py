@@ -7,13 +7,23 @@ import pytest
 
 csrc_dirpath = Path(__file__).parent.parent / "algovivo_codegen" / "csrc"
 
+skip_enzyme_varname = "ALGOVIVO_SKIP_ENZYME"
+
 requires_enzyme = pytest.mark.skipif(
-    not os.environ.get("ENZYME") or not os.environ.get("LLVM_BIN_DIR"),
-    reason="requires ENZYME and LLVM_BIN_DIR, see the llvm18-enzyme docker image"
+    os.environ.get(skip_enzyme_varname) == "1",
+    reason=f"{skip_enzyme_varname}=1"
 )
 
 
 def compile_with_enzyme(cpp_src, name="lib") -> ctypes.CDLL:
+    missing = [varname for varname in ["ENZYME", "LLVM_BIN_DIR"] if not os.environ.get(varname)]
+    if missing:
+        pytest.fail(
+            f"Enzyme tests require {' and '.join(missing)} to be set (see the llvm18-enzyme docker image), "
+            f"set {skip_enzyme_varname}=1 to skip them explicitly",
+            pytrace=False
+        )
+
     llvm_bin_dirpath = Path(os.environ["LLVM_BIN_DIR"])
     enzyme_filepath = os.environ["ENZYME"]
 
