@@ -185,6 +185,13 @@ float potential_energy = 0.0;"""
             if hasattr(potential, "make_energy_fn"):
                 fn = potential.make_energy_fn()
                 energy_fns_src += fn.codegen() + "\n\n"
+                if getattr(fn, "export_grad", False):
+                    if len(fn.args.get_differentiable_args()) == 0:
+                        raise ValueError(
+                            f"{fn.name} asks for its gradient but has no differentiable arg "
+                            "to take it with respect to"
+                        )
+                    energy_fns_src += fn.make_backward_pass().codegen() + "\n\n"
         return energy_fns_src
 
     def instantiate_templates(self, csrc_dirpath):
