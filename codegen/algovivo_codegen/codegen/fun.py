@@ -2,10 +2,11 @@ from .args import Args
 from .backward_pass_fun import BackwardPassFun
 
 class Fun:
-    def __init__(self, name):
+    def __init__(self, name, export_grad=False):
         self.args = Args()
         self.name = name
         self.src_body = ""
+        self.export_grad = export_grad
 
     @property
     def num_args(self):
