@@ -125,5 +125,15 @@ def test_muscle_energy_forward():
 def test_muscle_energy_grad():
     fn = algovivo_codegen.potentials.Muscles().make_energy_fn()
     lib = compile_energy_with_grad(fn, ["potentials/muscles.h"])
-    values = {"k": 4.0, "num_muscles": 1, "muscles": [0, 1], "a": [0.5], "l0": [2.0], "pos": [0.0, 0.0, 0.3, 2.0]}
+    values = {
+        "pos": [0.0, 0.0, 0.3, 2.0],
+
+        "num_muscles": 1,
+        "muscles": [0, 1],
+        
+        "k": 4.0,
+        
+        "a": [0.5],
+        "l0": [2.0]
+    }
     assert_grad_matches_central_diff(lib, fn, values)
