@@ -1,4 +1,3 @@
-import resolve from "@rollup/plugin-node-resolve";
 import terser from "@rollup/plugin-terser";
 import { execSync } from "child_process";
 
@@ -31,7 +30,6 @@ for (let minified of [true, false]) {
       sourcemap: false
     },
     plugins: [
-      resolve(),
       ...(minified ? [terser()] : []),
       header(),
     ]
@@ -47,7 +45,6 @@ for (let minified of [true, false]) {
       sourcemap: false
     },
     plugins: [
-      resolve(),
       ...(minified ? [terser()] : []),
       header()
     ]
