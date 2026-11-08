@@ -3,6 +3,7 @@ import ctypes
 import tempfile
 from pathlib import Path
 import algovivo_codegen
+from enzyme_utils import requires_enzyme, compile_with_enzyme, central_diff_grad
 
 this_dirpath = Path(__file__).parent
 codegen_dirpath = this_dirpath.parent
@@ -31,7 +32,7 @@ def make_inertial_energy_fn(name="inertial_energy"):
     f.args.add_arg("int", "num_vertices")
     f.args.add_arg("float*", "pos0")
     f.args.add_arg("float*", "vel0")
-    f.args.add_arg("float*", "pos")
+    f.args.add_differentiable_arg("float*", "pos", num_elements="num_vertices", element_size="space_dim")
     f.args.add_arg("float", "vertex_mass")
     f.src_body = "float inertial_energy = 0.0;" + get_inertia_src() + "return inertial_energy;"
     return f
@@ -151,3 +152,54 @@ def test_inertial_energy_forward():
     expected = 0.06
 
     assert abs(energy - expected) < 1e-5, f"energy mismatch: {energy} != {expected}"
+
+
+def compile_inertial_energy_with_grad() -> ctypes.CDLL:
+    fn = make_inertial_energy_fn("inertial_energy")
+    cpp_src = "\n".join([
+        (csrc_dirpath / "enzyme.h").read_text(),
+        (csrc_dirpath / "dim.h").read_text(),
+        (csrc_dirpath / "dynamics" / "inertia.h").read_text().replace("#include \"../dim.h\"", ""),
+        "namespace algovivo {",
+        fn.codegen(),
+        fn.make_backward_pass().codegen(),
+        "}"
+    ]).replace("#pragma once", "")
+
+    lib = compile_with_enzyme(cpp_src, "inertial_energy")
+    float_p = ctypes.POINTER(ctypes.c_float)
+    lib.inertial_energy.argtypes = [ctypes.c_float, ctypes.c_int, float_p, float_p, float_p, ctypes.c_float]
+    lib.inertial_energy.restype = ctypes.c_float
+    lib.inertial_energy_grad.argtypes = [ctypes.c_float, ctypes.c_int, float_p, float_p, float_p, float_p, ctypes.c_float]
+    lib.inertial_energy_grad.restype = None
+    return lib
+
+
+@requires_enzyme
+def test_inertial_energy_grad():
+    lib = compile_inertial_energy_with_grad()
+
+    h = 0.1
+    num_vertices = 2
+    vertex_mass = 1.5
+    n = 2 * num_vertices
+
+    pos0 = (ctypes.c_float * n)(0.0, 0.0, 1.0, 0.0)
+    vel0 = (ctypes.c_float * n)(1.0, 0.0, 0.0, 1.0)
+    pos_values = [0.2, 0.0, 1.2, 0.2]
+
+    pos = (ctypes.c_float * n)(*pos_values)
+    pos_grad = (ctypes.c_float * n)()
+    lib.inertial_energy_grad(h, num_vertices, pos0, vel0, pos, pos_grad, vertex_mass)
+
+    predicted = [pos0[k] + h * vel0[k] for k in range(n)]
+    expected = [2 * vertex_mass * (pos_values[k] - predicted[k]) for k in range(n)]
+    for got, want in zip(pos_grad, expected):
+        assert abs(got - want) < 1e-5, (list(pos_grad), expected)
+
+    finite_diff = central_diff_grad(
+        lambda p: lib.inertial_energy(h, num_vertices, pos0, vel0, p, vertex_mass),
+        pos_values
+    )
+    for got, want in zip(pos_grad, finite_diff):
+        assert abs(got - want) < 1e-2, (list(pos_grad), finite_diff)
