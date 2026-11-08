@@ -126,11 +126,14 @@ def test_muscle_energy_grad():
     fn = algovivo_codegen.potentials.Muscles().make_energy_fn()
     lib = compile_energy_with_grad(fn, ["potentials/muscles.h"])
     values = {
-        "pos": [0.0, 0.0, 0.3, 2.0],
+        "pos": [
+            0.0, 0.0,
+            0.3, 2.0
+        ],
 
         "num_muscles": 1,
         "muscles": [0, 1],
-        
+
         "k": 4.0,
         
         "a": [0.5],

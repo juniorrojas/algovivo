@@ -133,7 +133,11 @@ def test_triangle_energy_grad():
     lib.rsi_of_pos(rest_pos, 1, (ctypes.c_int * 3)(*triangles), rsi)
 
     values = {
-        "pos": [0.0, 0.0, 1.2, 0.1, -0.1, 0.9],
+        "pos": [
+            0.0, 0.0,
+            1.2, 0.1,
+            -0.1, 0.9
+        ],
 
         "num_triangles": 1,
         "triangles": triangles,
