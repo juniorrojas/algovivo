@@ -3,7 +3,7 @@ import ctypes
 import tempfile
 from pathlib import Path
 import algovivo_codegen
-from enzyme_utils import requires_enzyme, compile_with_enzyme, central_diff_grad
+from enzyme_utils import requires_enzyme, compile_energy_with_grad, assert_grad_matches_central_diff, assert_close
 
 this_dirpath = Path(__file__).parent
 codegen_dirpath = this_dirpath.parent
@@ -107,48 +107,10 @@ def test_gravity_energy_forward():
     assert abs(energy - expected) < 1e-5, f"energy mismatch: {energy} != {expected}"
 
 
-def compile_gravity_energy_with_grad() -> ctypes.CDLL:
-    fn = algovivo_codegen.potentials.Gravity().make_energy_fn("gravity_energy")
-    cpp_src = "\n".join([
-        (csrc_dirpath / "enzyme.h").read_text(),
-        (csrc_dirpath / "dim.h").read_text(),
-        (csrc_dirpath / "potentials" / "gravity.h").read_text(),
-        "namespace algovivo {",
-        fn.codegen(),
-        fn.make_backward_pass().codegen(),
-        "}"
-    ]).replace("#pragma once", "")
-
-    lib = compile_with_enzyme(cpp_src, "gravity_energy")
-    float_p = ctypes.POINTER(ctypes.c_float)
-    lib.gravity_energy.argtypes = [ctypes.c_float, ctypes.c_int, float_p, ctypes.c_float]
-    lib.gravity_energy.restype = ctypes.c_float
-    lib.gravity_energy_grad.argtypes = [ctypes.c_float, ctypes.c_int, float_p, float_p, ctypes.c_float]
-    lib.gravity_energy_grad.restype = None
-    return lib
-
-
 @requires_enzyme
 def test_gravity_energy_grad():
-    lib = compile_gravity_energy_with_grad()
-
-    g = 9.8
-    vertex_mass = 1.5
-    pos_values = [0.0, 1.0, 3.0, 2.0, -1.0, 0.5]
-    num_vertices = len(pos_values) // 2
-    n = len(pos_values)
-
-    pos = (ctypes.c_float * n)(*pos_values)
-    pos_grad = (ctypes.c_float * n)()
-    lib.gravity_energy_grad(g, num_vertices, pos, pos_grad, vertex_mass)
-
-    expected = [0.0, vertex_mass * g] * num_vertices
-    for got, want in zip(pos_grad, expected):
-        assert abs(got - want) < 1e-5, (list(pos_grad), expected)
-
-    finite_diff = central_diff_grad(
-        lambda p: lib.gravity_energy(g, num_vertices, p, vertex_mass),
-        pos_values
-    )
-    for got, want in zip(pos_grad, finite_diff):
-        assert abs(got - want) < 1e-2, (list(pos_grad), finite_diff)
+    fn = algovivo_codegen.potentials.Gravity().make_energy_fn()
+    lib = compile_energy_with_grad(fn, ["potentials/gravity.h"])
+    values = {"g": 9.8, "num_vertices": 3, "pos": [0.0, 1.0, 3.0, 2.0, -1.0, 0.5], "vertex_mass": 1.5}
+    grad = assert_grad_matches_central_diff(lib, fn, values)
+    assert_close(grad, [0.0, 1.5 * 9.8] * 3, rtol=1e-5)

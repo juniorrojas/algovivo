@@ -3,6 +3,7 @@ import ctypes
 import tempfile
 from pathlib import Path
 import algovivo_codegen
+from enzyme_utils import requires_enzyme, compile_energy_with_grad, assert_grad_matches_central_diff
 
 this_dirpath = Path(__file__).parent
 codegen_dirpath = this_dirpath.parent
@@ -106,3 +107,11 @@ def test_collision_energy_forward():
     expected = 5.0
 
     assert abs(energy - expected) < 1e-5, f"energy mismatch: {energy} != {expected}"
+
+
+@requires_enzyme
+def test_collision_energy_grad():
+    fn = algovivo_codegen.potentials.Collision().make_energy_fn()
+    lib = compile_energy_with_grad(fn, ["potentials/collision.h"])
+    values = {"k_collision": 100.0, "num_vertices": 3, "pos": [0.0, 0.5, 0.3, -0.1, -0.2, -0.2]}
+    assert_grad_matches_central_diff(lib, fn, values)
