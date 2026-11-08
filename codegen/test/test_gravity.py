@@ -3,6 +3,7 @@ import ctypes
 import tempfile
 from pathlib import Path
 import algovivo_codegen
+from enzyme_utils import requires_enzyme, compile_energy_with_grad, assert_grad_matches_central_diff, assert_close
 
 this_dirpath = Path(__file__).parent
 codegen_dirpath = this_dirpath.parent
@@ -104,3 +105,12 @@ def test_gravity_energy_forward():
     expected = 29.4
 
     assert abs(energy - expected) < 1e-5, f"energy mismatch: {energy} != {expected}"
+
+
+@requires_enzyme
+def test_gravity_energy_grad():
+    fn = algovivo_codegen.potentials.Gravity().make_energy_fn()
+    lib = compile_energy_with_grad(fn, ["potentials/gravity.h"])
+    values = {"g": 9.8, "num_vertices": 3, "pos": [0.0, 1.0, 3.0, 2.0, -1.0, 0.5], "vertex_mass": 1.5}
+    grad = assert_grad_matches_central_diff(lib, fn, values)
+    assert_close(grad, [0.0, 1.5 * 9.8] * 3, rtol=1e-5)

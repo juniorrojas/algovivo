@@ -3,6 +3,7 @@ import ctypes
 import tempfile
 from pathlib import Path
 import algovivo_codegen
+from enzyme_utils import requires_enzyme, compile_energy_with_grad, assert_grad_matches_central_diff, assert_close
 
 this_dirpath = Path(__file__).parent
 codegen_dirpath = this_dirpath.parent
@@ -31,7 +32,7 @@ def make_inertial_energy_fn(name="inertial_energy"):
     f.args.add_arg("int", "num_vertices")
     f.args.add_arg("float*", "pos0")
     f.args.add_arg("float*", "vel0")
-    f.args.add_arg("float*", "pos")
+    f.args.add_differentiable_arg("float*", "pos", num_elements="num_vertices", element_size="space_dim")
     f.args.add_arg("float", "vertex_mass")
     f.src_body = "float inertial_energy = 0.0;" + get_inertia_src() + "return inertial_energy;"
     return f
@@ -151,3 +152,16 @@ def test_inertial_energy_forward():
     expected = 0.06
 
     assert abs(energy - expected) < 1e-5, f"energy mismatch: {energy} != {expected}"
+
+
+@requires_enzyme
+def test_inertial_energy_grad():
+    fn = make_inertial_energy_fn()
+    lib = compile_energy_with_grad(fn, ["dynamics/inertia.h"])
+    h, vertex_mass = 0.1, 1.5
+    pos0 = [0.0, 0.0, 1.0, 0.0]
+    vel0 = [1.0, 0.0, 0.0, 1.0]
+    pos = [0.2, 0.0, 1.2, 0.2]
+    values = {"h": h, "num_vertices": 2, "pos0": pos0, "vel0": vel0, "pos": pos, "vertex_mass": vertex_mass}
+    grad = assert_grad_matches_central_diff(lib, fn, values)
+    assert_close(grad, [2 * vertex_mass * (p - (p0 + h * v0)) for p, p0, v0 in zip(pos, pos0, vel0)], rtol=1e-5)

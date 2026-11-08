@@ -3,6 +3,7 @@ import ctypes
 import tempfile
 from pathlib import Path
 import algovivo_codegen
+from enzyme_utils import requires_enzyme, compile_energy_with_grad, assert_grad_matches_central_diff
 
 this_dirpath = Path(__file__).parent
 codegen_dirpath = this_dirpath.parent
@@ -118,3 +119,24 @@ def test_muscle_energy_forward():
     expected = 2.0
 
     assert abs(energy - expected) < 1e-4, f"energy mismatch: {energy} != {expected}"
+
+
+@requires_enzyme
+def test_muscle_energy_grad():
+    fn = algovivo_codegen.potentials.Muscles().make_energy_fn()
+    lib = compile_energy_with_grad(fn, ["potentials/muscles.h"])
+    values = {
+        "pos": [
+            0.0, 0.0,
+            0.3, 2.0
+        ],
+
+        "num_muscles": 1,
+        "muscles": [0, 1],
+
+        "k": 4.0,
+        
+        "a": [0.5],
+        "l0": [2.0]
+    }
+    assert_grad_matches_central_diff(lib, fn, values)

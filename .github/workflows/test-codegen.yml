@@ -9,6 +9,9 @@ on:
     branches:
       - main
 
+env:
+  ENZYME_IMAGE: ghcr.io/juniorrojas/algovivo/llvm18-enzyme:latest
+
 jobs:
   test-codegen:
     runs-on: ubuntu-latest
@@ -16,10 +19,15 @@ jobs:
       - name: Clone repo
         uses: actions/checkout@v6
 
-      - name: Install dependencies
-        run: pip install pytest
-
       - name: Test
         run: |
-          export PYTHONPATH=./codegen
-          pytest -s ./codegen/test
+          docker run \
+            -v $(pwd):/workspace \
+            -w /workspace \
+            ${{ env.ENZYME_IMAGE }} \
+            bash -c '
+              apt-get update && apt-get install -y python3-pytest &&
+              export PATH=$LLVM_BIN_DIR:$PATH &&
+              export PYTHONPATH=./codegen &&
+              python3 -m pytest -s ./codegen/test
+            '

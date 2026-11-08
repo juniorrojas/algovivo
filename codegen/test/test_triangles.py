@@ -3,6 +3,7 @@ import ctypes
 import tempfile
 from pathlib import Path
 import algovivo_codegen
+from enzyme_utils import requires_enzyme, compile_energy_with_grad, assert_grad_matches_central_diff
 
 this_dirpath = Path(__file__).parent
 codegen_dirpath = this_dirpath.parent
@@ -120,3 +121,30 @@ def test_triangle_energy():
     )
     deformed_energy = lib.triangle_energy(1, triangles, rsi, mu, lam, stretched_pos)
     assert deformed_energy > 1e-3, deformed_energy
+
+@requires_enzyme
+def test_triangle_energy_grad():
+    fn = algovivo_codegen.potentials.Triangles().make_energy_fn()
+    lib = compile_energy_with_grad(fn, ["potentials/triangles.h"])
+
+    triangles = [0, 1, 2]
+    rest_pos = (ctypes.c_float * 6)(0.0, 0.0, 1.0, 0.0, 0.0, 1.0)
+    rsi = (ctypes.c_float * 4)()
+    lib.rsi_of_pos(rest_pos, 1, (ctypes.c_int * 3)(*triangles), rsi)
+
+    values = {
+        "pos": [
+            0.0, 0.0,
+            1.2, 0.1,
+            -0.1, 0.9
+        ],
+
+        "num_triangles": 1,
+        "triangles": triangles,
+
+        "rsi": list(rsi),
+
+        "mu": [500.0],
+        "lambda": [50.0]
+    }
+    assert_grad_matches_central_diff(lib, fn, values)
