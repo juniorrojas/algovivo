@@ -209,6 +209,13 @@ float potential_energy = 0.0;"""
                 print(f"module {module.name} saved to {output_filepath}")
                 includes_src += f"#include \"../potentials/{module.name}.h\"\n"
 
+        for potential in self.potentials:
+            header = getattr(potential, "header", None)
+            if header is not None:
+                header = Path(header)
+                shutil.copyfile(header, csrc_dirpath.joinpath("potentials", header.name))
+                includes_src += f"#include \"../potentials/{header.name}\"\n"
+
         self.make_loss()
         energy_fns_src = self.make_energy_functions()
         loss_grad = self.loss.make_backward_pass()
